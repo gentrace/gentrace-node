@@ -1,7 +1,8 @@
 name: Build and publish package
 
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
       
 permissions:
   contents: write
