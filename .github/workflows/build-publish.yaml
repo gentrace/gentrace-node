@@ -1,7 +1,7 @@
 name: Build and publish package
 
 on:
-  workflow_dispatch: true
+  workflow_dispatch:
       
 permissions:
   contents: write
