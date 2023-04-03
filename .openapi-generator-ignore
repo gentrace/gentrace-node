@@ -1,6 +1,5 @@
 .gitignore
 README.md
 git_push.sh
-package.json
 package-lock.json
 yarn.lock
