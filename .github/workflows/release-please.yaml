@@ -14,6 +14,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v3
+        id: release
         with:
           release-type: node
           package-name: release-please-action
+
+      - uses: actions/checkout@v3
+        if: ${{ steps.release.outputs.release_created }}  
+          
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.15.0'
+          cache: 'yarn'
+          cache-dependency-path: yarn.lock
+        if: ${{ steps.release.outputs.release_created }}  
+    
+      - name: Install and build
+        run: |
+          yarn install
+          yarn build
+        if: ${{ steps.release.outputs.release_created }}  
+    
+      - name: Publish package to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" > .npmrc
+          npm publish
+        if: ${{ steps.release.outputs.release_created }}  
