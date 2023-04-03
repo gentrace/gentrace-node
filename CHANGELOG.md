@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.12](https://github.com/gentrace/gentrace-node/compare/v0.0.11...v0.0.12) (2023-04-03)
+
+
+### Miscellaneous Chores
+
+* release 0.0.12 ([02d5f07](https://github.com/gentrace/gentrace-node/commit/02d5f07ca8a0f255653170325fbf33325d5daaf3))
+
 ## [0.0.11](https://github.com/gentrace/gentrace-node/compare/v0.0.10...v0.0.11) (2023-04-03)
 
 
