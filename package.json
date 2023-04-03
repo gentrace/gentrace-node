@@ -1,0 +1,26 @@
+{
+  "name": "@gentrace/node",
+  "version": "0.0.1",
+  "description": "Node.js library for the Gentrace API",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gentrace/gentrace-node.git"
+  },
+  "keywords": [
+    "gentrace"
+  ],
+  "author": "Gentrace",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --outDir dist/"
+  },
+  "dependencies": {
+    "axios": "^0.26.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.11.5",
+    "typescript": "^3.6.4"
+  }
+}
