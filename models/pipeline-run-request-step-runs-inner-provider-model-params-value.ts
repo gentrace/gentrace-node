@@ -14,5 +14,11 @@
 
 
 
-export * from './api/gentrace-api';
+/**
+ * 
+ * @export
+ * @interface PipelineRunRequestStepRunsInnerProviderModelParamsValue
+ */
+export interface PipelineRunRequestStepRunsInnerProviderModelParamsValue {
+}
 

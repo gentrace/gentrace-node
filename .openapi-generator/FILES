@@ -1,6 +1,13 @@
 .npmignore
 api.ts
+api/gentrace-api.ts
 base.ts
 common.ts
 configuration.ts
 index.ts
+models/index.ts
+models/pipeline-run-request-step-runs-inner-provider-model-params-value.ts
+models/pipeline-run-request-step-runs-inner-provider.ts
+models/pipeline-run-request-step-runs-inner.ts
+models/pipeline-run-request.ts
+models/pipeline-run-response.ts

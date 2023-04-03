@@ -14,5 +14,17 @@
 
 
 
-export * from './api/gentrace-api';
+/**
+ * 
+ * @export
+ * @interface PipelineRunResponse
+ */
+export interface PipelineRunResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof PipelineRunResponse
+     */
+    'pipelineRunId'?: string;
+}
 
