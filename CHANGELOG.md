@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/gentrace/gentrace-node/compare/v0.1.3...v0.1.4) (2023-04-04)
+
+
+### Miscellaneous Chores
+
+* release 0.1.4 ([db69ddb](https://github.com/gentrace/gentrace-node/commit/db69ddbde6f2fbf0e240a945dc2a3349024e4ea0))
+* release 0.1.4 ([284abe0](https://github.com/gentrace/gentrace-node/commit/284abe034bb1d685a2fde2722c373d51d9e2b747))
+
 ## [0.1.3](https://github.com/gentrace/gentrace-node/compare/v0.1.2...v0.1.3) (2023-04-04)
 
 
