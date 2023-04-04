@@ -36,8 +36,8 @@ export class PineconeHandler extends PineconeClient {
 
   public async init() {
     super.init({
-      apiKey: this.pipeline.pineconeConfiguration.apiKey,
-      environment: this.pipeline.pineconeConfiguration.environment,
+      apiKey: this.pipeline.pineconeConfig.apiKey,
+      environment: this.pipeline.pineconeConfig.environment,
     });
   }
 

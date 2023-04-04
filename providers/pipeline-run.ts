@@ -24,7 +24,6 @@ export class PipelineRun {
         pipelineRun: this,
       });
     } catch (e) {
-      console.log("Error:", e);
       throw new Error(
         "Please install OpenAI as a dependency with, e.g. `yarn add openai`"
       );
@@ -50,11 +49,37 @@ export class PipelineRun {
   }
 
   public async submit() {
-    const configuration = new GentraceConfiguration({
-      apiKey: this.pipeline.apiKey,
-    });
+    console.log("config", this.pipeline.config);
+    const gentraceApi = new GentraceApi(this.pipeline.config);
 
-    const gentraceApi = new GentraceApi(configuration);
+    console.log("submission", {
+      name: this.pipeline.id,
+      stepRuns: this.stepRuns.map(
+        ({
+          provider,
+          elapsedTime,
+          startTime,
+          endTime,
+          invocation,
+          modelParams,
+          inputs,
+          outputs,
+        }) => {
+          return {
+            provider: {
+              name: provider,
+              invocation,
+              modelParams,
+              inputs,
+              outputs,
+            },
+            elapsedTime,
+            startTime,
+            endTime,
+          };
+        }
+      ),
+    });
 
     await gentraceApi.pipelineRunPost({
       name: this.pipeline.id,

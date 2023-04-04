@@ -9,6 +9,7 @@ import {
   CreateEmbeddingRequest,
   CreateEmbeddingResponse,
   OpenAIApi,
+  Configuration,
 } from "openai";
 import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
@@ -24,7 +25,7 @@ export class OpenAIHandler extends OpenAIApi {
     pipelineRun: PipelineRun;
     pipeline: Pipeline;
   }) {
-    super(pipeline.openAIConfiguration);
+    super(pipeline.openAIConfig);
 
     this.pipelineRun = pipelineRun;
   }
@@ -160,6 +161,7 @@ export class OpenAIHandler extends OpenAIApi {
     const { model, ...inputParams } = createEmbeddingRequest;
 
     const startTime = performance.timeOrigin + performance.now();
+
     const completion = await super.createEmbedding(
       createEmbeddingRequest,
       options
