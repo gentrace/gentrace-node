@@ -24,8 +24,9 @@ export class PipelineRun {
         pipelineRun: this,
       });
     } catch (e) {
+      console.log("Error:", e);
       throw new Error(
-        "Please install OpenAI as a dependency with, e.g. `yarn add openai-node`"
+        "Please install OpenAI as a dependency with, e.g. `yarn add openai`"
       );
     }
   }

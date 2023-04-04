@@ -18,7 +18,7 @@
     "build": "run-s clean compile",
     "bump-patch": "./scripts/bump-patch",
     "clean": "rm -rf dist",
-    "compile": "tsc --outDir dist -d index.ts"
+    "compile": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
     "@pinecone-database/pinecone": "^0.0.8",

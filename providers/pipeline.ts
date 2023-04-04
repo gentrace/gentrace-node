@@ -10,6 +10,7 @@ export class Pipeline {
   public id: string;
   public apiKey: string;
 
+  // TODO: rename this to correctly reflect the interface (IT"S ON THE STASH)
   public pineconeConfiguration: PineconeConfiguration;
   public openAIConfiguration: OpenAIConfiguration;
 
