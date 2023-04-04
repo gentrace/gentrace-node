@@ -16,6 +16,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "run-s clean compile",
+    "bump-patch": "./scripts/bump-patch",
     "clean": "rm -rf dist",
     "compile": "tsc --outDir dist -d index.ts"
   },
