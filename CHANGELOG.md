@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/gentrace/gentrace-node/compare/v0.1.0...v0.1.1) (2023-04-04)
+
+
+### Bug Fixes
+
+* add changes to OpenAI providers ([90418de](https://github.com/gentrace/gentrace-node/commit/90418de763c48db742d384012e0583566ce1ce50))
+
 ## [0.1.0](https://github.com/gentrace/gentrace-node/compare/v0.0.14...v0.1.0) (2023-04-04)
 
 
