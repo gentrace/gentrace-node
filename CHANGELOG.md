@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.3](https://github.com/gentrace/gentrace-node/compare/v0.1.2...v0.1.3) (2023-04-04)
+
+
+### Bug Fixes
+
+* rename handler functions ([94ea7a3](https://github.com/gentrace/gentrace-node/commit/94ea7a32be9f127ef2117d80585702500ac8d3e1))
+
+
+### Miscellaneous Chores
+
+* release 0.1.3 ([c037238](https://github.com/gentrace/gentrace-node/commit/c037238f048cfff822a659d5b327b1f1333971f3))
+
 ## [0.1.2](https://github.com/gentrace/gentrace-node/compare/v0.1.1...v0.1.2) (2023-04-04)
 
 
