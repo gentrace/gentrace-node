@@ -1,8 +1,9 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "openai/node_modules/axios";
 import * as Mustache from "mustache";
 import {
   ChatCompletionRequestMessage,
   CreateChatCompletionRequest,
+  CreateChatCompletionResponse,
   CreateCompletionRequest,
   CreateCompletionResponse,
   CreateEmbeddingRequest,
@@ -44,7 +45,7 @@ export class OpenAIHandler extends OpenAIApi {
   public async createCompletion(
     createCompletionRequest: CreateCompletionTemplateRequest,
     options?: AxiosRequestConfig
-  ) {
+  ): Promise<AxiosResponse<CreateCompletionResponse, any>> {
     const { promptTemplate, promptInputs, ...baseCompletionOptions } =
       createCompletionRequest;
 
@@ -102,7 +103,7 @@ export class OpenAIHandler extends OpenAIApi {
   /**
    *
    * @summary Creates a completion for the provided chat messages and model parameters,
-   * while instrumenting the request with telemetry to send to the GENTRACE API.
+   * while instrumenting the request with telemetry to send to the Gentrace API.
    *
    * @param {CreateChatCompletionRequest} createChatCompletionRequest
    * @param {*} [options] Override http request option.
@@ -112,7 +113,7 @@ export class OpenAIHandler extends OpenAIApi {
   public async createChatCompletion(
     createChatCompletionRequest: CreateChatCompletionRequest,
     options?: AxiosRequestConfig
-  ) {
+  ): Promise<AxiosResponse<CreateChatCompletionResponse, any>> {
     const { messages, ...baseCompletionOptions } = createChatCompletionRequest;
 
     const startTime = performance.timeOrigin + performance.now();
@@ -155,7 +156,7 @@ export class OpenAIHandler extends OpenAIApi {
   public async createEmbedding(
     createEmbeddingRequest: CreateEmbeddingRequest,
     options?: AxiosRequestConfig
-  ) {
+  ): Promise<AxiosResponse<CreateEmbeddingResponse, any>> {
     const { model, ...inputParams } = createEmbeddingRequest;
 
     const startTime = performance.timeOrigin + performance.now();

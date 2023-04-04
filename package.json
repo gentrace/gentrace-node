@@ -29,6 +29,8 @@
     "mustache": "^4.2.0"
   },
   "devDependencies": {
+    "@pinecone-database/pinecone": "^0.0.8",
+    "openai": "^3.2.1",
     "@types/node": "^12.11.5",
     "@types/mustache": "^4.2.2",
     "typescript": "^3.6.4",
