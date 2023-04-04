@@ -16,7 +16,7 @@ export class PipelineRun {
     return this.pipeline;
   }
 
-  async getOpenAIClient() {
+  async getOpenAI() {
     try {
       const { OpenAIHandler } = await import("./llms/openai");
       return new OpenAIHandler({
@@ -30,7 +30,7 @@ export class PipelineRun {
     }
   }
 
-  async getPineconeClient() {
+  async getPinecone() {
     try {
       const { PineconeHandler } = await import("./vectorstores/pinecone");
       return new PineconeHandler({
