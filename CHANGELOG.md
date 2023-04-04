@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/gentrace/gentrace-node/compare/v0.0.14...v0.1.0) (2023-04-04)
+
+
+### Features
+
+* Add in the custom provider logic ([8209325](https://github.com/gentrace/gentrace-node/commit/8209325f7858f770601777b7b29b557e54e3cf53))
+
 ## [0.0.14](https://github.com/gentrace/gentrace-node/compare/v0.0.13...v0.0.14) (2023-04-04)
 
 
