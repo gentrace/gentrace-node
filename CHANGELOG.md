@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/gentrace/gentrace-node/compare/v0.1.8...v0.1.9) (2023-04-05)
+
+
+### Bug Fixes
+
+* workflow should trim down node modules, readd as peer dependencies and include range ([f4fc5cd](https://github.com/gentrace/gentrace-node/commit/f4fc5cda0ff3b57606b8a4c574978dae438e83c1))
+
 ## [0.1.8](https://github.com/gentrace/gentrace-node/compare/v0.1.7...v0.1.8) (2023-04-05)
 
 
