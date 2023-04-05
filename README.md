@@ -4,7 +4,7 @@
 Gentrace Node.js SDK
 </h1>
 <p align="center">
-  <a href="https://github.com/linear/linear/blob/master/LICENSE">
+  <a href="https://github.com/gentrace/gentrace-node/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Gentrace is released under the MIT license." />
   </a>
   <a href="https://github.com/gentrace/gentrace-node/actions/workflows/release-please.yaml">
