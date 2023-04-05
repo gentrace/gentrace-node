@@ -35,7 +35,7 @@ export class PineconeHandler extends PineconeClient {
   }
 
   public async init() {
-    super.init({
+    await super.init({
       apiKey: this.pipeline.pineconeConfig.apiKey,
       environment: this.pipeline.pineconeConfig.environment,
     });
@@ -52,7 +52,7 @@ export class PineconeHandler extends PineconeClient {
       const startTime = performance.timeOrigin + performance.now();
       const response = await boundFetch(requestParameters, initOverrides);
       const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = endTime - startTime;
+      const elapsedTime = Math.floor(endTime - startTime);
 
       this.pipelineRun.addStepRun(
         new PineconeFetchStepRun(
@@ -76,7 +76,7 @@ export class PineconeHandler extends PineconeClient {
       const startTime = performance.timeOrigin + performance.now();
       const response = await boundUpdate(requestParameters, initOverrides);
       const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = endTime - startTime;
+      const elapsedTime = Math.floor(endTime - startTime);
 
       this.pipelineRun.addStepRun(
         new PineconeUpdateStepRun(
@@ -103,7 +103,7 @@ export class PineconeHandler extends PineconeClient {
       const startTime = performance.timeOrigin + performance.now();
       const response = await boundQuery(requestParameters, initOverrides);
       const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = endTime - startTime;
+      const elapsedTime = Math.floor(endTime - startTime);
 
       const { topK, filter, ...inputs } = queryRequest;
       const modelParams = { topK, filter };
@@ -131,7 +131,7 @@ export class PineconeHandler extends PineconeClient {
       const startTime = performance.timeOrigin + performance.now();
       const response = await boundUpsert(requestParameters, initOverrides);
       const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = endTime - startTime;
+      const elapsedTime = Math.floor(endTime - startTime);
 
       this.pipelineRun.addStepRun(
         new PineconeUpsertStepRun(
@@ -154,7 +154,7 @@ export class PineconeHandler extends PineconeClient {
       const startTime = performance.timeOrigin + performance.now();
       const response = await boundDelete(deleteRequest, initOverrides);
       const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = endTime - startTime;
+      const elapsedTime = Math.floor(endTime - startTime);
 
       this.pipelineRun.addStepRun(
         new PineconeDeleteStepRun(
@@ -283,7 +283,7 @@ class PineconeDeleteStepRun extends StepRun {
   ) {
     super(
       "pinecone",
-      "pinecone_indexUpsert",
+      "pinecone_indexDelete1",
       elapsedTime,
       startTime,
       endTime,

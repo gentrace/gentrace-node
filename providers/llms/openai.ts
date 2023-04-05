@@ -77,7 +77,7 @@ export class OpenAIHandler extends OpenAIApi {
 
     const endTime = performance.timeOrigin + performance.now();
 
-    const elapsedTime = endTime - startTime;
+    const elapsedTime = Math.floor(endTime - startTime);
 
     // User and suffix parameters are inputs not model parameters
     const { user, suffix, ...partialModelParams } = baseCompletionOptions;
@@ -125,7 +125,7 @@ export class OpenAIHandler extends OpenAIApi {
 
     const endTime = performance.timeOrigin + performance.now();
 
-    const elapsedTime = endTime - startTime;
+    const elapsedTime = Math.floor(endTime - startTime);
 
     // user parameter is an input, not a model parameter
     const { user, ...modelParams } = baseCompletionOptions;
@@ -169,7 +169,7 @@ export class OpenAIHandler extends OpenAIApi {
 
     const endTime = performance.timeOrigin + performance.now();
 
-    const elapsedTime = endTime - startTime;
+    const elapsedTime = Math.floor(endTime - startTime);
 
     this.pipelineRun.addStepRun(
       new OpenAICreateEmbeddingStepRun(

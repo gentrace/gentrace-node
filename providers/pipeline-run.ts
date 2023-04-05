@@ -49,37 +49,7 @@ export class PipelineRun {
   }
 
   public async submit() {
-    console.log("config", this.pipeline.config);
     const gentraceApi = new GentraceApi(this.pipeline.config);
-
-    console.log("submission", {
-      name: this.pipeline.id,
-      stepRuns: this.stepRuns.map(
-        ({
-          provider,
-          elapsedTime,
-          startTime,
-          endTime,
-          invocation,
-          modelParams,
-          inputs,
-          outputs,
-        }) => {
-          return {
-            provider: {
-              name: provider,
-              invocation,
-              modelParams,
-              inputs,
-              outputs,
-            },
-            elapsedTime,
-            startTime,
-            endTime,
-          };
-        }
-      ),
-    });
 
     await gentraceApi.pipelineRunPost({
       name: this.pipeline.id,
