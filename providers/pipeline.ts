@@ -5,7 +5,6 @@ import { PipelineRun } from "./pipeline-run";
 type PineconeConfiguration = {
   apiKey: string;
   environment: string;
-  indexName?: string;
 };
 
 export class Pipeline {
