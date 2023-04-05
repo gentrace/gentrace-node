@@ -15,14 +15,14 @@ import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 
-export class OpenAIHandler extends OpenAIApi {
-  private pipelineRun: PipelineRun;
+export class OpenAIPipelineHandler extends OpenAIApi {
+  private pipelineRun?: PipelineRun;
 
   constructor({
     pipelineRun,
     pipeline,
   }: {
-    pipelineRun: PipelineRun;
+    pipelineRun?: PipelineRun;
     pipeline: Pipeline;
   }) {
     super(pipeline.openAIConfig);
@@ -30,8 +30,8 @@ export class OpenAIHandler extends OpenAIApi {
     this.pipelineRun = pipelineRun;
   }
 
-  getPipelineRun() {
-    return this.pipelineRun;
+  public setPipelineRun(pipelineRun: PipelineRun) {
+    this.pipelineRun = pipelineRun;
   }
 
   /**

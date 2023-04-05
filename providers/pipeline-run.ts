@@ -1,7 +1,8 @@
 import { GentraceApi } from "../api";
-import { Configuration as GentraceConfiguration } from "../configuration";
 import { Pipeline } from "./pipeline";
 import { StepRun } from "./step-run";
+import type { PineconePipelineHandler } from "./vectorstores/pinecone";
+import type { OpenAIPipelineHandler } from "./llms/openai";
 
 export class PipelineRun {
   private pipeline: Pipeline;
@@ -17,29 +18,35 @@ export class PipelineRun {
   }
 
   async getOpenAI() {
-    try {
-      const { OpenAIHandler } = await import("./llms/openai");
-      return new OpenAIHandler({
-        pipeline: this.pipeline,
-        pipelineRun: this,
-      });
-    } catch (e) {
+    if (this.pipeline.pipelineHandlers.has("openai")) {
+      const handler: OpenAIPipelineHandler =
+        this.pipeline.pipelineHandlers.get("openai");
+      const clonedHandler = Object.assign(
+        Object.create(Object.getPrototypeOf(handler)),
+        handler
+      );
+      clonedHandler.setPipelineRun(this);
+      return clonedHandler;
+    } else {
       throw new Error(
-        "Please install OpenAI as a dependency with, e.g. `yarn add openai`"
+        "Did not find OpenAI handler. Did you call setup() on the pipeline?"
       );
     }
   }
 
   async getPinecone() {
-    try {
-      const { PineconeHandler } = await import("./vectorstores/pinecone");
-      return new PineconeHandler({
-        pipeline: this.pipeline,
-        pipelineRun: this,
-      });
-    } catch (e) {
+    if (this.pipeline.pipelineHandlers.has("pinecone")) {
+      const handler: PineconePipelineHandler =
+        this.pipeline.pipelineHandlers.get("pinecone");
+      const clonedHandler = Object.assign(
+        Object.create(Object.getPrototypeOf(handler)),
+        handler
+      );
+      clonedHandler.setPipelineRun(this);
+      return clonedHandler;
+    } else {
       throw new Error(
-        "Please install Pinecone as a dependency with, e.g. `yarn add @pinecone-database/pinecone`"
+        "Did not find Pinecone handler. Did you call setup() on the pipeline?"
       );
     }
   }
@@ -51,7 +58,7 @@ export class PipelineRun {
   public async submit() {
     const gentraceApi = new GentraceApi(this.pipeline.config);
 
-    await gentraceApi.pipelineRunPost({
+    return await gentraceApi.pipelineRunPost({
       name: this.pipeline.id,
       stepRuns: this.stepRuns.map(
         ({

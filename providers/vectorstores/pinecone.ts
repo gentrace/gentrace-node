@@ -13,20 +13,20 @@ import {
   UpsertRequest,
   UpsertResponse,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
-import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
+import { StepRun } from "../step-run";
 
-export class PineconeHandler extends PineconeClient {
-  private pipelineRun: PipelineRun;
+export class PineconePipelineHandler extends PineconeClient {
   private pipeline: Pipeline;
+  private pipelineRun?: PipelineRun;
 
   constructor({
     pipeline,
     pipelineRun,
   }: {
     pipeline: Pipeline;
-    pipelineRun: PipelineRun;
+    pipelineRun?: PipelineRun;
   }) {
     super();
 
@@ -34,6 +34,13 @@ export class PineconeHandler extends PineconeClient {
     this.pipelineRun = pipelineRun;
   }
 
+  public setPipelineRun(pipelineRun: PipelineRun) {
+    this.pipelineRun = pipelineRun;
+  }
+
+  /*
+   * Pinecone-specific function overrides listed below
+   */
   public async init() {
     await super.init({
       apiKey: this.pipeline.pineconeConfig.apiKey,
