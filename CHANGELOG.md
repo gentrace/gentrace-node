@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/gentrace/gentrace-node/compare/v0.1.6...v0.1.7) (2023-04-05)
+
+
+### Bug Fixes
+
+* add in a few more fixes to correct server incompatibility ([a0aad17](https://github.com/gentrace/gentrace-node/commit/a0aad1751a73263f5d6af9895552900b04588ccd))
+
 ## [0.1.6](https://github.com/gentrace/gentrace-node/compare/v0.1.5...v0.1.6) (2023-04-04)
 
 
