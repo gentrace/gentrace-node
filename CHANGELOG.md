@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/gentrace/gentrace-node/compare/v0.1.7...v0.1.8) (2023-04-05)
+
+
+### Bug Fixes
+
+* refactor in a slightly hacky way to support maintaining Pinecone config for different pipeline runs ([3995538](https://github.com/gentrace/gentrace-node/commit/399553820dca10089e4aa157122ff6c43a0df33f))
+
 ## [0.1.7](https://github.com/gentrace/gentrace-node/compare/v0.1.6...v0.1.7) (2023-04-05)
 
 
