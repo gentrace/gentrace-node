@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.6](https://github.com/gentrace/gentrace-node/compare/v0.1.5...v0.1.6) (2023-04-04)
+
+
+### Bug Fixes
+
+* add in the appropriate package.json changes ([bb6ede3](https://github.com/gentrace/gentrace-node/commit/bb6ede39ba2635b0211d8a842b64ced039cd2c23))
+* resolve adding in the previously stashed fixes ([d7a112e](https://github.com/gentrace/gentrace-node/commit/d7a112edf96194dd3fc3bcf97db1e7c4874dcca6))
+
 ## [0.1.5](https://github.com/gentrace/gentrace-node/compare/v0.1.4...v0.1.5) (2023-04-04)
 
 
