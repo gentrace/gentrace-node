@@ -33,6 +33,11 @@ jobs:
         run: |
           yarn install
           yarn build
+
+          # Remove before publishing to NPM
+          rm -rf node_modules/openai/
+          rm -rf node_modules/@pinecone-database/
+
         if: ${{ steps.release.outputs.release_created }}  
     
       - name: Publish package to NPM
