@@ -1,3 +1,10 @@
 {
-  ".": "0.0.0"
+  ".": "0.0.0",
+  "extra-files": [
+    {
+      "type": "json",
+      "path": "package/package.json",
+      "jsonpath": "x.name"
+    }
+  ]
 }
