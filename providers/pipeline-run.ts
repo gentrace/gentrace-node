@@ -19,9 +19,8 @@ export class PipelineRun {
 
   async getOpenAI() {
     if (this.pipeline.pipelineHandlers.has("openai")) {
-      const handler: OpenAIPipelineHandler =
-        this.pipeline.pipelineHandlers.get("openai");
-      const clonedHandler = Object.assign(
+      const handler = this.pipeline.pipelineHandlers.get("openai");
+      const clonedHandler: OpenAIPipelineHandler = Object.assign(
         Object.create(Object.getPrototypeOf(handler)),
         handler
       );
@@ -36,9 +35,8 @@ export class PipelineRun {
 
   async getPinecone() {
     if (this.pipeline.pipelineHandlers.has("pinecone")) {
-      const handler: PineconePipelineHandler =
-        this.pipeline.pipelineHandlers.get("pinecone");
-      const clonedHandler = Object.assign(
+      const handler = this.pipeline.pipelineHandlers.get("pinecone");
+      const clonedHandler: PineconePipelineHandler = Object.assign(
         Object.create(Object.getPrototypeOf(handler)),
         handler
       );
