@@ -1,7 +1,7 @@
 {
   "packages": {
     "package": {
-      "changelog-path": "CHANGELOG.md",
+      "changelog-path": "package/CHANGELOG.md",
       "release-type": "node",
       "bump-minor-pre-major": false,
       "bump-patch-for-minor-pre-major": false,
@@ -10,7 +10,7 @@
       "extra-files": [
         {
           "type": "json",
-          "path": "package.json",
+          "path": "package/package.json",
           "jsonpath": "x.name"
         }
       ]
