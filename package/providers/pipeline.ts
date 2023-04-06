@@ -38,6 +38,9 @@ export class Pipeline {
     this.pineconeConfig = pineconeConfig;
   }
 
+  /**
+   * Setup the pipeline by initializing the pipeline handlers for all provider handlers
+   */
   async setup() {
     if (this.pineconeConfig) {
       try {
