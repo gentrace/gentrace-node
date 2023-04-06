@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script assumes that jq and semver are installed
+# Script assumes that jq and semver are installed globally
 
 # The remote action may have already bumped the package version
 git pull --rebase origin main
