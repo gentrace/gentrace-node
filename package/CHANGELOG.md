@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/gentrace/gentrace-node/compare/v0.3.3...v0.3.4) (2023-04-06)
+
+
+### Bug Fixes
+
+* format fix ([8bfdc45](https://github.com/gentrace/gentrace-node/commit/8bfdc45ebabb9195e76fd1a47a10ab1ad43275c5))
+
 ## [0.3.3](https://github.com/gentrace/gentrace-node/compare/v0.3.2...v0.3.3) (2023-04-06)
 
 
