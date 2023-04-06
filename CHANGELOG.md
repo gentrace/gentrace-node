@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.10](https://github.com/gentrace/gentrace-node/compare/v0.1.9...v0.1.10) (2023-04-06)
+
+
+### Bug Fixes
+
+* add typings for cloned handler ([cc40770](https://github.com/gentrace/gentrace-node/commit/cc40770c7728c5c5f3c095f6414da1ced0016e94))
+
 ## [0.1.9](https://github.com/gentrace/gentrace-node/compare/v0.1.8...v0.1.9) (2023-04-05)
 
 
