@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/gentrace/gentrace-node/compare/v0.2.0...v0.3.0) (2023-04-06)
+
+
+### Features
+
+* add in package.json and extra files to update ([a57057f](https://github.com/gentrace/gentrace-node/commit/a57057f074a54dbc1b0fa4a9793d3b904c229d6a))
+
 ## [0.2.0](https://github.com/gentrace/gentrace-node/compare/v0.1.10...v0.2.0) (2023-04-06)
 
 
