@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "lib": ["esnext"],
+    "types": ["node"],
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "noImplicitAny": false,
+    "useUnknownInCatchVariables": false,
+    "resolveJsonModule": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules"]
+}

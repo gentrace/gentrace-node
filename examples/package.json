@@ -1,0 +1,25 @@
+{
+  "name": "gentrace-test-node-package",
+  "description": "Package to test the Gentrace Node.JS SDK",
+  "version": "0.0.1",
+  "author": "Gentrace",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.12.0"
+  },
+  "scripts": {
+    "start": "dotenv ts-node"
+  },
+  "dependencies": {
+    "@pinecone-database/pinecone": "^0.0.12",
+    "openai": "^3.2.1",
+    "@gentrace/browser": "^0.0.5",
+    "@gentrace/node": "^0.1.10",
+    "typescript": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "dotenv-cli": "^7.1.0",
+    "ts-node": "^10.9.1"
+  }
+}
