@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/gentrace/gentrace-node/compare/v0.1.10...v0.2.0) (2023-04-06)
+
+
+### Features
+
+* restructure directory ([37ac0e1](https://github.com/gentrace/gentrace-node/commit/37ac0e1789a2dc939c411345eafc4a9ff78389ce))
+
+
+### Bug Fixes
+
+* add changes for workflow publishing ([1cd6722](https://github.com/gentrace/gentrace-node/commit/1cd6722aefe33e15a94ad073df3ff932541e3184))
+
 ## [0.1.10](https://github.com/gentrace/gentrace-node/compare/v0.1.9...v0.1.10) (2023-04-06)
 
 
