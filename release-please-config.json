@@ -11,7 +11,7 @@
         {
           "type": "json",
           "path": "package.json",
-          "jsonpath": "x.name"
+          "jsonpath": "x.version"
         }
       ]
     }
