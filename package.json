@@ -6,13 +6,17 @@
   "author": "Gentrace",
   "license": "MIT",
   "scripts": {
-    "prepare": "husky install",
     "bump-patch": "./scripts/bump-patch"
   },
   "lint-staged": {
     "**/*.{ts,tsx,json}": [
       "prettier --write"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
   },
   "devDependencies": {
     "husky": "^8.0.3",
