@@ -15,10 +15,18 @@
   },
   "husky": {
     "hooks": {
+      "commit-msg": "npx commitlint -E  HUSKY_GIT_PARAMS",
       "pre-commit": "npx lint-staged"
     }
   },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
   "devDependencies": {
+    "@commitlint/cli": "^17.5.1",
+    "@commitlint/config-conventional": "^17.4.4",
     "husky": "^4.3.8",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.7"
