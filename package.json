@@ -1,6 +1,6 @@
 {
   "name": "gentrace-node",
-  "version": "0.3.0",
+  "version": "0.1.0",
   "description": "Gentrace Node.JS container package ",
   "repository": "git@github.com:gentrace/gentrace-node.git",
   "author": "Gentrace",
