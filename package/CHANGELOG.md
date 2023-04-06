@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/gentrace/gentrace-node/compare/v0.3.0...v0.3.1) (2023-04-06)
+
+
+### Bug Fixes
+
+* move CHANGELOG location ([4ccf1fe](https://github.com/gentrace/gentrace-node/commit/4ccf1fe1a0e39db0462961f198d487682e9663db))
+
 ## [0.3.0](https://github.com/gentrace/gentrace-node/compare/v0.2.0...v0.3.0) (2023-04-06)
 
 
