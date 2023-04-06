@@ -1,5 +1,5 @@
 {
-  "name": "gentrace-test-node-package",
+  "name": "gentrace-node-examples",
   "description": "Package to test the Gentrace Node.JS SDK",
   "version": "0.0.1",
   "author": "Gentrace",
@@ -13,7 +13,6 @@
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
     "openai": "^3.2.1",
-    "@gentrace/browser": "^0.0.5",
     "@gentrace/node": "^0.1.10",
     "typescript": "^5.0.3"
   },
