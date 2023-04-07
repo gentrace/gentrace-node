@@ -23,9 +23,11 @@ async function createChatCompletion() {
     model: "gpt-3.5-turbo",
   });
 
-  console.log("OpenAI chat completion response", chatCompletionResponse);
+  console.log("chatCompletionResponse", chatCompletionResponse.data);
 
-  await runner.submit();
+  const pipelineRunId = await runner.submit();
+
+  console.log("Pipeline run id", pipelineRunId.data);
 }
 
 createChatCompletion();

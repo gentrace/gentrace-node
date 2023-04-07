@@ -56,7 +56,7 @@ export class PipelineRun {
   public async submit() {
     const gentraceApi = new GentraceApi(this.pipeline.config);
 
-    return await gentraceApi.pipelineRunPost({
+    const pipelinePostResponse = await gentraceApi.pipelineRunPost({
       name: this.pipeline.id,
       stepRuns: this.stepRuns.map(
         ({
@@ -84,5 +84,7 @@ export class PipelineRun {
         }
       ),
     });
+
+    return pipelinePostResponse.data;
   }
 }
