@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/gentrace/gentrace-node/compare/v0.3.4...v0.3.5) (2023-04-07)
+
+
+### Bug Fixes
+
+* make sure submit returns Axios data ([edf68a3](https://github.com/gentrace/gentrace-node/commit/edf68a3a68af5a6294bb00e0c0750a495c3bad2c))
+
 ## [0.3.4](https://github.com/gentrace/gentrace-node/compare/v0.3.3...v0.3.4) (2023-04-06)
 
 
