@@ -27,7 +27,7 @@ async function createChatCompletion() {
 
   const pipelineRunId = await runner.submit();
 
-  console.log("Pipeline run id", pipelineRunId.data);
+  console.log("Pipeline run id", pipelineRunId);
 }
 
 createChatCompletion();
