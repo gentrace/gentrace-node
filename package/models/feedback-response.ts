@@ -13,8 +13,18 @@
  */
 
 
-export * from "./api";
-export * from "./configuration";
-export * from "./models";
 
-export * from "./providers/index"
+/**
+ * 
+ * @export
+ * @interface FeedbackResponse
+ */
+export interface FeedbackResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof FeedbackResponse
+     */
+    'message': string;
+}
+

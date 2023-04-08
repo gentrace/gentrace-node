@@ -1,10 +1,12 @@
 .npmignore
 api.ts
-api/gentrace-api.ts
+api/ingestion-api.ts
 base.ts
 common.ts
 configuration.ts
 index.ts
+models/feedback-request.ts
+models/feedback-response.ts
 models/index.ts
 models/pipeline-run-request-step-runs-inner-provider-model-params-value.ts
 models/pipeline-run-request-step-runs-inner-provider.ts
