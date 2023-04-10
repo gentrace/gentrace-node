@@ -5,7 +5,7 @@
 # The remote action may have already bumped the package version
 git pull --rebase origin main
 
-CURRENT_VERSION=$(jq -r .version package.json)
+CURRENT_VERSION=$(jq -r .version package/package.json)
 NEXT_VERSION=$(semver $CURRENT_VERSION -i patch)
 
 git commit --allow-empty -m "chore: release $NEXT_VERSION" -m "Release-As: $NEXT_VERSION"
