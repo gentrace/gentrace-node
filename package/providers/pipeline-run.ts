@@ -1,4 +1,4 @@
-import { GentraceApi } from "../api";
+import { IngestionApi } from "../api";
 import { Pipeline } from "./pipeline";
 import { StepRun } from "./step-run";
 import type { PineconePipelineHandler } from "./vectorstores/pinecone";
@@ -54,9 +54,9 @@ export class PipelineRun {
   }
 
   public async submit() {
-    const gentraceApi = new GentraceApi(this.pipeline.config);
+    const ingestionApi = new IngestionApi(this.pipeline.config);
 
-    const pipelinePostResponse = await gentraceApi.pipelineRunPost({
+    const pipelinePostResponse = await ingestionApi.pipelineRunPost({
       name: this.pipeline.id,
       stepRuns: this.stepRuns.map(
         ({
