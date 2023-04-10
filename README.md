@@ -24,29 +24,11 @@ The Gentrace Node.js library provides convenient access to the Gentrace API from
 $ npm install @gentrace/node
 ```
 
-## Usage
+## Getting started
 
-The library needs to be configured with your account's secret key, which is available on the [website](https://staging.gentrace.ai/t/<slug>/settings/api-keys). We recommend setting it as an environment variable. Here's an example of initializing the library with the API key loaded from an environment variable and creating a completion:
+Visit our [guides](https://docs.gentrace.ai/docs/api-reference?lang=node.js) to learn how to get started.
 
-```javascript
-TODO: insert code
-```
+### API reference 
 
-Check out the [full API documentation](https://docs.gentrace.ai/docs/api-reference?lang=node.js) for examples of all the available functions.
+Visit our [API reference](https://docs.gentrace.ai/reference/post_pipeline-run) to construct API requests interactively.
 
-### Request options
-
-All of the available API request functions additionally contain an optional final parameter where you can pass custom [axios request options](https://axios-http.com/docs/req_config), for example:
-
-
-```javascript
-TODO: insert code
-```
-
-### Error handling
-
-API requests can potentially return errors due to invalid inputs or other issues. These errors can be handled with a `try...catch` statement, and the error details can be found in either `error.response` or `error.message`:
-
-```javascript
-TODO: insert code
-```
