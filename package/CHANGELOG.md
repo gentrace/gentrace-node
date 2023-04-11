@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6](https://github.com/gentrace/gentrace-node/compare/v0.3.5...v0.3.6) (2023-04-10)
+
+
+### Bug Fixes
+
+* change references to reflect name change ([472f30f](https://github.com/gentrace/gentrace-node/commit/472f30f9d886320b774d32e22fcf8082cd4d0be8))
+
 ## [0.3.5](https://github.com/gentrace/gentrace-node/compare/v0.3.4...v0.3.5) (2023-04-07)
 
 
