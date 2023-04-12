@@ -8,7 +8,6 @@ index.ts
 models/feedback-request.ts
 models/feedback-response.ts
 models/index.ts
-models/pipeline-run-request-step-runs-inner-provider-model-params-value.ts
 models/pipeline-run-request-step-runs-inner-provider.ts
 models/pipeline-run-request-step-runs-inner.ts
 models/pipeline-run-request.ts
