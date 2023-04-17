@@ -51,8 +51,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
   private async setupSelfContainedPipelineRun<T>(
     pipelineId: string | undefined,
-    coreLogic: () => T
-  ): Promise<T> {
+    coreLogic: () => Promise<T>
+  ): Promise<T & { pipelineRunId: string }> {
     if (!this.pipelineRun) {
       if (!pipelineId) {
         throw new Error(
@@ -73,11 +73,12 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
     const returnValue = await coreLogic();
 
-    this.pipelineRun.submit().then((pipelineRunId) => {
-      console.log("pipelineRunId", pipelineRunId);
-    });
+    const { pipelineRunId } = await this.pipelineRun.submit();
 
-    return returnValue;
+    (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
+      pipelineRunId;
+
+    return returnValue as T & { pipelineRunId: string };
   }
 
   /**
@@ -92,64 +93,69 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   public async createCompletion(
     createCompletionRequest: CreateCompletionTemplateRequest,
     options?: AxiosRequestConfig
-  ): Promise<AxiosResponse<CreateCompletionResponse, any>> {
-    return this.setupSelfContainedPipelineRun(
-      createCompletionRequest.pipelineId,
-      async () => {
-        const { promptTemplate, promptInputs, ...baseCompletionOptions } =
-          createCompletionRequest;
+  ): Promise<
+    AxiosResponse<CreateCompletionResponse, any> & { pipelineRunId: string }
+  > {
+    return await this.setupSelfContainedPipelineRun<
+      AxiosResponse<CreateCompletionResponse, any>
+    >(createCompletionRequest.pipelineId, async () => {
+      const {
+        promptTemplate,
+        promptInputs,
+        pipelineId: _pipelineId,
+        ...baseCompletionOptions
+      } = createCompletionRequest;
 
-        if (!!(baseCompletionOptions as any).prompt) {
-          throw new Error(
-            "The prompt attribute cannot be provided when using the GENTRACE SDK. Use promptTemplate and promptInputs instead."
-          );
-        }
-
-        if (!promptTemplate) {
-          throw new Error(
-            "The promptTemplate attribute must be provided when using the GENTRACE SDK."
-          );
-        }
-
-        const renderedPrompt = Mustache.render(promptTemplate, promptInputs);
-
-        const newCompletionOptions: CreateCompletionRequest = {
-          ...baseCompletionOptions,
-          prompt: renderedPrompt,
-        };
-
-        const startTime = performance.timeOrigin + performance.now();
-        const completion = await super.createCompletion(
-          newCompletionOptions,
-          options
+      if (!!(baseCompletionOptions as any).prompt) {
+        throw new Error(
+          "The prompt attribute cannot be provided when using the Gentrace SDK. Use promptTemplate and promptInputs instead."
         );
-
-        const endTime = performance.timeOrigin + performance.now();
-
-        const elapsedTime = Math.floor(endTime - startTime);
-
-        // User and suffix parameters are inputs not model parameters
-        const { user, suffix, ...partialModelParams } = baseCompletionOptions;
-
-        this.pipelineRun.addStepRun(
-          new OpenAICreateCompletionStepRun(
-            elapsedTime,
-            new Date(startTime).toISOString(),
-            new Date(endTime).toISOString(),
-            {
-              prompt: promptInputs,
-              user,
-              suffix,
-            },
-            { ...partialModelParams, promptTemplate },
-
-            completion.data
-          )
-        );
-
-        return completion;
       }
-    );
+
+      if (!promptTemplate) {
+        throw new Error(
+          "The promptTemplate attribute must be provided when using the Gentrace SDK."
+        );
+      }
+
+      const renderedPrompt = Mustache.render(promptTemplate, promptInputs);
+
+      const newCompletionOptions: CreateCompletionRequest = {
+        ...baseCompletionOptions,
+        prompt: renderedPrompt,
+      };
+
+      const startTime = performance.timeOrigin + performance.now();
+      const completion = await super.createCompletion(
+        newCompletionOptions,
+        options
+      );
+
+      const endTime = performance.timeOrigin + performance.now();
+
+      const elapsedTime = Math.floor(endTime - startTime);
+
+      // User and suffix parameters are inputs not model parameters
+      const { user, suffix, ...partialModelParams } = baseCompletionOptions;
+
+      this.pipelineRun.addStepRun(
+        new OpenAICreateCompletionStepRun(
+          elapsedTime,
+          new Date(startTime).toISOString(),
+          new Date(endTime).toISOString(),
+          {
+            prompt: promptInputs,
+            user,
+            suffix,
+          },
+          { ...partialModelParams, promptTemplate },
+
+          completion.data
+        )
+      );
+
+      return completion;
+    });
   }
 
   /**
@@ -166,16 +172,21 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     createChatCompletionRequest: CreateChatCompletionRequest &
       OptionalPipelineId,
     options?: AxiosRequestConfig
-  ): Promise<AxiosResponse<CreateChatCompletionResponse, any>> {
+  ): Promise<
+    AxiosResponse<CreateChatCompletionResponse, any> & { pipelineRunId: string }
+  > {
     return this.setupSelfContainedPipelineRun(
       createChatCompletionRequest.pipelineId,
       async () => {
-        const { messages, ...baseCompletionOptions } =
-          createChatCompletionRequest;
+        const {
+          messages,
+          pipelineId: _pipelineId,
+          ...baseCompletionOptions
+        } = createChatCompletionRequest;
 
         const startTime = performance.timeOrigin + performance.now();
         const completion = await super.createChatCompletion(
-          createChatCompletionRequest,
+          { messages, ...baseCompletionOptions },
           options
         );
 
@@ -215,16 +226,22 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   public async createEmbedding(
     createEmbeddingRequest: CreateEmbeddingRequest & OptionalPipelineId,
     options?: AxiosRequestConfig
-  ): Promise<AxiosResponse<CreateEmbeddingResponse, any>> {
+  ): Promise<
+    AxiosResponse<CreateEmbeddingResponse, any> & { pipelineRunId: string }
+  > {
     return this.setupSelfContainedPipelineRun(
       createEmbeddingRequest.pipelineId,
       async () => {
-        const { model, ...inputParams } = createEmbeddingRequest;
+        const {
+          model,
+          pipelineId: _pipelineId,
+          ...inputParams
+        } = createEmbeddingRequest;
 
         const startTime = performance.timeOrigin + performance.now();
 
         const completion = await super.createEmbedding(
-          createEmbeddingRequest,
+          { model, ...inputParams },
           options
         );
 
