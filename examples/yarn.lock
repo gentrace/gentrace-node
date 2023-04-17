@@ -9,7 +9,7 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@gentrace/node@/Users/viveknair/Code/gentrace-node/package":
+"@gentrace/node@../package":
   version "0.3.6"
   dependencies:
     axios "^0.27.2"
