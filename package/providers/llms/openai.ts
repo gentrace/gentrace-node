@@ -49,6 +49,34 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     this.pipeline = pipeline;
   }
 
+  private setupSelfContainedPipelineRun({
+    pipelineId,
+  }: {
+    pipelineId?: string;
+  }): boolean {
+    if (this.pipelineRun) {
+      return false;
+    }
+
+    if (!pipelineId) {
+      throw new Error(
+        "The pipelineId attribute must be provided if you are not defining a self-contained PipelineRun."
+      );
+    }
+
+    this.pipeline = new Pipeline({
+      id: pipelineId,
+      apiKey: this.gentraceConfig.apiKey,
+      basePath: this.gentraceConfig.basePath,
+    });
+
+    this.pipelineRun = new PipelineRun({
+      pipeline: this.pipeline,
+    });
+
+    return true;
+  }
+
   /**
    *
    * @summary Creates a completion for the provided prompt template, input and model parameters,
@@ -62,24 +90,9 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     createCompletionRequest: CreateCompletionTemplateRequest,
     options?: AxiosRequestConfig
   ): Promise<AxiosResponse<CreateCompletionResponse, any>> {
-    let selfContainedPipelineRun: PipelineRun | null = null;
-    if (!this.pipelineRun) {
-      if (!createCompletionRequest.pipelineId) {
-        throw new Error(
-          "The pipelineId attribute must be provided if you are not defining a Pipeline instance."
-        );
-      }
-
-      const selfContainedPipeline = new Pipeline({
-        id: createCompletionRequest.pipelineId,
-        apiKey: this.gentraceConfig.apiKey,
-        basePath: this.gentraceConfig.basePath,
-      });
-
-      selfContainedPipelineRun = new PipelineRun({
-        pipeline: selfContainedPipeline,
-      });
-    }
+    const isSelfContained = this.setupSelfContainedPipelineRun({
+      pipelineId: createCompletionRequest.pipelineId,
+    });
 
     const { promptTemplate, promptInputs, ...baseCompletionOptions } =
       createCompletionRequest;
