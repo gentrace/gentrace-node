@@ -49,32 +49,33 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     this.pipeline = pipeline;
   }
 
-  private setupSelfContainedPipelineRun({
-    pipelineId,
-  }: {
-    pipelineId?: string;
-  }): boolean {
-    if (this.pipelineRun) {
-      return false;
+  private async setupSelfContainedPipelineRun<T>(
+    pipelineId: string | undefined,
+    coreLogic: () => T
+  ): Promise<T> {
+    if (!this.pipelineRun) {
+      if (!pipelineId) {
+        throw new Error(
+          "The pipelineId attribute must be provided if you are not defining a self-contained PipelineRun."
+        );
+      }
+
+      this.pipeline = new Pipeline({
+        id: pipelineId,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+      });
+
+      this.pipelineRun = new PipelineRun({
+        pipeline: this.pipeline,
+      });
     }
 
-    if (!pipelineId) {
-      throw new Error(
-        "The pipelineId attribute must be provided if you are not defining a self-contained PipelineRun."
-      );
-    }
+    const returnValue = await coreLogic();
 
-    this.pipeline = new Pipeline({
-      id: pipelineId,
-      apiKey: this.gentraceConfig.apiKey,
-      basePath: this.gentraceConfig.basePath,
-    });
+    this.pipelineRun.submit();
 
-    this.pipelineRun = new PipelineRun({
-      pipeline: this.pipeline,
-    });
-
-    return true;
+    return returnValue;
   }
 
   /**
@@ -90,66 +91,63 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     createCompletionRequest: CreateCompletionTemplateRequest,
     options?: AxiosRequestConfig
   ): Promise<AxiosResponse<CreateCompletionResponse, any>> {
-    const isSelfContained = this.setupSelfContainedPipelineRun({
-      pipelineId: createCompletionRequest.pipelineId,
-    });
+    return this.setupSelfContainedPipelineRun(
+      createCompletionRequest.pipelineId,
+      async () => {
+        const { promptTemplate, promptInputs, ...baseCompletionOptions } =
+          createCompletionRequest;
 
-    const { promptTemplate, promptInputs, ...baseCompletionOptions } =
-      createCompletionRequest;
+        if (!!(baseCompletionOptions as any).prompt) {
+          throw new Error(
+            "The prompt attribute cannot be provided when using the GENTRACE SDK. Use promptTemplate and promptInputs instead."
+          );
+        }
 
-    if (!!(baseCompletionOptions as any).prompt) {
-      throw new Error(
-        "The prompt attribute cannot be provided when using the GENTRACE SDK. Use promptTemplate and promptInputs instead."
-      );
-    }
+        if (!promptTemplate) {
+          throw new Error(
+            "The promptTemplate attribute must be provided when using the GENTRACE SDK."
+          );
+        }
 
-    if (!promptTemplate) {
-      throw new Error(
-        "The promptTemplate attribute must be provided when using the GENTRACE SDK."
-      );
-    }
+        const renderedPrompt = Mustache.render(promptTemplate, promptInputs);
 
-    const renderedPrompt = Mustache.render(promptTemplate, promptInputs);
+        const newCompletionOptions: CreateCompletionRequest = {
+          ...baseCompletionOptions,
+          prompt: renderedPrompt,
+        };
 
-    const newCompletionOptions: CreateCompletionRequest = {
-      ...baseCompletionOptions,
-      prompt: renderedPrompt,
-    };
+        const startTime = performance.timeOrigin + performance.now();
+        const completion = await super.createCompletion(
+          newCompletionOptions,
+          options
+        );
 
-    const startTime = performance.timeOrigin + performance.now();
-    const completion = await super.createCompletion(
-      newCompletionOptions,
-      options
+        const endTime = performance.timeOrigin + performance.now();
+
+        const elapsedTime = Math.floor(endTime - startTime);
+
+        // User and suffix parameters are inputs not model parameters
+        const { user, suffix, ...partialModelParams } = baseCompletionOptions;
+
+        this.pipelineRun.addStepRun(
+          new OpenAICreateCompletionStepRun(
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            {
+              prompt: promptInputs,
+              user,
+              suffix,
+            },
+            { ...partialModelParams, promptTemplate },
+
+            completion.data
+          )
+        );
+
+        return completion;
+      }
     );
-
-    const endTime = performance.timeOrigin + performance.now();
-
-    const elapsedTime = Math.floor(endTime - startTime);
-
-    // User and suffix parameters are inputs not model parameters
-    const { user, suffix, ...partialModelParams } = baseCompletionOptions;
-
-    (this.pipelineRun ?? selfContainedPipelineRun).addStepRun(
-      new OpenAICreateCompletionStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        {
-          prompt: promptInputs,
-          user,
-          suffix,
-        },
-        { ...partialModelParams, promptTemplate },
-
-        completion.data
-      )
-    );
-
-    if (selfContainedPipelineRun) {
-      selfContainedPipelineRun.submit();
-    }
-
-    return completion;
   }
 
   /**
