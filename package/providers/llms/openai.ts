@@ -9,29 +9,44 @@ import {
   CreateEmbeddingRequest,
   CreateEmbeddingResponse,
   OpenAIApi,
-  Configuration,
+  Configuration as OpenAIConfiguration,
 } from "openai";
 import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
+import { Configuration as GentraceConfiguration } from "../../configuration";
+
+type OpenAIPipelineHandlerOptions = {
+  pipelineRun?: PipelineRun;
+  pipeline?: Pipeline;
+  config: OpenAIConfiguration;
+  gentraceConfig: GentraceConfiguration;
+};
 
 export class OpenAIPipelineHandler extends OpenAIApi {
   private pipelineRun?: PipelineRun;
+  private pipeline?: Pipeline;
+  private gentraceConfig: GentraceConfiguration;
 
   constructor({
     pipelineRun,
     pipeline,
-  }: {
-    pipelineRun?: PipelineRun;
-    pipeline: Pipeline;
-  }) {
-    super(pipeline.openAIConfig);
+    config,
+    gentraceConfig,
+  }: OpenAIPipelineHandlerOptions) {
+    super(config);
 
     this.pipelineRun = pipelineRun;
+    this.pipeline = pipeline;
+    this.gentraceConfig = gentraceConfig;
   }
 
   public setPipelineRun(pipelineRun: PipelineRun) {
     this.pipelineRun = pipelineRun;
+  }
+
+  public setPipeline(pipeline: Pipeline) {
+    this.pipeline = pipeline;
   }
 
   /**
@@ -47,6 +62,25 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     createCompletionRequest: CreateCompletionTemplateRequest,
     options?: AxiosRequestConfig
   ): Promise<AxiosResponse<CreateCompletionResponse, any>> {
+    let selfContainedPipelineRun: PipelineRun | null = null;
+    if (!this.pipelineRun) {
+      if (!createCompletionRequest.pipelineId) {
+        throw new Error(
+          "The pipelineId attribute must be provided if you are not defining a Pipeline instance."
+        );
+      }
+
+      const selfContainedPipeline = new Pipeline({
+        id: createCompletionRequest.pipelineId,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+      });
+
+      selfContainedPipelineRun = new PipelineRun({
+        pipeline: selfContainedPipeline,
+      });
+    }
+
     const { promptTemplate, promptInputs, ...baseCompletionOptions } =
       createCompletionRequest;
 
@@ -82,7 +116,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     // User and suffix parameters are inputs not model parameters
     const { user, suffix, ...partialModelParams } = baseCompletionOptions;
 
-    this.pipelineRun.addStepRun(
+    (this.pipelineRun ?? selfContainedPipelineRun).addStepRun(
       new OpenAICreateCompletionStepRun(
         elapsedTime,
         new Date(startTime).toISOString(),
@@ -97,6 +131,10 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         completion.data
       )
     );
+
+    if (selfContainedPipelineRun) {
+      selfContainedPipelineRun.submit();
+    }
 
     return completion;
   }
@@ -292,4 +330,8 @@ export type CreateCompletionTemplateRequest = Omit<
 > & {
   promptTemplate?: string;
   promptInputs?: Record<string, string>;
+} & OptionalPipelineId;
+
+type OptionalPipelineId = {
+  pipelineId?: string;
 };
