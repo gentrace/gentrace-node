@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/gentrace/gentrace-node/compare/v0.3.6...v0.4.0) (2023-04-17)
+
+
+### Features
+
+* add self-contained PipelineRun invocation for OpenAI methods ([#42](https://github.com/gentrace/gentrace-node/issues/42)) ([a17fa63](https://github.com/gentrace/gentrace-node/commit/a17fa638f102c3ffa221892c58d14443ba11d67d))
+
 ## [0.3.6](https://github.com/gentrace/gentrace-node/compare/v0.3.5...v0.3.6) (2023-04-10)
 
 
