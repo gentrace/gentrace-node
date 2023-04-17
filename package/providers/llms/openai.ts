@@ -161,36 +161,43 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createChatCompletion(
-    createChatCompletionRequest: CreateChatCompletionRequest,
+    createChatCompletionRequest: CreateChatCompletionRequest &
+      OptionalPipelineId,
     options?: AxiosRequestConfig
   ): Promise<AxiosResponse<CreateChatCompletionResponse, any>> {
-    const { messages, ...baseCompletionOptions } = createChatCompletionRequest;
+    return this.setupSelfContainedPipelineRun(
+      createChatCompletionRequest.pipelineId,
+      async () => {
+        const { messages, ...baseCompletionOptions } =
+          createChatCompletionRequest;
 
-    const startTime = performance.timeOrigin + performance.now();
-    const completion = await super.createChatCompletion(
-      createChatCompletionRequest,
-      options
+        const startTime = performance.timeOrigin + performance.now();
+        const completion = await super.createChatCompletion(
+          createChatCompletionRequest,
+          options
+        );
+
+        const endTime = performance.timeOrigin + performance.now();
+
+        const elapsedTime = Math.floor(endTime - startTime);
+
+        // user parameter is an input, not a model parameter
+        const { user, ...modelParams } = baseCompletionOptions;
+
+        this.pipelineRun.addStepRun(
+          new OpenAICreateChatCompletionStepRun(
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            { messages, user },
+            modelParams,
+            completion.data
+          )
+        );
+
+        return completion;
+      }
     );
-
-    const endTime = performance.timeOrigin + performance.now();
-
-    const elapsedTime = Math.floor(endTime - startTime);
-
-    // user parameter is an input, not a model parameter
-    const { user, ...modelParams } = baseCompletionOptions;
-
-    this.pipelineRun.addStepRun(
-      new OpenAICreateChatCompletionStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        { messages, user },
-        modelParams,
-        completion.data
-      )
-    );
-
-    return completion;
   }
 
   /**
@@ -204,34 +211,39 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createEmbedding(
-    createEmbeddingRequest: CreateEmbeddingRequest,
+    createEmbeddingRequest: CreateEmbeddingRequest & OptionalPipelineId,
     options?: AxiosRequestConfig
   ): Promise<AxiosResponse<CreateEmbeddingResponse, any>> {
-    const { model, ...inputParams } = createEmbeddingRequest;
+    return this.setupSelfContainedPipelineRun(
+      createEmbeddingRequest.pipelineId,
+      async () => {
+        const { model, ...inputParams } = createEmbeddingRequest;
 
-    const startTime = performance.timeOrigin + performance.now();
+        const startTime = performance.timeOrigin + performance.now();
 
-    const completion = await super.createEmbedding(
-      createEmbeddingRequest,
-      options
+        const completion = await super.createEmbedding(
+          createEmbeddingRequest,
+          options
+        );
+
+        const endTime = performance.timeOrigin + performance.now();
+
+        const elapsedTime = Math.floor(endTime - startTime);
+
+        this.pipelineRun.addStepRun(
+          new OpenAICreateEmbeddingStepRun(
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            { ...inputParams },
+            { model },
+            completion.data
+          )
+        );
+
+        return completion;
+      }
     );
-
-    const endTime = performance.timeOrigin + performance.now();
-
-    const elapsedTime = Math.floor(endTime - startTime);
-
-    this.pipelineRun.addStepRun(
-      new OpenAICreateEmbeddingStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        { ...inputParams },
-        { model },
-        completion.data
-      )
-    );
-
-    return completion;
   }
 }
 
