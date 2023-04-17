@@ -9,29 +9,76 @@ import {
   CreateEmbeddingRequest,
   CreateEmbeddingResponse,
   OpenAIApi,
-  Configuration,
+  Configuration as OpenAIConfiguration,
 } from "openai";
 import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
+import { Configuration as GentraceConfiguration } from "../../configuration";
+
+type OpenAIPipelineHandlerOptions = {
+  pipelineRun?: PipelineRun;
+  pipeline?: Pipeline;
+  config: OpenAIConfiguration;
+  gentraceConfig: GentraceConfiguration;
+};
 
 export class OpenAIPipelineHandler extends OpenAIApi {
   private pipelineRun?: PipelineRun;
+  private pipeline?: Pipeline;
+  private gentraceConfig: GentraceConfiguration;
 
   constructor({
     pipelineRun,
     pipeline,
-  }: {
-    pipelineRun?: PipelineRun;
-    pipeline: Pipeline;
-  }) {
-    super(pipeline.openAIConfig);
+    config,
+    gentraceConfig,
+  }: OpenAIPipelineHandlerOptions) {
+    super(config);
 
     this.pipelineRun = pipelineRun;
+    this.pipeline = pipeline;
+    this.gentraceConfig = gentraceConfig;
   }
 
   public setPipelineRun(pipelineRun: PipelineRun) {
     this.pipelineRun = pipelineRun;
+  }
+
+  public setPipeline(pipeline: Pipeline) {
+    this.pipeline = pipeline;
+  }
+
+  private async setupSelfContainedPipelineRun<T>(
+    pipelineId: string | undefined,
+    coreLogic: () => Promise<T>
+  ): Promise<T & { pipelineRunId: string }> {
+    if (!this.pipelineRun) {
+      if (!pipelineId) {
+        throw new Error(
+          "The pipelineId attribute must be provided if you are not defining a self-contained PipelineRun."
+        );
+      }
+
+      this.pipeline = new Pipeline({
+        id: pipelineId,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+      });
+
+      this.pipelineRun = new PipelineRun({
+        pipeline: this.pipeline,
+      });
+    }
+
+    const returnValue = await coreLogic();
+
+    const { pipelineRunId } = await this.pipelineRun.submit();
+
+    (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
+      pipelineRunId;
+
+    return returnValue as T & { pipelineRunId: string };
   }
 
   /**
@@ -46,59 +93,69 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   public async createCompletion(
     createCompletionRequest: CreateCompletionTemplateRequest,
     options?: AxiosRequestConfig
-  ): Promise<AxiosResponse<CreateCompletionResponse, any>> {
-    const { promptTemplate, promptInputs, ...baseCompletionOptions } =
-      createCompletionRequest;
+  ): Promise<
+    AxiosResponse<CreateCompletionResponse, any> & { pipelineRunId: string }
+  > {
+    return await this.setupSelfContainedPipelineRun<
+      AxiosResponse<CreateCompletionResponse, any>
+    >(createCompletionRequest.pipelineId, async () => {
+      const {
+        promptTemplate,
+        promptInputs,
+        pipelineId: _pipelineId,
+        ...baseCompletionOptions
+      } = createCompletionRequest;
 
-    if (!!(baseCompletionOptions as any).prompt) {
-      throw new Error(
-        "The prompt attribute cannot be provided when using the GENTRACE SDK. Use promptTemplate and promptInputs instead."
+      if (!!(baseCompletionOptions as any).prompt) {
+        throw new Error(
+          "The prompt attribute cannot be provided when using the Gentrace SDK. Use promptTemplate and promptInputs instead."
+        );
+      }
+
+      if (!promptTemplate) {
+        throw new Error(
+          "The promptTemplate attribute must be provided when using the Gentrace SDK."
+        );
+      }
+
+      const renderedPrompt = Mustache.render(promptTemplate, promptInputs);
+
+      const newCompletionOptions: CreateCompletionRequest = {
+        ...baseCompletionOptions,
+        prompt: renderedPrompt,
+      };
+
+      const startTime = performance.timeOrigin + performance.now();
+      const completion = await super.createCompletion(
+        newCompletionOptions,
+        options
       );
-    }
 
-    if (!promptTemplate) {
-      throw new Error(
-        "The promptTemplate attribute must be provided when using the GENTRACE SDK."
+      const endTime = performance.timeOrigin + performance.now();
+
+      const elapsedTime = Math.floor(endTime - startTime);
+
+      // User and suffix parameters are inputs not model parameters
+      const { user, suffix, ...partialModelParams } = baseCompletionOptions;
+
+      this.pipelineRun.addStepRun(
+        new OpenAICreateCompletionStepRun(
+          elapsedTime,
+          new Date(startTime).toISOString(),
+          new Date(endTime).toISOString(),
+          {
+            prompt: promptInputs,
+            user,
+            suffix,
+          },
+          { ...partialModelParams, promptTemplate },
+
+          completion.data
+        )
       );
-    }
 
-    const renderedPrompt = Mustache.render(promptTemplate, promptInputs);
-
-    const newCompletionOptions: CreateCompletionRequest = {
-      ...baseCompletionOptions,
-      prompt: renderedPrompt,
-    };
-
-    const startTime = performance.timeOrigin + performance.now();
-    const completion = await super.createCompletion(
-      newCompletionOptions,
-      options
-    );
-
-    const endTime = performance.timeOrigin + performance.now();
-
-    const elapsedTime = Math.floor(endTime - startTime);
-
-    // User and suffix parameters are inputs not model parameters
-    const { user, suffix, ...partialModelParams } = baseCompletionOptions;
-
-    this.pipelineRun.addStepRun(
-      new OpenAICreateCompletionStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        {
-          prompt: promptInputs,
-          user,
-          suffix,
-        },
-        { ...partialModelParams, promptTemplate },
-
-        completion.data
-      )
-    );
-
-    return completion;
+      return completion;
+    });
   }
 
   /**
@@ -112,36 +169,48 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createChatCompletion(
-    createChatCompletionRequest: CreateChatCompletionRequest,
+    createChatCompletionRequest: CreateChatCompletionRequest &
+      OptionalPipelineId,
     options?: AxiosRequestConfig
-  ): Promise<AxiosResponse<CreateChatCompletionResponse, any>> {
-    const { messages, ...baseCompletionOptions } = createChatCompletionRequest;
+  ): Promise<
+    AxiosResponse<CreateChatCompletionResponse, any> & { pipelineRunId: string }
+  > {
+    return this.setupSelfContainedPipelineRun(
+      createChatCompletionRequest.pipelineId,
+      async () => {
+        const {
+          messages,
+          pipelineId: _pipelineId,
+          ...baseCompletionOptions
+        } = createChatCompletionRequest;
 
-    const startTime = performance.timeOrigin + performance.now();
-    const completion = await super.createChatCompletion(
-      createChatCompletionRequest,
-      options
+        const startTime = performance.timeOrigin + performance.now();
+        const completion = await super.createChatCompletion(
+          { messages, ...baseCompletionOptions },
+          options
+        );
+
+        const endTime = performance.timeOrigin + performance.now();
+
+        const elapsedTime = Math.floor(endTime - startTime);
+
+        // user parameter is an input, not a model parameter
+        const { user, ...modelParams } = baseCompletionOptions;
+
+        this.pipelineRun.addStepRun(
+          new OpenAICreateChatCompletionStepRun(
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            { messages, user },
+            modelParams,
+            completion.data
+          )
+        );
+
+        return completion;
+      }
     );
-
-    const endTime = performance.timeOrigin + performance.now();
-
-    const elapsedTime = Math.floor(endTime - startTime);
-
-    // user parameter is an input, not a model parameter
-    const { user, ...modelParams } = baseCompletionOptions;
-
-    this.pipelineRun.addStepRun(
-      new OpenAICreateChatCompletionStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        { messages, user },
-        modelParams,
-        completion.data
-      )
-    );
-
-    return completion;
   }
 
   /**
@@ -155,34 +224,45 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createEmbedding(
-    createEmbeddingRequest: CreateEmbeddingRequest,
+    createEmbeddingRequest: CreateEmbeddingRequest & OptionalPipelineId,
     options?: AxiosRequestConfig
-  ): Promise<AxiosResponse<CreateEmbeddingResponse, any>> {
-    const { model, ...inputParams } = createEmbeddingRequest;
+  ): Promise<
+    AxiosResponse<CreateEmbeddingResponse, any> & { pipelineRunId: string }
+  > {
+    return this.setupSelfContainedPipelineRun(
+      createEmbeddingRequest.pipelineId,
+      async () => {
+        const {
+          model,
+          pipelineId: _pipelineId,
+          ...inputParams
+        } = createEmbeddingRequest;
 
-    const startTime = performance.timeOrigin + performance.now();
+        const startTime = performance.timeOrigin + performance.now();
 
-    const completion = await super.createEmbedding(
-      createEmbeddingRequest,
-      options
+        const completion = await super.createEmbedding(
+          { model, ...inputParams },
+          options
+        );
+
+        const endTime = performance.timeOrigin + performance.now();
+
+        const elapsedTime = Math.floor(endTime - startTime);
+
+        this.pipelineRun.addStepRun(
+          new OpenAICreateEmbeddingStepRun(
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            { ...inputParams },
+            { model },
+            completion.data
+          )
+        );
+
+        return completion;
+      }
     );
-
-    const endTime = performance.timeOrigin + performance.now();
-
-    const elapsedTime = Math.floor(endTime - startTime);
-
-    this.pipelineRun.addStepRun(
-      new OpenAICreateEmbeddingStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        { ...inputParams },
-        { model },
-        completion.data
-      )
-    );
-
-    return completion;
   }
 }
 
@@ -292,4 +372,8 @@ export type CreateCompletionTemplateRequest = Omit<
 > & {
   promptTemplate?: string;
   promptInputs?: Record<string, string>;
+} & OptionalPipelineId;
+
+type OptionalPipelineId = {
+  pipelineId?: string;
 };

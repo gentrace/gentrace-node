@@ -23,7 +23,11 @@ export class Pipeline {
     pineconeConfig,
   }: {
     id: string;
-    apiKey: string;
+    apiKey:
+      | string
+      | Promise<string>
+      | ((name: string) => string)
+      | ((name: string) => Promise<string>);
     basePath?: string;
     openAIConfig?: OpenAIConfiguration;
     pineconeConfig?: PineconeConfiguration;
@@ -64,6 +68,8 @@ export class Pipeline {
         const { OpenAIPipelineHandler } = await import("./llms/openai");
         const openAIHandler = new OpenAIPipelineHandler({
           pipeline: this,
+          config: this.openAIConfig,
+          gentraceConfig: this.config,
         });
         this.pipelineHandlers.set("openai", openAIHandler);
       } catch (e) {
