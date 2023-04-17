@@ -73,7 +73,9 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
     const returnValue = await coreLogic();
 
-    this.pipelineRun.submit();
+    this.pipelineRun.submit().then((pipelineRunId) => {
+      console.log("pipelineRunId", pipelineRunId);
+    });
 
     return returnValue;
   }
