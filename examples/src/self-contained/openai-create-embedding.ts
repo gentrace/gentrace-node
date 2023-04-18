@@ -15,7 +15,7 @@ async function createEmbedding() {
     input: "testing",
   });
 
-  console.log("embeddingResponse", embeddingResponse);
+  console.log("embeddingResponse", embeddingResponse.pipelineRunId);
 }
 
 createEmbedding();

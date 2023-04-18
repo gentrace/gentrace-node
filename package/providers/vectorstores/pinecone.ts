@@ -65,14 +65,10 @@ export class PineconePipelineHandler extends PineconeClient {
   private async setupSelfContainedPipelineRun<T>(
     pipelineId: string | undefined,
     coreLogic: () => Promise<T>
-  ): Promise<T & { pipelineRunId: string }> {
-    if (!this.pipelineRun) {
-      if (!pipelineId) {
-        throw new Error(
-          "The pipelineId attribute must be provided if you are not defining a self-contained PipelineRun."
-        );
-      }
+  ): Promise<T & { pipelineRunId?: string }> {
+    let isSelfContainedPipelineRun = !this.pipelineRun && pipelineId;
 
+    if (isSelfContainedPipelineRun) {
       this.pipeline = new Pipeline({
         id: pipelineId,
         apiKey: this.gentraceConfig.apiKey,
@@ -86,12 +82,15 @@ export class PineconePipelineHandler extends PineconeClient {
 
     const returnValue = await coreLogic();
 
-    const { pipelineRunId } = await this.pipelineRun.submit();
+    if (isSelfContainedPipelineRun) {
+      const { pipelineRunId } = await this.pipelineRun.submit();
+      (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
+        pipelineRunId;
 
-    (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
-      pipelineRunId;
+      return returnValue as T & { pipelineRunId: string };
+    }
 
-    return returnValue as T & { pipelineRunId: string };
+    return returnValue;
   }
 
   /*
