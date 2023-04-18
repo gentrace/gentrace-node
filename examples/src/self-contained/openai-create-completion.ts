@@ -1,25 +1,24 @@
-import { openai } from "@gentrace/node";
-import { Configuration } from "openai";
+import { OpenAIApi, Configuration } from "@gentrace/node/openai";
 
-openai({
-  gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
-  gentraceBasePath: "http://localhost:3000/api/v1",
-  config: new Configuration({
+const openai = new OpenAIApi(
+  new Configuration({
+    gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
+    gentraceBasePath: "http://localhost:3000/api/v1",
     apiKey: process.env.OPENAI_KEY,
-  }),
-}).then((openai) => {
-  async function createCompletion() {
-    const completionResponse = await openai.createCompletion({
-      pipelineId: "testing-pipeline-id",
-      model: "text-davinci-003",
-      promptTemplate: "Write a brief summary of the history of {{ company }}: ",
-      promptInputs: {
-        company: "Google",
-      },
-    });
+  })
+);
 
-    console.log("completion response", completionResponse);
-  }
+async function createCompletion() {
+  const completionResponse = await openai.createCompletion({
+    pipelineId: "testing-pipeline-id",
+    model: "text-davinci-003",
+    promptTemplate: "Write a brief summary of the history of {{ company }}: ",
+    promptInputs: {
+      company: "Google",
+    },
+  });
 
-  createCompletion();
-});
+  console.log("completion response", completionResponse);
+}
+
+createCompletion();

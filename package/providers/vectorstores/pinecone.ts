@@ -23,7 +23,7 @@ import { OptionalPipelineId } from "../utils";
 type PineconePipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
   pipeline?: Pipeline;
-  config: PineconeConfiguration;
+  config?: PineconeConfiguration;
   gentraceConfig: GentraceConfiguration;
 };
 
@@ -38,7 +38,7 @@ export class PineconePipelineHandler extends PineconeClient {
   private pipeline: Pipeline;
   private pipelineRun?: PipelineRun;
   private gentraceConfig: GentraceConfiguration;
-  private config: PineconeConfiguration;
+  private config?: PineconeConfiguration;
 
   constructor({
     pipeline,
@@ -93,11 +93,8 @@ export class PineconePipelineHandler extends PineconeClient {
   /*
    * Pinecone-specific function overrides listed below
    */
-  public async init() {
-    await super.init({
-      apiKey: this.config.apiKey,
-      environment: this.config.environment,
-    });
+  public async init(params?: PineconeConfiguration) {
+    await super.init(params ? params : this.config);
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues
