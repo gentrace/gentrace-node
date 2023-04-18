@@ -2,7 +2,7 @@ import type { Configuration as OpenAIConfiguration } from "openai/dist/configura
 import { Configuration as GentraceConfiguration } from "../configuration";
 import { PineconeConfiguration } from "./pipeline";
 
-export async function getOpenAI({
+export async function openai({
   gentraceApiKey,
   gentraceBasePath,
   config,
@@ -28,7 +28,7 @@ export async function getOpenAI({
   }
 }
 
-export async function getPinecone({
+export async function pinecone({
   gentraceApiKey,
   gentraceBasePath,
   config,
