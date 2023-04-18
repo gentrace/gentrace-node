@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/gentrace/gentrace-node/compare/v0.5.0...v0.6.0) (2023-04-18)
+
+
+### Features
+
+* improve API interface ([#46](https://github.com/gentrace/gentrace-node/issues/46)) ([7eacd72](https://github.com/gentrace/gentrace-node/commit/7eacd726bc9c9da059e0192d8d29001af1ffcf82))
+
 ## [0.5.0](https://github.com/gentrace/gentrace-node/compare/v0.4.0...v0.5.0) (2023-04-18)
 
 
