@@ -12,30 +12,82 @@ import {
   UpsertOperationRequest,
   UpsertRequest,
   UpsertResponse,
+  VectorOperationsApi,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
-import { Pipeline } from "../pipeline";
+import { PineconeConfiguration, Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 import { StepRun } from "../step-run";
+import { Configuration as GentraceConfiguration } from "../../configuration";
+import { OptionalPipelineId } from "../utils";
+
+type PineconePipelineHandlerOptions = {
+  pipelineRun?: PipelineRun;
+  pipeline?: Pipeline;
+  config: PineconeConfiguration;
+  gentraceConfig: GentraceConfiguration;
+};
+
+type ModifyFirstParam<T, U> = T extends (
+  param1: infer P,
+  ...args: infer A
+) => infer R
+  ? (param1: U, ...args: A) => R
+  : never;
 
 export class PineconePipelineHandler extends PineconeClient {
   private pipeline: Pipeline;
   private pipelineRun?: PipelineRun;
+  private gentraceConfig: GentraceConfiguration;
+  private config: PineconeConfiguration;
 
   constructor({
     pipeline,
     pipelineRun,
-  }: {
-    pipeline: Pipeline;
-    pipelineRun?: PipelineRun;
-  }) {
+    config,
+    gentraceConfig,
+  }: PineconePipelineHandlerOptions) {
     super();
+    this.config = config;
 
     this.pipeline = pipeline;
     this.pipelineRun = pipelineRun;
+    this.gentraceConfig = gentraceConfig;
   }
 
   public setPipelineRun(pipelineRun: PipelineRun) {
     this.pipelineRun = pipelineRun;
+  }
+
+  private async setupSelfContainedPipelineRun<T>(
+    pipelineId: string | undefined,
+    coreLogic: () => Promise<T>
+  ): Promise<T & { pipelineRunId: string }> {
+    if (!this.pipelineRun) {
+      if (!pipelineId) {
+        throw new Error(
+          "The pipelineId attribute must be provided if you are not defining a self-contained PipelineRun."
+        );
+      }
+
+      this.pipeline = new Pipeline({
+        id: pipelineId,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+      });
+
+      this.pipelineRun = new PipelineRun({
+        pipeline: this.pipeline,
+      });
+    }
+
+    const returnValue = await coreLogic();
+
+    const { pipelineRunId } = await this.pipelineRun.submit();
+
+    (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
+      pipelineRunId;
+
+    return returnValue as T & { pipelineRunId: string };
   }
 
   /*
@@ -43,140 +95,212 @@ export class PineconePipelineHandler extends PineconeClient {
    */
   public async init() {
     await super.init({
-      apiKey: this.pipeline.pineconeConfig.apiKey,
-      environment: this.pipeline.pineconeConfig.environment,
+      apiKey: this.config.apiKey,
+      environment: this.config.environment,
     });
   }
 
+  // @ts-ignore: hack to avoid base class inheritance issues
   public Index(index: string) {
     const apiHandler = super.Index(index);
 
+    type ModifiedFetchFunction = ModifyFirstParam<
+      typeof apiHandler.fetch,
+      FetchRequest & OptionalPipelineId
+    >;
+
     const boundFetch = apiHandler.fetch.bind(apiHandler);
-    apiHandler.fetch = async (
-      requestParameters: FetchRequest,
+    const fetch: ModifiedFetchFunction = async (
+      requestParameters: FetchRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
     ): Promise<FetchResponse> => {
-      const startTime = performance.timeOrigin + performance.now();
-      const response = await boundFetch(requestParameters, initOverrides);
-      const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = Math.floor(endTime - startTime);
+      return this.setupSelfContainedPipelineRun(
+        requestParameters.pipelineId,
+        async () => {
+          const startTime = performance.timeOrigin + performance.now();
+          const response = await boundFetch(requestParameters, initOverrides);
+          const endTime = performance.timeOrigin + performance.now();
+          const elapsedTime = Math.floor(endTime - startTime);
 
-      this.pipelineRun.addStepRun(
-        new PineconeFetchStepRun(
-          elapsedTime,
-          new Date(startTime).toISOString(),
-          new Date(endTime).toISOString(),
-          { ...requestParameters },
-          response
-        )
+          this.pipelineRun.addStepRun(
+            new PineconeFetchStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              { ...requestParameters },
+              response
+            )
+          );
+
+          return response;
+        }
       );
-
-      return response;
     };
+
+    apiHandler.fetch = fetch;
+
+    type ModifiedUpdateFunction = ModifyFirstParam<
+      typeof apiHandler.update,
+      UpdateOperationRequest & OptionalPipelineId
+    >;
 
     const boundUpdate = apiHandler.update.bind(apiHandler);
-    apiHandler.update = async (
-      requestParameters: UpdateOperationRequest,
+    const update: ModifiedUpdateFunction = async (
+      requestParameters: UpdateOperationRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
     ): Promise<FetchResponse> => {
-      const { updateRequest } = requestParameters;
-      const startTime = performance.timeOrigin + performance.now();
-      const response = await boundUpdate(requestParameters, initOverrides);
-      const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = Math.floor(endTime - startTime);
+      return this.setupSelfContainedPipelineRun(
+        requestParameters.pipelineId,
+        async () => {
+          const { updateRequest } = requestParameters;
+          const startTime = performance.timeOrigin + performance.now();
+          const response = await boundUpdate(requestParameters, initOverrides);
+          const endTime = performance.timeOrigin + performance.now();
+          const elapsedTime = Math.floor(endTime - startTime);
 
-      this.pipelineRun.addStepRun(
-        new PineconeUpdateStepRun(
-          elapsedTime,
-          new Date(startTime).toISOString(),
-          new Date(endTime).toISOString(),
+          this.pipelineRun.addStepRun(
+            new PineconeUpdateStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
 
-          { ...updateRequest },
-          response
-        )
+              { ...updateRequest },
+              response
+            )
+          );
+
+          return response;
+        }
       );
-
-      return response;
     };
+
+    apiHandler.update = update;
+
+    type ModifiedQueryFunction = ModifyFirstParam<
+      typeof apiHandler.query,
+      QueryOperationRequest & OptionalPipelineId
+    >;
 
     const boundQuery = apiHandler.query.bind(apiHandler);
 
-    apiHandler.query = async (
-      requestParameters: QueryOperationRequest,
+    const query: ModifiedQueryFunction = async (
+      requestParameters: QueryOperationRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
     ): Promise<QueryResponse> => {
-      const { queryRequest } = requestParameters;
+      return this.setupSelfContainedPipelineRun(
+        requestParameters.pipelineId,
+        async () => {
+          const { queryRequest } = requestParameters;
 
-      const startTime = performance.timeOrigin + performance.now();
-      const response = await boundQuery(requestParameters, initOverrides);
-      const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = Math.floor(endTime - startTime);
+          const startTime = performance.timeOrigin + performance.now();
+          const response = await boundQuery(requestParameters, initOverrides);
+          const endTime = performance.timeOrigin + performance.now();
+          const elapsedTime = Math.floor(endTime - startTime);
 
-      const { topK, filter, ...inputs } = queryRequest;
-      const modelParams = { topK, filter };
+          const { topK, filter, ...inputs } = queryRequest;
+          const modelParams = { topK, filter };
 
-      this.pipelineRun.addStepRun(
-        new PineconeQueryStepRun(
-          elapsedTime,
-          new Date(startTime).toISOString(),
-          new Date(endTime).toISOString(),
-          { ...inputs },
-          { ...modelParams },
-          response
-        )
+          this.pipelineRun.addStepRun(
+            new PineconeQueryStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              { ...inputs },
+              { ...modelParams },
+              response
+            )
+          );
+
+          return response;
+        }
       );
-
-      return response;
     };
+
+    apiHandler.query = query;
+
+    type ModifiedUpsertFunction = ModifyFirstParam<
+      typeof apiHandler.upsert,
+      UpsertOperationRequest & OptionalPipelineId
+    >;
 
     const boundUpsert = apiHandler.upsert.bind(apiHandler);
-    apiHandler.upsert = async (
-      requestParameters: UpsertOperationRequest,
+    const upsert: ModifiedUpsertFunction = async (
+      requestParameters: UpsertOperationRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
     ): Promise<UpsertResponse> => {
-      const { upsertRequest } = requestParameters;
-      const startTime = performance.timeOrigin + performance.now();
-      const response = await boundUpsert(requestParameters, initOverrides);
-      const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = Math.floor(endTime - startTime);
+      return this.setupSelfContainedPipelineRun(
+        requestParameters.pipelineId,
+        async () => {
+          const { upsertRequest } = requestParameters;
+          const startTime = performance.timeOrigin + performance.now();
+          const response = await boundUpsert(requestParameters, initOverrides);
+          const endTime = performance.timeOrigin + performance.now();
+          const elapsedTime = Math.floor(endTime - startTime);
 
-      this.pipelineRun.addStepRun(
-        new PineconeUpsertStepRun(
-          elapsedTime,
-          new Date(startTime).toISOString(),
-          new Date(endTime).toISOString(),
-          { ...upsertRequest },
-          response
-        )
+          this.pipelineRun.addStepRun(
+            new PineconeUpsertStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              { ...upsertRequest },
+              response
+            )
+          );
+
+          return response;
+        }
       );
-
-      return response;
     };
+
+    apiHandler.upsert = upsert;
+
+    type ModifiedDeleteFunction = ModifyFirstParam<
+      typeof apiHandler.delete1,
+      Delete1Request & OptionalPipelineId
+    >;
 
     const boundDelete = apiHandler.delete1.bind(apiHandler);
-    apiHandler.delete1 = async (
-      deleteRequest: Delete1Request,
+    const delete1: ModifiedDeleteFunction = async (
+      deleteRequest: Delete1Request & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
     ): Promise<UpsertResponse> => {
-      const startTime = performance.timeOrigin + performance.now();
-      const response = await boundDelete(deleteRequest, initOverrides);
-      const endTime = performance.timeOrigin + performance.now();
-      const elapsedTime = Math.floor(endTime - startTime);
+      return this.setupSelfContainedPipelineRun(
+        deleteRequest.pipelineId,
+        async () => {
+          const startTime = performance.timeOrigin + performance.now();
+          const response = await boundDelete(deleteRequest, initOverrides);
+          const endTime = performance.timeOrigin + performance.now();
+          const elapsedTime = Math.floor(endTime - startTime);
 
-      this.pipelineRun.addStepRun(
-        new PineconeDeleteStepRun(
-          elapsedTime,
-          new Date(startTime).toISOString(),
-          new Date(endTime).toISOString(),
-          { ...deleteRequest },
-          response
-        )
+          this.pipelineRun.addStepRun(
+            new PineconeDeleteStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              { ...deleteRequest },
+              response
+            )
+          );
+
+          return response;
+        }
       );
-
-      return response;
     };
 
-    return apiHandler;
+    apiHandler.delete1 = delete1;
+
+    type ModifiedVectorOperationsApi = Omit<
+      VectorOperationsApi,
+      "fetch" | "update" | "query" | "upsert" | "delete1"
+    > & {
+      fetch: ModifiedFetchFunction;
+      update: ModifiedUpdateFunction;
+      query: ModifiedQueryFunction;
+      upsert: ModifiedUpsertFunction;
+      delete1: ModifiedDeleteFunction;
+    };
+
+    return apiHandler as ModifiedVectorOperationsApi;
   }
 }
 

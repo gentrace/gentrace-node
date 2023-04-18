@@ -15,6 +15,7 @@ import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 import { Configuration as GentraceConfiguration } from "../../configuration";
+import { OptionalPipelineId } from "../utils";
 
 type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -26,6 +27,7 @@ type OpenAIPipelineHandlerOptions = {
 export class OpenAIPipelineHandler extends OpenAIApi {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
+  private config?: OpenAIConfiguration;
   private gentraceConfig: GentraceConfiguration;
 
   constructor({
@@ -35,6 +37,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     gentraceConfig,
   }: OpenAIPipelineHandlerOptions) {
     super(config);
+
+    this.config = config;
 
     this.pipelineRun = pipelineRun;
     this.pipeline = pipeline;
@@ -373,7 +377,3 @@ export type CreateCompletionTemplateRequest = Omit<
   promptTemplate?: string;
   promptInputs?: Record<string, string>;
 } & OptionalPipelineId;
-
-type OptionalPipelineId = {
-  pipelineId?: string;
-};
