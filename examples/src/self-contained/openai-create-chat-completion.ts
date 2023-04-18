@@ -9,17 +9,13 @@ getOpenAI({
   }),
 }).then((openai) => {
   async function createCompletion() {
-    const completionResponse = await openai.createChatCompletion({
+    const chatCompletionResponse = await openai.createChatCompletion({
       messages: [{ role: "user", content: "Hello!" }],
       model: "gpt-3.5-turbo",
       pipelineId: "testing-pipeline-id",
     });
 
-    console.log(
-      "chat completion response",
-      completionResponse.data,
-      completionResponse
-    );
+    console.log("chat completion response", chatCompletionResponse);
   }
 
   createCompletion();
