@@ -1,7 +1,7 @@
-import { getOpenAI } from "@gentrace/node";
+import { openai } from "@gentrace/node";
 import { Configuration } from "openai";
 
-getOpenAI({
+openai({
   gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
   gentraceBasePath: "http://localhost:3000/api/v1",
   config: new Configuration({

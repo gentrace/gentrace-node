@@ -1,6 +1,6 @@
-import { getPinecone } from "@gentrace/node";
+import { pinecone } from "@gentrace/node";
 
-getPinecone({
+pinecone({
   gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
   gentraceBasePath: "http://localhost:3000/api/v1",
   config: {
