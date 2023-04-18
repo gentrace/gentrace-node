@@ -141,7 +141,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
       // User and suffix parameters are inputs not model parameters
       const { user, suffix, ...partialModelParams } = baseCompletionOptions;
 
-      this.pipelineRun.addStepRun(
+      this.pipelineRun?.addStepRun(
         new OpenAICreateCompletionStepRun(
           elapsedTime,
           new Date(startTime).toISOString(),
@@ -202,7 +202,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         // user parameter is an input, not a model parameter
         const { user, ...modelParams } = baseCompletionOptions;
 
-        this.pipelineRun.addStepRun(
+        this.pipelineRun?.addStepRun(
           new OpenAICreateChatCompletionStepRun(
             elapsedTime,
             new Date(startTime).toISOString(),
@@ -254,7 +254,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
         const elapsedTime = Math.floor(endTime - startTime);
 
-        this.pipelineRun.addStepRun(
+        this.pipelineRun?.addStepRun(
           new OpenAICreateEmbeddingStepRun(
             elapsedTime,
             new Date(startTime).toISOString(),
