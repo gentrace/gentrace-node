@@ -1,17 +1,16 @@
-import { pinecone as pineconeBuilder } from "@gentrace/node/pinecone";
+import { PineconeClient } from "@gentrace/node/pinecone";
 import { DEFAULT_VECTOR } from "../utils";
 
-const pinecone = pineconeBuilder({
+const pinecone = new PineconeClient({
   gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
   gentraceBasePath: "http://localhost:3000/api/v1",
-  config: {
-    apiKey: process.env.PINECONE_API_KEY ?? "",
-    environment: process.env.PINECONE_ENVIRONMENT ?? "",
-  },
 });
 
 async function queryPineconeIndex() {
-  await pinecone.init();
+  await pinecone.init({
+    apiKey: process.env.PINECONE_API_KEY ?? "",
+    environment: process.env.PINECONE_ENVIRONMENT ?? "",
+  });
 
   const index = await pinecone.Index("openai-trec");
 
