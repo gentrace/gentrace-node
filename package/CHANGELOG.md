@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/gentrace/gentrace-node/compare/v0.4.0...v0.5.0) (2023-04-18)
+
+
+### Features
+
+* add in self-contained Pinecone ([#44](https://github.com/gentrace/gentrace-node/issues/44)) ([82b52c3](https://github.com/gentrace/gentrace-node/commit/82b52c3d0565d6fe9b2e35e17e63dfb2dfa1d5cb))
+
 ## [0.4.0](https://github.com/gentrace/gentrace-node/compare/v0.3.6...v0.4.0) (2023-04-17)
 
 
