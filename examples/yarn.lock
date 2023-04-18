@@ -14,6 +14,7 @@
   dependencies:
     axios "^0.27.2"
     mustache "^4.2.0"
+    uuid "^9.0.0"
 
 "@jridgewell/resolve-uri@^3.0.3":
   version "3.1.0"
@@ -264,6 +265,11 @@ typescript@^5.0.3:
   version "5.0.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.0.3.tgz"
   integrity sha512-xv8mOEDnigb/tN9PSMTwSEqAnUvkoXMQlicOb0IUVDBSQCgBSaAAROUZYy2IcUy5qU6XajK5jjjO7TMWqBTKZA==
+
+uuid@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
+  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"

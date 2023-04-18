@@ -1,5 +1,7 @@
 import { IngestionApi } from "../api";
 import { Pipeline } from "./pipeline";
+import { PipelineRunResponse } from "../index";
+import { v4 } from "uuid";
 import { StepRun } from "./step-run";
 import type { PineconePipelineHandler } from "./vectorstores/pinecone";
 import type { OpenAIPipelineHandler } from "./llms/openai";
@@ -53,10 +55,15 @@ export class PipelineRun {
     this.stepRuns.push(stepRun);
   }
 
-  public async submit() {
+  public async submit(
+    { waitForServer }: { waitForServer: boolean } = { waitForServer: false }
+  ) {
     const ingestionApi = new IngestionApi(this.pipeline.config);
 
-    const pipelinePostResponse = await ingestionApi.pipelineRunPost({
+    const newPipelineRunId = v4();
+
+    const submission = ingestionApi.pipelineRunPost({
+      id: newPipelineRunId,
       name: this.pipeline.id,
       stepRuns: this.stepRuns.map(
         ({
@@ -85,6 +92,14 @@ export class PipelineRun {
       ),
     });
 
+    if (!waitForServer) {
+      const data: PipelineRunResponse = {
+        pipelineRunId: newPipelineRunId,
+      };
+      return data;
+    }
+
+    const pipelinePostResponse = await submission;
     return pipelinePostResponse.data;
   }
 }
