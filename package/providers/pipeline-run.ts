@@ -62,14 +62,8 @@ export class PipelineRun {
 
     const newPipelineRunId = v4();
 
-    if (!waitForServer) {
-      const data: PipelineRunResponse = {
-        pipelineRunId: newPipelineRunId,
-      };
-      return data;
-    }
-
-    const pipelinePostResponse = await ingestionApi.pipelineRunPost({
+    const submission = ingestionApi.pipelineRunPost({
+      id: newPipelineRunId,
       name: this.pipeline.id,
       stepRuns: this.stepRuns.map(
         ({
@@ -98,6 +92,14 @@ export class PipelineRun {
       ),
     });
 
+    if (!waitForServer) {
+      const data: PipelineRunResponse = {
+        pipelineRunId: newPipelineRunId,
+      };
+      return data;
+    }
+
+    const pipelinePostResponse = await submission;
     return pipelinePostResponse.data;
   }
 }
