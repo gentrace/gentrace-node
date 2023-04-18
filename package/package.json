@@ -13,12 +13,21 @@
   "author": "Gentrace",
   "license": "MIT",
   "exports": {
-    ".": "./dist/index.js",
-    "./openai": "./dist/providers/getters/openai.js",
-    "./pinecone": "./dist/providers/getters/pinecone.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./openai": {
+      "types": "./dist/providers/getters/openai.d.ts",
+      "default": "./dist/providers/getters/openai.js"
+    },
+    "./pinecone": {
+      "types": "./dist/providers/getters/pinecone.d.ts",
+      "default": "./dist/providers/getters/pinecone.js"
+    }
   },
   "scripts": {
-    "build": "run-s clean compile ",
+    "build": "run-s clean compile",
     "clean": "rimraf dist",
     "compile": "tsc -p tsconfig.json"
   },

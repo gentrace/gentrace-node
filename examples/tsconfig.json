@@ -2,9 +2,8 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "target": "es6",
-    "module": "commonjs",
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": ".",

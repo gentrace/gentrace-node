@@ -2,7 +2,7 @@ import type { Configuration as OpenAIConfiguration } from "openai/dist/configura
 import { Configuration as GentraceConfiguration } from "../../configuration";
 import { OpenAIPipelineHandler } from "../llms/openai";
 
-export async function openai({
+export function openai({
   gentraceApiKey,
   gentraceBasePath,
   config,

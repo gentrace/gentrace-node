@@ -2,7 +2,7 @@ import { Configuration as GentraceConfiguration } from "../../configuration";
 import { PineconeConfiguration } from "../pipeline";
 import { PineconePipelineHandler } from "../vectorstores/pinecone";
 
-export async function pinecone({
+export function pinecone({
   gentraceApiKey,
   gentraceBasePath,
   config,
