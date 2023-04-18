@@ -1,4 +1,4 @@
-import { openai } from "@gentrace/node";
+import { openai } from "@gentrace/node/openai";
 import { Configuration } from "openai";
 
 openai({
