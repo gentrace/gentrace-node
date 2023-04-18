@@ -2,7 +2,7 @@ import type { Configuration as OpenAIConfiguration } from "openai/dist/configura
 import { Configuration as GentraceConfiguration } from "../configuration";
 import { PipelineRun } from "./pipeline-run";
 
-type PineconeConfiguration = {
+export type PineconeConfiguration = {
   apiKey: string;
   environment: string;
 };
@@ -53,6 +53,8 @@ export class Pipeline {
         );
         const pineconeHandler = new PineconePipelineHandler({
           pipeline: this,
+          config: this.pineconeConfig,
+          gentraceConfig: this.config,
         });
         await pineconeHandler.init();
         this.pipelineHandlers.set("pinecone", pineconeHandler);
