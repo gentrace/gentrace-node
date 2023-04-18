@@ -123,7 +123,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun.addStepRun(
+          this.pipelineRun?.addStepRun(
             new PineconeFetchStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -163,7 +163,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun.addStepRun(
+          this.pipelineRun?.addStepRun(
             new PineconeUpdateStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -209,7 +209,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const { topK, filter, ...inputs } = queryRequest;
           const modelParams = { topK, filter };
 
-          this.pipelineRun.addStepRun(
+          this.pipelineRun?.addStepRun(
             new PineconeQueryStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -250,7 +250,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun.addStepRun(
+          this.pipelineRun?.addStepRun(
             new PineconeUpsertStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -286,7 +286,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun.addStepRun(
+          this.pipelineRun?.addStepRun(
             new PineconeDeleteStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
