@@ -100,6 +100,7 @@ export class PineconePipelineHandler extends PineconeClient {
     });
   }
 
+  // @ts-ignore: hack to avoid base class inheritance issues
   public Index(index: string) {
     const apiHandler = super.Index(index);
 
@@ -288,7 +289,10 @@ export class PineconePipelineHandler extends PineconeClient {
 
     apiHandler.delete1 = delete1;
 
-    type ModifiedVectorOperationsApi = VectorOperationsApi & {
+    type ModifiedVectorOperationsApi = Omit<
+      VectorOperationsApi,
+      "fetch" | "update" | "query" | "upsert" | "delete1"
+    > & {
       fetch: ModifiedFetchFunction;
       update: ModifiedUpdateFunction;
       query: ModifiedQueryFunction;
