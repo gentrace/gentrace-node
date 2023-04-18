@@ -1,13 +1,12 @@
-import { openai as openaiBuilder } from "@gentrace/node/openai";
-import { Configuration } from "openai";
+import { OpenAIApi, Configuration } from "@gentrace/node/openai";
 
-const openai = openaiBuilder({
-  gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
-  gentraceBasePath: "http://localhost:3000/api/v1",
-  config: new Configuration({
+const openai = new OpenAIApi(
+  new Configuration({
+    gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
+    gentraceBasePath: "http://localhost:3000/api/v1",
     apiKey: process.env.OPENAI_KEY,
-  }),
-});
+  })
+);
 
 async function createEmbedding() {
   const embeddingResponse = await openai.createEmbedding({

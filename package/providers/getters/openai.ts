@@ -1,28 +1,36 @@
-import type { Configuration as OpenAIConfiguration } from "openai/dist/configuration";
+import {
+  Configuration as OpenAIConfiguration,
+  ConfigurationParameters as OpenAIConfigurationParameters,
+} from "openai";
 import { Configuration as GentraceConfiguration } from "../../configuration";
 import { OpenAIPipelineHandler } from "../llms/openai";
 
-export function openai({
-  gentraceApiKey,
-  gentraceBasePath,
-  config,
-}: {
+class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
   gentraceApiKey: string;
   gentraceBasePath?: string;
-  config?: OpenAIConfiguration;
-}) {
-  try {
-    const openAIHandler = new OpenAIPipelineHandler({
-      gentraceConfig: new GentraceConfiguration({
-        apiKey: gentraceApiKey,
-        basePath: gentraceBasePath,
-      }),
-      config,
-    });
-    return openAIHandler;
-  } catch (e) {
-    throw new Error(
-      "Please install OpenAI as a dependency with, e.g. `yarn add openai`"
-    );
+
+  constructor(
+    modifiedOAIConfig: OpenAIConfigurationParameters & {
+      gentraceApiKey: string;
+      gentraceBasePath?: string;
+    }
+  ) {
+    super(modifiedOAIConfig);
+    this.gentraceApiKey = modifiedOAIConfig.gentraceApiKey;
+    this.gentraceBasePath = modifiedOAIConfig.gentraceBasePath;
   }
 }
+
+class OpenAIApi extends OpenAIPipelineHandler {
+  constructor(modifiedOAIConfig: ModifiedOpenAIConfiguration) {
+    super({
+      config: modifiedOAIConfig,
+      gentraceConfig: new GentraceConfiguration({
+        apiKey: modifiedOAIConfig.gentraceApiKey,
+        basePath: modifiedOAIConfig.gentraceBasePath,
+      }),
+    });
+  }
+}
+
+export { OpenAIApi, ModifiedOpenAIConfiguration as Configuration };
