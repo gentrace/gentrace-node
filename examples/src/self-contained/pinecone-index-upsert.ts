@@ -25,8 +25,7 @@ async function upsertPineconeIndex() {
       ],
     },
   });
-
-  console.log("upsertResponse", upsertResponse);
+  console.log("upsertResponse", upsertResponse, upsertResponse.pipelineRunId);
 }
 
 upsertPineconeIndex();

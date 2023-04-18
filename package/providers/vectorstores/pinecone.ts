@@ -34,6 +34,10 @@ type ModifyFirstParam<T, U> = T extends (
   ? (param1: U, ...args: A) => R
   : never;
 
+type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
+  ...args: Parameters<T>
+) => Promise<Awaited<ReturnType<T>> & { pipelineRunId: string }>;
+
 export class PineconePipelineHandler extends PineconeClient {
   private pipeline: Pipeline;
   private pipelineRun?: PipelineRun;
@@ -101,16 +105,17 @@ export class PineconePipelineHandler extends PineconeClient {
   public Index(index: string) {
     const apiHandler = super.Index(index);
 
-    type ModifiedFetchFunction = ModifyFirstParam<
-      typeof apiHandler.fetch,
-      FetchRequest & OptionalPipelineId
+    type FetchFunctionType = typeof apiHandler.fetch;
+
+    type ModifiedFetchFunction = FunctionWithPipelineRunId<
+      ModifyFirstParam<FetchFunctionType, FetchRequest & OptionalPipelineId>
     >;
 
     const boundFetch = apiHandler.fetch.bind(apiHandler);
     const fetch: ModifiedFetchFunction = async (
       requestParameters: FetchRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
-    ): Promise<FetchResponse> => {
+    ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
         async () => {
@@ -136,16 +141,20 @@ export class PineconePipelineHandler extends PineconeClient {
 
     apiHandler.fetch = fetch;
 
-    type ModifiedUpdateFunction = ModifyFirstParam<
-      typeof apiHandler.update,
-      UpdateOperationRequest & OptionalPipelineId
+    type UpdateFunctionType = typeof apiHandler.update;
+
+    type ModifiedUpdateFunction = FunctionWithPipelineRunId<
+      ModifyFirstParam<
+        UpdateFunctionType,
+        UpdateOperationRequest & OptionalPipelineId
+      >
     >;
 
     const boundUpdate = apiHandler.update.bind(apiHandler);
     const update: ModifiedUpdateFunction = async (
       requestParameters: UpdateOperationRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
-    ): Promise<FetchResponse> => {
+    ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
         async () => {
@@ -173,9 +182,13 @@ export class PineconePipelineHandler extends PineconeClient {
 
     apiHandler.update = update;
 
-    type ModifiedQueryFunction = ModifyFirstParam<
-      typeof apiHandler.query,
-      QueryOperationRequest & OptionalPipelineId
+    type QueryFunctionType = typeof apiHandler.query;
+
+    type ModifiedQueryFunction = FunctionWithPipelineRunId<
+      ModifyFirstParam<
+        QueryFunctionType,
+        QueryOperationRequest & OptionalPipelineId
+      >
     >;
 
     const boundQuery = apiHandler.query.bind(apiHandler);
@@ -183,7 +196,7 @@ export class PineconePipelineHandler extends PineconeClient {
     const query: ModifiedQueryFunction = async (
       requestParameters: QueryOperationRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
-    ): Promise<QueryResponse> => {
+    ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
         async () => {
@@ -215,16 +228,20 @@ export class PineconePipelineHandler extends PineconeClient {
 
     apiHandler.query = query;
 
-    type ModifiedUpsertFunction = ModifyFirstParam<
-      typeof apiHandler.upsert,
-      UpsertOperationRequest & OptionalPipelineId
+    type UpsertFunctionType = typeof apiHandler.upsert;
+
+    type ModifiedUpsertFunction = FunctionWithPipelineRunId<
+      ModifyFirstParam<
+        UpsertFunctionType,
+        UpsertOperationRequest & OptionalPipelineId
+      >
     >;
 
     const boundUpsert = apiHandler.upsert.bind(apiHandler);
     const upsert: ModifiedUpsertFunction = async (
       requestParameters: UpsertOperationRequest & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
-    ): Promise<UpsertResponse> => {
+    ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
         async () => {
@@ -251,16 +268,17 @@ export class PineconePipelineHandler extends PineconeClient {
 
     apiHandler.upsert = upsert;
 
-    type ModifiedDeleteFunction = ModifyFirstParam<
-      typeof apiHandler.delete1,
-      Delete1Request & OptionalPipelineId
+    type DeleteFunctionType = typeof apiHandler.delete1;
+
+    type ModifiedDeleteFunction = FunctionWithPipelineRunId<
+      ModifyFirstParam<DeleteFunctionType, Delete1Request & OptionalPipelineId>
     >;
 
     const boundDelete = apiHandler.delete1.bind(apiHandler);
     const delete1: ModifiedDeleteFunction = async (
       deleteRequest: Delete1Request & OptionalPipelineId,
       initOverrides?: RequestInit | InitOverrideFunction
-    ): Promise<UpsertResponse> => {
+    ) => {
       return this.setupSelfContainedPipelineRun(
         deleteRequest.pipelineId,
         async () => {
@@ -297,6 +315,7 @@ export class PineconePipelineHandler extends PineconeClient {
       delete1: ModifiedDeleteFunction;
     };
 
+    // @ts-ignore
     return apiHandler as ModifiedVectorOperationsApi;
   }
 }
