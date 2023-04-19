@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/gentrace/gentrace-node/compare/v0.7.1...v0.7.2) (2023-04-19)
+
+
+### Miscellaneous Chores
+
+* release 0.7.2 ([#58](https://github.com/gentrace/gentrace-node/issues/58)) ([1f95bfd](https://github.com/gentrace/gentrace-node/commit/1f95bfd2b3d16d6672ce0cb497f75064cd2aab21))
+
 ## [0.7.1](https://github.com/gentrace/gentrace-node/compare/v0.7.0...v0.7.1) (2023-04-18)
 
 
