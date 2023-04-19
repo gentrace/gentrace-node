@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.6](https://github.com/gentrace/gentrace-node/compare/v0.7.5...v0.7.6) (2023-04-19)
+
+
+### Bug Fixes
+
+* temporarily remove provenance check ([#67](https://github.com/gentrace/gentrace-node/issues/67)) ([b983b74](https://github.com/gentrace/gentrace-node/commit/b983b74ca8acc261f53ba92179e84ad47af0046f))
+
 ## [0.7.5](https://github.com/gentrace/gentrace-node/compare/v0.7.4...v0.7.5) (2023-04-19)
 
 
