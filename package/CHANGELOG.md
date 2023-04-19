@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.7.1](https://github.com/gentrace/gentrace-node/compare/v0.7.0...v0.7.1) (2023-04-18)
+
+
+### Bug Fixes
+
+* ensure that errors are not thrown if pipelineID is not specified ([#52](https://github.com/gentrace/gentrace-node/issues/52)) ([e883ab7](https://github.com/gentrace/gentrace-node/commit/e883ab7f07e97650684d6e4f2851d0d23eda1052))
+* make sure that submission is awaited if they specify ([#56](https://github.com/gentrace/gentrace-node/issues/56)) ([96fa7f4](https://github.com/gentrace/gentrace-node/commit/96fa7f4e8de31fa4ee8cb13f6efb8fae6aca5be7))
+* polish addStepRun invocation criteria ([#53](https://github.com/gentrace/gentrace-node/issues/53)) ([2e9aa86](https://github.com/gentrace/gentrace-node/commit/2e9aa86a2e4a00794b188c706a549ffb70edd8c4))
+* return pipeline run ID back to client, with typing ([#50](https://github.com/gentrace/gentrace-node/issues/50)) ([050a5d1](https://github.com/gentrace/gentrace-node/commit/050a5d12283d93d2d913e94741fa661e01683440))
+
 ## [0.7.0](https://github.com/gentrace/gentrace-node/compare/v0.6.0...v0.7.0) (2023-04-18)
 
 
