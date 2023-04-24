@@ -23,7 +23,7 @@ async function queryPineconeIndex() {
     },
   });
 
-  console.log("queryResponse", queryResponse);
+  console.log("queryResponse", queryResponse.pipelineRunId);
 }
 
 queryPineconeIndex();
