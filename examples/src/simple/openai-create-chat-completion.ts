@@ -10,7 +10,13 @@ const openai = new OpenAIApi(
 
 async function createCompletion() {
   const chatCompletionResponse = await openai.createChatCompletion({
-    messages: [{ role: "user", content: "Hello!" }],
+    messages: [
+      {
+        role: "user",
+        contentTemplate: "Hello {{ name }}!",
+        contentInputs: { name: "Vivek" },
+      },
+    ],
     model: "gpt-3.5-turbo",
     pipelineId: "testing-pipeline-id",
   });
