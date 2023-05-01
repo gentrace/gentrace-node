@@ -105,23 +105,16 @@ export class OpenAIPipelineHandler extends OpenAIApi {
       const {
         promptTemplate,
         promptInputs,
+        prompt,
         pipelineId: _pipelineId,
         ...baseCompletionOptions
       } = createCompletionRequest;
 
-      if (!!(baseCompletionOptions as any).prompt) {
-        throw new Error(
-          "The prompt attribute cannot be provided when using the Gentrace SDK. Use promptTemplate and promptInputs instead."
-        );
-      }
+      let renderedPrompt = prompt;
 
-      if (!promptTemplate) {
-        throw new Error(
-          "The promptTemplate attribute must be provided when using the Gentrace SDK."
-        );
+      if (promptTemplate && promptInputs) {
+        renderedPrompt = Mustache.render(promptTemplate, promptInputs);
       }
-
-      const renderedPrompt = Mustache.render(promptTemplate, promptInputs);
 
       const newCompletionOptions: CreateCompletionRequest = {
         ...baseCompletionOptions,
@@ -147,7 +140,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           new Date(startTime).toISOString(),
           new Date(endTime).toISOString(),
           {
-            prompt: promptInputs,
+            prompt: promptTemplate && promptInputs ? promptInputs : prompt,
             user,
             suffix,
           },
@@ -290,7 +283,7 @@ class OpenAICreateCompletionStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: {
-      prompt?: Record<string, string>;
+      prompt?: Record<string, string> | string | any[];
       user?: string;
       suffix?: string;
     },
@@ -371,10 +364,7 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
   }
 }
 
-export type CreateCompletionTemplateRequest = Omit<
-  CreateCompletionRequest,
-  "prompt"
-> & {
+export type CreateCompletionTemplateRequest = CreateCompletionRequest & {
   promptTemplate?: string;
   promptInputs?: Record<string, string>;
 } & OptionalPipelineId;
