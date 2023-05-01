@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.7](https://github.com/gentrace/gentrace-node/compare/v0.7.6...v0.7.7) (2023-05-01)
+
+
+### Bug Fixes
+
+* all rendering message templates for chat completion ([#76](https://github.com/gentrace/gentrace-node/issues/76)) ([1ffab36](https://github.com/gentrace/gentrace-node/commit/1ffab362125e6ca01f896ccd5de7c01809aa6172))
+* allow prompt for completion ([#74](https://github.com/gentrace/gentrace-node/issues/74)) ([3ca23df](https://github.com/gentrace/gentrace-node/commit/3ca23dfd7f35b278aa400a4ca2604b4825e90778))
+
 ## [0.7.6](https://github.com/gentrace/gentrace-node/compare/v0.7.5...v0.7.6) (2023-04-19)
 
 
