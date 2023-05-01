@@ -26,7 +26,7 @@ $ npm install @gentrace/node
 
 ## Getting started
 
-Visit our [guides](https://docs.gentrace.ai/docs/overview) to learn how to get started.
+Visit our [Node.JS monitoring guides](https://docs.gentrace.ai/docs/typescript-nodejs-sdk) to learn how to get started.
 
 ### API reference 
 
