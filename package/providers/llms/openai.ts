@@ -182,9 +182,11 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           ...baseCompletionOptions
         } = createChatCompletionRequest;
 
+        const renderedMessages = createRenderedChatMessages(messages);
+
         const startTime = performance.timeOrigin + performance.now();
         const completion = await super.createChatCompletion(
-          { messages, ...baseCompletionOptions },
+          { messages: renderedMessages, ...baseCompletionOptions },
           options
         );
 
@@ -368,3 +370,32 @@ export type CreateCompletionTemplateRequest = CreateCompletionRequest & {
   promptTemplate?: string;
   promptInputs?: Record<string, string>;
 } & OptionalPipelineId;
+
+type ChatCompletionRequestMessageTemplate = ChatCompletionRequestMessage & {
+  contentTemplate?: string;
+  contentInputs?: Record<string, string>;
+};
+
+export type CreateChatCompletionTemplateRequest =
+  CreateChatCompletionRequest & {
+    messages: ChatCompletionRequestMessageTemplate[];
+  } & OptionalPipelineId;
+
+function createRenderedChatMessages(
+  messages: ChatCompletionRequestMessageTemplate[]
+) {
+  let newMessages: ChatCompletionRequestMessage[] = [];
+  for (let message of messages) {
+    if (message.contentTemplate && message.contentInputs) {
+      const { contentTemplate, contentInputs, ...rest } = message;
+      newMessages.push({
+        ...rest,
+        content: Mustache.render(contentTemplate, contentInputs),
+      });
+    } else {
+      newMessages.push({ ...message });
+    }
+  }
+
+  return newMessages;
+}
