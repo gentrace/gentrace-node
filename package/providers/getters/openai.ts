@@ -32,13 +32,15 @@ class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
 
 class OpenAIApi extends OpenAIPipelineHandler {
   constructor(modifiedOAIConfig: ModifiedOpenAIConfiguration) {
+    const gentraceConfig = new GentraceConfiguration({
+      apiKey: modifiedOAIConfig.gentraceApiKey,
+      basePath: modifiedOAIConfig.gentraceBasePath,
+      logger: modifiedOAIConfig.gentraceLogger,
+    });
+
     super({
       config: modifiedOAIConfig,
-      gentraceConfig: new GentraceConfiguration({
-        apiKey: modifiedOAIConfig.gentraceApiKey,
-        basePath: modifiedOAIConfig.gentraceBasePath,
-        logger: modifiedOAIConfig.gentraceLogger,
-      }),
+      gentraceConfig,
     });
   }
 }

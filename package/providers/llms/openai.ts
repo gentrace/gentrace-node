@@ -64,6 +64,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         id: pipelineId,
         apiKey: this.gentraceConfig.apiKey,
         basePath: this.gentraceConfig.basePath,
+        logger: this.gentraceConfig.logger,
       });
 
       this.pipelineRun = new PipelineRun({
