@@ -165,8 +165,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createChatCompletion(
-    createChatCompletionRequest: CreateChatCompletionRequest &
-      OptionalPipelineId,
+    createChatCompletionRequest: CreateChatCompletionTemplateRequest,
     options?: AxiosRequestConfig
   ): Promise<
     AxiosResponse<CreateChatCompletionResponse, any> & {
@@ -202,7 +201,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
             elapsedTime,
             new Date(startTime).toISOString(),
             new Date(endTime).toISOString(),
-            { messages, user },
+            { messages: renderedMessages, user },
             modelParams,
             completion.data
           )
@@ -371,15 +370,21 @@ export type CreateCompletionTemplateRequest = CreateCompletionRequest & {
   promptInputs?: Record<string, string>;
 } & OptionalPipelineId;
 
-type ChatCompletionRequestMessageTemplate = ChatCompletionRequestMessage & {
+type ChatCompletionRequestMessageTemplate = Omit<
+  ChatCompletionRequestMessage,
+  "content"
+> & {
+  content?: string;
   contentTemplate?: string;
   contentInputs?: Record<string, string>;
 };
 
-export type CreateChatCompletionTemplateRequest =
-  CreateChatCompletionRequest & {
-    messages: ChatCompletionRequestMessageTemplate[];
-  } & OptionalPipelineId;
+export type CreateChatCompletionTemplateRequest = Omit<
+  CreateChatCompletionRequest,
+  "messages"
+> & {
+  messages: ChatCompletionRequestMessageTemplate[];
+} & OptionalPipelineId;
 
 function createRenderedChatMessages(
   messages: ChatCompletionRequestMessageTemplate[]
@@ -392,8 +397,8 @@ function createRenderedChatMessages(
         ...rest,
         content: Mustache.render(contentTemplate, contentInputs),
       });
-    } else {
-      newMessages.push({ ...message });
+    } else if (message.content) {
+      newMessages.push({ ...message } as ChatCompletionRequestMessage);
     }
   }
 

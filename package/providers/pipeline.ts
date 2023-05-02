@@ -42,6 +42,27 @@ export class Pipeline {
     this.pineconeConfig = pineconeConfig;
   }
 
+  getLogger() {
+    return this.config.logger;
+  }
+
+  logInfo(message: string) {
+    const logger = this.getLogger();
+    if (logger) {
+      logger.info(message);
+    }
+  }
+
+  logWarn(e: Error | string) {
+    const logger = this.getLogger();
+    if (logger) {
+      logger.warn(e);
+    } else {
+      // By default, we print to STDERR.
+      console.warn(e);
+    }
+  }
+
   /**
    * Setup the pipeline by initializing the pipeline handlers for all provider handlers
    */

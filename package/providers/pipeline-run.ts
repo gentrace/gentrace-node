@@ -62,6 +62,8 @@ export class PipelineRun {
 
     const newPipelineRunId = v4();
 
+    this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
+
     const submission = ingestionApi.pipelineRunPost({
       id: newPipelineRunId,
       name: this.pipeline.id,
@@ -93,13 +95,29 @@ export class PipelineRun {
     });
 
     if (!waitForServer) {
+      submission
+        .catch((e) => {
+          this.pipeline.logWarn(e);
+        })
+        .then(() => {
+          this.pipeline.logInfo(
+            "Successfully submitted PipelineRun to Gentrace"
+          );
+        });
+
       const data: PipelineRunResponse = {
         pipelineRunId: newPipelineRunId,
       };
       return data;
     }
 
-    const pipelinePostResponse = await submission;
-    return pipelinePostResponse.data;
+    try {
+      const pipelinePostResponse = await submission;
+      this.pipeline.logInfo("Successfully submitted PipelineRun to Gentrace");
+      return pipelinePostResponse.data;
+    } catch (e) {
+      this.pipeline.logWarn(e);
+      throw e;
+    }
   }
 }
