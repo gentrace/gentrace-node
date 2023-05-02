@@ -21,6 +21,16 @@ jobs:
           cd package
           npm ci
           npm run build
+          
+      - name: Create .env file
+        run: |
+          cd package
+          touch .env
+          echo GENTRACE_API_KEY=test-api-key >> .env
+          echo OPENAI_KEY=test-api-key >> .env
+          echo OPENAI_ORG_ID=test-org-id >> .env
+          echo PINECONE_API_KEY=test-api-key >> .env
+          echo PINECONE_ENVIRONMENT=test-environment >> .env
 
       - name: Run Jest tests
         run: |
