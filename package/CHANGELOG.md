@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.9](https://github.com/gentrace/gentrace-node/compare/v0.7.8...v0.7.9) (2023-05-02)
+
+
+### Bug Fixes
+
+* add in several more usability tests ([#86](https://github.com/gentrace/gentrace-node/issues/86)) ([330e1c4](https://github.com/gentrace/gentrace-node/commit/330e1c4783494e73b948ff0719a996037a26f837))
+* add more host validation in configuration, jest init ([#85](https://github.com/gentrace/gentrace-node/issues/85)) ([ca0760c](https://github.com/gentrace/gentrace-node/commit/ca0760c4e0fb9e7f0a5939b81e6ce41e7a9bf28a))
+
 ## [0.7.8](https://github.com/gentrace/gentrace-node/compare/v0.7.7...v0.7.8) (2023-05-02)
 
 

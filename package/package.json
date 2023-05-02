@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/node",
-  "version": "0.7.8",
+  "version": "0.7.9",
   "description": "Node.js library for the Gentrace API",
   "repository": {
     "type": "git",
