@@ -1,11 +1,8 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
 import { OpenAIApi, Configuration } from "@gentrace/node/openai";
-import { config } from "dotenv";
 
-config();
-
-describe("test_openai_embedding_pipeline", () => {
+describe("test_openai_completion_pipeline", () => {
   const completionResponse = {
     choices: [{ finish_reason: "stop", index: 0, text: "\n" }],
     created: 1682109134,

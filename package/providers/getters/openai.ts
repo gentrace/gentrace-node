@@ -32,6 +32,26 @@ class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
 
 class OpenAIApi extends OpenAIPipelineHandler {
   constructor(modifiedOAIConfig: ModifiedOpenAIConfiguration) {
+    if (!modifiedOAIConfig.apiKey) {
+      throw new Error("API key not provided.");
+    }
+
+    if (!modifiedOAIConfig.gentraceApiKey) {
+      throw new Error("Gentrace API key not provided.");
+    }
+
+    if (modifiedOAIConfig.gentraceBasePath) {
+      try {
+        const url = new URL(modifiedOAIConfig.gentraceBasePath);
+        if (url.pathname.startsWith("/api/v1")) {
+        } else {
+          throw new Error('Gentrace base path must end in "/api/v1".');
+        }
+      } catch (err) {
+        throw new Error(`Invalid Gentrace base path: ${err.message}`);
+      }
+    }
+
     const gentraceConfig = new GentraceConfiguration({
       apiKey: modifiedOAIConfig.gentraceApiKey,
       basePath: modifiedOAIConfig.gentraceBasePath,

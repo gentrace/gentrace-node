@@ -30,7 +30,8 @@
     "build": "run-s clean compile",
     "clean": "rimraf dist",
     "compile": "tsc -p tsconfig.json",
-    "test": "jest"
+    "test": "run-s build jest",
+    "jest": "jest"
   },
   "peerDependencies": {
     "@pinecone-database/pinecone": "> 0.0.1 < 1.0.0",
