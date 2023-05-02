@@ -165,8 +165,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createChatCompletion(
-    createChatCompletionRequest: CreateChatCompletionRequest &
-      OptionalPipelineId,
+    createChatCompletionRequest: CreateChatCompletionTemplateRequest,
     options?: AxiosRequestConfig
   ): Promise<
     AxiosResponse<CreateChatCompletionResponse, any> & {
