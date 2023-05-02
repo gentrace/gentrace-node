@@ -46,6 +46,13 @@ export class Pipeline {
     return this.config.logger;
   }
 
+  logInfo(message: string) {
+    const logger = this.getLogger();
+    if (logger) {
+      logger.info(message);
+    }
+  }
+
   logWarn(e: Error | string) {
     const logger = this.getLogger();
     if (logger) {
