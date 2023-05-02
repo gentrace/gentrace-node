@@ -53,10 +53,6 @@ describe("test_openai_embedding_pipeline", () => {
     const openai = new OpenAIApi(
       new Configuration({
         gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
-        gentraceLogger: {
-          info: (message) => console.log(message),
-          warn: (message) => console.warn(message),
-        },
         apiKey: process.env.OPENAI_KEY,
       })
     );
