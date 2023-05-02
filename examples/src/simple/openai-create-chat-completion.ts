@@ -21,7 +21,7 @@ async function createCompletion() {
     pipelineId: "testing-pipeline-id",
   });
 
-  console.log("chat completion response", chatCompletionResponse);
+  console.log(" chat completion response", chatCompletionResponse);
 }
 
 createCompletion();
