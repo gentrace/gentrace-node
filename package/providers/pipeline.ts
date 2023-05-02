@@ -12,7 +12,6 @@ export class Pipeline {
   public pineconeConfig: PineconeConfiguration;
   public openAIConfig: OpenAIConfiguration;
   public config: GentraceConfiguration;
-
   public pipelineHandlers: Map<string, any> = new Map();
 
   constructor({
@@ -21,6 +20,7 @@ export class Pipeline {
     basePath,
     openAIConfig,
     pineconeConfig,
+    logger,
   }: {
     id: string;
     apiKey:
@@ -31,11 +31,16 @@ export class Pipeline {
     basePath?: string;
     openAIConfig?: OpenAIConfiguration;
     pineconeConfig?: PineconeConfiguration;
+    logger?: {
+      info: (message: string, context?: any) => void;
+      warn: (message: string | Error, context?: any) => void;
+    };
   }) {
     this.id = id;
     this.config = new GentraceConfiguration({
       apiKey,
       basePath,
+      logger,
     });
 
     this.openAIConfig = openAIConfig;
