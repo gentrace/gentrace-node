@@ -9,7 +9,7 @@ class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
   gentraceApiKey: string;
   gentraceBasePath?: string;
   gentraceLogger?: {
-    log: (message: string, context?: any) => void;
+    info: (message: string, context?: any) => void;
     warn: (message: string | Error, context?: any) => void;
   };
 
@@ -18,7 +18,7 @@ class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
       gentraceApiKey: string;
       gentraceBasePath?: string;
       gentraceLogger?: {
-        log: (message: string, context?: any) => void;
+        info: (message: string, context?: any) => void;
         warn: (message: string | Error, context?: any) => void;
       };
     }
