@@ -5,7 +5,7 @@ import { config } from "dotenv";
 
 config();
 
-describe("test_openai_embedding_pipeline", () => {
+describe("test_openai_chat_completion_pipeline", () => {
   const chatCompletionResponse = {
     choices: [
       {
