@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.8](https://github.com/gentrace/gentrace-node/compare/v0.7.7...v0.7.8) (2023-05-02)
+
+
+### Bug Fixes
+
+* add logger object parameter ([#80](https://github.com/gentrace/gentrace-node/issues/80)) ([be0ee61](https://github.com/gentrace/gentrace-node/commit/be0ee61f30df9ece0876b6fc167f1cc76489f896))
+* make logger fixes ([#84](https://github.com/gentrace/gentrace-node/issues/84)) ([e1be944](https://github.com/gentrace/gentrace-node/commit/e1be944f6296c90cea6f584ad260136b89db9480))
+
 ## [0.7.7](https://github.com/gentrace/gentrace-node/compare/v0.7.6...v0.7.7) (2023-05-01)
 
 
