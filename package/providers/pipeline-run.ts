@@ -99,7 +99,12 @@ export class PipelineRun {
       return data;
     }
 
-    const pipelinePostResponse = await submission;
-    return pipelinePostResponse.data;
+    try {
+      const pipelinePostResponse = await submission;
+      return pipelinePostResponse.data;
+    } catch (e) {
+      this.pipeline.logWarn(e);
+      throw e;
+    }
   }
 }
