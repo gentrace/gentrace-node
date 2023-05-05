@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.10](https://github.com/gentrace/gentrace-node/compare/v0.7.9...v0.7.10) (2023-05-05)
+
+
+### Bug Fixes
+
+* changed how we process self-contained invocations ([#89](https://github.com/gentrace/gentrace-node/issues/89)) ([860ff8c](https://github.com/gentrace/gentrace-node/commit/860ff8c5f4f56754d57b697e0962c642a7116e71))
+
 ## [0.7.9](https://github.com/gentrace/gentrace-node/compare/v0.7.8...v0.7.9) (2023-05-02)
 
 
