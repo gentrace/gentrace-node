@@ -55,27 +55,29 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
   private async setupSelfContainedPipelineRun<T>(
     pipelineId: string | undefined,
-    coreLogic: () => Promise<T>
+    coreLogic: (pipelineRun: PipelineRun) => Promise<T>
   ): Promise<T & { pipelineRunId?: string }> {
     let isSelfContainedPipelineRun = !this.pipelineRun && pipelineId;
 
+    let pipelineRun = this.pipelineRun;
+
     if (isSelfContainedPipelineRun) {
-      this.pipeline = new Pipeline({
+      const pipeline = new Pipeline({
         id: pipelineId,
         apiKey: this.gentraceConfig.apiKey,
         basePath: this.gentraceConfig.basePath,
         logger: this.gentraceConfig.logger,
       });
 
-      this.pipelineRun = new PipelineRun({
-        pipeline: this.pipeline,
+      pipelineRun = new PipelineRun({
+        pipeline,
       });
     }
 
-    const returnValue = await coreLogic();
+    const returnValue = await coreLogic(pipelineRun);
 
     if (isSelfContainedPipelineRun) {
-      const { pipelineRunId } = await this.pipelineRun.submit();
+      const { pipelineRunId } = await pipelineRun.submit();
       (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
@@ -102,7 +104,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   > {
     return await this.setupSelfContainedPipelineRun<
       AxiosResponse<CreateCompletionResponse, any>
-    >(createCompletionRequest.pipelineId, async () => {
+    >(createCompletionRequest.pipelineId, async (pipelineRun) => {
       const {
         promptTemplate,
         promptInputs,
@@ -135,7 +137,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
       // User and suffix parameters are inputs not model parameters
       const { user, suffix, ...partialModelParams } = baseCompletionOptions;
 
-      this.pipelineRun?.addStepRun(
+      pipelineRun?.addStepRun(
         new OpenAICreateCompletionStepRun(
           elapsedTime,
           new Date(startTime).toISOString(),
@@ -175,7 +177,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   > {
     return this.setupSelfContainedPipelineRun(
       createChatCompletionRequest.pipelineId,
-      async () => {
+      async (pipelineRun) => {
         const {
           messages,
           pipelineId: _pipelineId,
@@ -197,7 +199,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         // user parameter is an input, not a model parameter
         const { user, ...modelParams } = baseCompletionOptions;
 
-        this.pipelineRun?.addStepRun(
+        pipelineRun?.addStepRun(
           new OpenAICreateChatCompletionStepRun(
             elapsedTime,
             new Date(startTime).toISOString(),
@@ -231,7 +233,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   > {
     return this.setupSelfContainedPipelineRun(
       createEmbeddingRequest.pipelineId,
-      async () => {
+      async (pipelineRun) => {
         const {
           model,
           pipelineId: _pipelineId,
@@ -249,7 +251,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
         const elapsedTime = Math.floor(endTime - startTime);
 
-        this.pipelineRun?.addStepRun(
+        pipelineRun?.addStepRun(
           new OpenAICreateEmbeddingStepRun(
             elapsedTime,
             new Date(startTime).toISOString(),
