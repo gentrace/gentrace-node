@@ -27,8 +27,9 @@
     }
   },
   "scripts": {
-    "build": "run-s clean compile",
-    "clean": "rimraf dist",
+    "build": "run-s clean compile copy-providers",
+    "clean": "rimraf dist && rimraf openai/dist && rimraf pinecone/dist",
+    "copy-providers": "cp -r dist/openai openai/dist && cp -r dist/pinecone pinecone/dist",
     "compile": "tsc -p tsconfig.json",
     "test": "run-s build jest",
     "jest": "jest"
