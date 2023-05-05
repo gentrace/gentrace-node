@@ -85,7 +85,7 @@ export class PineconePipelineHandler extends PineconeClient {
     const returnValue = await coreLogic(pipelineRun);
 
     if (isSelfContainedPipelineRun) {
-      const { pipelineRunId } = await this.pipelineRun.submit();
+      const { pipelineRunId } = await pipelineRun.submit();
       (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
