@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.12](https://github.com/gentrace/gentrace-node/compare/v0.7.11...v0.7.12) (2023-05-05)
+
+
+### Bug Fixes
+
+* remove the this.pipelineRun reference ([#93](https://github.com/gentrace/gentrace-node/issues/93)) ([6097861](https://github.com/gentrace/gentrace-node/commit/6097861532eaa5fefbf8b8f00831ad0ad2118b3d))
+
 ## [0.7.11](https://github.com/gentrace/gentrace-node/compare/v0.7.10...v0.7.11) (2023-05-05)
 
 
