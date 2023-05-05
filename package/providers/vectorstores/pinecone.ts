@@ -64,23 +64,25 @@ export class PineconePipelineHandler extends PineconeClient {
 
   private async setupSelfContainedPipelineRun<T>(
     pipelineId: string | undefined,
-    coreLogic: () => Promise<T>
+    coreLogic: (pipelineRun: PipelineRun) => Promise<T>
   ): Promise<T & { pipelineRunId?: string }> {
     let isSelfContainedPipelineRun = !this.pipelineRun && pipelineId;
 
+    let pipelineRun = this.pipelineRun;
+
     if (isSelfContainedPipelineRun) {
-      this.pipeline = new Pipeline({
+      const pipeline = new Pipeline({
         id: pipelineId,
         apiKey: this.gentraceConfig.apiKey,
         basePath: this.gentraceConfig.basePath,
       });
 
-      this.pipelineRun = new PipelineRun({
+      pipelineRun = new PipelineRun({
         pipeline: this.pipeline,
       });
     }
 
-    const returnValue = await coreLogic();
+    const returnValue = await coreLogic(pipelineRun);
 
     if (isSelfContainedPipelineRun) {
       const { pipelineRunId } = await this.pipelineRun.submit();
@@ -117,13 +119,13 @@ export class PineconePipelineHandler extends PineconeClient {
     ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
-        async () => {
+        async (pipelineRun) => {
           const startTime = performance.timeOrigin + performance.now();
           const response = await boundFetch(requestParameters, initOverrides);
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun?.addStepRun(
+          pipelineRun?.addStepRun(
             new PineconeFetchStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -156,14 +158,14 @@ export class PineconePipelineHandler extends PineconeClient {
     ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
-        async () => {
+        async (pipelineRun) => {
           const { updateRequest } = requestParameters;
           const startTime = performance.timeOrigin + performance.now();
           const response = await boundUpdate(requestParameters, initOverrides);
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun?.addStepRun(
+          pipelineRun?.addStepRun(
             new PineconeUpdateStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -198,7 +200,7 @@ export class PineconePipelineHandler extends PineconeClient {
     ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
-        async () => {
+        async (pipelineRun) => {
           const { queryRequest } = requestParameters;
 
           const startTime = performance.timeOrigin + performance.now();
@@ -209,7 +211,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const { topK, filter, ...inputs } = queryRequest;
           const modelParams = { topK, filter };
 
-          this.pipelineRun?.addStepRun(
+          pipelineRun?.addStepRun(
             new PineconeQueryStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -243,14 +245,14 @@ export class PineconePipelineHandler extends PineconeClient {
     ) => {
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId,
-        async () => {
+        async (pipelineRun) => {
           const { upsertRequest } = requestParameters;
           const startTime = performance.timeOrigin + performance.now();
           const response = await boundUpsert(requestParameters, initOverrides);
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun?.addStepRun(
+          pipelineRun?.addStepRun(
             new PineconeUpsertStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -280,13 +282,13 @@ export class PineconePipelineHandler extends PineconeClient {
     ) => {
       return this.setupSelfContainedPipelineRun(
         deleteRequest.pipelineId,
-        async () => {
+        async (pipelineRun) => {
           const startTime = performance.timeOrigin + performance.now();
           const response = await boundDelete(deleteRequest, initOverrides);
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          this.pipelineRun?.addStepRun(
+          pipelineRun?.addStepRun(
             new PineconeDeleteStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
