@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.11](https://github.com/gentrace/gentrace-node/compare/v0.7.10...v0.7.11) (2023-05-05)
+
+
+### Bug Fixes
+
+* temporarily duplicate source into openai and pinecone ([#91](https://github.com/gentrace/gentrace-node/issues/91)) ([5b5abab](https://github.com/gentrace/gentrace-node/commit/5b5ababc3e4cf7dfe2ae2b3ae8b37356a34dafad))
+
 ## [0.7.10](https://github.com/gentrace/gentrace-node/compare/v0.7.9...v0.7.10) (2023-05-05)
 
 
