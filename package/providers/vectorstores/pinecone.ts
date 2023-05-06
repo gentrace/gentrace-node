@@ -75,10 +75,11 @@ export class PineconePipelineHandler extends PineconeClient {
         id: pipelineId,
         apiKey: this.gentraceConfig.apiKey,
         basePath: this.gentraceConfig.basePath,
+        logger: this.gentraceConfig.logger,
       });
 
       pipelineRun = new PipelineRun({
-        pipeline: this.pipeline,
+        pipeline,
       });
     }
 
