@@ -12,27 +12,26 @@
   ],
   "author": "Gentrace",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./index.d.ts",
+      "default": "./index.js"
     },
     "./openai": {
-      "types": "./dist/providers/getters/openai.d.ts",
-      "default": "./dist/providers/getters/openai.js"
+      "types": "./openai.d.ts",
+      "default": "./openai.js"
     },
     "./pinecone": {
-      "types": "./dist/providers/getters/pinecone.d.ts",
-      "default": "./dist/providers/getters/pinecone.js"
+      "types": "./pinecone.d.ts",
+      "default": "./pinecone.js"
     }
   },
   "scripts": {
-    "build": "run-s clean compile copy-providers",
-    "clean": "rimraf dist && rimraf openai/dist && rimraf pinecone/dist",
-    "copy-providers": "cp -r dist/openai openai/dist && cp -r dist/pinecone pinecone/dist",
-    "compile": "tsc -p tsconfig.json",
+    "build": "run-s clean compile",
+    "clean": "rimraf dist",
+    "compile": "tsc -p tsconfig.json && cp package.json dist/package.json",
     "test": "run-s build jest",
     "jest": "jest"
   },
