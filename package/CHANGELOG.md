@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.14](https://github.com/gentrace/gentrace-node/compare/v0.7.13...v0.7.14) (2023-05-06)
+
+
+### Bug Fixes
+
+* pipeline not passed in correctly ([#97](https://github.com/gentrace/gentrace-node/issues/97)) ([35ce52d](https://github.com/gentrace/gentrace-node/commit/35ce52d5d0a0cde5fafbc3129b163cd29e2e2a77))
+
 ## [0.7.13](https://github.com/gentrace/gentrace-node/compare/v0.7.12...v0.7.13) (2023-05-06)
 
 
