@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.13](https://github.com/gentrace/gentrace-node/compare/v0.7.12...v0.7.13) (2023-05-06)
+
+
+### Bug Fixes
+
+* make sure that package.json includes main and types ([#95](https://github.com/gentrace/gentrace-node/issues/95)) ([165712b](https://github.com/gentrace/gentrace-node/commit/165712bf429b8c6d0d2708519584e582dedaea09))
+
 ## [0.7.12](https://github.com/gentrace/gentrace-node/compare/v0.7.11...v0.7.12) (2023-05-05)
 
 
