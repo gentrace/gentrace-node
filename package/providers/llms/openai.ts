@@ -1,5 +1,6 @@
 import { AxiosRequestConfig, AxiosResponse } from "openai/node_modules/axios";
-import * as Mustache from "mustache";
+// @ts-ignore: the typings from @types/mustache are incorrect
+import Mustache from "mustache";
 import {
   ChatCompletionRequestMessage,
   CreateChatCompletionRequest,
