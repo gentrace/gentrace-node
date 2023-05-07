@@ -4,12 +4,6 @@ export default {
   input: ["index.ts", "openai.ts", "pinecone.ts"],
   output: [
     {
-      dir: "dist",
-      format: "cjs",
-      preserveModules: true,
-      sourcemap: true,
-    },
-    {
       dir: "dist/esm",
       format: "es",
       sourcemap: true,
@@ -19,7 +13,7 @@ export default {
   ],
   plugins: [
     typescript({
-      tsconfig: "./tsconfig.json",
+      tsconfig: "./tsconfig.esm.json",
     }),
   ],
 };

@@ -12,33 +12,36 @@
   ],
   "author": "Gentrace",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/esm/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "./index.js",
+  "module": "./esm/index.mjs",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.mjs",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./esm/index.mjs",
+      "require": "./index.js",
+      "default": "./index.js",
+      "types": "./index.d.ts"
     },
     "./openai": {
-      "import": "./dist/esm/openai.mjs",
-      "require": "./dist/openai.js",
-      "default": "./dist/openai.js",
-      "types": "./dist/openai.d.ts"
+      "import": "./esm/openai.mjs",
+      "require": "./openai.js",
+      "default": "./openai.js",
+      "types": "./openai.d.ts"
     },
     "./pinecone": {
-      "import": "./dist/esm/pinecone.mjs",
-      "require": "./dist/pinecone.js",
-      "default": "./dist/pinecone.js",
-      "types": "./dist/pinecone.d.ts"
+      "import": "./esm/pinecone.mjs",
+      "require": "./pinecone.js",
+      "default": "./pinecone.js",
+      "types": "./pinecone.d.ts"
     }
   },
   "scripts": {
-    "build": "run-s clean compile",
+    "build": "run-s clean rollup:compile copy-package",
     "clean": "rimraf dist",
-    "compile": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript && cp package.json dist/package.json",
+    "rollup:compile": "run-s rollup:compile-cjs rollup:compile-esm",
+    "rollup:compile-cjs": "rollup --config rollup.config.cjs.ts --configPlugin @rollup/plugin-typescript",
+    "rollup:compile-esm": "rollup --config rollup.config.esm.ts --configPlugin @rollup/plugin-typescript",
+    "copy-package": "cp package.json dist/package.json",
     "test": "jest"
   },
   "peerDependencies": {

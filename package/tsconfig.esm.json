@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "declaration": true,
+    "outDir": "dist/esm",
+    "target": "ES6",
+    "noImplicitAny": true,
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "typeRoots": ["node_modules/@types"]
+  },
+  "exclude": ["dist", "node_modules"]
+}
