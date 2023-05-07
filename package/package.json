@@ -12,28 +12,34 @@
   ],
   "author": "Gentrace",
   "license": "MIT",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
     "./openai": {
-      "types": "./openai.d.ts",
-      "default": "./openai.js"
+      "import": "./dist/esm/openai.mjs",
+      "require": "./dist/openai.js",
+      "default": "./dist/openai.js",
+      "types": "./dist/openai.d.ts"
     },
     "./pinecone": {
-      "types": "./pinecone.d.ts",
-      "default": "./pinecone.js"
+      "import": "./dist/esm/pinecone.mjs",
+      "require": "./dist/pinecone.js",
+      "default": "./dist/pinecone.js",
+      "types": "./dist/pinecone.d.ts"
     }
   },
   "scripts": {
     "build": "run-s clean compile",
     "clean": "rimraf dist",
-    "compile": "tsc -p tsconfig.json && cp package.json dist/package.json",
-    "test": "run-s build jest",
-    "jest": "jest"
+    "compile": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript && cp package.json dist/package.json",
+    "test": "jest"
   },
   "peerDependencies": {
     "@pinecone-database/pinecone": "> 0.0.1 < 1.0.0",
@@ -54,6 +60,9 @@
   },
   "devDependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.5.1",
     "@types/mustache": "^4.2.2",
     "@types/node": "^12.11.5",
@@ -64,6 +73,7 @@
     "npm-run-all": "^4.1.5",
     "openai": "^3.2.1",
     "rimraf": "^5.0.0",
+    "rollup": "^3.21.5",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
