@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
+    "module": "ESNext",
     "declaration": true,
-    "target": "ES6",
-    "module": "commonjs",
-    "noImplicitAny": true,
     "outDir": "dist",
+    "target": "ES6",
+    "noImplicitAny": true,
     "rootDir": ".",
     "moduleResolution": "node",
-    "types": ["jest", "node"]
+    "typeRoots": ["node_modules/@types"]
   },
-  "exclude": ["dist", "node_modules"],
-  "include": ["src", "tests"]
+  "exclude": ["dist", "node_modules"]
 }

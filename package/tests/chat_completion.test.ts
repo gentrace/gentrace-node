@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { OpenAIApi, Configuration } from "@gentrace/node/openai";
+import { Configuration, OpenAIApi } from "../openai";
 import { config } from "dotenv";
 
 config();
