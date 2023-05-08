@@ -15,11 +15,6 @@
   "devDependencies": {
     "parcel": "^2.8.3"
   },
-  "targets": {
-    "default": {
-      "includeNodeModules": true
-    }
-  },
   "engines": {
     "node": ">=16"
   }
