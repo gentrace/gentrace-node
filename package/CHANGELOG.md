@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.19](https://github.com/gentrace/gentrace-node/compare/v0.7.18...v0.7.19) (2023-05-09)
+
+
+### Bug Fixes
+
+* release 0.7.19 ([#109](https://github.com/gentrace/gentrace-node/issues/109)) ([6dddcb4](https://github.com/gentrace/gentrace-node/commit/6dddcb424c61ce524fc84673018d64aaf0a70806))
+
 ## [0.7.13](https://github.com/gentrace/gentrace-node/compare/v0.7.12...v0.7.13) (2023-05-06)
 
 
