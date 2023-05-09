@@ -59,11 +59,12 @@
   "dependencies": {
     "axios": "^0.27.2",
     "mustache": "^4.2.0",
-    "tslib": "^2.5.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.5.1",
     "@types/node": "^12.11.5",
