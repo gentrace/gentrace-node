@@ -1,0 +1,5 @@
+{
+  "name": "@gentrace/node/openai",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts"
+}
