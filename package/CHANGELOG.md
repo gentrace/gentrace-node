@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.16](https://github.com/gentrace/gentrace-node/compare/v0.7.15...v0.7.16) (2023-05-09)
+
+
+### Bug Fixes
+
+* add tslib and see if dependencies resolve correctly ([#103](https://github.com/gentrace/gentrace-node/issues/103)) ([96a9299](https://github.com/gentrace/gentrace-node/commit/96a92991c85fc0ee7dc8f307943f197045f1640a))
+
 ## [0.7.15](https://github.com/gentrace/gentrace-node/compare/v0.7.14...v0.7.15) (2023-05-09)
 
 
