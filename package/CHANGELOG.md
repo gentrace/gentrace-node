@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.15](https://github.com/gentrace/gentrace-node/compare/v0.7.14...v0.7.15) (2023-05-09)
+
+
+### Bug Fixes
+
+* simplify the package structure to allow better reuse ([#99](https://github.com/gentrace/gentrace-node/issues/99)) ([6ed7ee1](https://github.com/gentrace/gentrace-node/commit/6ed7ee1d1a942266be6719e1cc53fbbb5935968d))
+
 ## [0.7.14](https://github.com/gentrace/gentrace-node/compare/v0.7.13...v0.7.14) (2023-05-06)
 
 
