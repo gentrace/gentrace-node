@@ -1,40 +1,5 @@
 # Changelog
 
-## [0.7.18](https://github.com/gentrace/gentrace-node/compare/v0.7.17...v0.7.18) (2023-05-09)
-
-
-### Bug Fixes
-
-* change dep location ([#107](https://github.com/gentrace/gentrace-node/issues/107)) ([540315b](https://github.com/gentrace/gentrace-node/commit/540315b689a4c6a960ff2d7db58e1012dc6f0b50))
-
-## [0.7.17](https://github.com/gentrace/gentrace-node/compare/v0.7.16...v0.7.17) (2023-05-09)
-
-
-### Bug Fixes
-
-* ensure CJS dependencies are properly converted ([#105](https://github.com/gentrace/gentrace-node/issues/105)) ([bac590c](https://github.com/gentrace/gentrace-node/commit/bac590c0f1bdde67c4e1bbb69ffb13be4ef771ba))
-
-## [0.7.16](https://github.com/gentrace/gentrace-node/compare/v0.7.15...v0.7.16) (2023-05-09)
-
-
-### Bug Fixes
-
-* add tslib and see if dependencies resolve correctly ([#103](https://github.com/gentrace/gentrace-node/issues/103)) ([96a9299](https://github.com/gentrace/gentrace-node/commit/96a92991c85fc0ee7dc8f307943f197045f1640a))
-
-## [0.7.15](https://github.com/gentrace/gentrace-node/compare/v0.7.14...v0.7.15) (2023-05-09)
-
-
-### Bug Fixes
-
-* simplify the package structure to allow better reuse ([#99](https://github.com/gentrace/gentrace-node/issues/99)) ([6ed7ee1](https://github.com/gentrace/gentrace-node/commit/6ed7ee1d1a942266be6719e1cc53fbbb5935968d))
-
-## [0.7.14](https://github.com/gentrace/gentrace-node/compare/v0.7.13...v0.7.14) (2023-05-06)
-
-
-### Bug Fixes
-
-* pipeline not passed in correctly ([#97](https://github.com/gentrace/gentrace-node/issues/97)) ([35ce52d](https://github.com/gentrace/gentrace-node/commit/35ce52d5d0a0cde5fafbc3129b163cd29e2e2a77))
-
 ## [0.7.13](https://github.com/gentrace/gentrace-node/compare/v0.7.12...v0.7.13) (2023-05-06)
 
 
