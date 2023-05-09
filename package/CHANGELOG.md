@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.17](https://github.com/gentrace/gentrace-node/compare/v0.7.16...v0.7.17) (2023-05-09)
+
+
+### Bug Fixes
+
+* ensure CJS dependencies are properly converted ([#105](https://github.com/gentrace/gentrace-node/issues/105)) ([bac590c](https://github.com/gentrace/gentrace-node/commit/bac590c0f1bdde67c4e1bbb69ffb13be4ef771ba))
+
 ## [0.7.16](https://github.com/gentrace/gentrace-node/compare/v0.7.15...v0.7.16) (2023-05-09)
 
 
