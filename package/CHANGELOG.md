@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.18](https://github.com/gentrace/gentrace-node/compare/v0.7.17...v0.7.18) (2023-05-09)
+
+
+### Bug Fixes
+
+* change dep location ([#107](https://github.com/gentrace/gentrace-node/issues/107)) ([540315b](https://github.com/gentrace/gentrace-node/commit/540315b689a4c6a960ff2d7db58e1012dc6f0b50))
+
 ## [0.7.17](https://github.com/gentrace/gentrace-node/compare/v0.7.16...v0.7.17) (2023-05-09)
 
 
