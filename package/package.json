@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/node",
-  "version": "0.7.18",
+  "version": "0.7.20-beta.4",
   "description": "Node.js library for the Gentrace API",
   "repository": {
     "type": "git",
@@ -13,34 +13,33 @@
   "author": "Gentrace",
   "license": "MIT",
   "main": "./index.js",
-  "module": "./esm/index.mjs",
+  "module": "./index.mjs",
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./esm/index.mjs",
+      "import": "./index.mjs",
       "require": "./index.js",
       "default": "./index.js",
       "types": "./index.d.ts"
     },
     "./openai": {
-      "import": "./esm/openai.mjs",
+      "import": "./openai.mjs",
       "require": "./openai.js",
       "default": "./openai.js",
       "types": "./openai.d.ts"
     },
     "./pinecone": {
-      "import": "./esm/pinecone.mjs",
+      "import": "./pinecone.mjs",
       "require": "./pinecone.js",
       "default": "./pinecone.js",
       "types": "./pinecone.d.ts"
     }
   },
   "scripts": {
-    "build": "run-s clean rollup:compile copy-package",
+    "build": "run-s clean typescript:compile rollup:compile copy-package",
     "clean": "rimraf dist",
-    "rollup:compile": "run-s rollup:compile-cjs rollup:compile-esm",
-    "rollup:compile-cjs": "rollup --config rollup.config.cjs.ts --configPlugin @rollup/plugin-typescript",
-    "rollup:compile-esm": "rollup --config rollup.config.esm.ts --configPlugin @rollup/plugin-typescript",
+    "typescript:compile": "tsc -p tsconfig.json",
+    "rollup:compile": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "copy-package": "cp package.json dist/package.json",
     "test": "jest"
   },
@@ -65,7 +64,6 @@
     "@pinecone-database/pinecone": "^0.0.12",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.5.1",
     "@types/node": "^12.11.5",

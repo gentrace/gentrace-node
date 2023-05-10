@@ -7,6 +7,7 @@
     "noImplicitAny": true,
     "rootDir": ".",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "typeRoots": ["node_modules/@types"]
   },
   "exclude": ["dist", "node_modules"]
