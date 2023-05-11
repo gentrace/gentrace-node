@@ -6,7 +6,7 @@
     "noImplicitAny": true,
     "outDir": "dist",
     "rootDir": ".",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
     "types": ["jest", "node"]
   },
   "exclude": ["dist", "node_modules"],

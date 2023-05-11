@@ -1,4 +1,4 @@
-import { Configuration, OpenAIApi } from "@gentrace/node/openai";
+import { Configuration, OpenAIApi } from "../openai";
 
 describe("Usage of OpenAIApi", () => {
   describe("constructor", () => {
