@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.22](https://github.com/gentrace/gentrace-node/compare/v0.7.21...v0.7.22) (2023-05-11)
+
+
+### Bug Fixes
+
+* allow ES module interop ([#115](https://github.com/gentrace/gentrace-node/issues/115)) ([e835ca8](https://github.com/gentrace/gentrace-node/commit/e835ca87a527f69644d90edbe767e586a3a9afd3))
+
 ## [0.7.21](https://github.com/gentrace/gentrace-node/compare/v0.7.19...v0.7.21) (2023-05-11)
 
 
