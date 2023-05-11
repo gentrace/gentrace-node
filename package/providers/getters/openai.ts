@@ -48,7 +48,7 @@ class OpenAIApi extends OpenAIPipelineHandler {
           throw new Error('Gentrace base path must end in "/api/v1".');
         }
       } catch (err) {
-        throw new Error(`Invalid Gentrace base path: ${err.message}`);
+        throw new Error(`Invalid Gentrace base path ${err.message}`);
       }
     }
 
