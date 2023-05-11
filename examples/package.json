@@ -11,7 +11,7 @@
     "start": "dotenv ts-node"
   },
   "dependencies": {
-    "@gentrace/node": "^0.7.20-beta.6",
+    "@gentrace/node": "^0.7.20-beta.7",
     "@pinecone-database/pinecone": "^0.0.12",
     "openai": "^3.2.1",
     "typescript": "^5.0.3"
