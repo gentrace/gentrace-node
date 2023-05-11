@@ -13,6 +13,7 @@
     "workbox-webpack-plugin": "^6.5.2"
   },
   "dependencies": {
-    "@gentrace/node": "file:../../package/dist"
+    "@gentrace/node": "^0.7.22-beta.1",
+    "openai": "^3.2.1"
   }
 }
