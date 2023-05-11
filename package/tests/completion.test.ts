@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { OpenAIApi, Configuration } from "@gentrace/node/openai";
+import { Configuration, OpenAIApi } from "../openai";
 
 describe("test_openai_completion_pipeline", () => {
   const completionResponse = {
