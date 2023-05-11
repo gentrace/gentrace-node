@@ -2,11 +2,13 @@
   "compilerOptions": {
     "declaration": true,
     "target": "ES6",
-    "module": "commonjs",
+    "module": "ESNext",
     "noImplicitAny": true,
     "outDir": "dist",
     "rootDir": ".",
     "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "types": ["jest", "node"]
   },
   "exclude": ["dist", "node_modules"],
