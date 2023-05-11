@@ -58,11 +58,11 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     pipelineId: string | undefined,
     coreLogic: (pipelineRun: PipelineRun) => Promise<T>
   ): Promise<T & { pipelineRunId?: string }> {
-    let isSelfContainedPr = !this.pipelineRun && pipelineId;
+    let isSelfContainedPullRequest = !this.pipelineRun && pipelineId;
 
     let pipelineRun = this.pipelineRun;
 
-    if (isSelfContainedPr) {
+    if (isSelfContainedPullRequest) {
       const pipeline = new Pipeline({
         id: pipelineId,
         apiKey: this.gentraceConfig.apiKey,
@@ -77,7 +77,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
     const returnValue = await coreLogic(pipelineRun);
 
-    if (isSelfContainedPr) {
+    if (isSelfContainedPullRequest) {
       const { pipelineRunId } = await pipelineRun.submit();
       (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
