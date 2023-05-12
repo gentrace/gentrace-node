@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.23](https://github.com/gentrace/gentrace-node/compare/v0.7.22...v0.7.23) (2023-05-12)
+
+
+### Bug Fixes
+
+* add explicit performance import ([#119](https://github.com/gentrace/gentrace-node/issues/119)) ([78850ec](https://github.com/gentrace/gentrace-node/commit/78850ec8c1307615a9489c630a764b745d66ab3b))
+
+
+### Miscellaneous Chores
+
+* release 0.7.23 ([#117](https://github.com/gentrace/gentrace-node/issues/117)) ([07017f0](https://github.com/gentrace/gentrace-node/commit/07017f02d0044b0d940783e3ccb985f2020ca201))
+
 ## [0.7.22](https://github.com/gentrace/gentrace-node/compare/v0.7.21...v0.7.22) (2023-05-11)
 
 
