@@ -19,6 +19,7 @@ import { PipelineRun } from "../pipeline-run";
 import { StepRun } from "../step-run";
 import { Configuration as GentraceConfiguration } from "../../configuration";
 import { OptionalPipelineId } from "../utils";
+import { performance } from "perf_hooks";
 
 type PineconePipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
