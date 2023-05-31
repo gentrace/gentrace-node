@@ -25,6 +25,22 @@ export class Evaluation {
     });
 
     this.api = new CoreApi(this.config);
+
+    if (!apiKey) {
+      throw new Error("Gentrace API key must be defined.");
+    }
+
+    if (basePath) {
+      try {
+        const url = new URL(basePath);
+        if (url.pathname.startsWith("/api/v1")) {
+        } else {
+          throw new Error('Gentrace base path must end in "/api/v1".');
+        }
+      } catch (err) {
+        throw new Error(`Invalid Gentrace base path: ${err.message}`);
+      }
+    }
   }
 
   async getTestCases(setId: string) {
