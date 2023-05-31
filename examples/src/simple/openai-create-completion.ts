@@ -18,7 +18,7 @@ async function createCompletion() {
     },
   });
 
-  console.log("completion response", completionResponse);
+  console.log("completion response", completionResponse.data.choices[0]);
 }
 
 createCompletion();

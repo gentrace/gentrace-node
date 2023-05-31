@@ -12,4 +12,20 @@
  * Do not edit the class manually.
  */
 
-export * from "./api/core-api";
+// May contain unused imports in some cases
+// @ts-ignore
+import { TestCase } from "./test-case";
+
+/**
+ *
+ * @export
+ * @interface TestCaseGet200Response
+ */
+export interface TestCaseGet200Response {
+  /**
+   *
+   * @type {Array<TestCase>}
+   * @memberof TestCaseGet200Response
+   */
+  testCases?: Array<TestCase>;
+}
