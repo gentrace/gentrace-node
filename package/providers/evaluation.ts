@@ -2,7 +2,7 @@ import { CoreApi } from "../api";
 import { Configuration as GentraceConfiguration } from "../configuration";
 import { TestRunPostRequestTestResultsInner } from "../models";
 
-type TestResult = TestRunPostRequestTestResultsInner;
+export type TestResult = TestRunPostRequestTestResultsInner;
 
 export class Evaluation {
   public config: GentraceConfiguration;
