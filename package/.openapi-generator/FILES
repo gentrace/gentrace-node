@@ -1,6 +1,6 @@
 .npmignore
 api.ts
-api/ingestion-api.ts
+api/core-api.ts
 base.ts
 common.ts
 configuration.ts
@@ -12,4 +12,11 @@ models/pipeline-run-request-step-runs-inner-provider.ts
 models/pipeline-run-request-step-runs-inner.ts
 models/pipeline-run-request.ts
 models/pipeline-run-response.ts
-tsconfig.json
+models/test-case-get200-response.ts
+models/test-case.ts
+models/test-run-get200-response-stats.ts
+models/test-run-get200-response.ts
+models/test-run-post-request-test-results-inner.ts
+models/test-run-post-request.ts
+models/test-run-post200-response.ts
+models/test-run.ts

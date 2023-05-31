@@ -12,4 +12,16 @@
  * Do not edit the class manually.
  */
 
-export * from "./api/core-api";
+/**
+ *
+ * @export
+ * @interface TestRunPost200Response
+ */
+export interface TestRunPost200Response {
+  /**
+   *
+   * @type {string}
+   * @memberof TestRunPost200Response
+   */
+  runId: string;
+}

@@ -1,4 +1,4 @@
-import { IngestionApi } from "../api";
+import { CoreApi } from "../api/core-api";
 import { Pipeline } from "./pipeline";
 import { PipelineRunResponse } from "../models/pipeline-run-response";
 import { v4 } from "uuid";
@@ -58,13 +58,13 @@ export class PipelineRun {
   public async submit(
     { waitForServer }: { waitForServer: boolean } = { waitForServer: false }
   ) {
-    const ingestionApi = new IngestionApi(this.pipeline.config);
+    const coreApi = new CoreApi(this.pipeline.config);
 
     const newPipelineRunId = v4();
 
     this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
 
-    const submission = ingestionApi.pipelineRunPost({
+    const submission = coreApi.pipelineRunPost({
       id: newPipelineRunId,
       name: this.pipeline.id,
       stepRuns: this.stepRuns.map(
