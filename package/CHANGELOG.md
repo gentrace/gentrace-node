@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/gentrace/gentrace-node/compare/v0.7.23...v0.8.0) (2023-05-31)
+
+
+### Features
+
+* add evaluation routes ([#120](https://github.com/gentrace/gentrace-node/issues/120)) ([6b4109b](https://github.com/gentrace/gentrace-node/commit/6b4109b33c752b8d3a7378c77413b0a4cf3f1774))
+
 ## [0.7.23](https://github.com/gentrace/gentrace-node/compare/v0.7.22...v0.7.23) (2023-05-12)
 
 
