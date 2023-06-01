@@ -1,6 +1,6 @@
 import { Evaluation } from "@gentrace/node";
 
-const SET_ID = "12494e89-af19-4326-a12c-54e487337ecc";
+const SET_ID = "09c6528e-5a2b-548b-b666-c0cb71e12145";
 
 async function submitTestRun() {
   const evaluation = new Evaluation({
@@ -22,7 +22,7 @@ async function submitTestRun() {
         a: "1",
         b: "2",
       },
-      output: "This are some outputs",
+      output: testCase.expected,
     });
   }
 
