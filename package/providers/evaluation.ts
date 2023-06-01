@@ -27,7 +27,7 @@ export class Evaluation {
     this.api = new CoreApi(this.config);
 
     if (!apiKey) {
-      throw new Error("Gentrace API key must be defined.");
+      throw new Error("Gentrace API key must be defined");
     }
 
     if (basePath) {
