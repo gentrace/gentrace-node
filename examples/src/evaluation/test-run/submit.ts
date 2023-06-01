@@ -16,14 +16,13 @@ async function submitTestRun() {
     output: string;
   }[] = [];
   for (const testCase of responses.testCases ?? []) {
-    results.push({
-      caseId: testCase["id"],
-      inputs: {
-        a: "1",
-        b: "2",
-      },
-      output: testCase.expected,
-    });
+    // results.push({
+    //   caseId: testCase["id"],
+    //   inputs: {
+    //     a: "1",
+    //     b: "2",
+    //   },
+    // });
   }
 
   const submissionResponse = await evaluation.submitTestResults(
