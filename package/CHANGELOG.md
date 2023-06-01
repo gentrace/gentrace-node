@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/gentrace/gentrace-node/compare/v0.8.0...v0.8.1) (2023-06-01)
+
+
+### Bug Fixes
+
+* add expected and archive ([#125](https://github.com/gentrace/gentrace-node/issues/125)) ([edf6579](https://github.com/gentrace/gentrace-node/commit/edf65790c5b11a8ebf238de05af9412694a86bdc))
+
 ## [0.8.0](https://github.com/gentrace/gentrace-node/compare/v0.7.23...v0.8.0) (2023-05-31)
 
 
