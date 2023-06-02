@@ -2,6 +2,7 @@ import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../openai";
 import { config } from "dotenv";
+import { init } from "../providers";
 
 config();
 
@@ -50,10 +51,13 @@ describe("test_openai_embedding_pipeline", () => {
   });
 
   it("should return pipelineRunId when embedding is passed", async () => {
+    init({
+      apiKey: process.env.GENTRACE_API_KEY ?? "",
+    });
+
     const openai = new OpenAIApi(
       new Configuration({
-        gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
-        apiKey: process.env.OPENAI_KEY,
+        apiKey: process.env.OPENAI_API_KEY ?? "",
       })
     );
 

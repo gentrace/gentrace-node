@@ -32,9 +32,23 @@ export function init({
   branch?: string;
   commit?: string;
 }) {
+  if (!apiKey) {
+    throw new Error("Gentrace API key not provided.");
+  }
+
   GENTRACE_API_KEY = apiKey;
 
   if (basePath) {
+    try {
+      const url = new URL(basePath);
+      if (url.pathname.startsWith("/api/v1")) {
+      } else {
+        throw new Error('Gentrace base path must end in "/api/v1".');
+      }
+    } catch (err) {
+      throw new Error(`Invalid Gentrace base path: ${err.message}`);
+    }
+
     GENTRACE_BASE_PATH = basePath;
   }
 
@@ -52,4 +66,13 @@ export function init({
   if (commit) {
     GENTRACE_COMMIT = commit;
   }
+}
+
+export function deinit() {
+  GENTRACE_API_KEY = "";
+  GENTRACE_BASE_PATH = "";
+  GENTRACE_BRANCH = "";
+  GENTRACE_COMMIT = "";
+  globalGentraceConfig = null;
+  globalGentraceApi = null;
 }

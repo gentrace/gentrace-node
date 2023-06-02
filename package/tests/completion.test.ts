@@ -1,6 +1,7 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../openai";
+import { init } from "../providers";
 
 describe("test_openai_completion_pipeline", () => {
   const completionResponse = {
@@ -44,9 +45,12 @@ describe("test_openai_completion_pipeline", () => {
   });
 
   it("should return pipelineRunId when completion is given a pipelineId", async () => {
+    init({
+      apiKey: process.env.GENTRACE_API_KEY ?? "",
+    });
+
     const openai = new OpenAIApi(
       new Configuration({
-        gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
         apiKey: process.env.OPENAI_KEY,
       })
     );
@@ -64,9 +68,12 @@ describe("test_openai_completion_pipeline", () => {
   });
 
   it("should not return pipelineRunId when completion is not given a pipeline", async () => {
+    init({
+      apiKey: process.env.GENTRACE_API_KEY ?? "",
+    });
+
     const openai = new OpenAIApi(
       new Configuration({
-        gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
         apiKey: process.env.OPENAI_KEY,
       })
     );

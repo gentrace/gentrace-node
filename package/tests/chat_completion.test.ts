@@ -2,6 +2,7 @@ import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../openai";
 import { config } from "dotenv";
+import { deinit, init } from "../providers/init";
 
 config();
 
@@ -58,10 +59,18 @@ describe("test_openai_chat_completion_pipeline", () => {
     server.close();
   });
 
+  beforeEach(() => {
+    deinit();
+    jest.resetModules();
+  });
+
   it("should return pipelineRunId when chat completion is given a pipelineId", async () => {
+    init({
+      apiKey: process.env.GENTRACE_API_KEY ?? "",
+    });
+
     const openai = new OpenAIApi(
       new Configuration({
-        gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
         apiKey: process.env.OPENAI_KEY,
       })
     );
@@ -81,9 +90,12 @@ describe("test_openai_chat_completion_pipeline", () => {
   });
 
   it("should not return pipelineRunId when chat completion is not given a pipeline", async () => {
+    init({
+      apiKey: process.env.GENTRACE_API_KEY ?? "",
+    });
+
     const openai = new OpenAIApi(
       new Configuration({
-        gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
         apiKey: process.env.OPENAI_KEY,
       })
     );

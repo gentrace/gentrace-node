@@ -1,7 +1,8 @@
 import stringify from "json-stable-stringify";
 import { rest } from "msw";
+import { deinit, init } from "../providers/init";
+import { getTestCases, submitTestResults } from "../providers";
 import { setupServer, SetupServer } from "msw/node";
-import { Evaluation } from "../providers/evaluation";
 
 describe("Usage of Evaluation functionality", () => {
   let server: SetupServer;
@@ -60,50 +61,19 @@ describe("Usage of Evaluation functionality", () => {
     server.close();
   });
 
+  beforeEach(() => {
+    deinit();
+    jest.resetModules();
+  });
+
   describe("constructor", () => {
-    it("should create an instance when configuration is valid (gentrace.ai host)", () => {
-      expect(() => {
-        new Evaluation({
-          apiKey: "gentrace-api-key",
-          basePath: "https://gentrace.ai/api/v1",
-        });
-      }).not.toThrow();
-    });
-
-    it("should throw an error when base path is invalid (gentrace.ai host)", () => {
-      expect(() => {
-        new Evaluation({
-          apiKey: "dsfl",
-          basePath: "https://gentrace.ai/api",
-        });
-      }).toThrow();
-    });
-
-    it("should not throw an error when base path is invalid (gentrace.ai host)", () => {
-      expect(() => {
-        new Evaluation({
-          apiKey: "dsfl",
-          basePath: "https://gentrace.ai/api/v1",
-        });
-      }).not.toThrow();
-    });
-
-    it("should throw an error when api key is not defined(gentrace.ai host)", () => {
-      expect(() => {
-        new Evaluation({
-          apiKey: "",
-          basePath: "https://gentrace.ai/api/v1",
-        });
-      }).toThrow();
-    });
-
     it("should create an instance when configuration is valid (gentrace.ai host)", async () => {
-      const evaluation = new Evaluation({
+      init({
         apiKey: "gentrace-api-key",
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCasesResponse = await evaluation.getTestCases("set-id");
+      const testCasesResponse = await getTestCases("set-id");
       const testCases = testCasesResponse.testCases ?? [];
 
       expect(testCases.length).toBe(1);
@@ -112,7 +82,39 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await evaluation.submitTestResults(
+      const submissionResponse = await submitTestResults(
+        "set-id",
+        "test-source",
+        [
+          {
+            caseId: "",
+            inputs: {
+              a: "1",
+              b: "2",
+            },
+            output: "This are some outputs",
+          },
+        ]
+      );
+      expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
+    });
+
+    it("should create an instance when configuration is valid (gentrace.ai host)", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const testCasesResponse = await getTestCases("set-id");
+      const testCases = testCasesResponse.testCases ?? [];
+
+      expect(testCases.length).toBe(1);
+
+      expect(stringify(testCases)).toBe(
+        stringify(getTestCasesResponse.testCases)
+      );
+
+      const submissionResponse = await submitTestResults(
         "set-id",
         "test-source",
         [

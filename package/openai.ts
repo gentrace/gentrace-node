@@ -19,7 +19,7 @@ class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
       /**
        * @deprecated Declare the API key in the init() call instead.
        */
-      gentraceApiKey: string;
+      gentraceApiKey?: string;
       /**
        * @deprecated Declare the base path in the init() call instead.
        */
@@ -56,12 +56,16 @@ class OpenAIApi extends OpenAIPipelineHandler {
     }
 
     let gentraceConfig: GentraceConfiguration | null = null;
-    if (modifiedOAIConfig.apiKey) {
+    if (modifiedOAIConfig.gentraceApiKey) {
       gentraceConfig = new GentraceConfiguration({
         apiKey: modifiedOAIConfig.gentraceApiKey ?? GENTRACE_API_KEY,
         basePath: modifiedOAIConfig.gentraceBasePath,
         logger: modifiedOAIConfig.gentraceLogger,
       });
+    } else if (!globalGentraceConfig) {
+      throw new Error(
+        "Gentrace API key not provided. Please provide it in the init() call."
+      );
     } else {
       gentraceConfig = globalGentraceConfig;
     }

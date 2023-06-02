@@ -1,8 +1,9 @@
 import { Configuration, OpenAIApi } from "../openai";
+import { init } from "../providers";
 
 describe("Usage of OpenAIApi", () => {
   describe("constructor", () => {
-    it("should create an instance when configuration is valid (gentrace.ai host)", () => {
+    it("should create an instance when configuration params are deprecated but still valid (gentrace.ai host)", () => {
       expect(() => {
         new OpenAIApi(
           new Configuration({
@@ -16,9 +17,11 @@ describe("Usage of OpenAIApi", () => {
 
     it("should create an instance when configuration is valid (gentrace.ai host)", () => {
       expect(() => {
+        init({
+          apiKey: "gentrace-api-key",
+        });
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "gentrace-api-key",
             apiKey: "openai-api-key",
           })
         );
@@ -27,10 +30,13 @@ describe("Usage of OpenAIApi", () => {
 
     it("should create an instance when configuration is valid (staging.gentrace.ai host)", () => {
       expect(() => {
+        init({
+          apiKey: "gentrace-api-key",
+          basePath: "https://staging.gentrace.ai/api/v1",
+        });
+
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "https://staging.gentrace.ai/api/v1/pipeline-run",
             apiKey: "openai-api-key",
           })
         );
@@ -39,10 +45,13 @@ describe("Usage of OpenAIApi", () => {
 
     it("should create an instance when configuration is valid (localhost + port host)", () => {
       expect(() => {
+        init({
+          apiKey: "gentrace-api-key",
+          basePath: "http://localhost:3000/api/v1",
+        });
+
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "http://localhost:3000/api/v1/pipeline-run",
             apiKey: "openai-api-key",
           })
         );
@@ -51,9 +60,12 @@ describe("Usage of OpenAIApi", () => {
 
     it("should create an instance when configuration is valid (no host)", () => {
       expect(() => {
+        init({
+          apiKey: "gentrace-api-key",
+        });
+
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "gentrace-api-key",
             apiKey: "openai-api-key",
           })
         );
@@ -61,10 +73,13 @@ describe("Usage of OpenAIApi", () => {
     });
 
     it("should create an instance when configuration is valid", () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
       const openai = new OpenAIApi(
         new Configuration({
-          gentraceApiKey: "gentrace-api-key",
-          gentraceBasePath: "https://gentrace.ai/api/v1",
           apiKey: "openai-api-key",
         })
       );
@@ -73,10 +88,13 @@ describe("Usage of OpenAIApi", () => {
 
     it("should throw an error when API key is absent", () => {
       expect(() => {
+        init({
+          apiKey: "gentrace-api-key",
+          basePath: "https://gentrace.ai/api/v1",
+        });
+
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "https://gentrace.ai/api/v1",
             apiKey: "",
           })
         );
@@ -85,10 +103,12 @@ describe("Usage of OpenAIApi", () => {
 
     it("should throw an error when Gentrace API key is absent", () => {
       expect(() => {
+        init({
+          apiKey: "",
+        });
+
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "",
-            gentraceBasePath: "https://gentrace.ai/api/v1",
             apiKey: "openai-api-key",
           })
         );
@@ -97,10 +117,13 @@ describe("Usage of OpenAIApi", () => {
 
     it("should throw an error when Gentrace base path is invalid", () => {
       expect(() => {
+        init({
+          apiKey: "gentrace-api-key",
+          basePath: "invalid-url",
+        });
+
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "invalid-url",
             apiKey: "openai-api-key",
           })
         );
@@ -109,10 +132,13 @@ describe("Usage of OpenAIApi", () => {
 
     it("should throw an error when Gentrace base path does not end in /api/v1", () => {
       expect(() => {
+        init({
+          apiKey: "gentrace-api-key",
+          basePath: "https://gentrace.ai/invalid-path",
+        });
+
         new OpenAIApi(
           new Configuration({
-            gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "https://gentrace.ai/invalid-path",
             apiKey: "openai-api-key",
           })
         );
