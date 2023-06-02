@@ -3,10 +3,11 @@ import {
   ConfigurationParameters as OpenAIConfigurationParameters,
 } from "openai";
 import { Configuration as GentraceConfiguration } from "./configuration";
+import { GENTRACE_API_KEY, globalGentraceConfig } from "./providers/init";
 import { OpenAIPipelineHandler } from "./providers/llms/openai";
 
 class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
-  gentraceApiKey: string;
+  gentraceApiKey?: string;
   gentraceBasePath?: string;
   gentraceLogger?: {
     info: (message: string, context?: any) => void;
@@ -15,7 +16,13 @@ class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
 
   constructor(
     modifiedOAIConfig: OpenAIConfigurationParameters & {
+      /**
+       * @deprecated Declare the API key in the init() call instead.
+       */
       gentraceApiKey: string;
+      /**
+       * @deprecated Declare the base path in the init() call instead.
+       */
       gentraceBasePath?: string;
       gentraceLogger?: {
         info: (message: string, context?: any) => void;
@@ -36,10 +43,6 @@ class OpenAIApi extends OpenAIPipelineHandler {
       throw new Error("API key not provided.");
     }
 
-    if (!modifiedOAIConfig.gentraceApiKey) {
-      throw new Error("Gentrace API key not provided.");
-    }
-
     if (modifiedOAIConfig.gentraceBasePath) {
       try {
         const url = new URL(modifiedOAIConfig.gentraceBasePath);
@@ -52,11 +55,16 @@ class OpenAIApi extends OpenAIPipelineHandler {
       }
     }
 
-    const gentraceConfig = new GentraceConfiguration({
-      apiKey: modifiedOAIConfig.gentraceApiKey,
-      basePath: modifiedOAIConfig.gentraceBasePath,
-      logger: modifiedOAIConfig.gentraceLogger,
-    });
+    let gentraceConfig: GentraceConfiguration | null = null;
+    if (modifiedOAIConfig.apiKey) {
+      gentraceConfig = new GentraceConfiguration({
+        apiKey: modifiedOAIConfig.gentraceApiKey ?? GENTRACE_API_KEY,
+        basePath: modifiedOAIConfig.gentraceBasePath,
+        logger: modifiedOAIConfig.gentraceLogger,
+      });
+    } else {
+      gentraceConfig = globalGentraceConfig;
+    }
 
     super({
       config: modifiedOAIConfig,

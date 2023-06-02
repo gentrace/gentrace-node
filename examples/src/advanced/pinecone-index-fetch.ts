@@ -1,7 +1,7 @@
-import { Pipeline } from "@gentrace/node";
+import * as Gentrace from "@gentrace/node";
 
 async function fetchPineconeIndex() {
-  const pipeline = new Pipeline({
+  const pipeline = new Gentrace.Pipeline({
     id: "pinecone-index-fetch-pipeline",
     apiKey: process.env.GENTRACE_API_KEY ?? "",
     // TODO: change to prod at some point

@@ -1,5 +1,6 @@
 import type { Configuration as OpenAIConfiguration } from "openai/dist/configuration";
 import { Configuration as GentraceConfiguration } from "../configuration";
+import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
 
 export type PineconeConfiguration = {
@@ -23,11 +24,17 @@ export class Pipeline {
     logger,
   }: {
     id: string;
-    apiKey:
+    /**
+     * @deprecated Declare the API key in the init() call instead.
+     */
+    apiKey?:
       | string
       | Promise<string>
       | ((name: string) => string)
       | ((name: string) => Promise<string>);
+    /**
+     * @deprecated Declare the base path in the init() call instead.
+     */
     basePath?: string;
     openAIConfig?: OpenAIConfiguration;
     pineconeConfig?: PineconeConfiguration;
@@ -37,11 +44,21 @@ export class Pipeline {
     };
   }) {
     this.id = id;
-    this.config = new GentraceConfiguration({
-      apiKey,
-      basePath,
-      logger,
-    });
+
+    if (apiKey) {
+      if (logger) {
+        logger.warn(
+          "The apiKey parameter is deprecated. Please declare the API key in the init() call instead."
+        );
+      }
+      this.config = new GentraceConfiguration({
+        apiKey,
+        basePath,
+        logger,
+      });
+    } else {
+      this.config = globalGentraceConfig;
+    }
 
     this.openAIConfig = openAIConfig;
     this.pineconeConfig = pineconeConfig;

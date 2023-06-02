@@ -1,9 +1,11 @@
-import { Evaluation } from "@gentrace/node";
+import * as Gentrace from "@gentrace/node";
+
+init({});
 
 const SET_ID = "09c6528e-5a2b-548b-b666-c0cb71e12145";
 
 async function submitTestRun() {
-  const evaluation = new Evaluation({
+  const evaluation = new Gentrace.Evaluation({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
     basePath: "http://localhost:3000/api/v1",
   });
@@ -27,7 +29,7 @@ async function submitTestRun() {
 
   const submissionResponse = await evaluation.submitTestResults(
     SET_ID,
-    "test-run-id",
+    "source name",
     results
   );
 
