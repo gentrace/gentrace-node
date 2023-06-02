@@ -1,4 +1,10 @@
+import { init } from "@gentrace/node";
 import { PineconeClient } from "@gentrace/node/pinecone";
+
+init({
+  apiKey: process.env.GENTRACE_API_KEY ?? "",
+  basePath: "http://localhost:3000/api/v1",
+});
 
 const pinecone = new PineconeClient({
   gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",

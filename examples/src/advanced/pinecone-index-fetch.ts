@@ -1,11 +1,13 @@
-import * as Gentrace from "@gentrace/node";
+import { init, Pipeline } from "@gentrace/node";
 
 async function fetchPineconeIndex() {
-  const pipeline = new Gentrace.Pipeline({
-    id: "pinecone-index-fetch-pipeline",
+  init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
-    // TODO: change to prod at some point
     basePath: "http://localhost:3000/api/v1",
+  });
+
+  const pipeline = new Pipeline({
+    id: "pinecone-index-fetch-pipeline",
     pineconeConfig: {
       apiKey: process.env.PINECONE_API_KEY ?? "",
       environment: process.env.PINECONE_ENVIRONMENT ?? "",

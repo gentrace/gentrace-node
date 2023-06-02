@@ -3,10 +3,7 @@ import { globalGentraceConfig } from "./providers/init";
 import { PineconePipelineHandler } from "./providers/vectorstores/pinecone";
 
 class PineconeClient extends PineconePipelineHandler {
-  constructor({
-    gentraceApiKey,
-    gentraceBasePath,
-  }: {
+  constructor(params?: {
     /**
      * @deprecated Declare the API key in the init() call instead.
      */
@@ -16,6 +13,7 @@ class PineconeClient extends PineconePipelineHandler {
      */
     gentraceBasePath?: string;
   }) {
+    const { gentraceApiKey, gentraceBasePath } = params ?? {};
     let gentraceConfig: GentraceConfiguration | null = null;
 
     if (gentraceApiKey) {
