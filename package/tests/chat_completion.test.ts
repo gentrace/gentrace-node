@@ -66,12 +66,12 @@ describe("test_openai_chat_completion_pipeline", () => {
 
   it("should return pipelineRunId when chat completion is given a pipelineId", async () => {
     init({
-      apiKey: process.env.GENTRACE_API_KEY ?? "",
+      apiKey: "gentrace-api-key",
     });
 
     const openai = new OpenAIApi(
       new Configuration({
-        apiKey: process.env.OPENAI_KEY,
+        apiKey: "openai-api-key",
       })
     );
     const chatCompletionResponse = await openai.createChatCompletion({
@@ -91,12 +91,12 @@ describe("test_openai_chat_completion_pipeline", () => {
 
   it("should not return pipelineRunId when chat completion is not given a pipeline", async () => {
     init({
-      apiKey: process.env.GENTRACE_API_KEY ?? "",
+      apiKey: "gentrace-api-key",
     });
 
     const openai = new OpenAIApi(
       new Configuration({
-        apiKey: process.env.OPENAI_KEY,
+        apiKey: "openai-api-key",
       })
     );
     const chatCompletionResponse = await openai.createChatCompletion({

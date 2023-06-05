@@ -46,12 +46,12 @@ describe("test_openai_completion_pipeline", () => {
 
   it("should return pipelineRunId when completion is given a pipelineId", async () => {
     init({
-      apiKey: process.env.GENTRACE_API_KEY ?? "",
+      apiKey: "gentrace-api-key",
     });
 
     const openai = new OpenAIApi(
       new Configuration({
-        apiKey: process.env.OPENAI_KEY,
+        apiKey: "openai-api-key",
       })
     );
 
@@ -69,12 +69,12 @@ describe("test_openai_completion_pipeline", () => {
 
   it("should not return pipelineRunId when completion is not given a pipeline", async () => {
     init({
-      apiKey: process.env.GENTRACE_API_KEY ?? "",
+      apiKey: "gentrace-api-key",
     });
 
     const openai = new OpenAIApi(
       new Configuration({
-        apiKey: process.env.OPENAI_KEY,
+        apiKey: "openai-api-key",
       })
     );
     const completionResponse = await openai.createCompletion({

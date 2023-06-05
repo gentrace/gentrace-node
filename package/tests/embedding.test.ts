@@ -52,12 +52,12 @@ describe("test_openai_embedding_pipeline", () => {
 
   it("should return pipelineRunId when embedding is passed", async () => {
     init({
-      apiKey: process.env.GENTRACE_API_KEY ?? "",
+      apiKey: "gentrace-api-key",
     });
 
     const openai = new OpenAIApi(
       new Configuration({
-        apiKey: process.env.OPENAI_API_KEY ?? "",
+        apiKey: "openai-api-key",
       })
     );
 
