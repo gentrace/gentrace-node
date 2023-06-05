@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/gentrace/gentrace-node/compare/v0.9.1...v0.9.2) (2023-06-05)
+
+
+### Bug Fixes
+
+* actually pass through the branch and commit ([#133](https://github.com/gentrace/gentrace-node/issues/133)) ([3dfb5c5](https://github.com/gentrace/gentrace-node/commit/3dfb5c55b42204012a04d2da554014b36832d003))
+
 ## [0.9.1](https://github.com/gentrace/gentrace-node/compare/v0.9.0...v0.9.1) (2023-06-05)
 
 
