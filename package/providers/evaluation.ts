@@ -1,5 +1,8 @@
-import { TestRunPostRequestTestResultsInner } from "../models";
-import { globalGentraceApi } from "./init";
+import {
+  TestRunPostRequest,
+  TestRunPostRequestTestResultsInner,
+} from "../models";
+import { GENTRACE_BRANCH, GENTRACE_COMMIT, globalGentraceApi } from "./init";
 
 export type TestResult = TestRunPostRequestTestResultsInner;
 
@@ -20,9 +23,19 @@ export const submitTestResults = async (
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  const response = await globalGentraceApi.testRunPost({
+  const body: TestRunPostRequest = {
     setId,
     testResults,
-  });
+  };
+
+  if (GENTRACE_BRANCH) {
+    body.branch = GENTRACE_BRANCH;
+  }
+
+  if (GENTRACE_COMMIT) {
+    body.commit = GENTRACE_COMMIT;
+  }
+
+  const response = await globalGentraceApi.testRunPost(body);
   return response.data;
 };
