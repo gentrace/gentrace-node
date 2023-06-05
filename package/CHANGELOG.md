@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/gentrace/gentrace-node/compare/v0.8.1...v0.9.0) (2023-06-05)
+
+
+### Features
+
+* change interface to include init() function for auth ([#128](https://github.com/gentrace/gentrace-node/issues/128)) ([7a08eab](https://github.com/gentrace/gentrace-node/commit/7a08eab1dbbefe99b6527669678eb88b99392fd1))
+
 ## [0.8.1](https://github.com/gentrace/gentrace-node/compare/v0.8.0...v0.8.1) (2023-06-01)
 
 
