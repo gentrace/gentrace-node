@@ -1,10 +1,13 @@
+import { init } from "@gentrace/node";
 import { PineconeClient } from "@gentrace/node/pinecone";
 import { DEFAULT_VECTOR } from "../utils";
 
-const pinecone = new PineconeClient({
-  gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
-  gentraceBasePath: "http://localhost:3000/api/v1",
+init({
+  apiKey: process.env.GENTRACE_API_KEY ?? "",
+  basePath: "http://localhost:3000/api/v1",
 });
+
+const pinecone = new PineconeClient();
 
 async function upsertPineconeIndex() {
   await pinecone.init({

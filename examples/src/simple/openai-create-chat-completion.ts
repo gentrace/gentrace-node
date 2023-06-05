@@ -1,9 +1,13 @@
+import { init } from "@gentrace/node";
 import { OpenAIApi, Configuration } from "@gentrace/node/openai";
+
+init({
+  apiKey: process.env.GENTRACE_API_KEY ?? "",
+  basePath: "http://localhost:3000/api/v1",
+});
 
 const openai = new OpenAIApi(
   new Configuration({
-    gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
-    gentraceBasePath: "http://localhost:3000/api/v1",
     gentraceLogger: {
       info: (message) => console.log(message),
       warn: (message) => console.warn(message),

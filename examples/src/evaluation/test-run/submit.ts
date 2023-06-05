@@ -1,14 +1,14 @@
-import { Evaluation } from "@gentrace/node";
+import { init, getTestCases, submitTestResults } from "@gentrace/node";
 
 const SET_ID = "09c6528e-5a2b-548b-b666-c0cb71e12145";
 
 async function submitTestRun() {
-  const evaluation = new Evaluation({
+  init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
     basePath: "http://localhost:3000/api/v1",
   });
 
-  const responses = await evaluation.getTestCases(SET_ID);
+  const responses = await getTestCases(SET_ID);
 
   const results: {
     caseId: string;
@@ -16,18 +16,19 @@ async function submitTestRun() {
     output: string;
   }[] = [];
   for (const testCase of responses.testCases ?? []) {
-    // results.push({
-    //   caseId: testCase["id"],
-    //   inputs: {
-    //     a: "1",
-    //     b: "2",
-    //   },
-    // });
+    results.push({
+      caseId: testCase.id,
+      inputs: {
+        a: "1",
+        b: "2",
+      },
+      output: testCase.expected ?? "",
+    });
   }
 
-  const submissionResponse = await evaluation.submitTestResults(
+  const submissionResponse = await submitTestResults(
     SET_ID,
-    "test-run-id",
+    "source name",
     results
   );
 

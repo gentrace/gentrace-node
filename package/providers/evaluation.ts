@@ -1,63 +1,30 @@
-import { CoreApi } from "../api";
-import { Configuration as GentraceConfiguration } from "../configuration";
 import { TestRunPostRequestTestResultsInner } from "../models";
+import { globalGentraceApi } from "./init";
 
 export type TestResult = TestRunPostRequestTestResultsInner;
 
-export class Evaluation {
-  public config: GentraceConfiguration;
-  public api: CoreApi;
-
-  constructor({
-    apiKey,
-    basePath,
-  }: {
-    apiKey:
-      | string
-      | Promise<string>
-      | ((name: string) => string)
-      | ((name: string) => Promise<string>);
-    basePath?: string;
-  }) {
-    this.config = new GentraceConfiguration({
-      apiKey,
-      basePath,
-    });
-
-    this.api = new CoreApi(this.config);
-
-    if (!apiKey) {
-      throw new Error("Gentrace API key must be defined");
-    }
-
-    if (basePath) {
-      try {
-        const url = new URL(basePath);
-        if (url.pathname.startsWith("/api/v1")) {
-        } else {
-          throw new Error('Gentrace base path must end in "/api/v1".');
-        }
-      } catch (err) {
-        throw new Error(`Invalid Gentrace base path: ${err.message}`);
-      }
-    }
+export const getTestCases = async (setId: string) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  async getTestCases(setId: string) {
-    const response = await this.api.testCaseGet(setId);
-    return response.data;
+  const response = await globalGentraceApi.testCaseGet(setId);
+  return response.data;
+};
+
+export const submitTestResults = async (
+  setId: string,
+  source: string,
+  testResults: TestResult[]
+) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  async submitTestResults(
-    setId: string,
-    source: string,
-    testResults: TestResult[]
-  ) {
-    const response = await this.api.testRunPost({
-      setId,
-      source,
-      testResults,
-    });
-    return response.data;
-  }
-}
+  const response = await globalGentraceApi.testRunPost({
+    setId,
+    source,
+    testResults,
+  });
+  return response.data;
+};
