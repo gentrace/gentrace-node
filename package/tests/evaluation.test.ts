@@ -82,20 +82,16 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await submitTestResults(
-        "set-id",
-        "test-source",
-        [
-          {
-            caseId: "",
-            inputs: {
-              a: "1",
-              b: "2",
-            },
-            output: "This are some outputs",
+      const submissionResponse = await submitTestResults("set-id", [
+        {
+          caseId: "case-id",
+          inputs: {
+            a: "1",
+            b: "2",
           },
-        ]
-      );
+          output: "This are some outputs",
+        },
+      ]);
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
     });
 
@@ -114,20 +110,16 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await submitTestResults(
-        "set-id",
-        "test-source",
-        [
-          {
-            caseId: "",
-            inputs: {
-              a: "1",
-              b: "2",
-            },
-            output: "This are some outputs",
+      const submissionResponse = await submitTestResults("set-id", [
+        {
+          caseId: "case-id",
+          inputs: {
+            a: "1",
+            b: "2",
           },
-        ]
-      );
+          output: "This are some outputs",
+        },
+      ]);
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
     });
   });
