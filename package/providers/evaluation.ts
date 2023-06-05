@@ -14,7 +14,6 @@ export const getTestCases = async (setId: string) => {
 
 export const submitTestResults = async (
   setId: string,
-  source: string,
   testResults: TestResult[]
 ) => {
   if (!globalGentraceApi) {
@@ -23,7 +22,6 @@ export const submitTestResults = async (
 
   const response = await globalGentraceApi.testRunPost({
     setId,
-    source,
     testResults,
   });
   return response.data;
