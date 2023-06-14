@@ -1,6 +1,6 @@
 import { init, getTestCases, submitTestResults } from "@gentrace/node";
 
-const SET_ID = "09c6528e-5a2b-548b-b666-c0cb71e12145";
+const SET_ID = "0a82a2ee-e11d-4130-b6b5-7f84b1d75471";
 
 async function submitTestRun() {
   init({
@@ -8,28 +8,16 @@ async function submitTestRun() {
     basePath: "http://localhost:3000/api/v1",
   });
 
-  const responses = await getTestCases(SET_ID);
+  const testCases = await getTestCases(SET_ID);
 
-  const results: {
-    caseId: string;
-    inputs: Record<string, string>;
-    output: string;
-  }[] = [];
-  for (const testCase of responses.testCases ?? []) {
-    results.push({
-      caseId: testCase.id,
-      inputs: {
-        a: "1",
-        b: "2",
-      },
-      output: testCase.expected ?? "",
-    });
-  }
+  const outputs: string[] = testCases.map(
+    (testCase) => testCase.expected ?? ""
+  );
 
   const submissionResponse = await submitTestResults(
     SET_ID,
-    "source name",
-    results
+    testCases,
+    outputs
   );
 
   const runId = submissionResponse.runId;
