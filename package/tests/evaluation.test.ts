@@ -73,8 +73,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCasesResponse = await getTestCases("set-id");
-      const testCases = testCasesResponse.testCases ?? [];
+      const testCases = await getTestCases("set-id");
 
       expect(testCases.length).toBe(1);
 
@@ -82,15 +81,8 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await submitTestResults("set-id", [
-        {
-          caseId: "case-id",
-          inputs: {
-            a: "1",
-            b: "2",
-          },
-          output: "This are some outputs",
-        },
+      const submissionResponse = await submitTestResults("set-id", testCases, [
+        "This are some outputs",
       ]);
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
     });
@@ -101,8 +93,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCasesResponse = await getTestCases("set-id");
-      const testCases = testCasesResponse.testCases ?? [];
+      const testCases = await getTestCases("set-id");
 
       expect(testCases.length).toBe(1);
 
@@ -110,15 +101,8 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await submitTestResults("set-id", [
-        {
-          caseId: "case-id",
-          inputs: {
-            a: "1",
-            b: "2",
-          },
-          output: "This are some outputs",
-        },
+      const submissionResponse = await submitTestResults("set-id", testCases, [
+        "This are some outputs",
       ]);
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
     });
