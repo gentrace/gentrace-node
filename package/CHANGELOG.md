@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/gentrace/gentrace-node/compare/v0.10.0...v0.11.0) (2023-06-15)
+
+
+### Features
+
+* Ensure that `GENTRACE_BRANCH` and `GENTRACE_COMMIT` are used ([#141](https://github.com/gentrace/gentrace-node/issues/141)) ([b7f10dd](https://github.com/gentrace/gentrace-node/commit/b7f10ddf45463d518665ee55a936f65f5d9e088e))
+
 ## [0.10.0](https://github.com/gentrace/gentrace-node/compare/v0.9.2...v0.10.0) (2023-06-15)
 
 
