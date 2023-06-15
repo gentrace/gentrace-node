@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/gentrace/gentrace-node/compare/v0.9.2...v0.10.0) (2023-06-15)
+
+
+### Features
+
+* Simplify the SDK for evaluation endpoints ([#138](https://github.com/gentrace/gentrace-node/issues/138)) ([635538c](https://github.com/gentrace/gentrace-node/commit/635538c75ce58b0075a82f41e0965afe60621d07))
+
+
+### Bug Fixes
+
+* Clarify the recommendation to use submitTestResults() ([#140](https://github.com/gentrace/gentrace-node/issues/140)) ([a9dde74](https://github.com/gentrace/gentrace-node/commit/a9dde74848cde7d2c47d311cf7b95a514004d7ee))
+
 ## [0.9.2](https://github.com/gentrace/gentrace-node/compare/v0.9.1...v0.9.2) (2023-06-05)
 
 
