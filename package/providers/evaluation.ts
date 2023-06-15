@@ -1,10 +1,10 @@
-import { GENTRACE_BRANCH, GENTRACE_COMMIT, globalGentraceApi } from "./init";
 import {
-  TestRunPostRequestTestResultsInner,
   TestCase,
   TestRunPost200Response,
   TestRunPostRequest,
+  TestRunPostRequestTestResultsInner,
 } from "../models";
+import { GENTRACE_BRANCH, GENTRACE_COMMIT, globalGentraceApi } from "./init";
 
 export type TestResult = TestRunPostRequestTestResultsInner;
 
@@ -42,21 +42,36 @@ export const submitPreparedTestResults = async (
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
+  const body = constructSubmissionPayload(setId, testResults);
+
+  const response = await globalGentraceApi.testRunPost(body);
+  return response.data;
+};
+
+export const constructSubmissionPayload = (
+  setId: string,
+  testResults: TestResult[]
+) => {
   const body: TestRunPostRequest = {
     setId,
     testResults,
   };
 
-  if (GENTRACE_BRANCH) {
-    body.branch = GENTRACE_BRANCH;
+  if (GENTRACE_BRANCH || process.env.GENTRACE_BRANCH) {
+    body.branch =
+      GENTRACE_BRANCH.length > 0
+        ? GENTRACE_BRANCH
+        : process.env.GENTRACE_BRANCH;
   }
 
-  if (GENTRACE_COMMIT) {
-    body.commit = GENTRACE_COMMIT;
+  if (GENTRACE_COMMIT || process.env.GENTRACE_COMMIT) {
+    body.commit =
+      GENTRACE_COMMIT.length > 0
+        ? GENTRACE_COMMIT
+        : process.env.GENTRACE_COMMIT;
   }
 
-  const response = await globalGentraceApi.testRunPost(body);
-  return response.data;
+  return body;
 };
 
 /**
@@ -88,10 +103,5 @@ export const submitTestResults = async (
     };
   });
 
-  const response = await globalGentraceApi.testRunPost({
-    setId,
-    testResults,
-  });
-
-  return response.data;
+  return submitPreparedTestResults(setId, testResults);
 };

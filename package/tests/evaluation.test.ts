@@ -1,7 +1,11 @@
 import stringify from "json-stable-stringify";
 import { rest } from "msw";
 import { deinit, init } from "../providers/init";
-import { getTestCases, submitTestResults } from "../providers";
+import {
+  constructSubmissionPayload,
+  getTestCases,
+  submitTestResults,
+} from "../providers";
 import { setupServer, SetupServer } from "msw/node";
 
 describe("Usage of Evaluation functionality", () => {
@@ -59,11 +63,15 @@ describe("Usage of Evaluation functionality", () => {
 
   afterAll(() => {
     server.close();
+    process.env = OLD_ENV;
   });
+
+  const OLD_ENV = process.env;
 
   beforeEach(() => {
     deinit();
     jest.resetModules();
+    process.env = { ...OLD_ENV };
   });
 
   describe("constructor", () => {
@@ -105,6 +113,64 @@ describe("Usage of Evaluation functionality", () => {
         "This are some outputs",
       ]);
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
+    });
+
+    it("should properly construct the branch and commit values", async () => {
+      process.env.GENTRACE_BRANCH = "test-branch";
+      process.env.GENTRACE_COMMIT = "test-commit";
+
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const payload = constructSubmissionPayload("set-id", []);
+
+      expect(payload.branch).toBe("test-branch");
+      expect(payload.commit).toBe("test-commit");
+    });
+
+    it("should properly leave the branch and commit values undefined", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const payload = constructSubmissionPayload("set-id", []);
+
+      expect(payload.branch).toBeUndefined();
+      expect(payload.commit).toBeUndefined();
+    });
+
+    it("should properly define the branch and commit values if defined in init()", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch",
+        commit: "test-commit",
+      });
+
+      const payload = constructSubmissionPayload("set-id", []);
+
+      expect(payload.branch).toBe("test-branch");
+      expect(payload.commit).toBe("test-commit");
+    });
+
+    it("should prioritize the branch and commit values defined in the init() if both env and init() are defined", async () => {
+      process.env.GENTRACE_BRANCH = "test-branch-env";
+      process.env.GENTRACE_COMMIT = "test-commit-env";
+
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+      });
+
+      const payload = constructSubmissionPayload("set-id", []);
+
+      expect(payload.branch).toBe("test-branch-init");
+      expect(payload.commit).toBe("test-commit-init");
     });
   });
 });
