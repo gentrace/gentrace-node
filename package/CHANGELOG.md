@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/gentrace/gentrace-node/compare/v0.11.0...v0.11.1) (2023-06-15)
+
+
+### Bug Fixes
+
+* Add `GENTRACE_API_KEY` as an optional env variable ([#143](https://github.com/gentrace/gentrace-node/issues/143)) ([d104b41](https://github.com/gentrace/gentrace-node/commit/d104b411416862bfc95f8cac4e2f9e132799d7fa))
+
 ## [0.11.0](https://github.com/gentrace/gentrace-node/compare/v0.10.0...v0.11.0) (2023-06-15)
 
 
