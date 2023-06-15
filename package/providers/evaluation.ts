@@ -26,7 +26,8 @@ export const getTestCases = async (setId: string) => {
 };
 
 /**
- * Submits prepared test results to the Gentrace API for a given set ID.
+ * Submits prepared test results to the Gentrace API for a given set ID. This method requires that you
+ * create TestResult objects yourself. We recommend using the submitTestResults method instead.
  * @async
  * @param {string} setId - The ID of the test set associated with the test results.
  * @param {Array<TestResult>} testResults - An array of test results to submit.
