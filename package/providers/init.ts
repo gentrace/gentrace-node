@@ -17,13 +17,8 @@ export let globalGentraceConfig: GentraceConfiguration | null = null;
 
 export let globalGentraceApi: CoreApi | null = null;
 
-export function init({
-  apiKey,
-  basePath,
-  branch,
-  commit,
-}: {
-  apiKey:
+export function init(values?: {
+  apiKey?:
     | string
     | Promise<string>
     | ((name: string) => string)
@@ -32,11 +27,15 @@ export function init({
   branch?: string;
   commit?: string;
 }) {
-  if (!apiKey) {
-    throw new Error("Gentrace API key not provided.");
+  const { apiKey, basePath, branch, commit } = values ?? {};
+
+  if (!apiKey && !process.env.GENTRACE_API_KEY) {
+    throw new Error(
+      "Gentrace API key was provided neither by the `apiKey` param in the constructor nor by the `GENTRACE_API_KEY` env variable."
+    );
   }
 
-  GENTRACE_API_KEY = apiKey;
+  GENTRACE_API_KEY = apiKey || process.env.GENTRACE_API_KEY;
 
   if (basePath) {
     try {
