@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/gentrace/gentrace-node/compare/v0.11.1...v0.12.0) (2023-06-17)
+
+
+### Features
+
+* Add TestRun name ([#147](https://github.com/gentrace/gentrace-node/issues/147)) ([9ebc6e4](https://github.com/gentrace/gentrace-node/commit/9ebc6e4a8768b560f3bfc9f0aa91758d17c7322b))
+
 ## [0.11.1](https://github.com/gentrace/gentrace-node/compare/v0.11.0...v0.11.1) (2023-06-15)
 
 
