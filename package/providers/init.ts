@@ -13,6 +13,8 @@ export let GENTRACE_BRANCH = "";
 
 export let GENTRACE_COMMIT = "";
 
+export let GENTRACE_RUN_NAME = "";
+
 export let globalGentraceConfig: GentraceConfiguration | null = null;
 
 export let globalGentraceApi: CoreApi | null = null;
@@ -26,8 +28,9 @@ export function init(values?: {
   basePath?: string;
   branch?: string;
   commit?: string;
+  runName?: string;
 }) {
-  const { apiKey, basePath, branch, commit } = values ?? {};
+  const { apiKey, basePath, branch, commit, runName } = values ?? {};
 
   if (!apiKey && !process.env.GENTRACE_API_KEY) {
     throw new Error(
@@ -36,6 +39,8 @@ export function init(values?: {
   }
 
   GENTRACE_API_KEY = apiKey || process.env.GENTRACE_API_KEY;
+
+  GENTRACE_RUN_NAME = runName || process.env.GENTRACE_RUN_NAME;
 
   if (basePath) {
     try {
