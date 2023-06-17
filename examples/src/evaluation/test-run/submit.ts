@@ -1,11 +1,11 @@
 import { init, getTestCases, submitTestResults } from "@gentrace/node";
 
-const SET_ID = "77a43959-cbbb-42ef-8707-da3a6dfbaec0";
+const SET_ID = "e605d843-88e0-4462-85cc-2d49b0217a30";
 
 async function submitTestRun() {
   init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
-    basePath: "http://localhost:3000/api/v1",
+    runName: "Vivek's Run Name",
   });
 
   const testCases = await getTestCases(SET_ID);
