@@ -4,7 +4,12 @@ import {
   TestRunPostRequest,
   TestRunPostRequestTestResultsInner,
 } from "../models";
-import { GENTRACE_BRANCH, GENTRACE_COMMIT, globalGentraceApi } from "./init";
+import {
+  GENTRACE_BRANCH,
+  GENTRACE_COMMIT,
+  GENTRACE_RUN_NAME,
+  globalGentraceApi,
+} from "./init";
 
 export type TestResult = TestRunPostRequestTestResultsInner;
 
@@ -56,6 +61,10 @@ export const constructSubmissionPayload = (
     setId,
     testResults,
   };
+
+  if (GENTRACE_RUN_NAME) {
+    body.name = GENTRACE_RUN_NAME;
+  }
 
   if (GENTRACE_BRANCH || process.env.GENTRACE_BRANCH) {
     body.branch =

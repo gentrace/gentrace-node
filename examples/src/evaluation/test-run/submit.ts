@@ -1,11 +1,11 @@
 import { init, getTestCases, submitTestResults } from "@gentrace/node";
 
-const SET_ID = "0a82a2ee-e11d-4130-b6b5-7f84b1d75471";
+const SET_ID = "e605d843-88e0-4462-85cc-2d49b0217a30";
 
 async function submitTestRun() {
   init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
-    basePath: "http://localhost:3000/api/v1",
+    runName: "Vivek's Run Name",
   });
 
   const testCases = await getTestCases(SET_ID);
@@ -14,15 +14,19 @@ async function submitTestRun() {
     (testCase) => testCase.expected ?? ""
   );
 
-  const submissionResponse = await submitTestResults(
-    SET_ID,
-    testCases,
-    outputs
-  );
+  try {
+    const submissionResponse = await submitTestResults(
+      SET_ID,
+      testCases,
+      outputs
+    );
 
-  const runId = submissionResponse.runId;
-
-  console.log("runId: ", runId);
+    const runId = submissionResponse.runId;
+    console.log("runId: ", runId);
+  } catch (e) {
+    console.log("Error submitting test run: ", e, JSON.stringify(e));
+    return;
+  }
 }
 
 submitTestRun();
