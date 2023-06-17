@@ -11,10 +11,8 @@ async function submitTestRun() {
   const testCases = await getTestCases(SET_ID);
 
   const outputs: string[] = testCases.map(
-    (testCase) => "I hate you" // testCase.expected ?? ""
+    (testCase) => testCase.expected ?? ""
   );
-
-  console.log("outputs: ", outputs, testCases);
 
   try {
     const submissionResponse = await submitTestResults(
