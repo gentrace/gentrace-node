@@ -22,6 +22,9 @@ describe("Usage of Evaluation functionality", () => {
       updatedAt: string;
       archivedAt: string | null;
       expected: string | null;
+      expectedSteps:
+        | { key: string; output: string; inputs?: { [key: string]: any } }[]
+        | null;
       inputs: Record<string, any>;
       name: string;
       setId: string;
@@ -33,7 +36,13 @@ describe("Usage of Evaluation functionality", () => {
         createdAt: "2023-05-25T16:35:31.470Z",
         updatedAt: "2023-05-25T16:35:31.470Z",
         archivedAt: null,
-        expected: null,
+        expected: "This is some output",
+        expectedSteps: [
+          {
+            key: "compose",
+            output: "This is some output",
+          },
+        ],
         inputs: { a: 1, b: 2 },
         name: "Test Case 1",
         setId: "12494e89-af19-4326-a12c-54e487337ecc",
@@ -112,6 +121,36 @@ describe("Usage of Evaluation functionality", () => {
       const submissionResponse = await submitTestResults("set-id", testCases, [
         "This are some outputs",
       ]);
+      expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
+    });
+
+    it("should create an instance when output steps are provided", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const testCases = await getTestCases("set-id");
+
+      expect(testCases.length).toBe(1);
+
+      expect(stringify(testCases)).toBe(
+        stringify(getTestCasesResponse.testCases)
+      );
+
+      const submissionResponse = await submitTestResults(
+        "set-id",
+        testCases,
+        ["This are some outputs"],
+        [
+          [
+            {
+              key: "compose",
+              output: "This are some outputs",
+            },
+          ],
+        ]
+      );
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
     });
 
