@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/gentrace/gentrace-node/compare/v0.12.0...v0.13.0) (2023-06-27)
+
+
+### Features
+
+* Accept output steps ([#151](https://github.com/gentrace/gentrace-node/issues/151)) ([a5f9c42](https://github.com/gentrace/gentrace-node/commit/a5f9c425b552807f4666de412c08c6c3849ee678))
+
 ## [0.12.0](https://github.com/gentrace/gentrace-node/compare/v0.11.1...v0.12.0) (2023-06-17)
 
 
