@@ -16,6 +16,7 @@ models/test-case-get200-response.ts
 models/test-case.ts
 models/test-run-get200-response-stats.ts
 models/test-run-get200-response.ts
+models/test-run-post-request-test-results-inner-steps-inner.ts
 models/test-run-post-request-test-results-inner.ts
 models/test-run-post-request.ts
 models/test-run-post200-response.ts
