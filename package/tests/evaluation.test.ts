@@ -124,6 +124,25 @@ describe("Usage of Evaluation functionality", () => {
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
     });
 
+    it("should fails when parameters do not match", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const testCases = await getTestCases("set-id");
+
+      expect(testCases.length).toBe(1);
+
+      expect(stringify(testCases)).toBe(
+        stringify(getTestCasesResponse.testCases)
+      );
+
+      expect(submitTestResults("set-id", testCases, [])).rejects.toThrow(
+        "The number of test cases must be equal to the number of outputs."
+      );
+    });
+
     it("should create an instance when output steps are provided", async () => {
       init({
         apiKey: "gentrace-api-key",
