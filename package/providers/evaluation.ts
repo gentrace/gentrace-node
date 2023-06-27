@@ -83,6 +83,12 @@ export const constructSubmissionPayload = (
   return body;
 };
 
+type OutputStep = {
+  key: string;
+  output: string;
+  inputs?: { [key: string]: any };
+};
+
 /**
  * Submits test results by creating TestResult objects from given test cases and corresponding outputs.
  * @async
@@ -90,26 +96,42 @@ export const constructSubmissionPayload = (
  * @param {string} setId - The identifier of the test set.
  * @param {TestCase[]} testCases - An array of TestCase objects.
  * @param {string[]} outputs - An array of outputs corresponding to each TestCase.
+ * @param {OutputStep[][]} [outputSteps=[]] - An optional array of arrays of `OutputStep` objects, where each inner array corresponds to
+ *  the steps taken to generate the corresponding output.
  *
- * @throws {Error} Will throw an error if the Gentrace API key is not initialized.
+ * @throws {Error} Will throw an error if the Gentrace API key is not initialized. Also, will throw an error if the number of test cases
+ *  does not match the number of outputs.
  *
  * @returns {Promise<TestRunPost200Response>} The response data from the Gentrace API's testRunPost method.
  */
 export const submitTestResults = async (
   setId: string,
   testCases: TestCase[],
-  outputs: string[]
+  outputs: string[],
+  outputSteps: OutputStep[][] = []
 ) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
+  if (testCases.length !== outputs.length) {
+    throw new Error(
+      "The number of test cases must be equal to the number of outputs."
+    );
+  }
+
   const testResults: TestResult[] = testCases.map((testCase, index) => {
-    return {
+    const result: TestResult = {
       caseId: testCase.id,
-      inputs: testCase.inputs,
+      inputs: testCase.inputs as { [key: string]: string },
       output: outputs[index],
     };
+
+    if (outputSteps[index]) {
+      result.outputSteps = outputSteps[index];
+    }
+
+    return result;
   });
 
   return submitPreparedTestResults(setId, testResults);
