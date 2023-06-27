@@ -12,4 +12,4 @@ export * from './test-run-get200-response-stats';
 export * from './test-run-post200-response';
 export * from './test-run-post-request';
 export * from './test-run-post-request-test-results-inner';
-export * from './test-run-post-request-test-results-inner-steps-inner';
+export * from './test-run-post-request-test-results-inner-output-steps-inner';
