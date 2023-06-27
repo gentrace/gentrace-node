@@ -107,7 +107,7 @@ export const submitTestResults = async (
   const testResults: TestResult[] = testCases.map((testCase, index) => {
     return {
       caseId: testCase.id,
-      inputs: testCase.inputs,
+      inputs: testCase.inputs as { [key: string]: string },
       output: outputs[index],
     };
   });
