@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.0](https://github.com/gentrace/gentrace-node/compare/v0.12.0...v0.13.0) (2023-07-18)
+
+
+### Features
+
+* Accept output steps ([#151](https://github.com/gentrace/gentrace-node/issues/151)) ([a5f9c42](https://github.com/gentrace/gentrace-node/commit/a5f9c425b552807f4666de412c08c6c3849ee678))
+* Add TestSet routes with label filtering ([#153](https://github.com/gentrace/gentrace-node/issues/153)) ([1c16e6f](https://github.com/gentrace/gentrace-node/commit/1c16e6fcdd19b793d64845c66260806a682c56d4))
+
 ## [0.12.0](https://github.com/gentrace/gentrace-node/compare/v0.11.1...v0.12.0) (2023-06-17)
 
 
