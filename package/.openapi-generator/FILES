@@ -21,3 +21,5 @@ models/test-run-post-request-test-results-inner.ts
 models/test-run-post-request.ts
 models/test-run-post200-response.ts
 models/test-run.ts
+models/test-set.ts
+models/test-sets-get200-response.ts

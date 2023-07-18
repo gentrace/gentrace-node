@@ -3,6 +3,7 @@ import {
   TestRunPost200Response,
   TestRunPostRequest,
   TestRunPostRequestTestResultsInner,
+  TestSet,
 } from "../models";
 import {
   GENTRACE_BRANCH,
@@ -135,4 +136,32 @@ export const submitTestResults = async (
   });
 
   return submitPreparedTestResults(setId, testResults);
+};
+
+type TestSetParams = {
+  label: string;
+};
+
+/**
+ * Retrieves test sets from the Gentrace API.
+ * @async
+ * @param {TestSetParams} [params] - Optional parameters to filter the test sets.
+ * @returns {Promise<Array<TestSet>>} - A promise that resolves to an array of test sets.
+ * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
+ */
+export const getTestSets = async (params?: TestSetParams) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const label = (params ?? {}).label;
+
+  if (label) {
+    const response = await globalGentraceApi.testSetsGet(label);
+    return response.data.testSets;
+  } else {
+    const response = await globalGentraceApi.testSetsGet();
+    console.log("response.data.testSets", response.data.testSets);
+    return response.data.testSets;
+  }
 };
