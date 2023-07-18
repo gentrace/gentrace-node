@@ -4,6 +4,7 @@ import { deinit, init } from "../providers/init";
 import {
   constructSubmissionPayload,
   getTestCases,
+  getTestSets,
   submitTestResults,
 } from "../providers";
 import { setupServer, SetupServer } from "msw/node";
@@ -50,6 +51,177 @@ describe("Usage of Evaluation functionality", () => {
     ],
   };
 
+  let getFullTestSetsResponse: {
+    testSets: {
+      id: string;
+      createdAt: string;
+      updatedAt: string;
+      archivedAt: string | null;
+      labels: string[];
+      name: string;
+      organizationId: string;
+      branch: string;
+      cases: {
+        id: string;
+        createdAt: string;
+        updatedAt: string;
+        archivedAt: string | null;
+        expected: string | null;
+        expectedSteps:
+          | { key: string; output: string; inputs?: { [key: string]: any } }[]
+          | null;
+        inputs: Record<string, any>;
+        name: string;
+        setId: string;
+      }[];
+    }[];
+  } = {
+    testSets: [
+      {
+        id: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+        createdAt: "2023-07-18T11:08:09.842Z",
+        updatedAt: "2023-07-18T11:08:09.842Z",
+        archivedAt: null,
+        labels: ["guessing"],
+        name: "Guess the Year",
+        organizationId: "fe05eab7-4f07-530d-8ed9-15aeae86e0db",
+        branch: "main",
+        cases: [
+          {
+            id: "316c3797-7d04-54f9-91f0-8af87e1c8413",
+            createdAt: "2023-07-18T11:08:09.863Z",
+            updatedAt: "2023-07-18T11:08:09.863Z",
+            archivedAt: null,
+            expected: "2023",
+            expectedSteps: null,
+            inputs: {
+              query: "In what year was the Apple Vision Pro released?",
+            },
+            name: "Apple Vision Pro released",
+            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+          },
+          {
+            id: "a2bddcbc-51ac-5831-be0d-5868a7ffa1db",
+            createdAt: "2023-07-18T11:08:09.861Z",
+            updatedAt: "2023-07-18T11:08:09.861Z",
+            archivedAt: null,
+            expected: "2022",
+            expectedSteps: null,
+            inputs: {
+              query: "In what year was ChatGPT released?",
+            },
+            name: "ChatGPT released",
+            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+          },
+          {
+            id: "275d92ac-db8a-5964-846d-c8a7bc3caf4d",
+            createdAt: "2023-07-18T11:08:09.858Z",
+            updatedAt: "2023-07-18T11:08:09.858Z",
+            archivedAt: null,
+            expected: "2023",
+            expectedSteps: null,
+            inputs: {
+              query: "In what year was Gentrace founded?",
+            },
+            name: "Gentrace founded",
+            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+          },
+        ],
+      },
+      {
+        id: "393e926e-ba1b-486f-8cbe-db7d9471fe56",
+        createdAt: "2023-07-18T12:47:58.618Z",
+        updatedAt: "2023-07-18T12:47:58.618Z",
+        archivedAt: null,
+        labels: [],
+        name: "Testign",
+        organizationId: "fe05eab7-4f07-530d-8ed9-15aeae86e0db",
+        branch: "main",
+        cases: [],
+      },
+    ],
+  };
+
+  let getFilteredTestSetsResponse: {
+    testSets: {
+      id: string;
+      createdAt: string;
+      updatedAt: string;
+      archivedAt: string | null;
+      labels: string[];
+      name: string;
+      organizationId: string;
+      branch: string;
+      cases: {
+        id: string;
+        createdAt: string;
+        updatedAt: string;
+        archivedAt: string | null;
+        expected: string | null;
+        expectedSteps:
+          | { key: string; output: string; inputs?: { [key: string]: any } }[]
+          | null;
+        inputs: Record<string, any>;
+        name: string;
+        setId: string;
+      }[];
+    }[];
+  } = {
+    testSets: [
+      {
+        id: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+        createdAt: "2023-07-18T11:08:09.842Z",
+        updatedAt: "2023-07-18T11:08:09.842Z",
+        archivedAt: null,
+        labels: ["guessing"],
+        name: "Guess the Year",
+        organizationId: "fe05eab7-4f07-530d-8ed9-15aeae86e0db",
+        branch: "main",
+        cases: [
+          {
+            id: "316c3797-7d04-54f9-91f0-8af87e1c8413",
+            createdAt: "2023-07-18T11:08:09.863Z",
+            updatedAt: "2023-07-18T11:08:09.863Z",
+            archivedAt: null,
+            expected: "2023",
+            expectedSteps: null,
+            inputs: {
+              query: "In what year was the Apple Vision Pro released?",
+            },
+            name: "Apple Vision Pro released",
+            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+          },
+          {
+            id: "a2bddcbc-51ac-5831-be0d-5868a7ffa1db",
+            createdAt: "2023-07-18T11:08:09.861Z",
+            updatedAt: "2023-07-18T11:08:09.861Z",
+            archivedAt: null,
+            expected: "2022",
+            expectedSteps: null,
+            inputs: {
+              query: "In what year was ChatGPT released?",
+            },
+            name: "ChatGPT released",
+            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+          },
+          {
+            id: "275d92ac-db8a-5964-846d-c8a7bc3caf4d",
+            createdAt: "2023-07-18T11:08:09.858Z",
+            updatedAt: "2023-07-18T11:08:09.858Z",
+            archivedAt: null,
+            expected: "2023",
+            expectedSteps: null,
+            inputs: {
+              query: "In what year was Gentrace founded?",
+            },
+            name: "Gentrace founded",
+            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+          },
+        ],
+      },
+    ],
+  };
+
   beforeAll(() => {
     server = setupServer(
       rest.post("https://gentrace.ai/api/v1/test-run", (req, res, ctx) => {
@@ -64,6 +236,25 @@ describe("Usage of Evaluation functionality", () => {
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
           ctx.json(getTestCasesResponse)
+        );
+      }),
+      rest.get("https://gentrace.ai/api/v1/test-sets", (req, res, ctx) => {
+        const label = req.url.searchParams.get("label");
+
+        console.log("label params", label);
+
+        if (label) {
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(getFilteredTestSetsResponse)
+          );
+        }
+
+        return res(
+          ctx.status(200),
+          ctx.set("Content-Type", "application/json"),
+          ctx.json(getFullTestSetsResponse)
         );
       })
     );
@@ -171,6 +362,38 @@ describe("Usage of Evaluation functionality", () => {
         ]
       );
       expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
+    });
+
+    it("should return test sets when invoking the /api/v1/test-sets API", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const testSets = await getTestSets();
+
+      expect(testSets.length).toBe(2);
+
+      expect(stringify(testSets)).toBe(
+        stringify(getFullTestSetsResponse.testSets)
+      );
+    });
+
+    it("should return filtered test sets when invoking the /api/v1/test-sets API", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const filteredTestSets = await getTestSets({
+        label: "guessing",
+      });
+
+      expect(filteredTestSets.length).toBe(1);
+
+      expect(stringify(filteredTestSets)).toBe(
+        stringify(getFilteredTestSetsResponse.testSets)
+      );
     });
 
     it("should properly construct the branch and commit values", async () => {

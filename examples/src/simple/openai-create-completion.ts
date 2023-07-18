@@ -3,7 +3,7 @@ import { OpenAIApi, Configuration } from "@gentrace/node/openai";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
-  basePath: "http://localhost:3000/api/v1",
+  // basePath: "http://localhost:3000/api/v1",
 });
 
 const openai = new OpenAIApi(
@@ -22,7 +22,11 @@ async function createCompletion() {
     },
   });
 
-  console.log("completion response", completionResponse.data.choices[0]);
+  console.log(
+    "completion response",
+    // JSON.stringify(completionResponse, null, 2)
+    completionResponse
+  );
 }
 
 createCompletion();
