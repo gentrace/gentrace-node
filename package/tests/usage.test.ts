@@ -19,7 +19,7 @@ describe("Usage of OpenAIApi", () => {
         new OpenAIApi(
           new Configuration({
             gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "https://gentrace.ai/api/v1/pipeline-run",
+            gentraceBasePath: "https://gentrace.ai/api/v1/run",
             apiKey: "openai-api-key",
           })
         );

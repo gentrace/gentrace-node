@@ -1,9 +1,9 @@
 import {
   TestCase,
-  TestRunPost200Response,
-  TestRunPostRequest,
-  TestRunPostRequestTestResultsInner,
-  TestSet,
+  TestResultPost200Response,
+  TestResultPostRequest,
+  TestResultPostRequestTestRunsInner,
+  Pipeline,
 } from "../models";
 import {
   GENTRACE_BRANCH,
@@ -12,55 +12,55 @@ import {
   globalGentraceApi,
 } from "./init";
 
-export type TestResult = TestRunPostRequestTestResultsInner;
+export type TestRun = TestResultPostRequestTestRunsInner;
 
 /**
  * Retrieves test cases for a given set ID from the Gentrace API
  * @async
- * @param {string} setId - The ID of the test set to retrieve.
+ * @param {string} pipelineId - The ID of the pipeline to retrieve.
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
  * @returns {Promise<Array<TestCase>>} A Promise that resolves with an array of test cases.
  */
-export const getTestCases = async (setId: string) => {
+export const getTestCases = async (pipelineId: string) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  const response = await globalGentraceApi.testCaseGet(setId);
+  const response = await globalGentraceApi.testCaseGet(pipelineId);
   const testCases = response.data.testCases ?? [];
   return testCases;
 };
 
 /**
- * Submits prepared test results to the Gentrace API for a given set ID. This method requires that you
- * create TestResult objects yourself. We recommend using the submitTestResults method instead.
+ * Submits prepared test run to the Gentrace API for a given pipeline ID. This method requires that you
+ * create TestRun objects yourself. We recommend using the submitTestRun method instead.
  * @async
- * @param {string} setId - The ID of the test set associated with the test results.
- * @param {Array<TestResult>} testResults - An array of test results to submit.
+ * @param {string} pipelineId - The ID of the pipeline associated with the test results.
+ * @param {Array<TestRun>} testRuns - An array of test runs to submit.
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
  * @returns {Promise<TestRunPost200Response>} A Promise that resolves with the response data from the API.
  */
-export const submitPreparedTestResults = async (
-  setId: string,
-  testResults: TestResult[]
+export const submitPreparedTestResult = async (
+  pipelineId: string,
+  testRuns: TestRun[]
 ) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  const body = constructSubmissionPayload(setId, testResults);
+  const body = constructSubmissionPayload(pipelineId, testRuns);
 
-  const response = await globalGentraceApi.testRunPost(body);
+  const response = await globalGentraceApi.testResultPost(body);
   return response.data;
 };
 
 export const constructSubmissionPayload = (
-  setId: string,
-  testResults: TestResult[]
+  pipelineId: string,
+  testRuns: TestRun[]
 ) => {
-  const body: TestRunPostRequest = {
-    setId,
-    testResults,
+  const body: TestResultPostRequest = {
+    pipelineId,
+    testRuns,
   };
 
   if (GENTRACE_RUN_NAME) {
@@ -94,7 +94,7 @@ type OutputStep = {
  * Submits test results by creating TestResult objects from given test cases and corresponding outputs.
  * @async
  * @function
- * @param {string} setId - The identifier of the test set.
+ * @param {string} pipelineId - The identifier of the test set.
  * @param {TestCase[]} testCases - An array of TestCase objects.
  * @param {string[]} outputs - An array of outputs corresponding to each TestCase.
  * @param {OutputStep[][]} [outputSteps=[]] - An optional array of arrays of `OutputStep` objects, where each inner array corresponds to
@@ -105,8 +105,8 @@ type OutputStep = {
  *
  * @returns {Promise<TestRunPost200Response>} The response data from the Gentrace API's testRunPost method.
  */
-export const submitTestResults = async (
-  setId: string,
+export const submitTestResult = async (
+  pipelineId: string,
   testCases: TestCase[],
   outputs: string[],
   outputSteps: OutputStep[][] = []
@@ -121,8 +121,8 @@ export const submitTestResults = async (
     );
   }
 
-  const testResults: TestResult[] = testCases.map((testCase, index) => {
-    const result: TestResult = {
+  const testRuns: TestRun[] = testCases.map((testCase, index) => {
+    const result: TestRun = {
       caseId: testCase.id,
       inputs: testCase.inputs as { [key: string]: string },
       output: outputs[index],
@@ -135,21 +135,21 @@ export const submitTestResults = async (
     return result;
   });
 
-  return submitPreparedTestResults(setId, testResults);
+  return submitPreparedTestResult(pipelineId, testRuns);
 };
 
-type TestSetParams = {
+type PipelineParams = {
   label: string;
 };
 
 /**
  * Retrieves test sets from the Gentrace API.
  * @async
- * @param {TestSetParams} [params] - Optional parameters to filter the test sets.
- * @returns {Promise<Array<TestSet>>} - A promise that resolves to an array of test sets.
+ * @param {PipelineParams} [params] - Optional parameters to filter the test sets.
+ * @returns {Promise<Array<Pipeline>>} - A promise that resolves to an array of test sets.
  * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
  */
-export const getTestSets = async (params?: TestSetParams) => {
+export const getPipelines = async (params?: PipelineParams) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
@@ -157,11 +157,10 @@ export const getTestSets = async (params?: TestSetParams) => {
   const label = (params ?? {}).label;
 
   if (label) {
-    const response = await globalGentraceApi.testSetsGet(label);
-    return response.data.testSets;
+    const response = await globalGentraceApi.pipelinesGet(label);
+    return response.data.pipelines;
   } else {
-    const response = await globalGentraceApi.testSetsGet();
-    console.log("response.data.testSets", response.data.testSets);
-    return response.data.testSets;
+    const response = await globalGentraceApi.pipelinesGet();
+    return response.data.pipelines;
   }
 };

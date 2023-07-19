@@ -64,7 +64,7 @@ export class PipelineRun {
 
     this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
 
-    const submission = coreApi.pipelineRunPost({
+    const submission = coreApi.runPost({
       id: newPipelineRunId,
       name: this.pipeline.id,
       stepRuns: this.stepRuns.map(
