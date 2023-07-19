@@ -1,6 +1,13 @@
-import { init, getTestCases, submitTestResult } from "@gentrace/node";
+import { init, runTest, Pipeline, Configuration } from "@gentrace/node";
 
-const SET_ID = "9685b34e-2cac-5bd2-8751-c9e34ff9fd98";
+const PIPELINE_SLUG = "example-pipeline";
+
+const pipeline = new Pipeline({
+  id: "completion-pipeline",
+  openAIConfig: new Configuration({
+    apiKey: process.env.OPENAI_KEY,
+  }),
+});
 
 async function submitTestRun() {
   init({
@@ -9,25 +16,19 @@ async function submitTestRun() {
     runName: "Vivek's Run Name",
   });
 
-  const testCases = await getTestCases(SET_ID);
+  await runTest(PIPELINE_SLUG, async (testCase) => {
+    const runner = pipeline.start();
 
-  const outputs = testCases.map(
-    (testCase) => testCase.expectedOutputs ?? { value: "" }
-  );
-
-  try {
-    const submissionResponse = await submitTestResult(
-      SET_ID,
-      testCases,
-      outputs
+    await runner.measure(
+      (inputs) => {
+        // Simply return inputs as outputs
+        return inputs;
+      },
+      [testCase.inputs]
     );
 
-    const runId = submissionResponse.runId;
-    console.log("runId: ", runId);
-  } catch (e) {
-    console.log("Error submitting test run: ", e, JSON.stringify(e));
-    return;
-  }
+    return runner;
+  });
 }
 
 submitTestRun();

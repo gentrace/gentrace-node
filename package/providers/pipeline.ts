@@ -10,12 +10,14 @@ export type PineconeConfiguration = {
 
 export class Pipeline {
   public id: string;
+  public slug: string;
   public pineconeConfig: PineconeConfiguration;
   public openAIConfig: OpenAIConfiguration;
   public config: GentraceConfiguration;
   public pipelineHandlers: Map<string, any> = new Map();
 
   constructor({
+    slug,
     id,
     apiKey,
     basePath,
@@ -23,7 +25,13 @@ export class Pipeline {
     pineconeConfig,
     logger,
   }: {
-    id: string;
+    slug?: string;
+
+    /**
+     * @deprecated Use the "slug" parameter instead
+     */
+    id?: string;
+
     /**
      * @deprecated Declare the API key in the init() call instead.
      */
@@ -44,6 +52,11 @@ export class Pipeline {
     };
   }) {
     this.id = id;
+    this.slug = slug;
+
+    if (!slug && !id) {
+      throw new Error("Please provide the Pipeline slug");
+    }
 
     if (apiKey) {
       if (logger) {
@@ -118,6 +131,7 @@ export class Pipeline {
         });
         this.pipelineHandlers.set("openai", openAIHandler);
       } catch (e) {
+        console.error('Error importing "openai" package', e);
         throw new Error(
           "Please install OpenAI as a dependency with, e.g. `yarn add openai`"
         );

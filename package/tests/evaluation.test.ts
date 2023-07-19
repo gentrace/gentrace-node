@@ -4,16 +4,16 @@ import { deinit, init } from "../providers/init";
 import {
   constructSubmissionPayload,
   getTestCases,
-  getTestSets,
-  submitTestResults,
+  getPipelines,
+  submitTestResult,
 } from "../providers";
 import { setupServer, SetupServer } from "msw/node";
 
 describe("Usage of Evaluation functionality", () => {
   let server: SetupServer;
 
-  let createTestRunResponse = {
-    runId: "993F25D8-7B54-42E2-A50D-D143BCE1C5C4",
+  let createTestResultResponse = {
+    resultId: "993F25D8-7B54-42E2-A50D-D143BCE1C5C4",
   };
 
   let getTestCasesResponse: {
@@ -25,7 +25,7 @@ describe("Usage of Evaluation functionality", () => {
       expectedOutputs: null | Record<string, any>;
       inputs: Record<string, any>;
       name: string;
-      setId: string;
+      pipelineId: string;
     }[];
   } = {
     testCases: [
@@ -37,13 +37,13 @@ describe("Usage of Evaluation functionality", () => {
         expectedOutputs: { value: "This is some output" },
         inputs: { a: 1, b: 2 },
         name: "Test Case 1",
-        setId: "12494e89-af19-4326-a12c-54e487337ecc",
+        pipelineId: "12494e89-af19-4326-a12c-54e487337ecc",
       },
     ],
   };
 
-  let getFullTestSetsResponse: {
-    testSets: {
+  let getFullPipelinesResponse: {
+    pipelines: {
       id: string;
       createdAt: string;
       updatedAt: string;
@@ -60,11 +60,11 @@ describe("Usage of Evaluation functionality", () => {
         expectedOutputs: null | Record<string, any>;
         inputs: Record<string, any>;
         name: string;
-        setId: string;
+        pipelineId: string;
       }[];
     }[];
   } = {
-    testSets: [
+    pipelines: [
       {
         id: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
         createdAt: "2023-07-18T11:08:09.842Z",
@@ -85,7 +85,7 @@ describe("Usage of Evaluation functionality", () => {
               query: "In what year was the Apple Vision Pro released?",
             },
             name: "Apple Vision Pro released",
-            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+            pipelineId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
           },
           {
             id: "a2bddcbc-51ac-5831-be0d-5868a7ffa1db",
@@ -97,7 +97,7 @@ describe("Usage of Evaluation functionality", () => {
               query: "In what year was ChatGPT released?",
             },
             name: "ChatGPT released",
-            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+            pipelineId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
           },
           {
             id: "275d92ac-db8a-5964-846d-c8a7bc3caf4d",
@@ -109,7 +109,7 @@ describe("Usage of Evaluation functionality", () => {
               query: "In what year was Gentrace founded?",
             },
             name: "Gentrace founded",
-            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+            pipelineId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
           },
         ],
       },
@@ -127,8 +127,8 @@ describe("Usage of Evaluation functionality", () => {
     ],
   };
 
-  let getFilteredTestSetsResponse: {
-    testSets: {
+  let getFilteredPipelinesResponse: {
+    pipelines: {
       id: string;
       createdAt: string;
       updatedAt: string;
@@ -145,11 +145,11 @@ describe("Usage of Evaluation functionality", () => {
         expectedOutputs: null | Record<string, any>;
         inputs: Record<string, any>;
         name: string;
-        setId: string;
+        pipelineId: string;
       }[];
     }[];
   } = {
-    testSets: [
+    pipelines: [
       {
         id: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
         createdAt: "2023-07-18T11:08:09.842Z",
@@ -170,7 +170,7 @@ describe("Usage of Evaluation functionality", () => {
               query: "In what year was the Apple Vision Pro released?",
             },
             name: "Apple Vision Pro released",
-            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+            pipelineId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
           },
           {
             id: "a2bddcbc-51ac-5831-be0d-5868a7ffa1db",
@@ -182,7 +182,7 @@ describe("Usage of Evaluation functionality", () => {
               query: "In what year was ChatGPT released?",
             },
             name: "ChatGPT released",
-            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+            pipelineId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
           },
           {
             id: "275d92ac-db8a-5964-846d-c8a7bc3caf4d",
@@ -194,7 +194,7 @@ describe("Usage of Evaluation functionality", () => {
               query: "In what year was Gentrace founded?",
             },
             name: "Gentrace founded",
-            setId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
+            pipelineId: "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
           },
         ],
       },
@@ -203,11 +203,11 @@ describe("Usage of Evaluation functionality", () => {
 
   beforeAll(() => {
     server = setupServer(
-      rest.post("https://gentrace.ai/api/v1/test-run", (req, res, ctx) => {
+      rest.post("https://gentrace.ai/api/v1/test-result", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
-          ctx.json(createTestRunResponse)
+          ctx.json(createTestResultResponse)
         );
       }),
       rest.get("https://gentrace.ai/api/v1/test-case", (req, res, ctx) => {
@@ -217,23 +217,21 @@ describe("Usage of Evaluation functionality", () => {
           ctx.json(getTestCasesResponse)
         );
       }),
-      rest.get("https://gentrace.ai/api/v1/test-sets", (req, res, ctx) => {
+      rest.get("https://gentrace.ai/api/v1/pipelines", (req, res, ctx) => {
         const label = req.url.searchParams.get("label");
-
-        console.log("label params", label);
 
         if (label) {
           return res(
             ctx.status(200),
             ctx.set("Content-Type", "application/json"),
-            ctx.json(getFilteredTestSetsResponse)
+            ctx.json(getFilteredPipelinesResponse)
           );
         }
 
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
-          ctx.json(getFullTestSetsResponse)
+          ctx.json(getFullPipelinesResponse)
         );
       })
     );
@@ -260,7 +258,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("set-id");
+      const testCases = await getTestCases("pipeline-id");
 
       expect(testCases.length).toBe(1);
 
@@ -268,10 +266,14 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await submitTestResults("set-id", testCases, [
-        "This are some outputs",
-      ]);
-      expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
+      const submissionResponse = await submitTestResult(
+        "pipeline-id",
+        testCases,
+        ["This are some outputs"]
+      );
+      expect(submissionResponse.resultId).toBe(
+        createTestResultResponse.resultId
+      );
     });
 
     it("should create an instance when configuration is valid (gentrace.ai host)", async () => {
@@ -280,7 +282,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("set-id");
+      const testCases = await getTestCases("pipeline-id");
 
       expect(testCases.length).toBe(1);
 
@@ -288,10 +290,14 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await submitTestResults("set-id", testCases, [
-        "This are some outputs",
-      ]);
-      expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
+      const submissionResponse = await submitTestResult(
+        "pipeline-id",
+        testCases,
+        ["This are some outputs"]
+      );
+      expect(submissionResponse.resultId).toBe(
+        createTestResultResponse.resultId
+      );
     });
 
     it("should fails when parameters do not match", async () => {
@@ -300,7 +306,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("set-id");
+      const testCases = await getTestCases("pipeline-id");
 
       expect(testCases.length).toBe(1);
 
@@ -308,7 +314,7 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      expect(submitTestResults("set-id", testCases, [])).rejects.toThrow(
+      expect(submitTestResult("pipeline-id", testCases, [])).rejects.toThrow(
         "The number of test cases must be equal to the number of outputs."
       );
     });
@@ -319,7 +325,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("set-id");
+      const testCases = await getTestCases("pipeline-id");
 
       expect(testCases.length).toBe(1);
 
@@ -327,8 +333,8 @@ describe("Usage of Evaluation functionality", () => {
         stringify(getTestCasesResponse.testCases)
       );
 
-      const submissionResponse = await submitTestResults(
-        "set-id",
+      const submissionResponse = await submitTestResult(
+        "pipeline-id",
         testCases,
         ["This are some outputs"],
         [
@@ -340,38 +346,40 @@ describe("Usage of Evaluation functionality", () => {
           ],
         ]
       );
-      expect(submissionResponse.runId).toBe(createTestRunResponse.runId);
-    });
-
-    it("should return test sets when invoking the /api/v1/test-sets API", async () => {
-      init({
-        apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
-      });
-
-      const testSets = await getTestSets();
-
-      expect(testSets.length).toBe(2);
-
-      expect(stringify(testSets)).toBe(
-        stringify(getFullTestSetsResponse.testSets)
+      expect(submissionResponse.resultId).toBe(
+        createTestResultResponse.resultId
       );
     });
 
-    it("should return filtered test sets when invoking the /api/v1/test-sets API", async () => {
+    it("should return pipelines when invoking the /api/v1/pipelines API", async () => {
       init({
         apiKey: "gentrace-api-key",
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const filteredTestSets = await getTestSets({
+      const pipelines = await getPipelines();
+
+      expect(pipelines.length).toBe(2);
+
+      expect(stringify(pipelines)).toBe(
+        stringify(getFullPipelinesResponse.pipelines)
+      );
+    });
+
+    it("should return filtered pipelines when invoking the /api/v1/pipelines API", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const filteredPipelines = await getPipelines({
         label: "guessing",
       });
 
-      expect(filteredTestSets.length).toBe(1);
+      expect(filteredPipelines.length).toBe(1);
 
-      expect(stringify(filteredTestSets)).toBe(
-        stringify(getFilteredTestSetsResponse.testSets)
+      expect(stringify(filteredPipelines)).toBe(
+        stringify(getFilteredPipelinesResponse.pipelines)
       );
     });
 
@@ -384,7 +392,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const payload = constructSubmissionPayload("set-id", []);
+      const payload = constructSubmissionPayload("pipeline-id", []);
 
       expect(payload.branch).toBe("test-branch");
       expect(payload.commit).toBe("test-commit");
@@ -396,7 +404,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const payload = constructSubmissionPayload("set-id", []);
+      const payload = constructSubmissionPayload("pipeline-id", []);
 
       expect(payload.branch).toBeUndefined();
       expect(payload.commit).toBeUndefined();
@@ -410,7 +418,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit",
       });
 
-      const payload = constructSubmissionPayload("set-id", []);
+      const payload = constructSubmissionPayload("pipeline-id", []);
 
       expect(payload.branch).toBe("test-branch");
       expect(payload.commit).toBe("test-commit");
@@ -427,7 +435,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit-init",
       });
 
-      const payload = constructSubmissionPayload("set-id", []);
+      const payload = constructSubmissionPayload("pipeline-id", []);
 
       expect(payload.branch).toBe("test-branch-init");
       expect(payload.commit).toBe("test-commit-init");
