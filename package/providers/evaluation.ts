@@ -1,9 +1,8 @@
 import {
+  Pipeline,
   TestCase,
-  TestResultPost200Response,
   TestResultPostRequest,
   TestResultPostRequestTestRunsInner,
-  Pipeline,
 } from "../models";
 import {
   GENTRACE_BRANCH,
@@ -143,7 +142,7 @@ type PipelineParams = {
 };
 
 /**
- * Retrieves test sets from the Gentrace API.
+ * Retrieves pipelines from the Gentrace API.
  * @async
  * @param {PipelineParams} [params] - Optional parameters to filter the test sets.
  * @returns {Promise<Array<Pipeline>>} - A promise that resolves to an array of test sets.
@@ -162,5 +161,24 @@ export const getPipelines = async (params?: PipelineParams) => {
   } else {
     const response = await globalGentraceApi.pipelinesGet();
     return response.data.pipelines;
+  }
+};
+
+export const runTest = async (
+  pipelineSlug: string,
+  handler: (testCase: TestCase, runner) => Promise<void>
+) => {
+  const allPipelines = await getPipelines();
+
+  allPipelines.find((pipeline) => pipeline.slug === pipelineSlug);
+
+  if (matchingPipelines.length === 0) {
+    throw new Error("");
+  }
+
+  const testCases = await getTestCases(pipelineId);
+
+  for (const testCase of testCases) {
+    console.log("Running test case: ", testCase.id);
   }
 };
