@@ -22,10 +22,7 @@ describe("Usage of Evaluation functionality", () => {
       createdAt: string;
       updatedAt: string;
       archivedAt: string | null;
-      expected: string | null;
-      expectedSteps:
-        | { key: string; output: string; inputs?: { [key: string]: any } }[]
-        | null;
+      expectedOutputs: null | Record<string, any>;
       inputs: Record<string, any>;
       name: string;
       setId: string;
@@ -37,13 +34,7 @@ describe("Usage of Evaluation functionality", () => {
         createdAt: "2023-05-25T16:35:31.470Z",
         updatedAt: "2023-05-25T16:35:31.470Z",
         archivedAt: null,
-        expected: "This is some output",
-        expectedSteps: [
-          {
-            key: "compose",
-            output: "This is some output",
-          },
-        ],
+        expectedOutputs: { value: "This is some output" },
         inputs: { a: 1, b: 2 },
         name: "Test Case 1",
         setId: "12494e89-af19-4326-a12c-54e487337ecc",
@@ -66,10 +57,7 @@ describe("Usage of Evaluation functionality", () => {
         createdAt: string;
         updatedAt: string;
         archivedAt: string | null;
-        expected: string | null;
-        expectedSteps:
-          | { key: string; output: string; inputs?: { [key: string]: any } }[]
-          | null;
+        expectedOutputs: null | Record<string, any>;
         inputs: Record<string, any>;
         name: string;
         setId: string;
@@ -92,8 +80,7 @@ describe("Usage of Evaluation functionality", () => {
             createdAt: "2023-07-18T11:08:09.863Z",
             updatedAt: "2023-07-18T11:08:09.863Z",
             archivedAt: null,
-            expected: "2023",
-            expectedSteps: null,
+            expectedOutputs: { value: "2023" },
             inputs: {
               query: "In what year was the Apple Vision Pro released?",
             },
@@ -105,8 +92,7 @@ describe("Usage of Evaluation functionality", () => {
             createdAt: "2023-07-18T11:08:09.861Z",
             updatedAt: "2023-07-18T11:08:09.861Z",
             archivedAt: null,
-            expected: "2022",
-            expectedSteps: null,
+            expectedOutputs: { value: "2022" },
             inputs: {
               query: "In what year was ChatGPT released?",
             },
@@ -118,8 +104,7 @@ describe("Usage of Evaluation functionality", () => {
             createdAt: "2023-07-18T11:08:09.858Z",
             updatedAt: "2023-07-18T11:08:09.858Z",
             archivedAt: null,
-            expected: "2023",
-            expectedSteps: null,
+            expectedOutputs: { value: "2023" },
             inputs: {
               query: "In what year was Gentrace founded?",
             },
@@ -157,10 +142,7 @@ describe("Usage of Evaluation functionality", () => {
         createdAt: string;
         updatedAt: string;
         archivedAt: string | null;
-        expected: string | null;
-        expectedSteps:
-          | { key: string; output: string; inputs?: { [key: string]: any } }[]
-          | null;
+        expectedOutputs: null | Record<string, any>;
         inputs: Record<string, any>;
         name: string;
         setId: string;
@@ -183,8 +165,7 @@ describe("Usage of Evaluation functionality", () => {
             createdAt: "2023-07-18T11:08:09.863Z",
             updatedAt: "2023-07-18T11:08:09.863Z",
             archivedAt: null,
-            expected: "2023",
-            expectedSteps: null,
+            expectedOutputs: { value: "2023" },
             inputs: {
               query: "In what year was the Apple Vision Pro released?",
             },
@@ -196,8 +177,7 @@ describe("Usage of Evaluation functionality", () => {
             createdAt: "2023-07-18T11:08:09.861Z",
             updatedAt: "2023-07-18T11:08:09.861Z",
             archivedAt: null,
-            expected: "2022",
-            expectedSteps: null,
+            expectedOutputs: { value: "2022" },
             inputs: {
               query: "In what year was ChatGPT released?",
             },
@@ -209,8 +189,7 @@ describe("Usage of Evaluation functionality", () => {
             createdAt: "2023-07-18T11:08:09.858Z",
             updatedAt: "2023-07-18T11:08:09.858Z",
             archivedAt: null,
-            expected: "2023",
-            expectedSteps: null,
+            expectedOutputs: { value: "2023" },
             inputs: {
               query: "In what year was Gentrace founded?",
             },
