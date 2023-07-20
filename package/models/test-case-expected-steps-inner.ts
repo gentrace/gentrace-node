@@ -12,32 +12,28 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import { StepRun } from "./step-run";
-
 /**
  *
  * @export
- * @interface RunRequest
+ * @interface TestCaseExpectedStepsInner
  */
-export interface RunRequest {
+export interface TestCaseExpectedStepsInner {
   /**
-   *
+   * The key of the step
    * @type {string}
-   * @memberof RunRequest
+   * @memberof TestCaseExpectedStepsInner
    */
-  id: string;
+  key: string;
   /**
-   *
+   * The output of the step
    * @type {string}
-   * @memberof RunRequest
+   * @memberof TestCaseExpectedStepsInner
    */
-  name: string;
+  output: string;
   /**
-   *
-   * @type {Array<StepRun>}
-   * @memberof RunRequest
+   * The inputs of the step
+   * @type {{ [key: string]: string; }}
+   * @memberof TestCaseExpectedStepsInner
    */
-  stepRuns: Array<StepRun>;
+  inputs?: { [key: string]: string } | null;
 }

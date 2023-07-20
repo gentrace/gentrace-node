@@ -14,7 +14,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestResultPostRequestTestRunsInnerOutputStepsInner } from "./test-result-post-request-test-runs-inner-output-steps-inner";
+import { StepRun } from "./step-run";
 
 /**
  *
@@ -35,21 +35,9 @@ export interface TestResultPostRequestTestRunsInner {
    */
   caseId: string;
   /**
-   * The input data for the test case
-   * @type {{ [key: string]: string; }}
-   * @memberof TestResultPostRequestTestRunsInner
-   */
-  inputs: { [key: string]: string };
-  /**
-   * The expected output for the test case
-   * @type {string}
-   * @memberof TestResultPostRequestTestRunsInner
-   */
-  output: string;
-  /**
    *
-   * @type {Array<TestResultPostRequestTestRunsInnerOutputStepsInner>}
+   * @type {Array<StepRun>}
    * @memberof TestResultPostRequestTestRunsInner
    */
-  outputSteps?: Array<TestResultPostRequestTestRunsInnerOutputStepsInner> | null;
+  stepRuns: Array<StepRun>;
 }

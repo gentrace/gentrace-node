@@ -84,60 +84,6 @@ export const constructSubmissionPayload = (
   return body;
 };
 
-type OutputStep = {
-  key: string;
-  output: string;
-  inputs?: { [key: string]: any };
-};
-
-/**
- * Submits test results by creating TestResult objects from given test cases and corresponding outputs.
- * @async
- * @function
- * @param {string} pipelineId - The identifier of the test set.
- * @param {TestCase[]} testCases - An array of TestCase objects.
- * @param {string[]} outputs - An array of outputs corresponding to each TestCase.
- * @param {OutputStep[][]} [outputSteps=[]] - An optional array of arrays of `OutputStep` objects, where each inner array corresponds to
- *  the steps taken to generate the corresponding output.
- *
- * @throws {Error} Will throw an error if the Gentrace API key is not initialized. Also, will throw an error if the number of test cases
- *  does not match the number of outputs.
- *
- * @returns {Promise<TestRunPost200Response>} The response data from the Gentrace API's testRunPost method.
- */
-export const submitTestResult = async (
-  pipelineId: string,
-  testCases: TestCase[],
-  outputs: string[],
-  outputSteps: OutputStep[][] = []
-) => {
-  if (!globalGentraceApi) {
-    throw new Error("Gentrace API key not initialized. Call init() first.");
-  }
-
-  if (testCases.length !== outputs.length) {
-    throw new Error(
-      "The number of test cases must be equal to the number of outputs."
-    );
-  }
-
-  const testRuns: TestRun[] = testCases.map((testCase, index) => {
-    const result: TestRun = {
-      caseId: testCase.id,
-      inputs: testCase.inputs as { [key: string]: string },
-      output: outputs[index],
-    };
-
-    if (outputSteps[index]) {
-      result.outputSteps = outputSteps[index];
-    }
-
-    return result;
-  });
-
-  return submitPreparedTestResult(pipelineId, testRuns);
-};
-
 type PipelineParams = {
   label: string;
 };
@@ -159,12 +105,20 @@ export const getPipelines = async (params?: PipelineParams) => {
   if (label) {
     const response = await globalGentraceApi.pipelinesGet(label);
     return response.data.pipelines;
-  } else {
-    const response = await globalGentraceApi.pipelinesGet();
-    return response.data.pipelines;
   }
+
+  const response = await globalGentraceApi.pipelinesGet();
+  return response.data.pipelines;
 };
 
+/**
+ * Runs a test for a specific pipeline.
+ *
+ * @param {string} pipelineSlug - The slug of the pipeline.
+ * @param {(testCase: TestCase) => Promise<PipelineRun>} handler - The handler function that runs the test case and returns a promise with a PipelineRun.
+ * @returns {Promise<TestResult>} - A promise that resolves to the test result.
+ * @throws {Error} - Throws an error if the specified pipeline cannot be found.
+ */
 export const runTest = async (
   pipelineSlug: string,
   handler: (testCase: TestCase) => Promise<PipelineRun>
@@ -185,11 +139,22 @@ export const runTest = async (
 
   for (const testCase of testCases) {
     const pipelineRun = await handler(testCase);
-    pipelineRun.stepRuns;
+    testRuns.push({
+      caseId: testCase.id,
+      stepRuns: pipelineRun.stepRuns.map((stepRun) => ({
+        provider: {
+          modelParams: stepRun.modelParams,
+          invocation: stepRun.invocation,
+          inputs: stepRun.inputs,
+          outputs: stepRun.outputs,
+          name: stepRun.provider,
+        },
+        elapsedTime: stepRun.elapsedTime,
+        startTime: stepRun.startTime,
+        endTime: stepRun.endTime,
+      })),
+    });
   }
 
-  const body = constructSubmissionPayload(matchingPipeline.id, testRuns);
-
-  const response = await globalGentraceApi.testResultPost(body);
-  return response.data;
+  return await submitPreparedTestResult(matchingPipeline.id, testRuns);
 };

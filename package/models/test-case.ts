@@ -14,7 +14,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestResultPostRequestTestRunsInnerOutputStepsInner } from "./test-result-post-request-test-runs-inner-output-steps-inner";
+import { TestCaseExpectedStepsInner } from "./test-case-expected-steps-inner";
 
 /**
  *
@@ -54,10 +54,10 @@ export interface TestCase {
   expected?: string | null;
   /**
    *
-   * @type {Array<TestResultPostRequestTestRunsInnerOutputStepsInner>}
+   * @type {Array<TestCaseExpectedStepsInner>}
    * @memberof TestCase
    */
-  expectedSteps?: Array<TestResultPostRequestTestRunsInnerOutputStepsInner> | null;
+  expectedSteps?: Array<TestCaseExpectedStepsInner> | null;
   /**
    * The input data for the test case as a JSON object
    * @type {object}

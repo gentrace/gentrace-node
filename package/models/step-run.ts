@@ -14,30 +14,36 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { StepRun } from "./step-run";
+import { StepRunProvider } from "./step-run-provider";
 
 /**
  *
  * @export
- * @interface RunRequest
+ * @interface StepRun
  */
-export interface RunRequest {
+export interface StepRun {
+  /**
+   *
+   * @type {StepRunProvider}
+   * @memberof StepRun
+   */
+  provider?: StepRunProvider;
+  /**
+   *
+   * @type {number}
+   * @memberof StepRun
+   */
+  elapsedTime?: number;
   /**
    *
    * @type {string}
-   * @memberof RunRequest
+   * @memberof StepRun
    */
-  id: string;
+  startTime?: string;
   /**
    *
    * @type {string}
-   * @memberof RunRequest
+   * @memberof StepRun
    */
-  name: string;
-  /**
-   *
-   * @type {Array<StepRun>}
-   * @memberof RunRequest
-   */
-  stepRuns: Array<StepRun>;
+  endTime?: string;
 }
