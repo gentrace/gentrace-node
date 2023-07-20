@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/gentrace/gentrace-node/compare/v0.13.0...v0.14.0) (2023-07-20)
+
+
+### Features
+
+* when ingesting test runs, support outputs (a JSON blob) and deprecate output / outputSteps  ([#155](https://github.com/gentrace/gentrace-node/issues/155)) ([e04e3bc](https://github.com/gentrace/gentrace-node/commit/e04e3bcd780fd4a4493cd31379bf361c0006e921))
+
 ## [0.13.0](https://github.com/gentrace/gentrace-node/compare/v0.12.0...v0.13.0) (2023-07-18)
 
 
