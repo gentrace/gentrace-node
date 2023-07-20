@@ -1,6 +1,14 @@
-import { init, getTestCases, submitTestResults } from "@gentrace/node";
+import { init, Pipeline, runTest } from "@gentrace/node";
+import { Configuration } from "@gentrace/node/openai";
 
-const SET_ID = "9685b34e-2cac-5bd2-8751-c9e34ff9fd98";
+const PIPELINE_SLUG = "example-pipeline";
+
+const pipeline = new Pipeline({
+  id: "completion-pipeline",
+  openAIConfig: new Configuration({
+    apiKey: process.env.OPENAI_KEY,
+  }),
+});
 
 async function submitTestRun() {
   init({
@@ -9,37 +17,19 @@ async function submitTestRun() {
     runName: "Vivek's Run Name",
   });
 
-  const testCases = await getTestCases(SET_ID);
+  await runTest(PIPELINE_SLUG, async (testCase) => {
+    const runner = pipeline.start();
 
-  const outputSteps: { key: string; output: string }[][] = testCases.map(
-    (testCase) => {
-      return [
-        {
-          key: "compose",
-          output: testCase.expected ?? "",
-        },
-      ];
-    }
-  );
+    const openAi = await runner.getOpenAI();
 
-  const outputs: string[] = testCases.map(
-    (testCase) => testCase.expected ?? ""
-  );
+    await openAi.createCompletion({
+      model: "text-davinci-003",
+      promptTemplate: "Write a brief summary of the history of {{ company }}: ",
+      promptInputs: testCase.inputs,
+    });
 
-  try {
-    const submissionResponse = await submitTestResults(
-      SET_ID,
-      testCases,
-      outputs,
-      outputSteps
-    );
-
-    const runId = submissionResponse.runId;
-    console.log("runId: ", runId);
-  } catch (e) {
-    console.log("Error submitting test run: ", e, JSON.stringify(e));
-    return;
-  }
+    await runner.submit();
+  });
 }
 
 submitTestRun();

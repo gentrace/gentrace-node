@@ -14,6 +14,24 @@
 
 export * from "./api";
 export * from "./configuration";
-export * from "./models";
+export {
+  FeedbackRequest,
+  FeedbackResponse,
+  PipelinesGet200Response,
+  RunRequest,
+  RunResponse,
+  StepRun,
+  StepRunProvider,
+  TestCase,
+  TestCaseExpectedStepsInner,
+  TestCaseGet200Response,
+  TestResult,
+  TestResultGet200Response,
+  TestResultGet200Response1,
+  TestResultGet200ResponseStats,
+  TestResultPost200Response,
+  TestResultPostRequest,
+  TestResultPostRequestTestRunsInner,
+} from "./models";
 
 export * from "./providers/index";

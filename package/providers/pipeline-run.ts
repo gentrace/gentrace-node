@@ -55,6 +55,10 @@ export class PipelineRun {
     this.stepRuns.push(stepRun);
   }
 
+  async addOutputStepRun(stepRun: StepRun) {
+    console.log("Testing");
+  }
+
   public async submit(
     { waitForServer }: { waitForServer: boolean } = { waitForServer: false }
   ) {
