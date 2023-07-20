@@ -10,6 +10,7 @@ import {
   GENTRACE_RUN_NAME,
   globalGentraceApi,
 } from "./init";
+import { PipelineRun } from "./pipeline-run";
 
 export type TestRun = TestResultPostRequestTestRunsInner;
 
@@ -166,19 +167,29 @@ export const getPipelines = async (params?: PipelineParams) => {
 
 export const runTest = async (
   pipelineSlug: string,
-  handler: (testCase: TestCase, runner) => Promise<void>
+  handler: (testCase: TestCase) => Promise<PipelineRun>
 ) => {
   const allPipelines = await getPipelines();
 
-  allPipelines.find((pipeline) => pipeline.slug === pipelineSlug);
+  const matchingPipeline = allPipelines.find(
+    (pipeline) => pipeline.slug === pipelineSlug
+  );
 
-  if (matchingPipelines.length === 0) {
-    throw new Error("");
+  if (!matchingPipeline) {
+    throw new Error(`Could not find the specified pipeline (${pipelineSlug})`);
   }
 
-  const testCases = await getTestCases(pipelineId);
+  const testCases = await getTestCases(matchingPipeline.id);
+
+  const testRuns: TestRun[] = [];
 
   for (const testCase of testCases) {
-    console.log("Running test case: ", testCase.id);
+    const pipelineRun = await handler(testCase);
+    pipelineRun.stepRuns;
   }
+
+  const body = constructSubmissionPayload(matchingPipeline.id, testRuns);
+
+  const response = await globalGentraceApi.testResultPost(body);
+  return response.data;
 };

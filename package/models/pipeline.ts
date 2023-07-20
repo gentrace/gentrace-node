@@ -29,19 +29,19 @@ export interface Pipeline {
    */
   id: string;
   /**
-   * The date and time when the pipelinewas created
+   * The date and time when the pipeline was created
    * @type {string}
    * @memberof Pipeline
    */
   createdAt: string;
   /**
-   * The date and time when the pipelinewas last updated
+   * The date and time when the pipeline was last updated
    * @type {string}
    * @memberof Pipeline
    */
   updatedAt: string;
   /**
-   * The date and time when the pipelinewas archived, can be null if the pipelinehas not been archived
+   * The date and time when the pipeline was archived, can be null if the pipeline has not been archived
    * @type {string}
    * @memberof Pipeline
    */
@@ -63,7 +63,13 @@ export interface Pipeline {
    * @type {string}
    * @memberof Pipeline
    */
-  name: string;
+  displayName?: string | null;
+  /**
+   * The slug of the pipeline
+   * @type {string}
+   * @memberof Pipeline
+   */
+  slug: string;
   /**
    * The ID of the organization that owns the pipeline
    * @type {string}
@@ -71,7 +77,7 @@ export interface Pipeline {
    */
   organizationId: string;
   /**
-   * The branch that the pipelineis associated with
+   * The branch that the pipeline is associated with
    * @type {string}
    * @memberof Pipeline
    */

@@ -14,25 +14,6 @@
 
 export * from "./api";
 export * from "./configuration";
-
-// Need to explicitly export the models to avoid duplicate entities with the
-// same name (e.g. the OpenAPI-generated interface Pipeline and our class Pipeline)
-export {
-  FeedbackRequest,
-  FeedbackResponse,
-  PipelinesGet200Response,
-  RunRequest,
-  RunRequestStepRunsInnerProvider,
-  RunResponse,
-  TestCase,
-  TestCaseGet200Response,
-  TestResultGet200Response1,
-  TestResultGet200ResponseStats,
-  TestResultGet200Response,
-  TestResultPost200Response,
-  TestResultPostRequest,
-  TestResultPostRequestTestRunsInner,
-  TestResultPostRequestTestRunsInnerOutputStepsInner,
-} from "./models";
+export * from "./models";
 
 export * from "./providers/index";
