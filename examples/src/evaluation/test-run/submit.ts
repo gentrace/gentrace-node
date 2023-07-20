@@ -1,4 +1,4 @@
-import { init, getTestCases, submitTestResults } from "@gentrace/node";
+import { init, getTestCases, submitTestResult } from "@gentrace/node";
 
 const SET_ID = "9685b34e-2cac-5bd2-8751-c9e34ff9fd98";
 
@@ -11,27 +11,15 @@ async function submitTestRun() {
 
   const testCases = await getTestCases(SET_ID);
 
-  const outputSteps: { key: string; output: string }[][] = testCases.map(
-    (testCase) => {
-      return [
-        {
-          key: "compose",
-          output: testCase.expected ?? "",
-        },
-      ];
-    }
-  );
-
-  const outputs: string[] = testCases.map(
-    (testCase) => testCase.expected ?? ""
+  const outputs = testCases.map(
+    (testCase) => testCase.expectedOutputs ?? { value: "" }
   );
 
   try {
-    const submissionResponse = await submitTestResults(
+    const submissionResponse = await submitTestResult(
       SET_ID,
       testCases,
-      outputs,
-      outputSteps
+      outputs
     );
 
     const runId = submissionResponse.runId;

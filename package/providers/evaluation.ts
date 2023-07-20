@@ -96,6 +96,48 @@ type OutputStep = {
  * @function
  * @param {string} setId - The identifier of the test set.
  * @param {TestCase[]} testCases - An array of TestCase objects.
+ * @param {Record<string, any>[]} outputsList - An array of outputs corresponding to each TestCase.
+ *
+ * @throws {Error} Will throw an error if the Gentrace API key is not initialized. Also, will throw an error if the number of test cases
+ *  does not match the number of outputs.
+ *
+ * @returns {Promise<TestRunPost200Response>} The response data from the Gentrace API's testRunPost method.
+ */
+export const submitTestResult = async (
+  setId: string,
+  testCases: TestCase[],
+  outputsList: Record<string, any>[]
+) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  if (testCases.length !== outputsList.length) {
+    throw new Error(
+      "The number of test cases must be equal to the number of outputs."
+    );
+  }
+
+  const testRuns: TestResult[] = testCases.map((testCase, index) => {
+    const run: TestResult = {
+      caseId: testCase.id,
+      inputs: testCase.inputs,
+      outputs: outputsList[index],
+    };
+
+    return run;
+  });
+
+  return submitPreparedTestResults(setId, testRuns);
+};
+
+/**
+ * Submits test results by creating TestResult objects from given test cases and corresponding outputs.
+ * @deprecated Use {@link submitTestResult} instead.
+ * @async
+ * @function
+ * @param {string} setId - The identifier of the test set.
+ * @param {TestCase[]} testCases - An array of TestCase objects.
  * @param {string[]} outputs - An array of outputs corresponding to each TestCase.
  * @param {OutputStep[][]} [outputSteps=[]] - An optional array of arrays of `OutputStep` objects, where each inner array corresponds to
  *  the steps taken to generate the corresponding output.
