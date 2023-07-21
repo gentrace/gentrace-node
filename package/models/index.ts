@@ -7,7 +7,6 @@ export * from "./run-response";
 export * from "./step-run";
 export * from "./step-run-provider";
 export * from "./test-case";
-export * from "./test-case-expected-steps-inner";
 export * from "./test-case-get200-response";
 export * from "./test-result";
 export * from "./test-result-get200-response";

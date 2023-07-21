@@ -14,7 +14,6 @@ models/run-request.ts
 models/run-response.ts
 models/step-run-provider.ts
 models/step-run.ts
-models/test-case-expected-steps-inner.ts
 models/test-case-get200-response.ts
 models/test-case.ts
 models/test-result-get200-response-stats.ts

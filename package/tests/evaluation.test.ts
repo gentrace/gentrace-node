@@ -319,38 +319,6 @@ describe("Usage of Evaluation functionality", () => {
       );
     });
 
-    it("should create an instance when output steps are provided", async () => {
-      init({
-        apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
-      });
-
-      const testCases = await getTestCases("pipeline-id");
-
-      expect(testCases.length).toBe(1);
-
-      expect(stringify(testCases)).toBe(
-        stringify(getTestCasesResponse.testCases)
-      );
-
-      const submissionResponse = await submitTestResult(
-        "pipeline-id",
-        testCases,
-        ["This are some outputs"],
-        [
-          [
-            {
-              key: "compose",
-              output: "This are some outputs",
-            },
-          ],
-        ]
-      );
-      expect(submissionResponse.resultId).toBe(
-        createTestResultResponse.resultId
-      );
-    });
-
     it("should return pipelines when invoking the /api/v1/pipelines API", async () => {
       init({
         apiKey: "gentrace-api-key",

@@ -118,13 +118,13 @@ export class PipelineRun {
 
     this.stepRuns.push(
       new StepRun(
-        stepInfo.provider ?? "undeclared",
-        stepInfo.invocation ?? "undeclared",
+        stepInfo?.provider ?? "undeclared",
+        stepInfo?.invocation ?? "undeclared",
         elapsedTime,
         new Date(startTime).toISOString(),
         new Date(endTime).toISOString(),
         inputs,
-        stepInfo.modelParams ?? {},
+        stepInfo?.modelParams ?? {},
         modifiedOuput
       )
     );
