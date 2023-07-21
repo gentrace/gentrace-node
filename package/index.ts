@@ -23,7 +23,6 @@ export {
   StepRun,
   StepRunProvider,
   TestCase,
-  TestCaseExpectedStepsInner,
   TestCaseGet200Response,
   TestResult,
   TestResultGet200Response,
