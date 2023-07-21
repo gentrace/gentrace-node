@@ -1,11 +1,11 @@
-import { CoreApi } from "../api/core-api";
-import { Pipeline } from "./pipeline";
-import { PipelineRunResponse } from "../models/pipeline-run-response";
-import { v4 } from "uuid";
-import { PartialStepRunType, StepRun, StepRunType } from "./step-run";
-import type { PineconePipelineHandler } from "./vectorstores/pinecone";
-import type { OpenAIPipelineHandler } from "./llms/openai";
 import { performance } from "perf_hooks";
+import { v4 } from "uuid";
+import { CoreApi } from "../api/core-api";
+import { PipelineRunResponse } from "../models/pipeline-run-response";
+import type { OpenAIPipelineHandler } from "./llms/openai";
+import { Pipeline } from "./pipeline";
+import { PartialStepRunType, StepRun } from "./step-run";
+import type { PineconePipelineHandler } from "./vectorstores/pinecone";
 
 export class PipelineRun {
   private pipeline: Pipeline;
