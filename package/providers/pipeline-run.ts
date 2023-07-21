@@ -1,7 +1,7 @@
 import { performance } from "perf_hooks";
 import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
-import { PipelineRunResponse } from "../models/pipeline-run-response";
+import { RunResponse } from "../models/run-response";
 import type { OpenAIPipelineHandler } from "./llms/openai";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
@@ -182,7 +182,7 @@ export class PipelineRun {
           );
         });
 
-      const data: PipelineRunResponse = {
+      const data: RunResponse = {
         pipelineRunId: newPipelineRunId,
       };
       return data;
