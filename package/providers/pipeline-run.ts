@@ -2,9 +2,10 @@ import { CoreApi } from "../api/core-api";
 import { Pipeline } from "./pipeline";
 import { PipelineRunResponse } from "../models/pipeline-run-response";
 import { v4 } from "uuid";
-import { StepRun } from "./step-run";
+import { PartialStepRunType, StepRun, StepRunType } from "./step-run";
 import type { PineconePipelineHandler } from "./vectorstores/pinecone";
 import type { OpenAIPipelineHandler } from "./llms/openai";
+import { performance } from "perf_hooks";
 
 export class PipelineRun {
   private pipeline: Pipeline;
@@ -51,12 +52,83 @@ export class PipelineRun {
     }
   }
 
-  async addStepRun(stepRun: StepRun) {
+  async addStepRunNode(stepRun: StepRun) {
     this.stepRuns.push(stepRun);
   }
 
-  async addOutputStepRun(stepRun: StepRun) {
-    console.log("Testing");
+  checkpoint(
+    step: PartialStepRunType & {
+      inputs: any;
+      outputs: any;
+    }
+  ) {
+    const lastElement: StepRun | undefined =
+      this.stepRuns[this.stepRuns.length - 1];
+
+    if (lastElement) {
+      const { endTime: stepStartTime } = lastElement;
+      const elapsedTime =
+        new Date().getTime() - new Date(stepStartTime).getTime();
+      const endTimeNew = new Date().toISOString();
+      this.stepRuns.push(
+        new StepRun(
+          step.provider ?? "undeclared",
+          step.invocation ?? "undeclared",
+          elapsedTime,
+          stepStartTime,
+          endTimeNew,
+          step.inputs,
+          step.modelParams ?? {},
+          step.outputs
+        )
+      );
+    } else {
+      const elapsedTime = 0;
+      const startAndEndTime = new Date().toISOString();
+      this.stepRuns.push(
+        new StepRun(
+          step.provider ?? "undeclared",
+          step.invocation ?? "undeclared",
+          elapsedTime,
+          startAndEndTime,
+          startAndEndTime,
+          step.inputs,
+          step.modelParams ?? {},
+          step.outputs
+        )
+      );
+    }
+  }
+
+  async measure<F extends (...args: any[]) => any>(
+    func: F,
+    inputs: Parameters<F>
+  ): Promise<ReturnType<F>> {
+    const startTime = performance.timeOrigin + performance.now();
+    const returnValue = await func(...inputs);
+
+    // Our server only accepts outputs as an object.
+    let modifiedOuput = returnValue;
+    if (typeof returnValue !== "object") {
+      modifiedOuput = { value: returnValue };
+    }
+    const endTime = performance.timeOrigin + performance.now();
+    const elapsedTime = Math.floor(endTime - startTime);
+
+    this.stepRuns.push(
+      new StepRun(
+        "undeclared",
+        "undeclared",
+        elapsedTime,
+        new Date(startTime).toISOString(),
+        new Date(endTime).toISOString(),
+        inputs,
+        {},
+        modifiedOuput
+      )
+    );
+
+    return returnValue;
   }
 
   public async submit(

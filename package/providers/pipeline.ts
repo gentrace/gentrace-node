@@ -118,6 +118,7 @@ export class Pipeline {
         });
         this.pipelineHandlers.set("openai", openAIHandler);
       } catch (e) {
+        console.error('Error importing "openai" package', e);
         throw new Error(
           "Please install OpenAI as a dependency with, e.g. `yarn add openai`"
         );

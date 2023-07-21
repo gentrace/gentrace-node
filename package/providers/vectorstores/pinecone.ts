@@ -127,7 +127,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          pipelineRun?.addStepRun(
+          pipelineRun?.addStepRunNode(
             new PineconeFetchStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -167,7 +167,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          pipelineRun?.addStepRun(
+          pipelineRun?.addStepRunNode(
             new PineconeUpdateStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -213,7 +213,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const { topK, filter, ...inputs } = queryRequest;
           const modelParams = { topK, filter };
 
-          pipelineRun?.addStepRun(
+          pipelineRun?.addStepRunNode(
             new PineconeQueryStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -254,7 +254,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          pipelineRun?.addStepRun(
+          pipelineRun?.addStepRunNode(
             new PineconeUpsertStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
@@ -290,7 +290,7 @@ export class PineconePipelineHandler extends PineconeClient {
           const endTime = performance.timeOrigin + performance.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          pipelineRun?.addStepRun(
+          pipelineRun?.addStepRunNode(
             new PineconeDeleteStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
