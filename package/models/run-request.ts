@@ -33,7 +33,14 @@ export interface RunRequest {
    * @type {string}
    * @memberof RunRequest
    */
-  name: string;
+  slug?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof RunRequest
+   * @deprecated
+   */
+  name?: string;
   /**
    *
    * @type {Array<StepRun>}

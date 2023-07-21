@@ -139,6 +139,8 @@ export const runTest = async (
 
   for (const testCase of testCases) {
     const pipelineRun = await handler(testCase);
+    const pipeline = pipelineRun.getPipeline();
+
     testRuns.push({
       caseId: testCase.id,
       stepRuns: pipelineRun.stepRuns.map((stepRun) => ({
