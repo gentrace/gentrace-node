@@ -3,6 +3,7 @@ import { setupServer, SetupServer } from "msw/node";
 import { Configuration } from "../openai";
 import { init, Pipeline, PipelineRun } from "../providers";
 import stringify from "json-stable-stringify";
+import { sleep } from "../providers/utils";
 
 describe("test_openai_completion_pipeline", () => {
   const completionResponse = {
@@ -179,5 +180,79 @@ describe("test_openai_completion_pipeline", () => {
 
     const first = runner.stepRuns[0];
     expect(stringify(first.outputs)).toBe(stringify({ value: 3 }));
+  });
+
+  it("should have steps that reflect the custom params that are passed into the step", async () => {
+    init({
+      apiKey: "api-key",
+    });
+
+    const pipeline = new Pipeline({
+      id: "create-completion-pipeline",
+      openAIConfig: new Configuration({
+        apiKey: process.env.OPENAI_KEY,
+      }),
+    });
+
+    const runner = new PipelineRun({
+      pipeline,
+    });
+
+    const result = await runner.measure(
+      (a, b) => {
+        return a + b;
+      },
+      [1, 2],
+      {
+        modelParams: { b: 5 },
+        invocation: "customAddition",
+      }
+    );
+
+    expect(result).toEqual(3);
+
+    expect(runner.stepRuns.length).toEqual(1);
+
+    const first = runner.stepRuns[0];
+    expect(stringify(first.outputs)).toBe(stringify({ value: 3 }));
+    expect(stringify(first.modelParams)).toBe(stringify({ b: 5 }));
+
+    expect(first.invocation).toEqual("customAddition");
+    expect(first.provider).toEqual("undeclared");
+  });
+
+  it("should have steps with proper time spacing", async () => {
+    init({
+      apiKey: "api-key",
+    });
+
+    const pipeline = new Pipeline({
+      id: "create-completion-pipeline",
+      openAIConfig: new Configuration({
+        apiKey: process.env.OPENAI_KEY,
+      }),
+    });
+
+    const runner = new PipelineRun({
+      pipeline,
+    });
+
+    const result = await runner.measure(
+      async (a, b) => {
+        await sleep(1000);
+        return a + b;
+      },
+      [1, 2],
+      {
+        modelParams: { b: 5 },
+        invocation: "customAddition",
+      }
+    );
+
+    expect(runner.stepRuns.length).toEqual(1);
+
+    const first = runner.stepRuns[0];
+
+    expect(first.elapsedTime).toBeGreaterThanOrEqual(1000);
   });
 });

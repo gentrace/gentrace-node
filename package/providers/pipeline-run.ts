@@ -102,7 +102,8 @@ export class PipelineRun {
 
   async measure<F extends (...args: any[]) => any>(
     func: F,
-    inputs: Parameters<F>
+    inputs: Parameters<F>,
+    stepInfo?: Omit<PartialStepRunType, "inputs" | "outputs">
   ): Promise<ReturnType<F>> {
     const startTime = performance.timeOrigin + performance.now();
     const returnValue = await func(...inputs);
@@ -117,13 +118,13 @@ export class PipelineRun {
 
     this.stepRuns.push(
       new StepRun(
-        "undeclared",
-        "undeclared",
+        stepInfo.provider ?? "undeclared",
+        stepInfo.invocation ?? "undeclared",
         elapsedTime,
         new Date(startTime).toISOString(),
         new Date(endTime).toISOString(),
         inputs,
-        {},
+        stepInfo.modelParams ?? {},
         modifiedOuput
       )
     );
