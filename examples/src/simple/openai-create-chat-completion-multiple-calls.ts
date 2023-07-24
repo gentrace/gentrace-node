@@ -26,7 +26,7 @@ async function createCompletion() {
       },
     ],
     model: "gpt-3.5-turbo",
-    pipelineId: "testing-pipeline-id",
+    pipelineSlug: "testing-pipeline-id",
   });
 
   console.log(
@@ -43,7 +43,7 @@ async function createCompletion() {
       },
     ],
     model: "gpt-3.5-turbo",
-    pipelineId: "testing-pipeline-id",
+    pipelineSlug: "testing-pipeline-id",
   });
   console.log(
     "chat completion response two",

@@ -18,7 +18,7 @@ async function queryPineconeIndex() {
   const index = await pinecone.Index("openai-trec");
 
   const queryResponse = await index.query({
-    pipelineId: "pinecone-query-self-contained",
+    pipelineSlug: "pinecone-query-self-contained",
     queryRequest: {
       vector: DEFAULT_VECTOR,
       topK: 3,

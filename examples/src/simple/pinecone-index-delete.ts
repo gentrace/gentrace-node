@@ -20,7 +20,7 @@ async function deletePineconeIndex() {
   const index = await pinecone.Index("openai-trec");
 
   const deleteResponse = await index.delete1({
-    pipelineId: "pinecone-delete-self-contained",
+    pipelineSlug: "pinecone-delete-self-contained",
     ids: ["3890"],
   });
   console.log("deleteResponse", deleteResponse);

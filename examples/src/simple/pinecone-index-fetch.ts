@@ -17,7 +17,7 @@ async function fetchPineconeIndex() {
   const index = await pinecone.Index("openai-trec");
 
   const fetchResponse = await index.fetch({
-    pipelineId: "pinecone-fetch-self-contained-5",
+    pipelineSlug: "pinecone-fetch-self-contained-5",
     ids: ["3890"],
   });
 
