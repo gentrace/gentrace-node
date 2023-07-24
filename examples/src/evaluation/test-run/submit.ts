@@ -1,6 +1,6 @@
 import { init, runTest, Pipeline, Configuration } from "@gentrace/node";
 
-const PIPELINE_SLUG = "example-pipeline";
+const PIPELINE_SLUG = "guess-the-year";
 
 const pipeline = new Pipeline({
   id: PIPELINE_SLUG,
@@ -16,19 +16,23 @@ async function submitTestRun() {
     runName: "Vivek's Run Name",
   });
 
-  await runTest(PIPELINE_SLUG, async (testCase) => {
-    const runner = pipeline.start();
+  try {
+    await runTest(PIPELINE_SLUG, async (testCase) => {
+      const runner = pipeline.start();
 
-    await runner.measure(
-      (inputs) => {
-        // Simply return inputs as outputs
-        return inputs;
-      },
-      [testCase.inputs]
-    );
+      await runner.measure(
+        (inputs) => {
+          // Simply return inputs as outputs
+          return inputs;
+        },
+        [testCase.inputs]
+      );
 
-    return runner;
-  });
+      return runner;
+    });
+  } catch (e) {
+    console.error("Error value", e);
+  }
 }
 
 submitTestRun();
