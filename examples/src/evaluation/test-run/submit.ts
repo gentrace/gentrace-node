@@ -22,6 +22,7 @@ async function submitTestRun() {
 
       await runner.measure(
         (inputs) => {
+          console.log("inputs", inputs);
           // Simply return inputs as outputs
           return inputs;
         },

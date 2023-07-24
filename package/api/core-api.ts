@@ -53,6 +53,12 @@ import { TestResultGet200Response1 } from "../models";
 import { TestResultPost200Response } from "../models";
 // @ts-ignore
 import { TestResultPostRequest } from "../models";
+// @ts-ignore
+import { TestRunGet200Response } from "../models";
+// @ts-ignore
+import { TestRunPost200Response } from "../models";
+// @ts-ignore
+import { TestRunPostRequest } from "../models";
 /**
  * CoreApi - axios parameter creator
  * @export
@@ -65,11 +71,13 @@ export const CoreApiAxiosParamCreator = function (
      *
      * @summary Get pipelines, optionally filtered by label
      * @param {string} [label] The label to filter pipelines by
+     * @param {string} [slug] The slug to filter pipelines by
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     pipelinesGet: async (
       label?: string,
+      slug?: string,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
       const localVarPath = `/pipelines`;
@@ -94,6 +102,10 @@ export const CoreApiAxiosParamCreator = function (
 
       if (label !== undefined) {
         localVarQueryParameter["label"] = label;
+      }
+
+      if (slug !== undefined) {
+        localVarQueryParameter["slug"] = slug;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -167,16 +179,16 @@ export const CoreApiAxiosParamCreator = function (
     /**
      *
      * @summary Get test cases for a pipeline
-     * @param {string} pipelineId The ID of the test case set to retrieve
+     * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
+     * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     testCaseGet: async (
-      pipelineId: string,
+      pipelineId?: string,
+      pipelineSlug?: string,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
-      // verify required parameter 'pipelineId' is not null or undefined
-      assertParamExists("testCaseGet", "pipelineId", pipelineId);
       const localVarPath = `/test-case`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -199,6 +211,10 @@ export const CoreApiAxiosParamCreator = function (
 
       if (pipelineId !== undefined) {
         localVarQueryParameter["pipelineId"] = pipelineId;
+      }
+
+      if (pipelineSlug !== undefined) {
+        localVarQueryParameter["pipelineSlug"] = pipelineSlug;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -324,6 +340,117 @@ export const CoreApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     *
+     * @summary Get test run by ID
+     * @param {string} runId The ID of the test run to retrieve
+     * @param {*} [options] Override http request option.
+     * @deprecated
+     * @throws {RequiredError}
+     */
+    testRunGet: async (
+      runId: string,
+      options: AxiosRequestConfig = {}
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'runId' is not null or undefined
+      assertParamExists("testRunGet", "runId", runId);
+      const localVarPath = `/test-run`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (runId !== undefined) {
+        localVarQueryParameter["runId"] = runId;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Create a new test run from test results
+     * @param {TestRunPostRequest} testRunPostRequest
+     * @param {*} [options] Override http request option.
+     * @deprecated
+     * @throws {RequiredError}
+     */
+    testRunPost: async (
+      testRunPostRequest: TestRunPostRequest,
+      options: AxiosRequestConfig = {}
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'testRunPostRequest' is not null or undefined
+      assertParamExists(
+        "testRunPost",
+        "testRunPostRequest",
+        testRunPostRequest
+      );
+      const localVarPath = `/test-run`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        testRunPostRequest,
+        localVarRequestOptions,
+        configuration
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -338,11 +465,13 @@ export const CoreApiFp = function (configuration?: Configuration) {
      *
      * @summary Get pipelines, optionally filtered by label
      * @param {string} [label] The label to filter pipelines by
+     * @param {string} [slug] The slug to filter pipelines by
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async pipelinesGet(
       label?: string,
+      slug?: string,
       options?: AxiosRequestConfig
     ): Promise<
       (
@@ -352,6 +481,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.pipelinesGet(
         label,
+        slug,
         options
       );
       return createRequestFunction(
@@ -388,12 +518,14 @@ export const CoreApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Get test cases for a pipeline
-     * @param {string} pipelineId The ID of the test case set to retrieve
+     * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
+     * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async testCaseGet(
-      pipelineId: string,
+      pipelineId?: string,
+      pipelineSlug?: string,
       options?: AxiosRequestConfig
     ): Promise<
       (
@@ -403,6 +535,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.testCaseGet(
         pipelineId,
+        pipelineSlug,
         options
       );
       return createRequestFunction(
@@ -466,6 +599,62 @@ export const CoreApiFp = function (configuration?: Configuration) {
         configuration
       );
     },
+    /**
+     *
+     * @summary Get test run by ID
+     * @param {string} runId The ID of the test run to retrieve
+     * @param {*} [options] Override http request option.
+     * @deprecated
+     * @throws {RequiredError}
+     */
+    async testRunGet(
+      runId: string,
+      options?: AxiosRequestConfig
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string
+      ) => AxiosPromise<TestRunGet200Response>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.testRunGet(
+        runId,
+        options
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration
+      );
+    },
+    /**
+     *
+     * @summary Create a new test run from test results
+     * @param {TestRunPostRequest} testRunPostRequest
+     * @param {*} [options] Override http request option.
+     * @deprecated
+     * @throws {RequiredError}
+     */
+    async testRunPost(
+      testRunPostRequest: TestRunPostRequest,
+      options?: AxiosRequestConfig
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string
+      ) => AxiosPromise<TestRunPost200Response>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.testRunPost(
+        testRunPostRequest,
+        options
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration
+      );
+    },
   };
 };
 
@@ -484,15 +673,17 @@ export const CoreApiFactory = function (
      *
      * @summary Get pipelines, optionally filtered by label
      * @param {string} [label] The label to filter pipelines by
+     * @param {string} [slug] The slug to filter pipelines by
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     pipelinesGet(
       label?: string,
+      slug?: string,
       options?: any
     ): AxiosPromise<PipelinesGet200Response> {
       return localVarFp
-        .pipelinesGet(label, options)
+        .pipelinesGet(label, slug, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -510,16 +701,18 @@ export const CoreApiFactory = function (
     /**
      *
      * @summary Get test cases for a pipeline
-     * @param {string} pipelineId The ID of the test case set to retrieve
+     * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
+     * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     testCaseGet(
-      pipelineId: string,
+      pipelineId?: string,
+      pipelineSlug?: string,
       options?: any
     ): AxiosPromise<TestCaseGet200Response> {
       return localVarFp
-        .testCaseGet(pipelineId, options)
+        .testCaseGet(pipelineId, pipelineSlug, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -552,6 +745,38 @@ export const CoreApiFactory = function (
         .testResultPost(testResultPostRequest, options)
         .then((request) => request(axios, basePath));
     },
+    /**
+     *
+     * @summary Get test run by ID
+     * @param {string} runId The ID of the test run to retrieve
+     * @param {*} [options] Override http request option.
+     * @deprecated
+     * @throws {RequiredError}
+     */
+    testRunGet(
+      runId: string,
+      options?: any
+    ): AxiosPromise<TestRunGet200Response> {
+      return localVarFp
+        .testRunGet(runId, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Create a new test run from test results
+     * @param {TestRunPostRequest} testRunPostRequest
+     * @param {*} [options] Override http request option.
+     * @deprecated
+     * @throws {RequiredError}
+     */
+    testRunPost(
+      testRunPostRequest: TestRunPostRequest,
+      options?: any
+    ): AxiosPromise<TestRunPost200Response> {
+      return localVarFp
+        .testRunPost(testRunPostRequest, options)
+        .then((request) => request(axios, basePath));
+    },
   };
 };
 
@@ -566,13 +791,18 @@ export class CoreApi extends BaseAPI {
    *
    * @summary Get pipelines, optionally filtered by label
    * @param {string} [label] The label to filter pipelines by
+   * @param {string} [slug] The slug to filter pipelines by
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof CoreApi
    */
-  public pipelinesGet(label?: string, options?: AxiosRequestConfig) {
+  public pipelinesGet(
+    label?: string,
+    slug?: string,
+    options?: AxiosRequestConfig
+  ) {
     return CoreApiFp(this.configuration)
-      .pipelinesGet(label, options)
+      .pipelinesGet(label, slug, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -593,14 +823,19 @@ export class CoreApi extends BaseAPI {
   /**
    *
    * @summary Get test cases for a pipeline
-   * @param {string} pipelineId The ID of the test case set to retrieve
+   * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
+   * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof CoreApi
    */
-  public testCaseGet(pipelineId: string, options?: AxiosRequestConfig) {
+  public testCaseGet(
+    pipelineId?: string,
+    pipelineSlug?: string,
+    options?: AxiosRequestConfig
+  ) {
     return CoreApiFp(this.configuration)
-      .testCaseGet(pipelineId, options)
+      .testCaseGet(pipelineId, pipelineSlug, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -632,6 +867,39 @@ export class CoreApi extends BaseAPI {
   ) {
     return CoreApiFp(this.configuration)
       .testResultPost(testResultPostRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Get test run by ID
+   * @param {string} runId The ID of the test run to retrieve
+   * @param {*} [options] Override http request option.
+   * @deprecated
+   * @throws {RequiredError}
+   * @memberof CoreApi
+   */
+  public testRunGet(runId: string, options?: AxiosRequestConfig) {
+    return CoreApiFp(this.configuration)
+      .testRunGet(runId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Create a new test run from test results
+   * @param {TestRunPostRequest} testRunPostRequest
+   * @param {*} [options] Override http request option.
+   * @deprecated
+   * @throws {RequiredError}
+   * @memberof CoreApi
+   */
+  public testRunPost(
+    testRunPostRequest: TestRunPostRequest,
+    options?: AxiosRequestConfig
+  ) {
+    return CoreApiFp(this.configuration)
+      .testRunPost(testRunPostRequest, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }

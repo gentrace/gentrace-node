@@ -142,7 +142,8 @@ export const submitTestResult = async (
 };
 
 type PipelineParams = {
-  label: string;
+  label?: string;
+  slug?: string;
 };
 
 /**
@@ -158,13 +159,11 @@ export const getPipelines = async (params?: PipelineParams) => {
   }
 
   const label = (params ?? {}).label;
+  const slug = (params ?? {}).slug;
 
-  if (label) {
-    const response = await globalGentraceApi.pipelinesGet(label);
-    return response.data.pipelines;
-  }
+  const parameters: (string | undefined)[] = [label, slug];
 
-  const response = await globalGentraceApi.pipelinesGet();
+  const response = await globalGentraceApi.pipelinesGet(...parameters);
   return response.data.pipelines;
 };
 
@@ -196,7 +195,6 @@ export const runTest = async (
 
   for (const testCase of testCases) {
     const pipelineRun = await handler(testCase);
-    const pipeline = pipelineRun.getPipeline();
 
     testRuns.push({
       caseId: testCase.id,

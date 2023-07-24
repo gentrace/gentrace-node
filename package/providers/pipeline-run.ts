@@ -5,6 +5,7 @@ import { RunResponse } from "../models/run-response";
 import type { OpenAIPipelineHandler } from "./llms/openai";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
+import { getParamNames, zip } from "./utils";
 import type { PineconePipelineHandler } from "./vectorstores/pinecone";
 
 export class PipelineRun {
@@ -107,6 +108,15 @@ export class PipelineRun {
   ): Promise<ReturnType<F>> {
     const startTime = performance.timeOrigin + performance.now();
     const returnValue = await func(...inputs);
+    const paramNames = getParamNames(func);
+
+    const resolvedInputs = zip(paramNames, inputs).reduce<{
+      [key: string]: any;
+    }>((acc, current) => {
+      const [key, value] = current;
+      acc[key] = value;
+      return acc;
+    }, {});
 
     // Our server only accepts outputs as an object.
     let modifiedOuput = returnValue;
@@ -123,7 +133,7 @@ export class PipelineRun {
         elapsedTime,
         new Date(startTime).toISOString(),
         new Date(endTime).toISOString(),
-        inputs,
+        resolvedInputs,
         stepInfo?.modelParams ?? {},
         modifiedOuput
       )

@@ -23,11 +23,17 @@ import { TestResultPostRequestTestRunsInner } from "./test-result-post-request-t
  */
 export interface TestResultPostRequest {
   /**
-   * The pipeline ID to create the test result for
+   * The pipeline slug to create the test result for. Only one of pipelineSlug or pipelineId is required.
    * @type {string}
    * @memberof TestResultPostRequest
    */
-  pipelineId: string;
+  pipelineSlug?: string;
+  /**
+   * The pipeline ID to create the test result for. Only one of pipelineSlug or pipelineId is required.
+   * @type {string}
+   * @memberof TestResultPostRequest
+   */
+  pipelineId?: string;
   /**
    * The branch that the test result was created from
    * @type {string}
