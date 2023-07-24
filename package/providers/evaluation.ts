@@ -3,6 +3,8 @@ import {
   TestCase,
   TestResultPostRequest,
   TestResultPostRequestTestRunsInner,
+  TestRunPostRequestTestResultsInner,
+  TestRunPostRequest,
 } from "../models";
 import {
   GENTRACE_BRANCH,
@@ -101,44 +103,55 @@ export const constructSubmissionPayload = (
 export const submitTestResult = async (
   pipelineId: string,
   testCases: TestCase[],
-  outputs: string[]
+  outputsList: Record<string, any>[]
 ) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  if (testCases.length !== outputs.length) {
+  if (testCases.length !== outputsList.length) {
     throw new Error(
       "The number of test cases must be equal to the number of outputs."
     );
   }
 
-  const testResults: TestRun[] = testCases.map((testCase, index) => {
-    const startAndEndTime = new Date().toISOString();
-    const result: TestRun = {
-      caseId: testCase.id,
-      stepRuns: [
-        {
-          elapsedTime: 0,
-          startTime: startAndEndTime,
-          endTime: startAndEndTime,
-          provider: {
-            name: "undeclared",
-            invocation: "undeclared",
-            modelParams: {},
-            inputs: testCase.inputs,
-            outputs: {
-              value: outputs[index],
-            },
-          },
-        },
-      ],
-    };
+  const testRuns: TestRunPostRequestTestResultsInner[] = testCases.map(
+    (testCase, index) => {
+      const run: TestRunPostRequestTestResultsInner = {
+        caseId: testCase.id,
+        inputs: testCase.inputs,
+        outputs: outputsList[index],
+      };
 
-    return result;
-  });
+      return run;
+    }
+  );
 
-  return submitPreparedTestResult(pipelineId, testResults);
+  const body: TestRunPostRequest = {
+    setId: pipelineId,
+    testResults: testRuns,
+  };
+
+  if (GENTRACE_RUN_NAME) {
+    body.name = GENTRACE_RUN_NAME;
+  }
+
+  if (GENTRACE_BRANCH || process.env.GENTRACE_BRANCH) {
+    body.branch =
+      GENTRACE_BRANCH.length > 0
+        ? GENTRACE_BRANCH
+        : process.env.GENTRACE_BRANCH;
+  }
+
+  if (GENTRACE_COMMIT || process.env.GENTRACE_COMMIT) {
+    body.commit =
+      GENTRACE_COMMIT.length > 0
+        ? GENTRACE_COMMIT
+        : process.env.GENTRACE_COMMIT;
+  }
+
+  const response = await globalGentraceApi.testRunPost(body);
+  return response.data;
 };
 
 type PipelineParams = {
@@ -172,7 +185,7 @@ export const getPipelines = async (params?: PipelineParams) => {
  *
  * @param {string} pipelineSlug - The slug of the pipeline.
  * @param {(testCase: TestCase) => Promise<PipelineRun>} handler - The handler function that runs the test case and returns a promise with a PipelineRun.
- * @returns {Promise<TestResult>} - A promise that resolves to the test result.
+ * @returns {Promise<TestRun>} - A promise that resolves to the test result.
  * @throws {Error} - Throws an error if the specified pipeline cannot be found.
  */
 export const runTest = async (

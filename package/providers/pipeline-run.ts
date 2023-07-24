@@ -153,7 +153,8 @@ export class PipelineRun {
 
     const submission = coreApi.runPost({
       id: newPipelineRunId,
-      slug: this.pipeline.slug,
+      // @deprecated: only use slug in future releases
+      slug: this.pipeline.slug ?? this.pipeline.id,
       stepRuns: this.stepRuns.map(
         ({
           provider,

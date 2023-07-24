@@ -3,7 +3,7 @@ import { init, runTest, Pipeline, Configuration } from "@gentrace/node";
 const PIPELINE_SLUG = "guess-the-year";
 
 const pipeline = new Pipeline({
-  id: PIPELINE_SLUG,
+  slug: PIPELINE_SLUG,
   openAIConfig: new Configuration({
     apiKey: process.env.OPENAI_KEY,
   }),

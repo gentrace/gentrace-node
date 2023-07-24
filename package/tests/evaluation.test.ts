@@ -269,11 +269,11 @@ describe("Usage of Evaluation functionality", () => {
       const submissionResponse = await submitTestResult(
         "pipeline-id",
         testCases,
-        ["This are some outputs"]
+        [{ value: "This are some outputs" }]
       );
-      expect(submissionResponse.resultId).toBe(
-        createTestResultResponse.resultId
-      );
+
+      // The API endpoint will return runId instead of resultId since it's deprecated
+      expect(submissionResponse.runId).toBe(createTestResultResponse.resultId);
     });
 
     it("should create an instance when configuration is valid (gentrace.ai host)", async () => {
@@ -293,11 +293,9 @@ describe("Usage of Evaluation functionality", () => {
       const submissionResponse = await submitTestResult(
         "pipeline-id",
         testCases,
-        ["This are some outputs"]
+        [{ value: "This are some outputs" }]
       );
-      expect(submissionResponse.resultId).toBe(
-        createTestResultResponse.resultId
-      );
+      expect(submissionResponse.runId).toBe(createTestResultResponse.resultId);
     });
 
     it("should fails when parameters do not match", async () => {

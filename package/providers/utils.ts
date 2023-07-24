@@ -1,5 +1,6 @@
-export type OptionalPipelineId = {
+export type OptionalPipelineInfo = {
   pipelineId?: string;
+  pipelineSlug?: string;
 };
 
 export function sleep(ms: number) {

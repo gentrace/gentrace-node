@@ -8,7 +8,7 @@ async function createCompletion() {
   });
 
   const pipeline = new Pipeline({
-    id: "completion-pipeline",
+    slug: "completion-pipeline",
     openAIConfig: new Configuration({
       apiKey: process.env.OPENAI_KEY,
     }),

@@ -52,7 +52,7 @@ describe("test_openai_completion_pipeline", () => {
     });
 
     const pipeline = new Pipeline({
-      id: "create-completion-pipeline",
+      slug: "create-completion-pipeline",
       openAIConfig: new Configuration({
         apiKey: process.env.OPENAI_KEY,
       }),
@@ -81,7 +81,7 @@ describe("test_openai_completion_pipeline", () => {
     });
 
     const pipeline = new Pipeline({
-      id: "create-completion-pipeline",
+      slug: "create-completion-pipeline",
       openAIConfig: new Configuration({
         apiKey: process.env.OPENAI_KEY,
       }),
@@ -122,7 +122,7 @@ describe("test_openai_completion_pipeline", () => {
     });
 
     const pipeline = new Pipeline({
-      id: "create-completion-pipeline",
+      slug: "create-completion-pipeline",
       openAIConfig: new Configuration({
         apiKey: process.env.OPENAI_KEY,
       }),
@@ -157,7 +157,7 @@ describe("test_openai_completion_pipeline", () => {
     });
 
     const pipeline = new Pipeline({
-      id: "create-completion-pipeline",
+      slug: "create-completion-pipeline",
       openAIConfig: new Configuration({
         apiKey: process.env.OPENAI_KEY,
       }),
@@ -188,7 +188,7 @@ describe("test_openai_completion_pipeline", () => {
     });
 
     const pipeline = new Pipeline({
-      id: "create-completion-pipeline",
+      slug: "create-completion-pipeline",
       openAIConfig: new Configuration({
         apiKey: process.env.OPENAI_KEY,
       }),
@@ -227,7 +227,7 @@ describe("test_openai_completion_pipeline", () => {
     });
 
     const pipeline = new Pipeline({
-      id: "create-completion-pipeline",
+      slug: "create-completion-pipeline",
       openAIConfig: new Configuration({
         apiKey: process.env.OPENAI_KEY,
       }),

@@ -8,7 +8,7 @@ async function upsertPineconeIndex() {
   });
 
   const pipeline = new Pipeline({
-    id: "pinecone-index-fetch-pipeline",
+    slug: "pinecone-index-fetch-pipeline",
     pineconeConfig: {
       apiKey: process.env.PINECONE_API_KEY ?? "",
       environment: process.env.PINECONE_ENVIRONMENT ?? "",

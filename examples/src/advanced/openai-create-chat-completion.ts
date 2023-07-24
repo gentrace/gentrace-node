@@ -8,7 +8,7 @@ async function createChatCompletion() {
   });
 
   const pipeline = new Pipeline({
-    id: "create-completion-pipeline",
+    slug: "create-completion-pipeline",
     openAIConfig: new Configuration({
       apiKey: process.env.OPENAI_KEY,
     }),
