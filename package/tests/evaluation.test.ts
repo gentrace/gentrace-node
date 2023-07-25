@@ -16,6 +16,10 @@ describe("Usage of Evaluation functionality", () => {
     resultId: "993F25D8-7B54-42E2-A50D-D143BCE1C5C4",
   };
 
+  let createTestRunResponse = {
+    runId: "993F25D8-7B54-42E2-A50D-D143BCE1C5C4",
+  };
+
   let getTestCasesResponse: {
     testCases: {
       id: string;
@@ -208,6 +212,13 @@ describe("Usage of Evaluation functionality", () => {
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
           ctx.json(createTestResultResponse)
+        );
+      }),
+      rest.post("https://gentrace.ai/api/v1/test-run", (req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.set("Content-Type", "application/json"),
+          ctx.json(createTestRunResponse)
         );
       }),
       rest.get("https://gentrace.ai/api/v1/test-case", (req, res, ctx) => {
