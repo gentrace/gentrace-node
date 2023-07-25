@@ -15,6 +15,7 @@ import {
 import { PipelineRun } from "./pipeline-run";
 
 export type TestRun = TestResultPostRequestTestRunsInner;
+export type TestResult = TestRunPostRequestTestResultsInner;
 
 /**
  * Retrieves test cases for a given pipeline ID from the Gentrace API
@@ -34,25 +35,47 @@ export const getTestCases = async (pipelineId: string) => {
 };
 
 /**
- * Submits prepared test run to the Gentrace API for a given pipeline ID. This method requires that you
- * create TestRun objects yourself. We recommend using the submitTestRun method instead.
+ * @deprecated Use {@link runTest} instead.
+ * Submits prepared test results to the Gentrace API for a given set ID. This method requires that you
+ * create TestResult objects yourself. We recommend using the submitTestResults method instead.
  * @async
- * @param {string} pipelineId - The ID of the pipeline associated with the test results.
- * @param {Array<TestRun>} testRuns - An array of test runs to submit.
+ * @param {string} setId - The ID of the test set associated with the test results.
+ * @param {Array<TestResult>} testResults - An array of test results to submit.
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
  * @returns {Promise<TestRunPost200Response>} A Promise that resolves with the response data from the API.
  */
-export const submitPreparedTestResult = async (
-  pipelineId: string,
-  testRuns: TestRun[]
+export const submitPreparedTestResults = async (
+  setId: string,
+  testResults: TestResult[]
 ) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  const body = constructSubmissionPayload(pipelineId, testRuns);
+  const body: TestRunPostRequest = {
+    setId,
+    testResults,
+  };
 
-  const response = await globalGentraceApi.testResultPost(body);
+  if (GENTRACE_RUN_NAME) {
+    body.name = GENTRACE_RUN_NAME;
+  }
+
+  if (GENTRACE_BRANCH || process.env.GENTRACE_BRANCH) {
+    body.branch =
+      GENTRACE_BRANCH.length > 0
+        ? GENTRACE_BRANCH
+        : process.env.GENTRACE_BRANCH;
+  }
+
+  if (GENTRACE_COMMIT || process.env.GENTRACE_COMMIT) {
+    body.commit =
+      GENTRACE_COMMIT.length > 0
+        ? GENTRACE_COMMIT
+        : process.env.GENTRACE_COMMIT;
+  }
+
+  const response = await globalGentraceApi.testRunPost(body);
   return response.data;
 };
 
@@ -88,7 +111,7 @@ export const constructSubmissionPayload = (
 
 /**
  * Submits test results by creating TestResult objects from given test cases and corresponding outputs.
- * @deprecated Use {@link submitTestResult} instead.
+ * @deprecated Use {@link runTest} instead.
  * @async
  * @function
  * @param {string} pipelineId - The identifier of the pipeline.
@@ -226,5 +249,12 @@ export const runTest = async (
     });
   }
 
-  return await submitPreparedTestResult(matchingPipeline.id, testRuns);
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const body = constructSubmissionPayload(matchingPipeline.id, testRuns);
+
+  const response = await globalGentraceApi.testResultPost(body);
+  return response.data;
 };
