@@ -66,4 +66,11 @@ export interface TestCase {
    * @memberof TestCase
    */
   pipelineId: string;
+  /**
+   * The ID of the set (pipeline) that the test case belongs to
+   * @type {string}
+   * @memberof TestCase
+   * @deprecated
+   */
+  setId?: string;
 }
