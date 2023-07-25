@@ -38,6 +38,9 @@ export const getTestCases = async (pipelineId: string) => {
  * @deprecated Use {@link runTest} instead.
  * Submits prepared test results to the Gentrace API for a given set ID. This method requires that you
  * create TestResult objects yourself. We recommend using the submitTestResults method instead.
+ *
+ * NOTE: We have renamed TestResult -> TestRun, TestRun -> TestResult, and TestSet -> Pipeline.
+ *
  * @async
  * @param {string} setId - The ID of the test set associated with the test results.
  * @param {Array<TestResult>} testResults - An array of test results to submit.
@@ -112,6 +115,9 @@ export const constructSubmissionPayload = (
 /**
  * Submits test results by creating TestResult objects from given test cases and corresponding outputs.
  * @deprecated Use {@link runTest} instead.
+ *
+ * NOTE: We have renamed TestResult -> TestRun, TestRun -> TestResult, and TestSet -> Pipeline.
+ *
  * @async
  * @function
  * @param {string} pipelineId - The identifier of the pipeline.
