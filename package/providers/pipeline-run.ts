@@ -57,6 +57,28 @@ export class PipelineRun {
     this.stepRuns.push(stepRun);
   }
 
+  /**
+   * Creates a checkpoint by recording a `StepRun` instance with execution metadata and pushes it to `this.stepRuns`.
+   * If no prior `StepRun` instances exist, the elapsed time is set to 0 and the start and end times are set to the
+   * current timestamp. If it is empty, elapsed time is set to 0 and start time and end time are set to the current
+   * timestamp.
+   *
+   * @param {PartialStepRunType & { inputs: any; outputs: any; }} step The information about the step to checkpoint.
+   * This includes the inputs and outputs of the step, as well as optional provider, invocation and modelParams metadata.
+   *
+   * @example
+   * const stepInfo = {
+   *   provider: 'MyProvider',
+   *   invocation: 'doSomething',
+   *   inputs: { x: 10, y: 20 },
+   *   outputs: { result: 30 }
+   * };
+   * checkpoint(stepInfo);
+   *
+   * @returns {void} The function does not return anything.
+   *
+   * @throws {Error} If the `StepRun` constructor or any other operations throw an error, it will be propagated.
+   */
   checkpoint(
     step: PartialStepRunType & {
       inputs: any;
@@ -101,6 +123,25 @@ export class PipelineRun {
     }
   }
 
+  /**
+   * Asynchronously measures the execution time of a function.
+   *
+   * @template F Function type that extends (...args: any[]) => any
+   * @param {F} func The function to be measured.
+   * @param {Parameters<F>} inputs The parameters to be passed to the function.
+   * @param {Omit<PartialStepRunType, "inputs" | "outputs">} [stepInfo] Optional metadata for the function execution.
+   * @returns {Promise<ReturnType<F>>} Returns a promise that resolves to the return type of the function.
+   *
+   * @example
+   * async function foo(n: number) {
+   *   return n * 2;
+   * }
+   * const result = await measure(foo, [2]); // result will be 4
+   *
+   * The function also records a `StepRun` instance with execution metadata and pushes it to `this.stepRuns`.
+   * The recorded `StepRun` includes information such as the elapsed time, start and end time,
+   * resolved inputs, and model parameters if provided.
+   */
   async measure<F extends (...args: any[]) => any>(
     func: F,
     inputs: Parameters<F>,

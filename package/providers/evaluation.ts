@@ -219,7 +219,7 @@ export const getPipelines = async (params?: PipelineParams) => {
  */
 export const runTest = async (
   pipelineSlug: string,
-  handler: (testCase: TestCase) => Promise<PipelineRun>
+  handler: (testCase: TestCase) => Promise<[any, PipelineRun]>
 ) => {
   const allPipelines = await getPipelines();
 
@@ -236,7 +236,7 @@ export const runTest = async (
   const testRuns: TestRun[] = [];
 
   for (const testCase of testCases) {
-    const pipelineRun = await handler(testCase);
+    const [, pipelineRun] = await handler(testCase);
 
     testRuns.push({
       caseId: testCase.id,

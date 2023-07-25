@@ -20,7 +20,7 @@ async function submitTestRun() {
     await runTest(PIPELINE_SLUG, async (testCase) => {
       const runner = pipeline.start();
 
-      await runner.measure(
+      const outputs = await runner.measure(
         (inputs) => {
           console.log("inputs", inputs);
           // Simply return inputs as outputs
@@ -29,7 +29,7 @@ async function submitTestRun() {
         [testCase.inputs]
       );
 
-      return runner;
+      return [outputs, runner];
     });
   } catch (e) {
     console.error("Error value", e);
