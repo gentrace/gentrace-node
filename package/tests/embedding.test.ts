@@ -35,7 +35,7 @@ describe("test_openai_embedding_pipeline", () => {
           ctx.json(embeddingResponse)
         );
       }),
-      rest.post("https://gentrace.ai/api/v1/pipeline-run", (req, res, ctx) => {
+      rest.post("https://gentrace.ai/api/v1/run", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),

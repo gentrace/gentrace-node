@@ -14,27 +14,27 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestResultGet200ResponseStats } from "./test-result-get200-response-stats";
+import { TestResult } from "./test-result";
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestRun } from "./test-run";
+import { TestResultGet200ResponseStats } from "./test-result-get200-response-stats";
 
 /**
  *
  * @export
- * @interface TestRunGet200Response
+ * @interface TestResultGet200Response
  */
-export interface TestRunGet200Response {
+export interface TestResultGet200Response {
   /**
    *
-   * @type {TestRun}
-   * @memberof TestRunGet200Response
+   * @type {TestResult}
+   * @memberof TestResultGet200Response
    */
-  testRun?: TestRun;
+  testResult?: TestResult;
   /**
    *
    * @type {TestResultGet200ResponseStats}
-   * @memberof TestRunGet200Response
+   * @memberof TestResultGet200Response
    */
   stats?: TestResultGet200ResponseStats;
 }

@@ -15,49 +15,49 @@
 /**
  *
  * @export
- * @interface TestRun
+ * @interface TestResult
  */
-export interface TestRun {
+export interface TestResult {
   /**
-   * The unique identifier for the test run.
+   * The unique identifier for the test result.
    * @type {string}
-   * @memberof TestRun
+   * @memberof TestResult
    */
   id?: string;
   /**
-   * The date and time the test run was created.
+   * The date and time the test result was created.
    * @type {string}
-   * @memberof TestRun
+   * @memberof TestResult
    */
   createdAt?: string;
   /**
-   * The date and time the test run was last updated.
+   * The date and time the test result was last updated.
    * @type {string}
-   * @memberof TestRun
+   * @memberof TestResult
    */
   updatedAt?: string;
   /**
-   * The unique identifier for the test set associated with the test run.
+   * The unique identifier for the pipeline associated with the test result.
    * @type {string}
-   * @memberof TestRun
+   * @memberof TestResult
    */
-  setId?: string;
+  pipelineId?: string;
   /**
-   * The branch that the test run was created from
+   * The branch that the test result was created from
    * @type {string}
-   * @memberof TestRun
+   * @memberof TestResult
    */
   branch?: string;
   /**
-   * The commit that the test run was created from
+   * The commit that the test result was created from
    * @type {string}
-   * @memberof TestRun
+   * @memberof TestResult
    */
   commit?: string;
   /**
-   * The name of the test run
+   * The name of the test result
    * @type {string}
-   * @memberof TestRun
+   * @memberof TestResult
    */
   name?: string;
 }

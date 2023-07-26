@@ -15,31 +15,31 @@
 /**
  *
  * @export
- * @interface FeedbackRequest
+ * @interface TestResultGet200ResponseStats
  */
-export interface FeedbackRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof FeedbackRequest
-   */
-  pipelineRunId: string;
+export interface TestResultGet200ResponseStats {
   /**
    *
    * @type {number}
-   * @memberof FeedbackRequest
+   * @memberof TestResultGet200ResponseStats
    */
-  score: number;
+  total: number;
   /**
    *
-   * @type {string}
-   * @memberof FeedbackRequest
+   * @type {number}
+   * @memberof TestResultGet200ResponseStats
    */
-  recordedTime: string;
+  pending: number;
   /**
    *
-   * @type {string}
-   * @memberof FeedbackRequest
+   * @type {number}
+   * @memberof TestResultGet200ResponseStats
    */
-  details?: string | null;
+  failure: number;
+  /**
+   *
+   * @type {number}
+   * @memberof TestResultGet200ResponseStats
+   */
+  done: number;
 }

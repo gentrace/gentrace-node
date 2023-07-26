@@ -1,5 +1,5 @@
 import { Configuration, OpenAIApi } from "../openai";
-import { init } from "../providers";
+import { init, Pipeline } from "../providers";
 
 describe("Usage of OpenAIApi", () => {
   const OLD_ENV = process.env;
@@ -19,7 +19,7 @@ describe("Usage of OpenAIApi", () => {
         new OpenAIApi(
           new Configuration({
             gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "https://gentrace.ai/api/v1/pipeline-run",
+            gentraceBasePath: "https://gentrace.ai/api/v1/run",
             apiKey: "openai-api-key",
           })
         );
@@ -176,6 +176,28 @@ describe("Usage of OpenAIApi", () => {
       expect(() => {
         init();
       }).toThrow();
+    });
+
+    it("should throw if neither slug nor id are provided", () => {
+      expect(() => {
+        const pipeline = new Pipeline({});
+      }).toThrow();
+    });
+
+    it("should not throw if only deprecated ID is passed", () => {
+      expect(() => {
+        const pipeline = new Pipeline({
+          id: "test-id",
+        });
+      }).not.toThrow();
+    });
+
+    it("should not throw if only slug is passed", () => {
+      expect(() => {
+        const pipeline = new Pipeline({
+          slug: "test-slug",
+        });
+      }).not.toThrow();
     });
   });
 });

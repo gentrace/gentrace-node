@@ -14,18 +14,36 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCase } from "./test-case";
+import { StepRunProvider } from "./step-run-provider";
 
 /**
  *
  * @export
- * @interface TestCaseGet200Response
+ * @interface StepRun
  */
-export interface TestCaseGet200Response {
+export interface StepRun {
   /**
    *
-   * @type {Array<TestCase>}
-   * @memberof TestCaseGet200Response
+   * @type {StepRunProvider}
+   * @memberof StepRun
    */
-  testCases?: Array<TestCase>;
+  provider?: StepRunProvider;
+  /**
+   *
+   * @type {number}
+   * @memberof StepRun
+   */
+  elapsedTime?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof StepRun
+   */
+  startTime?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof StepRun
+   */
+  endTime?: string;
 }

@@ -16,7 +16,7 @@ import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 import { Configuration as GentraceConfiguration } from "../../configuration";
-import { OptionalPipelineId } from "../utils";
+import { OptionalPipelineInfo } from "../utils";
 import { performance } from "perf_hooks";
 
 type OpenAIPipelineHandlerOptions = {
@@ -56,16 +56,17 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   }
 
   private async setupSelfContainedPipelineRun<T>(
-    pipelineId: string | undefined,
+    pipelineSlug: string | undefined,
     coreLogic: (pipelineRun: PipelineRun) => Promise<T>
   ): Promise<T & { pipelineRunId?: string }> {
-    let isSelfContainedPullRequest = !this.pipelineRun && pipelineId;
+    let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
 
     let pipelineRun = this.pipelineRun;
 
     if (isSelfContainedPullRequest) {
       const pipeline = new Pipeline({
-        id: pipelineId,
+        id: pipelineSlug,
+        slug: pipelineSlug,
         apiKey: this.gentraceConfig.apiKey,
         basePath: this.gentraceConfig.basePath,
         logger: this.gentraceConfig.logger,
@@ -106,57 +107,62 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   > {
     return await this.setupSelfContainedPipelineRun<
       AxiosResponse<CreateCompletionResponse, any>
-    >(createCompletionRequest.pipelineId, async (pipelineRun) => {
-      const {
-        promptTemplate,
-        promptInputs,
-        prompt,
-        pipelineId: _pipelineId,
-        ...baseCompletionOptions
-      } = createCompletionRequest;
+    >(
+      createCompletionRequest.pipelineId ??
+        createCompletionRequest.pipelineSlug,
+      async (pipelineRun) => {
+        const {
+          promptTemplate,
+          promptInputs,
+          prompt,
+          pipelineId: _pipelineId,
+          pipelineSlug: _pipelineSlug,
+          ...baseCompletionOptions
+        } = createCompletionRequest;
 
-      let renderedPrompt = prompt;
+        let renderedPrompt = prompt;
 
-      if (promptTemplate && promptInputs) {
-        renderedPrompt = Mustache.render(promptTemplate, promptInputs);
+        if (promptTemplate && promptInputs) {
+          renderedPrompt = Mustache.render(promptTemplate, promptInputs);
+        }
+
+        const newCompletionOptions: CreateCompletionRequest = {
+          ...baseCompletionOptions,
+          prompt: renderedPrompt,
+        };
+
+        const startTime = performance.timeOrigin + performance.now();
+        const completion = await super.createCompletion(
+          newCompletionOptions,
+          options
+        );
+
+        const endTime = performance.timeOrigin + performance.now();
+
+        const elapsedTime = Math.floor(endTime - startTime);
+
+        // User and suffix parameters are inputs not model parameters
+        const { user, suffix, ...partialModelParams } = baseCompletionOptions;
+
+        pipelineRun?.addStepRunNode(
+          new OpenAICreateCompletionStepRun(
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            {
+              prompt: promptTemplate && promptInputs ? promptInputs : prompt,
+              user,
+              suffix,
+            },
+            { ...partialModelParams, promptTemplate },
+
+            completion.data
+          )
+        );
+
+        return completion;
       }
-
-      const newCompletionOptions: CreateCompletionRequest = {
-        ...baseCompletionOptions,
-        prompt: renderedPrompt,
-      };
-
-      const startTime = performance.timeOrigin + performance.now();
-      const completion = await super.createCompletion(
-        newCompletionOptions,
-        options
-      );
-
-      const endTime = performance.timeOrigin + performance.now();
-
-      const elapsedTime = Math.floor(endTime - startTime);
-
-      // User and suffix parameters are inputs not model parameters
-      const { user, suffix, ...partialModelParams } = baseCompletionOptions;
-
-      pipelineRun?.addStepRun(
-        new OpenAICreateCompletionStepRun(
-          elapsedTime,
-          new Date(startTime).toISOString(),
-          new Date(endTime).toISOString(),
-          {
-            prompt: promptTemplate && promptInputs ? promptInputs : prompt,
-            user,
-            suffix,
-          },
-          { ...partialModelParams, promptTemplate },
-
-          completion.data
-        )
-      );
-
-      return completion;
-    });
+    );
   }
 
   /**
@@ -178,11 +184,13 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     }
   > {
     return this.setupSelfContainedPipelineRun(
-      createChatCompletionRequest.pipelineId,
+      createChatCompletionRequest.pipelineId ??
+        createChatCompletionRequest.pipelineSlug,
       async (pipelineRun) => {
         const {
           messages,
           pipelineId: _pipelineId,
+          pipelineSlug: _pipelineSlug,
           ...baseCompletionOptions
         } = createChatCompletionRequest;
 
@@ -201,7 +209,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         // user parameter is an input, not a model parameter
         const { user, ...modelParams } = baseCompletionOptions;
 
-        pipelineRun?.addStepRun(
+        pipelineRun?.addStepRunNode(
           new OpenAICreateChatCompletionStepRun(
             elapsedTime,
             new Date(startTime).toISOString(),
@@ -228,17 +236,18 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createEmbedding(
-    createEmbeddingRequest: CreateEmbeddingRequest & OptionalPipelineId,
+    createEmbeddingRequest: CreateEmbeddingRequest & OptionalPipelineInfo,
     options?: AxiosRequestConfig
   ): Promise<
     AxiosResponse<CreateEmbeddingResponse, any> & { pipelineRunId?: string }
   > {
     return this.setupSelfContainedPipelineRun(
-      createEmbeddingRequest.pipelineId,
+      createEmbeddingRequest.pipelineId ?? createEmbeddingRequest.pipelineSlug,
       async (pipelineRun) => {
         const {
           model,
           pipelineId: _pipelineId,
+          pipelineSlug: _pipelineSlug,
           ...inputParams
         } = createEmbeddingRequest;
 
@@ -253,7 +262,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
         const elapsedTime = Math.floor(endTime - startTime);
 
-        pipelineRun?.addStepRun(
+        pipelineRun?.addStepRunNode(
           new OpenAICreateEmbeddingStepRun(
             elapsedTime,
             new Date(startTime).toISOString(),
@@ -373,7 +382,7 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
 export type CreateCompletionTemplateRequest = CreateCompletionRequest & {
   promptTemplate?: string;
   promptInputs?: Record<string, string>;
-} & OptionalPipelineId;
+} & OptionalPipelineInfo;
 
 type ChatCompletionRequestMessageTemplate = Omit<
   ChatCompletionRequestMessage,
@@ -389,7 +398,7 @@ export type CreateChatCompletionTemplateRequest = Omit<
   "messages"
 > & {
   messages: ChatCompletionRequestMessageTemplate[];
-} & OptionalPipelineId;
+} & OptionalPipelineInfo;
 
 function createRenderedChatMessages(
   messages: ChatCompletionRequestMessageTemplate[]

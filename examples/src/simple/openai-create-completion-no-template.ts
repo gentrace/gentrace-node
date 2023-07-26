@@ -14,7 +14,7 @@ const openai = new OpenAIApi(
 
 async function createCompletion() {
   const completionResponse = await openai.createCompletion({
-    pipelineId: "testing-pipeline-id",
+    pipelineSlug: "testing-pipeline-id",
     model: "text-davinci-003",
     prompt: "This is a test.",
   });

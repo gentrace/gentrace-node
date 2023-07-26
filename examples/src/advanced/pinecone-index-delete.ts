@@ -7,7 +7,7 @@ async function deletePineconeIndex() {
   });
 
   const pipeline = new Pipeline({
-    id: "pinecone-index-delete-pipeline",
+    slug: "pinecone-index-delete-pipeline",
     pineconeConfig: {
       apiKey: process.env.PINECONE_API_KEY ?? "",
       environment: process.env.PINECONE_ENVIRONMENT ?? "",

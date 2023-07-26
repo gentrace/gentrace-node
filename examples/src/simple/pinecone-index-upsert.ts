@@ -18,7 +18,7 @@ async function upsertPineconeIndex() {
   const index = await pinecone.Index("openai-trec");
 
   const upsertResponse = await index.upsert({
-    pipelineId: "pinecone-upsert-self-contained",
+    pipelineSlug: "pinecone-upsert-self-contained",
     upsertRequest: {
       vectors: [
         {

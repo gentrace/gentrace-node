@@ -16,7 +16,7 @@ async function createEmbedding() {
   const embeddingResponse = await openai.createEmbedding({
     model: "text-embedding-ada-002",
     input: "testing",
-    pipelineId: "testing-pipeline-id",
+    pipelineSlug: "testing-pipeline-id",
   });
 
   console.log(

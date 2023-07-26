@@ -44,7 +44,7 @@ describe("test_openai_chat_completion_pipeline", () => {
         }
       ),
 
-      rest.post("https://gentrace.ai/api/v1/pipeline-run", (req, res, ctx) => {
+      rest.post("https://gentrace.ai/api/v1/run", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
