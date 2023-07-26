@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/gentrace/gentrace-node/compare/v0.14.0...v0.15.0) (2023-07-26)
+
+
+### Features
+
+* Merge evaluate and observe ([#158](https://github.com/gentrace/gentrace-node/issues/158)) ([529b26c](https://github.com/gentrace/gentrace-node/commit/529b26c4d41690bb6543a9c2ec711c98e66005b4))
+
 ## [0.14.0](https://github.com/gentrace/gentrace-node/compare/v0.13.0...v0.14.0) (2023-07-20)
 
 
