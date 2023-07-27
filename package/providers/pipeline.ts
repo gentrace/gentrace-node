@@ -58,6 +58,10 @@ export class Pipeline {
       throw new Error("Please provide the Pipeline slug");
     }
 
+    if (!globalGentraceConfig) {
+      throw new Error("Please call init() before instantiating a Pipeline");
+    }
+
     if (apiKey) {
       if (logger) {
         logger.warn(
