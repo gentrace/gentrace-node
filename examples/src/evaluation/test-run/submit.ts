@@ -1,6 +1,12 @@
 import { init, runTest, Pipeline, Configuration } from "@gentrace/node";
 
-const PIPELINE_SLUG = "guess-the-year";
+const PIPELINE_SLUG = "creating-pipeilne";
+
+init({
+  apiKey: process.env.GENTRACE_API_KEY ?? "",
+  basePath: "http://localhost:3000/api/v1",
+  runName: "Vivek's Run Name",
+});
 
 const pipeline = new Pipeline({
   slug: PIPELINE_SLUG,
@@ -10,12 +16,6 @@ const pipeline = new Pipeline({
 });
 
 async function submitTestRun() {
-  init({
-    apiKey: process.env.GENTRACE_API_KEY ?? "",
-    basePath: "http://localhost:3000/api/v1",
-    runName: "Vivek's Run Name",
-  });
-
   try {
     await runTest(PIPELINE_SLUG, async (testCase) => {
       const runner = pipeline.start();
@@ -28,6 +28,8 @@ async function submitTestRun() {
         },
         [testCase.inputs]
       );
+
+      await runner.submit();
 
       return [outputs, runner];
     });

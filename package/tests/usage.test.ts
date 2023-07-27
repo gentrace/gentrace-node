@@ -1,5 +1,9 @@
 import { Configuration, OpenAIApi } from "../openai";
 import { init, Pipeline } from "../providers";
+import {
+  globalGentraceConfig,
+  resetGlobalGentraceApi,
+} from "../providers/init";
 
 describe("Usage of OpenAIApi", () => {
   const OLD_ENV = process.env;
@@ -11,6 +15,7 @@ describe("Usage of OpenAIApi", () => {
   beforeEach(() => {
     jest.resetModules();
     process.env = {};
+    resetGlobalGentraceApi();
   });
 
   describe("constructor", () => {
@@ -178,26 +183,12 @@ describe("Usage of OpenAIApi", () => {
       }).toThrow();
     });
 
-    it("should throw if neither slug nor id are provided", () => {
-      expect(() => {
-        const pipeline = new Pipeline({});
-      }).toThrow();
-    });
-
-    it("should not throw if only deprecated ID is passed", () => {
+    it("should throw if init() is not called before pipeline", () => {
       expect(() => {
         const pipeline = new Pipeline({
           id: "test-id",
         });
-      }).not.toThrow();
-    });
-
-    it("should not throw if only slug is passed", () => {
-      expect(() => {
-        const pipeline = new Pipeline({
-          slug: "test-slug",
-        });
-      }).not.toThrow();
+      }).toThrow();
     });
   });
 });

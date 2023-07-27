@@ -19,6 +19,10 @@ export let globalGentraceConfig: GentraceConfiguration | null = null;
 
 export let globalGentraceApi: CoreApi | null = null;
 
+export let resetGlobalGentraceApi = () => {
+  globalGentraceConfig = null;
+};
+
 export function init(values?: {
   apiKey?:
     | string
