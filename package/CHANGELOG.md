@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/gentrace/gentrace-node/compare/v0.15.0...v0.15.1) (2023-07-27)
+
+
+### Bug Fixes
+
+* Make sure Pipeline throws if init() was not called ([#161](https://github.com/gentrace/gentrace-node/issues/161)) ([f8703ef](https://github.com/gentrace/gentrace-node/commit/f8703ef74f38023ce7e6c6f65ee47f295090d363))
+
 ## [0.15.0](https://github.com/gentrace/gentrace-node/compare/v0.14.0...v0.15.0) (2023-07-26)
 
 
