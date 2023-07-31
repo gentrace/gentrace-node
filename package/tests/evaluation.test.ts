@@ -460,9 +460,7 @@ describe("Usage of Evaluation functionality", () => {
         }),
       });
 
-      const runner = new PipelineRun({
-        pipeline,
-      });
+      const runner = pipeline.start();
 
       const result = await runner.measure(
         async (a, b) => {
@@ -496,9 +494,7 @@ describe("Usage of Evaluation functionality", () => {
         }),
       });
 
-      const runner = new PipelineRun({
-        pipeline,
-      });
+      const runner = pipeline.start();
 
       const result = await runner.measure(
         async (a, b) => {
@@ -533,9 +529,7 @@ describe("Usage of Evaluation functionality", () => {
           }),
         });
 
-        const runner = new PipelineRun({
-          pipeline,
-        });
+        const runner = pipeline.start();
 
         const result = await runner.measure(
           async (a, b) => {
@@ -569,9 +563,7 @@ describe("Usage of Evaluation functionality", () => {
           }),
         });
 
-        const runner = new PipelineRun({
-          pipeline,
-        });
+        const runner = pipeline.start();
 
         const result = await runner.measure(
           async (a, b) => {
