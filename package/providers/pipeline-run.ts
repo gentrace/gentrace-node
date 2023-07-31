@@ -2,15 +2,18 @@ import { performance } from "perf_hooks";
 import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
 import { RunResponse } from "../models/run-response";
+import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import type { OpenAIPipelineHandler } from "./llms/openai";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
-import { getParamNames, zip } from "./utils";
+import { getParamNames, getTestCounter, zip } from "./utils";
 import type { PineconePipelineHandler } from "./vectorstores/pinecone";
 
 export class PipelineRun {
   private pipeline: Pipeline;
   public stepRuns: StepRun[];
+
+  private id: string = v4();
 
   constructor({ pipeline }: { pipeline: Pipeline }) {
     this.pipeline = pipeline;
@@ -19,6 +22,10 @@ export class PipelineRun {
 
   getPipeline() {
     return this.pipeline;
+  }
+
+  getId() {
+    return this.id;
   }
 
   async getOpenAI() {
@@ -186,17 +193,24 @@ export class PipelineRun {
   public async submit(
     { waitForServer }: { waitForServer: boolean } = { waitForServer: false }
   ) {
-    const coreApi = new CoreApi(this.pipeline.config);
+    const testCounter = getTestCounter();
 
-    const newPipelineRunId = v4();
+    if (testCounter > 0) {
+      const data: RunResponse = {
+        pipelineRunId: this.id,
+      };
+      return data;
+    }
+
+    const coreApi = new CoreApi(this.pipeline.config);
 
     this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
 
     const submission = coreApi.runPost({
-      id: newPipelineRunId,
+      id: this.id,
       // @deprecated: only use slug in future releases
       slug: this.pipeline.slug ?? this.pipeline.id,
-      collectionMethod: "runner",
+      collectionMethod: RunRequestCollectionMethodEnum.Runner,
       stepRuns: this.stepRuns.map(
         ({
           provider,
@@ -236,7 +250,7 @@ export class PipelineRun {
         });
 
       const data: RunResponse = {
-        pipelineRunId: newPipelineRunId,
+        pipelineRunId: this.id,
       };
       return data;
     }
