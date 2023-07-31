@@ -40,3 +40,19 @@ export function zip<S1, S2>(
 
   return zipped;
 }
+
+let TEST_COUNTER = 0;
+
+export function getTestCounter() {
+  return TEST_COUNTER;
+}
+
+export function incrementTestCounter() {
+  TEST_COUNTER += 1;
+  return TEST_COUNTER;
+}
+
+export function decrementTestCounter() {
+  TEST_COUNTER -= 1;
+  return TEST_COUNTER;
+}

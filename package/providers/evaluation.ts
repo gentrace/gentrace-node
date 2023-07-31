@@ -13,6 +13,7 @@ import {
   globalGentraceApi,
 } from "./init";
 import { PipelineRun } from "./pipeline-run";
+import { decrementTestCounter, incrementTestCounter } from "./utils";
 
 export type TestRun = TestResultPostRequestTestRunsInner;
 export type TestResult = TestRunPostRequestTestResultsInner;
@@ -223,46 +224,64 @@ export const runTest = async (
   pipelineSlug: string,
   handler: (testCase: TestCase) => Promise<[any, PipelineRun]>
 ) => {
-  const allPipelines = await getPipelines();
+  incrementTestCounter();
 
-  const matchingPipeline = allPipelines.find(
-    (pipeline) => pipeline.slug === pipelineSlug
-  );
+  try {
+    const allPipelines = await getPipelines();
 
-  if (!matchingPipeline) {
-    throw new Error(`Could not find the specified pipeline (${pipelineSlug})`);
+    const matchingPipeline = allPipelines.find(
+      (pipeline) => pipeline.slug === pipelineSlug
+    );
+
+    if (!matchingPipeline) {
+      throw new Error(
+        `Could not find the specified pipeline (${pipelineSlug})`
+      );
+    }
+
+    const testCases = await getTestCases(matchingPipeline.id);
+
+    const testRuns: TestRun[] = [];
+
+    for (const testCase of testCases) {
+      const [, pipelineRun] = await handler(testCase);
+
+      const testRun: TestRun = {
+        caseId: testCase.id,
+        stepRuns: pipelineRun.stepRuns.map((stepRun) => ({
+          provider: {
+            modelParams: stepRun.modelParams,
+            invocation: stepRun.invocation,
+            inputs: stepRun.inputs,
+            outputs: stepRun.outputs,
+            name: stepRun.provider,
+          },
+          elapsedTime: stepRun.elapsedTime,
+          startTime: stepRun.startTime,
+          endTime: stepRun.endTime,
+        })),
+      };
+
+      if (pipelineRun.getId()) {
+        testRun.id = pipelineRun.getId();
+      }
+
+      testRuns.push(testRun);
+    }
+
+    if (!globalGentraceApi) {
+      throw new Error("Gentrace API key not initialized. Call init() first.");
+    }
+
+    const body = constructSubmissionPayload(matchingPipeline.id, testRuns);
+
+    const response = await globalGentraceApi.testResultPost(body);
+    return response.data;
+  } catch (e) {
+    throw e;
+  } finally {
+    // Imperative that we decrement the test counter regardless of whether the function
+    // runs into an error or not.
+    decrementTestCounter();
   }
-
-  const testCases = await getTestCases(matchingPipeline.id);
-
-  const testRuns: TestRun[] = [];
-
-  for (const testCase of testCases) {
-    const [, pipelineRun] = await handler(testCase);
-
-    testRuns.push({
-      caseId: testCase.id,
-      stepRuns: pipelineRun.stepRuns.map((stepRun) => ({
-        provider: {
-          modelParams: stepRun.modelParams,
-          invocation: stepRun.invocation,
-          inputs: stepRun.inputs,
-          outputs: stepRun.outputs,
-          name: stepRun.provider,
-        },
-        elapsedTime: stepRun.elapsedTime,
-        startTime: stepRun.startTime,
-        endTime: stepRun.endTime,
-      })),
-    });
-  }
-
-  if (!globalGentraceApi) {
-    throw new Error("Gentrace API key not initialized. Call init() first.");
-  }
-
-  const body = constructSubmissionPayload(matchingPipeline.id, testRuns);
-
-  const response = await globalGentraceApi.testResultPost(body);
-  return response.data;
 };

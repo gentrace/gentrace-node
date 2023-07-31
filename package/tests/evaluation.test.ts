@@ -5,9 +5,14 @@ import {
   constructSubmissionPayload,
   getTestCases,
   getPipelines,
+  runTest,
   submitTestResult,
+  Pipeline,
+  PipelineRun,
 } from "../providers";
 import { setupServer, SetupServer } from "msw/node";
+import { Configuration } from "../openai";
+import { getTestCounter } from "../providers/utils";
 
 describe("Usage of Evaluation functionality", () => {
   let server: SetupServer;
@@ -54,6 +59,8 @@ describe("Usage of Evaluation functionality", () => {
       archivedAt: string | null;
       labels: string[];
       name: string;
+      slug: string;
+      displayName: string;
       organizationId: string;
       branch: string;
       cases: {
@@ -75,7 +82,9 @@ describe("Usage of Evaluation functionality", () => {
         updatedAt: "2023-07-18T11:08:09.842Z",
         archivedAt: null,
         labels: ["guessing"],
-        name: "Guess the Year",
+        name: null,
+        slug: "guess-the-year",
+        displayName: "Guess the Year",
         organizationId: "fe05eab7-4f07-530d-8ed9-15aeae86e0db",
         branch: "main",
         cases: [
@@ -123,7 +132,9 @@ describe("Usage of Evaluation functionality", () => {
         updatedAt: "2023-07-18T12:47:58.618Z",
         archivedAt: null,
         labels: [],
-        name: "Testign",
+        name: null,
+        slug: "testign",
+        displayName: "Testign",
         organizationId: "fe05eab7-4f07-530d-8ed9-15aeae86e0db",
         branch: "main",
         cases: [],
@@ -331,7 +342,6 @@ describe("Usage of Evaluation functionality", () => {
     it("should return pipelines when invoking the /api/v1/pipelines API", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
       });
 
       const pipelines = await getPipelines();
@@ -433,5 +443,151 @@ describe("Usage of Evaluation functionality", () => {
 
       expect(payload.collectionMethod).toBe("runner");
     });
+  });
+
+  it("should properly handle runTest() result submissions", async () => {
+    const slug = "guess-the-year";
+
+    init({
+      apiKey: "api-key",
+    });
+
+    await runTest(slug, async (testCase) => {
+      const pipeline = new Pipeline({
+        slug: slug,
+        openAIConfig: new Configuration({
+          apiKey: process.env.OPENAI_KEY,
+        }),
+      });
+
+      const runner = new PipelineRun({
+        pipeline,
+      });
+
+      const result = await runner.measure(
+        async (a, b) => {
+          return a + b;
+        },
+        [1, 2],
+        {
+          modelParams: { b: 5 },
+          invocation: "customAddition",
+        }
+      );
+
+      return [result, runner];
+    });
+  });
+
+  it("should properly increment and decrement counter", async () => {
+    const slug = "guess-the-year";
+
+    init({
+      apiKey: "api-key",
+    });
+
+    expect(getTestCounter()).toBe(0);
+
+    await runTest(slug, async (testCase) => {
+      const pipeline = new Pipeline({
+        slug: slug,
+        openAIConfig: new Configuration({
+          apiKey: process.env.OPENAI_KEY,
+        }),
+      });
+
+      const runner = new PipelineRun({
+        pipeline,
+      });
+
+      const result = await runner.measure(
+        async (a, b) => {
+          return a + b;
+        },
+        [1, 2],
+        {
+          modelParams: { b: 5 },
+          invocation: "customAddition",
+        }
+      );
+
+      return [result, runner];
+    });
+
+    expect(getTestCounter()).toBe(0);
+  });
+
+  it("should throw if slug is not found", async () => {
+    const slug = "not-available";
+
+    init({
+      apiKey: "api-key",
+    });
+
+    expect(
+      runTest(slug, async (testCase) => {
+        const pipeline = new Pipeline({
+          slug: slug,
+          openAIConfig: new Configuration({
+            apiKey: process.env.OPENAI_KEY,
+          }),
+        });
+
+        const runner = new PipelineRun({
+          pipeline,
+        });
+
+        const result = await runner.measure(
+          async (a, b) => {
+            return a + b;
+          },
+          [1, 2],
+          {
+            modelParams: { b: 5 },
+            invocation: "customAddition",
+          }
+        );
+
+        return [result, runner];
+      })
+    ).rejects.toThrow("Could not find the specified pipeline (not-available)");
+  });
+
+  it("should throw if slug is not found and reset counter appropriately", async () => {
+    const slug = "not-available";
+
+    init({
+      apiKey: "api-key",
+    });
+
+    await expect(
+      runTest(slug, async (testCase) => {
+        const pipeline = new Pipeline({
+          slug: slug,
+          openAIConfig: new Configuration({
+            apiKey: process.env.OPENAI_KEY,
+          }),
+        });
+
+        const runner = new PipelineRun({
+          pipeline,
+        });
+
+        const result = await runner.measure(
+          async (a, b) => {
+            return a + b;
+          },
+          [1, 2],
+          {
+            modelParams: { b: 5 },
+            invocation: "customAddition",
+          }
+        );
+
+        return [result, runner];
+      })
+    ).rejects.toThrow("Could not find the specified pipeline (not-available)");
+
+    expect(getTestCounter()).toBe(0);
   });
 });
