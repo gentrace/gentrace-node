@@ -196,6 +196,7 @@ export class PipelineRun {
       id: newPipelineRunId,
       // @deprecated: only use slug in future releases
       slug: this.pipeline.slug ?? this.pipeline.id,
+      collectionMethod: "runner",
       stepRuns: this.stepRuns.map(
         ({
           provider,

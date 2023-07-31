@@ -109,6 +109,8 @@ export const constructSubmissionPayload = (
         : process.env.GENTRACE_COMMIT;
   }
 
+  body.collectionMethod = "runner";
+
   return body;
 };
 
