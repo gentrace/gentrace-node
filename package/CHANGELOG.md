@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.15.2](https://github.com/gentrace/gentrace-node/compare/v0.15.1...v0.15.2) (2023-07-31)
+
+
+### Bug Fixes
+
+* Add collection method ([#163](https://github.com/gentrace/gentrace-node/issues/163)) ([c954403](https://github.com/gentrace/gentrace-node/commit/c954403b39620dd7ff772026c4fa96f0d369d592))
+* Add refining test ([#167](https://github.com/gentrace/gentrace-node/issues/167)) ([7178eab](https://github.com/gentrace/gentrace-node/commit/7178eabb33ed5ab67e63606b7e0f3db5f8415df6))
+* Add test for collectionType   ([#165](https://github.com/gentrace/gentrace-node/issues/165)) ([39f1d1e](https://github.com/gentrace/gentrace-node/commit/39f1d1e6e962b5cee93db38069b6818ff5808860))
+* Add test run counter ([#166](https://github.com/gentrace/gentrace-node/issues/166)) ([9f73c6f](https://github.com/gentrace/gentrace-node/commit/9f73c6f70ce98566570c4177664a19e00eb32fc6))
+
 ## [0.15.1](https://github.com/gentrace/gentrace-node/compare/v0.15.0...v0.15.1) (2023-07-27)
 
 
