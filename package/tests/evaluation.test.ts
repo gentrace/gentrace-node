@@ -417,5 +417,21 @@ describe("Usage of Evaluation functionality", () => {
       expect(payload.branch).toBe("test-branch-init");
       expect(payload.commit).toBe("test-commit-init");
     });
+
+    it("should create a body with a `runner` submission variable", async () => {
+      process.env.GENTRACE_BRANCH = "test-branch-env";
+      process.env.GENTRACE_COMMIT = "test-commit-env";
+
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+      });
+
+      const payload = constructSubmissionPayload("pipeline-id", []);
+
+      expect(payload.collectionMethod).toBe("runner");
+    });
   });
 });
