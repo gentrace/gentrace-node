@@ -56,3 +56,11 @@ export function decrementTestCounter() {
   TEST_COUNTER -= 1;
   return TEST_COUNTER;
 }
+
+export function getProcessEnv(name: string) {
+  if (typeof process === "undefined") {
+    return null;
+  }
+
+  return process.env[name];
+}

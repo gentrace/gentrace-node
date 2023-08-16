@@ -8,6 +8,7 @@
     "rootDir": ".",
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "typeRoots": ["node_modules/@types"]
   },

@@ -13,7 +13,11 @@ import {
   globalGentraceApi,
 } from "./init";
 import { PipelineRun } from "./pipeline-run";
-import { decrementTestCounter, incrementTestCounter } from "./utils";
+import {
+  decrementTestCounter,
+  getProcessEnv,
+  incrementTestCounter,
+} from "./utils";
 
 export type TestRun = TestResultPostRequestTestRunsInner;
 export type TestResult = TestRunPostRequestTestResultsInner;
@@ -65,18 +69,18 @@ export const submitPreparedTestResults = async (
     body.name = GENTRACE_RUN_NAME;
   }
 
-  if (GENTRACE_BRANCH || process.env.GENTRACE_BRANCH) {
+  if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
     body.branch =
       GENTRACE_BRANCH.length > 0
         ? GENTRACE_BRANCH
-        : process.env.GENTRACE_BRANCH;
+        : getProcessEnv("GENTRACE_BRANCH");
   }
 
-  if (GENTRACE_COMMIT || process.env.GENTRACE_COMMIT) {
+  if (GENTRACE_COMMIT || getProcessEnv("GENTRACE_COMMIT")) {
     body.commit =
       GENTRACE_COMMIT.length > 0
         ? GENTRACE_COMMIT
-        : process.env.GENTRACE_COMMIT;
+        : getProcessEnv("GENTRACE_COMMIT");
   }
 
   const response = await globalGentraceApi.testRunPost(body);
@@ -96,18 +100,18 @@ export const constructSubmissionPayload = (
     body.name = GENTRACE_RUN_NAME;
   }
 
-  if (GENTRACE_BRANCH || process.env.GENTRACE_BRANCH) {
+  if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
     body.branch =
       GENTRACE_BRANCH.length > 0
         ? GENTRACE_BRANCH
-        : process.env.GENTRACE_BRANCH;
+        : getProcessEnv("GENTRACE_BRANCH");
   }
 
-  if (GENTRACE_COMMIT || process.env.GENTRACE_COMMIT) {
+  if (GENTRACE_COMMIT || getProcessEnv("GENTRACE_COMMIT")) {
     body.commit =
       GENTRACE_COMMIT.length > 0
         ? GENTRACE_COMMIT
-        : process.env.GENTRACE_COMMIT;
+        : getProcessEnv("GENTRACE_COMMIT");
   }
 
   body.collectionMethod = "runner";
@@ -168,18 +172,18 @@ export const submitTestResult = async (
     body.name = GENTRACE_RUN_NAME;
   }
 
-  if (GENTRACE_BRANCH || process.env.GENTRACE_BRANCH) {
+  if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
     body.branch =
       GENTRACE_BRANCH.length > 0
         ? GENTRACE_BRANCH
-        : process.env.GENTRACE_BRANCH;
+        : getProcessEnv("GENTRACE_BRANCH");
   }
 
-  if (GENTRACE_COMMIT || process.env.GENTRACE_COMMIT) {
+  if (GENTRACE_COMMIT || getProcessEnv("GENTRACE_COMMIT")) {
     body.commit =
       GENTRACE_COMMIT.length > 0
         ? GENTRACE_COMMIT
-        : process.env.GENTRACE_COMMIT;
+        : getProcessEnv("GENTRACE_COMMIT");
   }
 
   const response = await globalGentraceApi.testRunPost(body);
