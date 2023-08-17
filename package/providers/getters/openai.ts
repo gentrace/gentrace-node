@@ -1,68 +1,44 @@
-import {
-  Configuration as OpenAIConfiguration,
-  ConfigurationParameters as OpenAIConfigurationParameters,
-} from "openai";
 import { Configuration as GentraceConfiguration } from "../../configuration";
-import { OpenAIPipelineHandler } from "../llms/openai";
-
-class ModifiedOpenAIConfiguration extends OpenAIConfiguration {
-  gentraceApiKey: string;
-  gentraceBasePath?: string;
-  gentraceLogger?: {
-    info: (message: string, context?: any) => void;
-    warn: (message: string | Error, context?: any) => void;
-  };
-
-  constructor(
-    modifiedOAIConfig: OpenAIConfigurationParameters & {
-      gentraceApiKey: string;
-      gentraceBasePath?: string;
-      gentraceLogger?: {
-        info: (message: string, context?: any) => void;
-        warn: (message: string | Error, context?: any) => void;
-      };
-    }
-  ) {
-    super(modifiedOAIConfig);
-    this.gentraceApiKey = modifiedOAIConfig.gentraceApiKey;
-    this.gentraceBasePath = modifiedOAIConfig.gentraceBasePath;
-    this.gentraceLogger = modifiedOAIConfig.gentraceLogger;
-  }
-}
+import { GENTRACE_API_KEY, globalGentraceConfig } from "../init";
+import { GentraceClientOptions, OpenAIPipelineHandler } from "../llms/openai";
 
 class OpenAIApi extends OpenAIPipelineHandler {
-  constructor(modifiedOAIConfig: ModifiedOpenAIConfiguration) {
-    if (!modifiedOAIConfig.apiKey) {
-      throw new Error("API key not provided.");
-    }
+  constructor(options: GentraceClientOptions) {
+    const { gentraceApiKey, gentraceBasePath, gentraceLogger, ...oaiOptions } =
+      options;
 
-    if (!modifiedOAIConfig.gentraceApiKey) {
-      throw new Error("Gentrace API key not provided.");
-    }
-
-    if (modifiedOAIConfig.gentraceBasePath) {
+    if (options.gentraceBasePath) {
       try {
-        const url = new URL(modifiedOAIConfig.gentraceBasePath);
+        const url = new URL(options.gentraceBasePath);
         if (url.pathname.startsWith("/api/v1")) {
         } else {
           throw new Error('Gentrace base path must end in "/api/v1".');
         }
       } catch (err) {
-        throw new Error(`Invalid Gentrace base path ${err.message}`);
+        throw new Error(`Invalid Gentrace base path: ${err.message}`);
       }
     }
 
-    const gentraceConfig = new GentraceConfiguration({
-      apiKey: modifiedOAIConfig.gentraceApiKey,
-      basePath: modifiedOAIConfig.gentraceBasePath,
-      logger: modifiedOAIConfig.gentraceLogger,
-    });
+    let gentraceConfig: GentraceConfiguration | null = null;
+    if (options.gentraceApiKey) {
+      gentraceConfig = new GentraceConfiguration({
+        apiKey: options.gentraceApiKey ?? GENTRACE_API_KEY,
+        basePath: options.gentraceBasePath,
+        logger: options.gentraceLogger,
+      });
+    } else if (!globalGentraceConfig) {
+      throw new Error(
+        "Gentrace API key not provided. Please provide it in the init() call."
+      );
+    } else {
+      gentraceConfig = globalGentraceConfig;
+    }
 
     super({
-      config: modifiedOAIConfig,
+      ...oaiOptions,
       gentraceConfig,
     });
   }
 }
 
-export { OpenAIApi, ModifiedOpenAIConfiguration as Configuration };
+export { OpenAIApi };

@@ -1,16 +1,10 @@
 import OpenAI, { ClientOptions } from "openai";
 import { Configuration as GentraceConfiguration } from "./configuration";
 import { GENTRACE_API_KEY, globalGentraceConfig } from "./providers/init";
-import { OpenAIPipelineHandler } from "./providers/llms/openai";
-
-type GentraceClientOptions = ClientOptions & {
-  gentraceApiKey?: string;
-  gentraceBasePath?: string;
-  gentraceLogger?: {
-    info: (message: string, context?: any) => void;
-    warn: (message: string | Error, context?: any) => void;
-  };
-};
+import {
+  GentraceClientOptions,
+  OpenAIPipelineHandler,
+} from "./providers/llms/openai";
 
 class GentraceOpenAI extends OpenAIPipelineHandler {
   constructor(options: GentraceClientOptions) {
