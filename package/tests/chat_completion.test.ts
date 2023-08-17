@@ -3,6 +3,8 @@ import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../openai";
 import { config } from "dotenv";
 import { deinit, init } from "../providers/init";
+import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
+import { sleep } from "../providers/utils";
 
 config();
 
@@ -30,8 +32,22 @@ describe("test_openai_chat_completion_pipeline", () => {
   };
 
   let server: SetupServer;
+  let interceptor = new FetchInterceptor();
 
   beforeAll(() => {
+    interceptor.apply();
+
+    interceptor.on("request", (request) => {
+      request.respondWith({
+        status: 200,
+        statusText: "OK",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gentracePipelineRunResponse),
+      });
+    });
+
     server = setupServer(
       rest.post(
         "https://api.openai.com/v1/chat/completions",
@@ -44,6 +60,7 @@ describe("test_openai_chat_completion_pipeline", () => {
         }
       ),
 
+      // Designed for old axios native handler calls
       rest.post("https://gentrace.ai/api/v1/run", (req, res, ctx) => {
         return res(
           ctx.status(200),
@@ -55,7 +72,9 @@ describe("test_openai_chat_completion_pipeline", () => {
     server.listen();
   });
 
-  afterAll(() => {
+  afterAll(async () => {
+    await sleep(30);
+    interceptor.dispose();
     server.close();
   });
 

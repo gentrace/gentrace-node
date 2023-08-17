@@ -177,7 +177,6 @@ function createError(
 async function getResponse(request: any, config: any) {
   let stageOne;
   try {
-    console.log("about to fetch");
     stageOne = await fetch(request);
   } catch (e) {
     // @ts-ignore
