@@ -5,13 +5,17 @@ on: [push, pull_request]
 jobs:
   jest:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        node-version: ['18.15.0', '16.13.1']
+    
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '18.15.0'
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: package/package-lock.json
         if: ${{ steps.release.outputs['package--release_created'] }}
