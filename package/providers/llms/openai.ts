@@ -2,7 +2,13 @@
 import Mustache from "mustache";
 import OpenAI, { ClientOptions } from "openai";
 import { APIPromise, RequestOptions } from "openai/core";
-import { Chat, Completion, CompletionCreateParams } from "openai/resources";
+import {
+  Chat,
+  Completion,
+  CompletionCreateParams,
+  CreateEmbeddingResponse,
+  EmbeddingCreateParams,
+} from "openai/resources";
 import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
 import { Stream } from "openai/streaming";
 import { Configuration as GentraceConfiguration } from "../../configuration";
@@ -46,6 +52,88 @@ function createRenderedChatMessages(
   return newMessages;
 }
 
+class GentraceEmbeddings extends OpenAI.Embeddings {
+  private pipelineRun?: PipelineRun;
+  private pipeline?: Pipeline;
+  private gentraceConfig: GentraceConfiguration;
+
+  constructor({
+    client,
+    pipelineRun,
+    pipeline,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    pipeline?: Pipeline;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super(client);
+    this.pipelineRun = pipelineRun;
+    this.pipeline = pipeline;
+    this.gentraceConfig = gentraceConfig;
+  }
+
+  // @ts-ignore
+  async create(
+    body: EmbeddingCreateParams & { pipelineSlug?: string },
+    options?: RequestOptions
+  ) {
+    const { pipelineSlug, ...newPayload } = body;
+    const { model, ...inputParams } = newPayload;
+
+    let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
+
+    let pipelineRun = this.pipelineRun;
+
+    if (isSelfContainedPullRequest) {
+      const pipeline = new Pipeline({
+        id: pipelineSlug,
+        slug: pipelineSlug,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+        logger: this.gentraceConfig.logger,
+      });
+
+      pipelineRun = new PipelineRun({
+        pipeline,
+      });
+    }
+
+    const startTime = Date.now();
+
+    const completion = (await this.post("/embeddings", {
+      body: newPayload,
+      ...options,
+    })) as never as CreateEmbeddingResponse;
+
+    const endTime = Date.now();
+
+    const elapsedTime = Math.floor(endTime - startTime);
+
+    pipelineRun?.addStepRunNode(
+      new OpenAICreateEmbeddingStepRun(
+        elapsedTime,
+        new Date(startTime).toISOString(),
+        new Date(endTime).toISOString(),
+        { ...inputParams },
+        { model },
+        completion
+      )
+    );
+
+    if (isSelfContainedPullRequest) {
+      const { pipelineRunId } = await pipelineRun.submit();
+      (completion as unknown as { pipelineRunId: string }).pipelineRunId =
+        pipelineRunId;
+
+      return completion as CreateEmbeddingResponse & { pipelineRunId: string };
+    }
+
+    return completion;
+  }
+}
+
 class GentraceChatCompletions extends OpenAI.Chat.Completions {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
@@ -63,7 +151,6 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
     gentraceConfig: GentraceConfiguration;
   }) {
     super(client);
-    console.log("GentraceChatCompletions constructor", pipelineRun);
     this.pipelineRun = pipelineRun;
     this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
@@ -121,17 +208,6 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
     // user parameter is an input, not a model parameter
     const { user, ...modelParams } = baseCompletionOptions;
 
-    console.log(
-      "Adding step run node",
-      new OpenAICreateChatCompletionStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        { messages: renderedMessages, user },
-        modelParams,
-        data
-      )
-    );
     pipelineRun?.addStepRunNode(
       new OpenAICreateChatCompletionStepRun(
         elapsedTime,
@@ -327,8 +403,11 @@ export class OpenAIPipelineHandler extends OpenAI {
   // @ts-ignore
   completions: GentraceCompletions;
 
-  // @ts-ignore:
+  // @ts-ignore
   chat: GentraceChat;
+
+  // @ts-ignore
+  embeddings: GentraceEmbeddings;
 
   constructor({
     pipelineRun,
@@ -337,8 +416,6 @@ export class OpenAIPipelineHandler extends OpenAI {
     ...oaiOptions
   }: ClientOptions & OpenAIPipelineHandlerOptions) {
     super(oaiOptions);
-
-    console.log("OAI pipeline handler: pipeline run", pipelineRun);
 
     this.pipelineRun = pipelineRun;
     this.pipeline = pipeline;
@@ -355,6 +432,14 @@ export class OpenAIPipelineHandler extends OpenAI {
 
     // @ts-ignore
     this.chat = new GentraceChat({
+      // @ts-ignore
+      client: this,
+      pipelineRun,
+      pipeline,
+      gentraceConfig,
+    });
+
+    this.embeddings = new GentraceEmbeddings({
       // @ts-ignore
       client: this,
       pipelineRun,
@@ -440,6 +525,32 @@ class OpenAICreateCompletionStepRun extends StepRun {
     super(
       "openai",
       "openai_createCompletion",
+      elapsedTime,
+      startTime,
+      endTime,
+      inputs,
+      modelParams,
+      response
+    );
+  }
+}
+
+class OpenAICreateEmbeddingStepRun extends StepRun {
+  public inputs: Omit<EmbeddingCreateParams, "model">;
+  public modelParams: Omit<EmbeddingCreateParams, "input" | "user">;
+  public response: CreateEmbeddingResponse;
+
+  constructor(
+    elapsedTime: number,
+    startTime: string,
+    endTime: string,
+    inputs: Omit<EmbeddingCreateParams, "model">,
+    modelParams: Omit<EmbeddingCreateParams, "input" | "user">,
+    response: CreateEmbeddingResponse
+  ) {
+    super(
+      "openai",
+      "openai_createEmbedding",
       elapsedTime,
       startTime,
       endTime,

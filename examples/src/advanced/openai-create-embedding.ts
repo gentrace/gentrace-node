@@ -1,5 +1,4 @@
 import { init, Pipeline } from "@gentrace/node";
-import { Configuration } from "openai";
 
 async function createEmbedding() {
   init({
@@ -9,18 +8,18 @@ async function createEmbedding() {
 
   const pipeline = new Pipeline({
     slug: "embedding-pipeline",
-    openAIConfig: new Configuration({
+    openAIConfig: {
       apiKey: process.env.OPENAI_KEY,
-    }),
+    },
   });
 
   await pipeline.setup();
 
   const runner = pipeline.start();
 
-  const openAi = await runner.getOpenAI();
+  const openai = await runner.getOpenAI();
 
-  const embeddingResponse = await openAi.createEmbedding({
+  const embeddingResponse = await openai.embeddings.create({
     model: "text-embedding-ada-002",
     input: "testing",
   });

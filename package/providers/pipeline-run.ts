@@ -217,8 +217,6 @@ export class PipelineRun {
 
     this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
 
-    console.log("step runs", this.stepRuns);
-
     const submission = coreApi.runPost({
       id: this.id,
       // @deprecated: only use slug in future releases
