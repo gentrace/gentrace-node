@@ -43,12 +43,16 @@ class GentraceCompletions extends OpenAI.Completions {
     this.gentraceConfig = gentraceConfig;
   }
 
-  private setupSelfContainedPipelineRun<T, U>(
-    pipelineSlug: string | undefined,
-    coreLogic: (pipelineRun: PipelineRun) => Promise<T>
-  ):
-    | APIPromise<T & { pipelineRunId?: string }>
-    | APIPromise<U & { pipelineRunId?: string }> {
+  // @ts-ignore
+  async create(
+    body: CompletionCreateParams & {
+      promptTemplate?: string;
+      promptInputs: Record<string, string>;
+      pipelineSlug?: string;
+    },
+    options?: RequestOptions
+  ) {
+    const { pipelineSlug } = body;
     let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
 
     let pipelineRun = this.pipelineRun;
@@ -67,95 +71,66 @@ class GentraceCompletions extends OpenAI.Completions {
       });
     }
 
-    const returnValue = await coreLogic(pipelineRun);
+    const {
+      promptTemplate,
+      promptInputs,
+      prompt,
+      pipelineSlug: _pipelineSlug,
+      ...baseCompletionOptions
+    } = body;
+
+    let renderedPrompt = prompt;
+
+    if (promptTemplate && promptInputs) {
+      renderedPrompt = Mustache.render(promptTemplate, promptInputs);
+    }
+
+    const newCompletionOptions: CompletionCreateParams = {
+      ...baseCompletionOptions,
+      prompt: renderedPrompt,
+    };
+
+    const startTime = Date.now();
+    const completion = this.post("/completions", {
+      body,
+      ...newCompletionOptions,
+      stream: body.stream ?? false,
+    }) as APIPromise<Completion> | APIPromise<Stream<Completion>>;
+
+    const endTime = Date.now();
+
+    const elapsedTime = Math.floor(endTime - startTime);
+
+    const data = await completion;
+
+    // User and suffix parameters are inputs not model parameters
+    const { user, suffix, ...partialModelParams } = baseCompletionOptions;
+
+    pipelineRun?.addStepRunNode(
+      new OpenAICreateCompletionStepRun(
+        elapsedTime,
+        new Date(startTime).toISOString(),
+        new Date(endTime).toISOString(),
+        {
+          prompt: promptTemplate && promptInputs ? promptInputs : prompt,
+          user,
+          suffix,
+        },
+        { ...partialModelParams, promptTemplate },
+        data
+      )
+    );
 
     if (isSelfContainedPullRequest) {
       const { pipelineRunId } = await pipelineRun.submit();
-      (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
+      (data as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
-      return returnValue as T & { pipelineRunId: string };
+      return data as
+        | (Completion & { pipelineRunId: string })
+        | (Stream<Completion> & { pipelineRunId: string });
     }
-
-    return returnValue;
-  }
-
-  /**
-   * Creates a completion for the provided prompt and parameters.
-   */
-  create(
-    body: CompletionCreateParamsNonStreaming,
-    options?: RequestOptions
-  ): APIPromise<Completion>;
-
-  create(
-    body: CompletionCreateParamsStreaming,
-    options?: RequestOptions
-  ): APIPromise<Stream<Completion>>;
-
-  create(
-    body: CompletionCreateParams & {
-      promptTemplate?: string;
-      promptInputs: Record<string, string>;
-      pipelineSlug?: string;
-    },
-    options?: RequestOptions
-  ): APIPromise<Completion> | APIPromise<Stream<Completion>> {
-    return this.setupSelfContainedPipelineRun<Completion, Stream<Completion>>(
-      body.pipelineSlug,
-      async (pipelineRun) => {
-        const {
-          promptTemplate,
-          promptInputs,
-          prompt,
-          pipelineSlug: _pipelineSlug,
-          ...baseCompletionOptions
-        } = body;
-
-        let renderedPrompt = prompt;
-
-        if (promptTemplate && promptInputs) {
-          renderedPrompt = Mustache.render(promptTemplate, promptInputs);
-        }
-
-        const newCompletionOptions: CompletionCreateParams = {
-          ...baseCompletionOptions,
-          prompt: renderedPrompt,
-        };
-
-        const startTime = Date.now();
-        const completion = this.post("/completions", {
-          body,
-          ...options,
-          stream: body.stream ?? false,
-        }) as APIPromise<Completion> | APIPromise<Stream<Completion>>;
-
-        const endTime = Date.now();
-
-        const elapsedTime = Math.floor(endTime - startTime);
-
-        // User and suffix parameters are inputs not model parameters
-        const { user, suffix, ...partialModelParams } = baseCompletionOptions;
-
-        pipelineRun?.addStepRunNode(
-          new OpenAICreateCompletionStepRun(
-            elapsedTime,
-            new Date(startTime).toISOString(),
-            new Date(endTime).toISOString(),
-            {
-              prompt: promptTemplate && promptInputs ? promptInputs : prompt,
-              user,
-              suffix,
-            },
-            { ...partialModelParams, promptTemplate },
-
-            completion.data
-          )
-        );
-
-        return completion;
-      }
-    );
+    return data;
   }
 }
 
@@ -176,7 +151,7 @@ export class OpenAIPipelineHandler extends OpenAI {
     this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
 
-    // TODO: override completions and chat resources to use our own
+    // @ts-ignore
     this.completions = new GentraceCompletions({
       client: this,
       pipelineRun,
@@ -408,7 +383,7 @@ class OpenAICreateCompletionStepRun extends StepRun {
     modelParams: Omit<CompletionCreateParams, "prompt" | "user" | "suffix"> & {
       promptTemplate: string;
     },
-    response: Completion
+    response: Completion | Stream<Completion>
   ) {
     super(
       "openai",
