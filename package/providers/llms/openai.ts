@@ -17,7 +17,6 @@ import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 import { Configuration as GentraceConfiguration } from "../../configuration";
 import { OptionalPipelineInfo } from "../utils";
-import { performance } from "perf_hooks";
 
 type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -131,13 +130,13 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           prompt: renderedPrompt,
         };
 
-        const startTime = performance.timeOrigin + performance.now();
+        const startTime = Date.now();
         const completion = await super.createCompletion(
           newCompletionOptions,
           options
         );
 
-        const endTime = performance.timeOrigin + performance.now();
+        const endTime = Date.now();
 
         const elapsedTime = Math.floor(endTime - startTime);
 
@@ -196,13 +195,13 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
         const renderedMessages = createRenderedChatMessages(messages);
 
-        const startTime = performance.timeOrigin + performance.now();
+        const startTime = Date.now();
         const completion = await super.createChatCompletion(
           { messages: renderedMessages, ...baseCompletionOptions },
           options
         );
 
-        const endTime = performance.timeOrigin + performance.now();
+        const endTime = Date.now();
 
         const elapsedTime = Math.floor(endTime - startTime);
 
@@ -251,14 +250,14 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           ...inputParams
         } = createEmbeddingRequest;
 
-        const startTime = performance.timeOrigin + performance.now();
+        const startTime = Date.now();
 
         const completion = await super.createEmbedding(
           { model, ...inputParams },
           options
         );
 
-        const endTime = performance.timeOrigin + performance.now();
+        const endTime = Date.now();
 
         const elapsedTime = Math.floor(endTime - startTime);
 

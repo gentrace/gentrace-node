@@ -3,6 +3,7 @@ import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../openai";
 import { config } from "dotenv";
 import { init } from "../providers";
+import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 
 config();
 
@@ -25,8 +26,21 @@ describe("test_openai_embedding_pipeline", () => {
   };
 
   let server: SetupServer;
+  let interceptor = new FetchInterceptor();
 
   beforeAll(() => {
+    interceptor.apply();
+
+    interceptor.on("request", (request) => {
+      request.respondWith({
+        status: 200,
+        statusText: "OK",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gentracePipelineRunResponse),
+      });
+    });
     server = setupServer(
       rest.post("https://api.openai.com/v1/embeddings", (req, res, ctx) => {
         return res(

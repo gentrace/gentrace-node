@@ -12,31 +12,21 @@
  * Do not edit the class manually.
  */
 
+import type { AxiosInstance, AxiosPromise, AxiosRequestConfig } from "axios";
 import type { Configuration } from "../configuration";
-import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from "axios";
-import globalAxios from "axios";
 // Some imports not used depending on template conditions
 // @ts-ignore
 import {
-  DUMMY_BASE_URL,
   assertParamExists,
-  setApiKeyToObject,
-  setBasicAuthToObject,
-  setBearerAuthToObject,
-  setOAuthToObject,
-  setSearchParams,
-  serializeDataIfNeeded,
-  toPathString,
   createRequestFunction,
+  DUMMY_BASE_URL,
+  serializeDataIfNeeded,
+  setBearerAuthToObject,
+  setSearchParams,
+  toPathString,
 } from "../common";
 // @ts-ignore
-import {
-  BASE_PATH,
-  COLLECTION_FORMATS,
-  RequestArgs,
-  BaseAPI,
-  RequiredError,
-} from "../base";
+import { BaseAPI, BASE_PATH, RequestArgs } from "../base";
 // @ts-ignore
 import { PipelinesGet200Response } from "../models";
 // @ts-ignore
@@ -48,7 +38,6 @@ import { TestCaseGet200Response } from "../models";
 // @ts-ignore
 import { TestResultGet200Response } from "../models";
 // @ts-ignore
-import { TestResultGet200Response1 } from "../models";
 // @ts-ignore
 import { TestResultPost200Response } from "../models";
 // @ts-ignore
@@ -59,6 +48,9 @@ import { TestRunGet200Response } from "../models";
 import { TestRunPost200Response } from "../models";
 // @ts-ignore
 import { TestRunPostRequest } from "../models";
+
+import axiosWithOptionalFetch from "../axios-instance";
+
 /**
  * CoreApi - axios parameter creator
  * @export
@@ -486,7 +478,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration
       );
@@ -510,7 +502,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration
       );
@@ -540,7 +532,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration
       );
@@ -567,7 +559,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration
       );
@@ -594,7 +586,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration
       );
@@ -622,7 +614,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration
       );
@@ -650,7 +642,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration
       );

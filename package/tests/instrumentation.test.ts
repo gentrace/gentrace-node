@@ -4,6 +4,7 @@ import { Configuration } from "../openai";
 import { init, Pipeline, PipelineRun } from "../providers";
 import stringify from "json-stable-stringify";
 import { sleep } from "../providers/utils";
+import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 
 describe("test_openai_completion_pipeline", () => {
   const completionResponse = {
@@ -20,8 +21,22 @@ describe("test_openai_completion_pipeline", () => {
   };
 
   let server: SetupServer;
+  let interceptor = new FetchInterceptor();
 
   beforeAll(() => {
+    interceptor.apply();
+
+    interceptor.on("request", (request) => {
+      request.respondWith({
+        status: 200,
+        statusText: "OK",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gentracePipelineRunResponse),
+      });
+    });
+
     server = setupServer(
       rest.post("https://api.openai.com/v1/completions", (req, res, ctx) => {
         return res(

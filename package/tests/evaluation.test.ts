@@ -13,6 +13,7 @@ import {
 import { setupServer, SetupServer } from "msw/node";
 import { Configuration } from "../openai";
 import { getTestCounter } from "../providers/utils";
+import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 
 describe("Usage of Evaluation functionality", () => {
   let server: SetupServer;
@@ -216,7 +217,42 @@ describe("Usage of Evaluation functionality", () => {
     ],
   };
 
+  let interceptor = new FetchInterceptor();
+
   beforeAll(() => {
+    interceptor.apply();
+
+    interceptor.on("request", (request) => {
+      let body: string = "";
+
+      if (request.url.href === "https://gentrace.ai/api/v1/test-result") {
+        body = JSON.stringify(createTestResultResponse);
+      }
+      if (request.url.href === "https://gentrace.ai/api/v1/test-run") {
+        body = JSON.stringify(createTestRunResponse);
+      }
+      if (request.url.href.includes("https://gentrace.ai/api/v1/test-case")) {
+        body = JSON.stringify(getTestCasesResponse);
+      }
+      if (request.url.href.includes("https://gentrace.ai/api/v1/pipelines")) {
+        const label = request.url.searchParams.get("label");
+        if (label) {
+          body = JSON.stringify(getFilteredPipelinesResponse);
+        } else {
+          body = JSON.stringify(getFullPipelinesResponse);
+        }
+      }
+
+      request.respondWith({
+        status: 200,
+        statusText: "OK",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body,
+      });
+    });
+
     server = setupServer(
       rest.post("https://gentrace.ai/api/v1/test-result", (req, res, ctx) => {
         return res(

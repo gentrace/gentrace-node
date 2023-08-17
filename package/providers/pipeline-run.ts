@@ -1,4 +1,3 @@
-import { performance } from "perf_hooks";
 import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
 import { RunResponse } from "../models/run-response";
@@ -154,7 +153,7 @@ export class PipelineRun {
     inputs: Parameters<F>,
     stepInfo?: Omit<PartialStepRunType, "inputs" | "outputs">
   ): Promise<ReturnType<F>> {
-    const startTime = performance.timeOrigin + performance.now();
+    const startTime = Date.now();
     const returnValue = await func(...inputs);
     const paramNames = getParamNames(func);
 
@@ -171,7 +170,7 @@ export class PipelineRun {
     if (typeof returnValue !== "object") {
       modifiedOuput = { value: returnValue };
     }
-    const endTime = performance.timeOrigin + performance.now();
+    const endTime = Date.now();
     const elapsedTime = Math.floor(endTime - startTime);
 
     this.stepRuns.push(

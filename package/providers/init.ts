@@ -1,5 +1,6 @@
 import { Configuration as GentraceConfiguration } from "../configuration";
 import { CoreApi } from "../api";
+import { getProcessEnv } from "./utils";
 
 export let GENTRACE_API_KEY:
   | string
@@ -36,15 +37,15 @@ export function init(values?: {
 }) {
   const { apiKey, basePath, branch, commit, runName } = values ?? {};
 
-  if (!apiKey && !process.env.GENTRACE_API_KEY) {
+  if (!apiKey && !getProcessEnv("GENTRACE_API_KEY")) {
     throw new Error(
       "Gentrace API key was provided neither by the `apiKey` param in the constructor nor by the `GENTRACE_API_KEY` env variable."
     );
   }
 
-  GENTRACE_API_KEY = apiKey || process.env.GENTRACE_API_KEY;
+  GENTRACE_API_KEY = apiKey || getProcessEnv("GENTRACE_API_KEY");
 
-  GENTRACE_RUN_NAME = runName || process.env.GENTRACE_RUN_NAME;
+  GENTRACE_RUN_NAME = runName || getProcessEnv("GENTRACE_RUN_NAME");
 
   if (basePath) {
     try {

@@ -11,5 +11,6 @@ module.exports = {
         tsconfig: "tsconfig.spec.json",
       },
     ],
+    "^.+\\.js$": "babel-jest",
   },
 };

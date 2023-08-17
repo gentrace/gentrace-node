@@ -2,6 +2,8 @@ import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../openai";
 import { init } from "../providers";
+import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
+import { sleep } from "../providers/utils";
 
 describe("test_openai_completion_pipeline", () => {
   const completionResponse = {
@@ -19,7 +21,22 @@ describe("test_openai_completion_pipeline", () => {
 
   let server: SetupServer;
 
+  let interceptor = new FetchInterceptor();
+
   beforeAll(() => {
+    interceptor.apply();
+
+    interceptor.on("request", (request) => {
+      request.respondWith({
+        status: 200,
+        statusText: "OK",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gentracePipelineRunResponse),
+      });
+    });
+
     server = setupServer(
       rest.post("https://api.openai.com/v1/completions", (req, res, ctx) => {
         return res(
@@ -40,7 +57,9 @@ describe("test_openai_completion_pipeline", () => {
     server.listen();
   });
 
-  afterAll(() => {
+  afterAll(async () => {
+    await sleep(30);
+    interceptor.dispose();
     server.close();
   });
 
