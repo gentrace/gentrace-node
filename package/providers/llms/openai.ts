@@ -1,63 +1,54 @@
-import { AxiosRequestConfig, AxiosResponse } from "openai/node_modules/axios";
 // @ts-ignore: the typings from @types/mustache are incorrect
 import Mustache from "mustache";
-import {
-  ChatCompletionRequestMessage,
-  CreateChatCompletionRequest,
-  CreateChatCompletionResponse,
-  CreateCompletionRequest,
-  CreateCompletionResponse,
-  CreateEmbeddingRequest,
-  CreateEmbeddingResponse,
-  OpenAIApi,
-  Configuration as OpenAIConfiguration,
-} from "openai";
+import OpenAI, { ClientOptions } from "openai";
 import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 import { Configuration as GentraceConfiguration } from "../../configuration";
 import { OptionalPipelineInfo } from "../utils";
+import {
+  Completion,
+  CompletionCreateParams,
+  CompletionCreateParamsNonStreaming,
+  CompletionCreateParamsStreaming,
+} from "openai/resources";
+import { APIPromise, RequestOptions } from "openai/core";
+import { Stream } from "openai/streaming";
 
 type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
   pipeline?: Pipeline;
-  config: OpenAIConfiguration;
   gentraceConfig: GentraceConfiguration;
 };
 
-export class OpenAIPipelineHandler extends OpenAIApi {
+class GentraceCompletions extends OpenAI.Completions {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
-  private config?: OpenAIConfiguration;
   private gentraceConfig: GentraceConfiguration;
 
   constructor({
+    client,
     pipelineRun,
     pipeline,
-    config,
     gentraceConfig,
-  }: OpenAIPipelineHandlerOptions) {
-    super(config);
-
-    this.config = config;
-
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    pipeline?: Pipeline;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super(client);
     this.pipelineRun = pipelineRun;
     this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
   }
 
-  public setPipelineRun(pipelineRun: PipelineRun) {
-    this.pipelineRun = pipelineRun;
-  }
-
-  public setPipeline(pipeline: Pipeline) {
-    this.pipeline = pipeline;
-  }
-
-  private async setupSelfContainedPipelineRun<T>(
+  private setupSelfContainedPipelineRun<T, U>(
     pipelineSlug: string | undefined,
     coreLogic: (pipelineRun: PipelineRun) => Promise<T>
-  ): Promise<T & { pipelineRunId?: string }> {
+  ):
+    | APIPromise<T & { pipelineRunId?: string }>
+    | APIPromise<U & { pipelineRunId?: string }> {
     let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
 
     let pipelineRun = this.pipelineRun;
@@ -87,6 +78,119 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     }
 
     return returnValue;
+  }
+
+  /**
+   * Creates a completion for the provided prompt and parameters.
+   */
+  create(
+    body: CompletionCreateParamsNonStreaming,
+    options?: RequestOptions
+  ): APIPromise<Completion>;
+
+  create(
+    body: CompletionCreateParamsStreaming,
+    options?: RequestOptions
+  ): APIPromise<Stream<Completion>>;
+
+  create(
+    body: CompletionCreateParams & {
+      promptTemplate?: string;
+      promptInputs: Record<string, string>;
+      pipelineSlug?: string;
+    },
+    options?: RequestOptions
+  ): APIPromise<Completion> | APIPromise<Stream<Completion>> {
+    return this.setupSelfContainedPipelineRun<Completion, Stream<Completion>>(
+      body.pipelineSlug,
+      async (pipelineRun) => {
+        const {
+          promptTemplate,
+          promptInputs,
+          prompt,
+          pipelineSlug: _pipelineSlug,
+          ...baseCompletionOptions
+        } = body;
+
+        let renderedPrompt = prompt;
+
+        if (promptTemplate && promptInputs) {
+          renderedPrompt = Mustache.render(promptTemplate, promptInputs);
+        }
+
+        const newCompletionOptions: CompletionCreateParams = {
+          ...baseCompletionOptions,
+          prompt: renderedPrompt,
+        };
+
+        const startTime = Date.now();
+        const completion = this.post("/completions", {
+          body,
+          ...options,
+          stream: body.stream ?? false,
+        }) as APIPromise<Completion> | APIPromise<Stream<Completion>>;
+
+        const endTime = Date.now();
+
+        const elapsedTime = Math.floor(endTime - startTime);
+
+        // User and suffix parameters are inputs not model parameters
+        const { user, suffix, ...partialModelParams } = baseCompletionOptions;
+
+        pipelineRun?.addStepRunNode(
+          new OpenAICreateCompletionStepRun(
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            {
+              prompt: promptTemplate && promptInputs ? promptInputs : prompt,
+              user,
+              suffix,
+            },
+            { ...partialModelParams, promptTemplate },
+
+            completion.data
+          )
+        );
+
+        return completion;
+      }
+    );
+  }
+}
+
+export class OpenAIPipelineHandler extends OpenAI {
+  private pipelineRun?: PipelineRun;
+  private pipeline?: Pipeline;
+  private gentraceConfig: GentraceConfiguration;
+
+  constructor({
+    pipelineRun,
+    pipeline,
+    gentraceConfig,
+    ...oaiOptions
+  }: ClientOptions & OpenAIPipelineHandlerOptions) {
+    super(oaiOptions);
+
+    this.pipelineRun = pipelineRun;
+    this.pipeline = pipeline;
+    this.gentraceConfig = gentraceConfig;
+
+    // TODO: override completions and chat resources to use our own
+    this.completions = new GentraceCompletions({
+      client: this,
+      pipelineRun,
+      pipeline,
+      gentraceConfig,
+    });
+  }
+
+  public setPipelineRun(pipelineRun: PipelineRun) {
+    this.pipelineRun = pipelineRun;
+  }
+
+  public setPipeline(pipeline: Pipeline) {
+    this.pipeline = pipeline;
   }
 
   /**
@@ -285,12 +389,12 @@ class OpenAICreateCompletionStepRun extends StepRun {
     suffix?: string;
   };
   public modelParams: Omit<
-    CreateCompletionRequest,
+    CompletionCreateParams,
     "prompt" | "user" | "suffix"
   > & {
     promptTemplate: string;
   };
-  public response: CreateCompletionResponse;
+  public response: CompletionCreateParams;
 
   constructor(
     elapsedTime: number,
@@ -301,10 +405,10 @@ class OpenAICreateCompletionStepRun extends StepRun {
       user?: string;
       suffix?: string;
     },
-    modelParams: Omit<CreateCompletionRequest, "prompt" | "user" | "suffix"> & {
+    modelParams: Omit<CompletionCreateParams, "prompt" | "user" | "suffix"> & {
       promptTemplate: string;
     },
-    response: CreateCompletionResponse
+    response: Completion
   ) {
     super(
       "openai",
