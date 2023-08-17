@@ -2,7 +2,8 @@
 import Mustache from "mustache";
 import OpenAI, { ClientOptions } from "openai";
 import { APIPromise, RequestOptions } from "openai/core";
-import { Completion, CompletionCreateParams } from "openai/resources";
+import { Chat, Completion, CompletionCreateParams } from "openai/resources";
+import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
 import { Stream } from "openai/streaming";
 import { Configuration as GentraceConfiguration } from "../../configuration";
 import { Pipeline } from "../pipeline";
@@ -15,13 +16,114 @@ type OpenAIPipelineHandlerOptions = {
   gentraceConfig: GentraceConfiguration;
 };
 
+type ChatCompletionRequestMessageTemplate = Omit<
+  Chat.CreateChatCompletionRequestMessage,
+  "content"
+> & {
+  content?: string;
+  contentTemplate?: string;
+  contentInputs?: Record<string, string>;
+};
+
+function createRenderedChatMessages(
+  messages: ChatCompletionRequestMessageTemplate[]
+) {
+  let newMessages: Chat.CreateChatCompletionRequestMessage[] = [];
+  for (let message of messages) {
+    if (message.contentTemplate && message.contentInputs) {
+      const { contentTemplate, contentInputs, ...rest } = message;
+      newMessages.push({
+        ...rest,
+        content: Mustache.render(contentTemplate, contentInputs),
+      });
+    } else if (message.content) {
+      newMessages.push({
+        ...message,
+      } as Chat.CreateChatCompletionRequestMessage);
+    }
+  }
+
+  return newMessages;
+}
+
 class GentraceChatCompletions extends OpenAI.Chat.Completions {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
 
-  async create() {
-    // TODO: add support
+  // @ts-ignore
+  async create(
+    body: Chat.CompletionCreateParams & {
+      messages: Array<ChatCompletionRequestMessageTemplate>;
+      pipelineSlug?: string;
+    },
+    requestOptions?: RequestOptions
+  ) {
+    const { pipelineSlug } = body;
+    let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
+
+    let pipelineRun = this.pipelineRun;
+
+    if (isSelfContainedPullRequest) {
+      const pipeline = new Pipeline({
+        id: pipelineSlug,
+        slug: pipelineSlug,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+        logger: this.gentraceConfig.logger,
+      });
+
+      pipelineRun = new PipelineRun({
+        pipeline,
+      });
+    }
+
+    const {
+      messages,
+      pipelineSlug: _pipelineSlug,
+      ...baseCompletionOptions
+    } = body;
+
+    const renderedMessages = createRenderedChatMessages(messages);
+
+    const startTime = Date.now();
+
+    const completion = this.post("/chat/completions", {
+      body: { messages: renderedMessages, ...baseCompletionOptions },
+      ...requestOptions,
+      stream: body.stream ?? false,
+    }) as APIPromise<ChatCompletion> | APIPromise<Stream<ChatCompletionChunk>>;
+
+    const endTime = Date.now();
+
+    const elapsedTime = Math.floor(endTime - startTime);
+
+    const data = await completion;
+
+    // user parameter is an input, not a model parameter
+    const { user, ...modelParams } = baseCompletionOptions;
+
+    pipelineRun?.addStepRunNode(
+      new OpenAICreateChatCompletionStepRun(
+        elapsedTime,
+        new Date(startTime).toISOString(),
+        new Date(endTime).toISOString(),
+        { messages: renderedMessages, user },
+        modelParams,
+        data
+      )
+    );
+
+    if (isSelfContainedPullRequest) {
+      const { pipelineRunId } = await pipelineRun.submit();
+      (data as unknown as { pipelineRunId: string }).pipelineRunId =
+        pipelineRunId;
+
+      return data as
+        | (Completion & { pipelineRunId: string })
+        | (Stream<Completion> & { pipelineRunId: string });
+    }
+    return data;
   }
 }
 
@@ -239,6 +341,43 @@ export class OpenAIPipelineHandler extends OpenAI {
   }
 }
 
+class OpenAICreateChatCompletionStepRun extends StepRun {
+  public modelParams: Omit<Chat.CompletionCreateParams, "messages" | "user">;
+  public inputs: {
+    messages?: Array<Chat.CreateChatCompletionRequestMessage>;
+    user?: string;
+  };
+
+  public response:
+    | OpenAI.Chat.Completions.ChatCompletion
+    | Stream<OpenAI.Chat.Completions.ChatCompletionChunk>;
+
+  constructor(
+    elapsedTime: number,
+    startTime: string,
+    endTime: string,
+    inputs: {
+      messages?: Array<Chat.CreateChatCompletionRequestMessage>;
+      user?: string;
+    },
+    modelParams: Omit<Chat.CompletionCreateParams, "messages" | "user">,
+    response:
+      | OpenAI.Chat.Completions.ChatCompletion
+      | Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+  ) {
+    super(
+      "openai",
+      "openai_createChatCompletion",
+      elapsedTime,
+      startTime,
+      endTime,
+      inputs,
+      modelParams,
+      response
+    );
+  }
+}
+
 class OpenAICreateCompletionStepRun extends StepRun {
   public inputs: {
     prompt?: Record<string, string>;
@@ -251,7 +390,7 @@ class OpenAICreateCompletionStepRun extends StepRun {
   > & {
     promptTemplate: string;
   };
-  public response: CompletionCreateParams;
+  public response: Completion | Stream<Completion>;
 
   constructor(
     elapsedTime: number,
