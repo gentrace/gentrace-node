@@ -29,11 +29,6 @@ async function createCompletion() {
     pipelineSlug: "testing-pipeline-id",
   });
 
-  console.log(
-    "chat completion response one",
-    chatCompletionResponseOne.pipelineRunId
-  );
-
   const chatCompletionResponseTwo = await openai.createChatCompletion({
     messages: [
       {
@@ -45,10 +40,6 @@ async function createCompletion() {
     model: "gpt-3.5-turbo",
     pipelineSlug: "testing-pipeline-id",
   });
-  console.log(
-    "chat completion response two",
-    chatCompletionResponseTwo.pipelineRunId
-  );
 }
 
 createCompletion();

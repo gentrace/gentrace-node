@@ -24,7 +24,7 @@ async function createChatCompletion() {
     model: "gpt-3.5-turbo",
   });
 
-  console.log("chatCompletionResponse", chatCompletionResponse.data);
+  console.log("chatCompletionResponse", chatCompletionResponse);
 
   const pipelineRunId = await runner.submit();
 

@@ -51,6 +51,24 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
   private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
 
+  constructor({
+    client,
+    pipelineRun,
+    pipeline,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    pipeline?: Pipeline;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super(client);
+    console.log("GentraceChatCompletions constructor", pipelineRun);
+    this.pipelineRun = pipelineRun;
+    this.pipeline = pipeline;
+    this.gentraceConfig = gentraceConfig;
+  }
+
   // @ts-ignore
   async create(
     body: Chat.CompletionCreateParams & {
@@ -103,6 +121,17 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
     // user parameter is an input, not a model parameter
     const { user, ...modelParams } = baseCompletionOptions;
 
+    console.log(
+      "Adding step run node",
+      new OpenAICreateChatCompletionStepRun(
+        elapsedTime,
+        new Date(startTime).toISOString(),
+        new Date(endTime).toISOString(),
+        { messages: renderedMessages, user },
+        modelParams,
+        data
+      )
+    );
     pipelineRun?.addStepRunNode(
       new OpenAICreateChatCompletionStepRun(
         elapsedTime,
@@ -154,7 +183,7 @@ class GentraceChat extends OpenAI.Chat {
     // @ts-ignore
     this.completions = new GentraceChatCompletions({
       // @ts-ignore
-      client: this,
+      client,
       pipelineRun,
       pipeline,
       gentraceConfig,
@@ -308,6 +337,8 @@ export class OpenAIPipelineHandler extends OpenAI {
     ...oaiOptions
   }: ClientOptions & OpenAIPipelineHandlerOptions) {
     super(oaiOptions);
+
+    console.log("OAI pipeline handler: pipeline run", pipelineRun);
 
     this.pipelineRun = pipelineRun;
     this.pipeline = pipeline;
