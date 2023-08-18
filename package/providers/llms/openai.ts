@@ -136,9 +136,34 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           options
         );
 
-        if (baseCompletionOptions.stream) {
-          console.log("streaming completion", completion.data);
+        let finalData: CreateCompletionResponse = completion.data;
+
+        if (
+          baseCompletionOptions.stream &&
+          typeof completion.data === "string"
+        ) {
+          const rawData = completion.data as string;
+          const allLines = rawData
+            .split("\n")
+            .filter(
+              (line) => line.trim().length > 0 && line.startsWith("data:")
+            )
+            .map((line) => line.slice("data:".length).trim())
+            .map((line) => {
+              try {
+                return JSON.parse(line);
+              } catch (e) {
+                return null;
+              }
+            })
+            .filter((line) => line !== null);
+
+          finalData = createCompletionStreamResponse(
+            allLines
+          ) as CreateCompletionResponse;
         }
+
+        completion.data = finalData;
 
         const endTime = Date.now();
 
@@ -158,8 +183,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
               suffix,
             },
             { ...partialModelParams, promptTemplate },
-
-            completion.data
+            finalData
           )
         );
 
@@ -504,6 +528,58 @@ function createChatCompletionStreamResponse(
         finish_reason: null,
         index: 0,
         message: { content: finalResponseString, role: "assistant" },
+      },
+    ],
+  };
+
+  return finalResponse;
+}
+
+function createCompletionStreamResponse(
+  streamList: {
+    id: string;
+    object: string;
+    created: number;
+    model: string;
+    choices: Choice[];
+  }[]
+) {
+  let finalResponseString = "";
+  let model = "";
+  let id = "";
+  let created = 0;
+  for (const value of streamList) {
+    model = value.model;
+    id = value.id;
+    created = value.created;
+
+    if (value.choices && value.choices.length > 0) {
+      const firstChoice = value.choices[0];
+      if (firstChoice.text) {
+        finalResponseString += firstChoice.text;
+      } else if (firstChoice.delta && firstChoice.delta.content) {
+        finalResponseString += firstChoice.delta.content;
+      } else if (
+        firstChoice.finish_reason &&
+        firstChoice.finish_reason === "stop"
+      ) {
+        break;
+      }
+    }
+  }
+
+  const finalResponse: CreateCompletionResponse = {
+    id,
+    // Override this so it doesn't show chat.completion.chunk
+    object: "text_completion",
+    created,
+    model,
+    choices: [
+      {
+        text: finalResponseString,
+        index: 0,
+        logprobs: null,
+        finish_reason: "length",
       },
     ],
   };
