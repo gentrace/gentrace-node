@@ -78,7 +78,7 @@ class GentraceEmbeddings extends OpenAI.Embeddings {
   async create(
     body: EmbeddingCreateParams & { pipelineSlug?: string },
     options?: RequestOptions
-  ) {
+  ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
     const { pipelineSlug, ...newPayload } = body;
     const { model, ...inputParams } = newPayload;
 
@@ -156,6 +156,7 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
     this.gentraceConfig = gentraceConfig;
   }
 
+  // TODO: Fix issues with response typing here
   // @ts-ignore
   async create(
     body: Chat.CompletionCreateParams & {

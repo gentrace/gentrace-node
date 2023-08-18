@@ -1,9 +1,6 @@
-import { Configuration, OpenAIApi } from "../openai";
+import { OpenAIApi } from "../openai";
 import { init, Pipeline } from "../providers";
-import {
-  globalGentraceConfig,
-  resetGlobalGentraceApi,
-} from "../providers/init";
+import { resetGlobalGentraceApi } from "../providers/init";
 
 describe("Usage of OpenAIApi", () => {
   const OLD_ENV = process.env;
@@ -21,13 +18,11 @@ describe("Usage of OpenAIApi", () => {
   describe("constructor", () => {
     it("should create an instance when configuration params are deprecated but still valid (gentrace.ai host)", () => {
       expect(() => {
-        new OpenAIApi(
-          new Configuration({
-            gentraceApiKey: "gentrace-api-key",
-            gentraceBasePath: "https://gentrace.ai/api/v1/run",
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          gentraceApiKey: "gentrace-api-key",
+          gentraceBasePath: "https://gentrace.ai/api/v1/run",
+          apiKey: "openai-api-key",
+        });
       }).not.toThrow();
     });
 
@@ -36,11 +31,9 @@ describe("Usage of OpenAIApi", () => {
         init({
           apiKey: "gentrace-api-key",
         });
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "openai-api-key",
+        });
       }).not.toThrow();
     });
 
@@ -51,11 +44,9 @@ describe("Usage of OpenAIApi", () => {
           basePath: "https://staging.gentrace.ai/api/v1",
         });
 
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "openai-api-key",
+        });
       }).not.toThrow();
     });
 
@@ -66,11 +57,9 @@ describe("Usage of OpenAIApi", () => {
           basePath: "http://localhost:3000/api/v1",
         });
 
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "openai-api-key",
+        });
       }).not.toThrow();
     });
 
@@ -94,11 +83,9 @@ describe("Usage of OpenAIApi", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const openai = new OpenAIApi(
-        new Configuration({
-          apiKey: "openai-api-key",
-        })
-      );
+      const openai = new OpenAIApi({
+        apiKey: "openai-api-key",
+      });
       expect(openai).toBeDefined();
     });
 
@@ -109,11 +96,9 @@ describe("Usage of OpenAIApi", () => {
           basePath: "https://gentrace.ai/api/v1",
         });
 
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "",
+        });
       }).toThrow("API key not provided.");
     });
 
@@ -123,11 +108,9 @@ describe("Usage of OpenAIApi", () => {
           apiKey: "",
         });
 
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "openai-api-key",
+        });
       }).toThrow(
         "Gentrace API key was provided neither by the `apiKey` param in the constructor nor by the `GENTRACE_API_KEY` env variable."
       );
@@ -140,11 +123,9 @@ describe("Usage of OpenAIApi", () => {
           basePath: "invalid-url",
         });
 
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "openai-api-key",
+        });
       }).toThrow("Invalid Gentrace base path");
     });
 
@@ -155,11 +136,9 @@ describe("Usage of OpenAIApi", () => {
           basePath: "https://gentrace.ai/invalid-path",
         });
 
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "openai-api-key",
+        });
       }).toThrow('Gentrace base path must end in "/api/v1".');
     });
 
