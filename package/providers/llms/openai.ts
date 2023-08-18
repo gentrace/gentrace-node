@@ -110,6 +110,9 @@ export class OpenAIPipelineHandler extends OpenAIApi {
       createCompletionRequest.pipelineId ??
         createCompletionRequest.pipelineSlug,
       async (pipelineRun) => {
+        const hasSpecifiedStreamResponseType =
+          options?.responseType === "stream";
+
         const {
           promptTemplate,
           promptInputs,
@@ -139,6 +142,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         let finalData: CreateCompletionResponse = completion.data;
 
         if (
+          !hasSpecifiedStreamResponseType &&
           baseCompletionOptions.stream &&
           typeof completion.data === "string"
         ) {
@@ -163,6 +167,58 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           ) as CreateCompletionResponse;
         }
 
+        if (hasSpecifiedStreamResponseType && baseCompletionOptions.stream) {
+          const allLines: {
+            id: string;
+            object: string;
+            created: number;
+            model: string;
+            choices: Choice[];
+          }[] = [];
+
+          // @ts-ignore
+          completion.data.on("data", (data) => {
+            const lines = data
+              .toString()
+              .split("\n")
+              .filter((line: any) => line.trim() !== "");
+            for (const line of lines) {
+              const message = line.replace(/^data: /, "");
+              if (message === "[DONE]") {
+                finalData = createCompletionStreamResponse(
+                  allLines
+                ) as CreateCompletionResponse;
+                pipelineRun?.addStepRunNode(
+                  new OpenAICreateCompletionStepRun(
+                    elapsedTime,
+                    new Date(startTime).toISOString(),
+                    new Date(endTime).toISOString(),
+                    {
+                      prompt:
+                        promptTemplate && promptInputs ? promptInputs : prompt,
+                      user,
+                      suffix,
+                    },
+                    { ...partialModelParams, promptTemplate },
+                    finalData
+                  )
+                );
+                return; // Stream finished
+              }
+              try {
+                const parsed = JSON.parse(message);
+                allLines.push(parsed);
+              } catch (error) {
+                console.error(
+                  "Could not JSON parse stream message",
+                  message,
+                  error
+                );
+              }
+            }
+          });
+        }
+
         completion.data = finalData;
 
         const endTime = Date.now();
@@ -172,20 +228,22 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         // User and suffix parameters are inputs not model parameters
         const { user, suffix, ...partialModelParams } = baseCompletionOptions;
 
-        pipelineRun?.addStepRunNode(
-          new OpenAICreateCompletionStepRun(
-            elapsedTime,
-            new Date(startTime).toISOString(),
-            new Date(endTime).toISOString(),
-            {
-              prompt: promptTemplate && promptInputs ? promptInputs : prompt,
-              user,
-              suffix,
-            },
-            { ...partialModelParams, promptTemplate },
-            finalData
-          )
-        );
+        if (!hasSpecifiedStreamResponseType) {
+          pipelineRun?.addStepRunNode(
+            new OpenAICreateCompletionStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              {
+                prompt: promptTemplate && promptInputs ? promptInputs : prompt,
+                user,
+                suffix,
+              },
+              { ...partialModelParams, promptTemplate },
+              finalData
+            )
+          );
+        }
 
         return completion;
       }
@@ -214,6 +272,9 @@ export class OpenAIPipelineHandler extends OpenAIApi {
       createChatCompletionRequest.pipelineId ??
         createChatCompletionRequest.pipelineSlug,
       async (pipelineRun) => {
+        const hasSpecifiedStreamResponseType =
+          options?.responseType === "stream";
+
         const {
           messages,
           pipelineId: _pipelineId,
@@ -233,7 +294,10 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
         let finalData: CreateChatCompletionResponse = completion.data;
 
+        // This is only for the case where the user has specified a stream response type
+        // but has specified the stream value
         if (
+          !hasSpecifiedStreamResponseType &&
           baseCompletionOptions.stream &&
           typeof completion.data === "string"
         ) {
@@ -258,6 +322,53 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           ) as CreateChatCompletionResponse;
         }
 
+        if (hasSpecifiedStreamResponseType && baseCompletionOptions.stream) {
+          const allLines: {
+            id: string;
+            object: string;
+            created: number;
+            model: string;
+            choices: Choice[];
+          }[] = [];
+
+          // @ts-ignore
+          completion.data.on("data", (data) => {
+            const lines = data
+              .toString()
+              .split("\n")
+              .filter((line: any) => line.trim() !== "");
+            for (const line of lines) {
+              const message = line.replace(/^data: /, "");
+              if (message === "[DONE]") {
+                finalData = createChatCompletionStreamResponse(
+                  allLines
+                ) as CreateChatCompletionResponse;
+                pipelineRun?.addStepRunNode(
+                  new OpenAICreateChatCompletionStepRun(
+                    elapsedTime,
+                    new Date(startTime).toISOString(),
+                    new Date(endTime).toISOString(),
+                    { messages: renderedMessages, user },
+                    modelParams,
+                    finalData
+                  )
+                );
+                return; // Stream finished
+              }
+              try {
+                const parsed = JSON.parse(message);
+                allLines.push(parsed);
+              } catch (error) {
+                console.error(
+                  "Could not JSON parse stream message",
+                  message,
+                  error
+                );
+              }
+            }
+          });
+        }
+
         completion.data = finalData;
 
         const elapsedTime = Math.floor(endTime - startTime);
@@ -265,16 +376,18 @@ export class OpenAIPipelineHandler extends OpenAIApi {
         // user parameter is an input, not a model parameter
         const { user, ...modelParams } = baseCompletionOptions;
 
-        pipelineRun?.addStepRunNode(
-          new OpenAICreateChatCompletionStepRun(
-            elapsedTime,
-            new Date(startTime).toISOString(),
-            new Date(endTime).toISOString(),
-            { messages: renderedMessages, user },
-            modelParams,
-            finalData
-          )
-        );
+        if (!hasSpecifiedStreamResponseType) {
+          pipelineRun?.addStepRunNode(
+            new OpenAICreateChatCompletionStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              { messages: renderedMessages, user },
+              modelParams,
+              finalData
+            )
+          );
+        }
 
         return completion;
       }
