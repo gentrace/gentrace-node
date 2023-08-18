@@ -136,6 +136,10 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           options
         );
 
+        if (baseCompletionOptions.stream) {
+          console.log("streaming completion", completion.data);
+        }
+
         const endTime = Date.now();
 
         const elapsedTime = Math.floor(endTime - startTime);
@@ -203,6 +207,35 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
         const endTime = Date.now();
 
+        let finalData: CreateChatCompletionResponse = completion.data;
+
+        if (
+          baseCompletionOptions.stream &&
+          typeof completion.data === "string"
+        ) {
+          const rawData = completion.data as string;
+          const allLines = rawData
+            .split("\n")
+            .filter(
+              (line) => line.trim().length > 0 && line.startsWith("data:")
+            )
+            .map((line) => line.slice("data:".length).trim())
+            .map((line) => {
+              try {
+                return JSON.parse(line);
+              } catch (e) {
+                return null;
+              }
+            })
+            .filter((line) => line !== null);
+
+          finalData = createChatCompletionStreamResponse(
+            allLines
+          ) as CreateChatCompletionResponse;
+        }
+
+        completion.data = finalData;
+
         const elapsedTime = Math.floor(endTime - startTime);
 
         // user parameter is an input, not a model parameter
@@ -215,7 +248,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
             new Date(endTime).toISOString(),
             { messages: renderedMessages, user },
             modelParams,
-            completion.data
+            finalData
           )
         );
 
@@ -416,4 +449,64 @@ function createRenderedChatMessages(
   }
 
   return newMessages;
+}
+
+interface Choice {
+  text?: string;
+  delta?: {
+    content?: string;
+  };
+  index?: number;
+  finish_reason?: string;
+}
+
+function createChatCompletionStreamResponse(
+  streamList: {
+    id: string;
+    object: string;
+    created: number;
+    model: string;
+    choices: Choice[];
+  }[]
+) {
+  let finalResponseString = "";
+  let model = "";
+  let id = "";
+  let created = 0;
+  for (const value of streamList) {
+    model = value.model;
+    id = value.id;
+    created = value.created;
+
+    if (value.choices && value.choices.length > 0) {
+      const firstChoice = value.choices[0];
+      if (firstChoice.text) {
+        finalResponseString += firstChoice.text;
+      } else if (firstChoice.delta && firstChoice.delta.content) {
+        finalResponseString += firstChoice.delta.content;
+      } else if (
+        firstChoice.finish_reason &&
+        firstChoice.finish_reason === "stop"
+      ) {
+        break;
+      }
+    }
+  }
+
+  const finalResponse: CreateChatCompletionResponse = {
+    id,
+    // Override this so it doesn't show chat.completion.chunk
+    object: "chat.completion",
+    created,
+    model,
+    choices: [
+      {
+        finish_reason: null,
+        index: 0,
+        message: { content: finalResponseString, role: "assistant" },
+      },
+    ],
+  };
+
+  return finalResponse;
 }
