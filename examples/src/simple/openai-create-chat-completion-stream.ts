@@ -17,23 +17,20 @@ const openai = new OpenAIApi(
 );
 
 async function createCompletion() {
-  const chatCompletionResponse = await openai.createChatCompletion({
-    messages: [
-      {
-        role: "user",
-        contentTemplate:
-          "Hello {{ name }}! Generate a fairly length 500 word email to jan.",
-        contentInputs: { name: "Vivek" },
-      },
-    ],
-    model: "gpt-3.5-turbo",
-    pipelineSlug: "testing-pipeline-id",
-    stream: true,
-  });
-
-  console.log(
-    "chat completion response",
-    JSON.stringify(chatCompletionResponse.data, null, 2)
+  const chatCompletionResponse = await openai.createChatCompletion(
+    {
+      messages: [
+        {
+          role: "user",
+          contentTemplate: "Hello {{ name }}!",
+          contentInputs: { name: "Vivek" },
+        },
+      ],
+      model: "gpt-3.5-turbo",
+      pipelineSlug: "testing-pipeline-id",
+      stream: true,
+    },
+    { responseType: "stream" }
   );
 }
 

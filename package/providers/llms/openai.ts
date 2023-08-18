@@ -56,9 +56,11 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
   private async setupSelfContainedPipelineRun<T>(
     pipelineSlug: string | undefined,
+    options: AxiosRequestConfig | undefined,
     coreLogic: (pipelineRun: PipelineRun) => Promise<T>
   ): Promise<T & { pipelineRunId?: string }> {
     let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
+    const hasSpecifiedStreamResponseType = options?.responseType === "stream";
 
     let pipelineRun = this.pipelineRun;
 
@@ -79,6 +81,13 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     const returnValue = await coreLogic(pipelineRun);
 
     if (isSelfContainedPullRequest) {
+      if (hasSpecifiedStreamResponseType) {
+        (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
+          pipelineRun.getId();
+
+        return returnValue as T & { pipelineRunId: string };
+      }
+
       const { pipelineRunId } = await pipelineRun.submit();
       (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
@@ -109,6 +118,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     >(
       createCompletionRequest.pipelineId ??
         createCompletionRequest.pipelineSlug,
+      options,
       async (pipelineRun) => {
         const hasSpecifiedStreamResponseType =
           options?.responseType === "stream";
@@ -272,6 +282,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
     return this.setupSelfContainedPipelineRun(
       createChatCompletionRequest.pipelineId ??
         createChatCompletionRequest.pipelineSlug,
+      options,
       async (pipelineRun) => {
         const hasSpecifiedStreamResponseType =
           options?.responseType === "stream";
@@ -333,7 +344,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
           }[] = [];
 
           // @ts-ignore
-          completion.data.on("data", (data) => {
+          completion.data.on("data", async (data) => {
             const lines = data
               .toString()
               .split("\n")
@@ -355,6 +366,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                     finalData
                   )
                 );
+
+                const { pipelineRunId } = await pipelineRun.submit();
                 return; // Stream finished
               }
               try {
@@ -414,6 +427,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   > {
     return this.setupSelfContainedPipelineRun(
       createEmbeddingRequest.pipelineId ?? createEmbeddingRequest.pipelineSlug,
+      options,
       async (pipelineRun) => {
         const {
           model,
