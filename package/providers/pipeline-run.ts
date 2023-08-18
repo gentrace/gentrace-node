@@ -1,18 +1,10 @@
 import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
-import { RunResponse } from "../models/run-response";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
-import type { OpenAIPipelineHandler } from "./llms/openai";
+import { RunResponse } from "../models/run-response";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
-import type { PineconePipelineHandler } from "./vectorstores/pinecone";
-// @ts-ignore
-import cloneInstance from "rfdc";
-
-const clone = cloneInstance({
-  circles: true,
-});
 
 export class PipelineRun {
   private pipeline: Pipeline;
