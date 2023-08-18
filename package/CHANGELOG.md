@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.5](https://github.com/gentrace/gentrace-node/compare/v0.15.4...v0.15.5) (2023-08-18)
+
+
+### Bug Fixes
+
+* Fix end and start streaming times not properly reflecting ([#177](https://github.com/gentrace/gentrace-node/issues/177)) ([01fdb55](https://github.com/gentrace/gentrace-node/commit/01fdb553d5eb3a058502e20b889995f3444d0f99))
+
 ## [0.15.4](https://github.com/gentrace/gentrace-node/compare/v0.15.3...v0.15.4) (2023-08-18)
 
 
