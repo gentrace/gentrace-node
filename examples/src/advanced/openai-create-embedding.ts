@@ -7,7 +7,7 @@ async function createEmbedding() {
   });
 
   const pipeline = new Pipeline({
-    slug: "embedding-pipeline",
+    slug: "testing-pipeline-id",
     openAIConfig: {
       apiKey: process.env.OPENAI_KEY,
     },
