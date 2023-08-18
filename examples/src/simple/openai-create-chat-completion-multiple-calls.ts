@@ -1,23 +1,34 @@
 import { init } from "@gentrace/node";
-import { OpenAIApi, Configuration } from "@gentrace/node/openai";
+import { OpenAIApi } from "@gentrace/node/openai";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   basePath: "http://localhost:3000/api/v1",
 });
 
-const openai = new OpenAIApi(
-  new Configuration({
-    gentraceLogger: {
-      info: (message) => console.log(message),
-      warn: (message) => console.warn(message),
-    },
-    apiKey: process.env.OPENAI_KEY,
-  })
-);
+const openai = new OpenAIApi({
+  gentraceLogger: {
+    info: (message) => console.log(message),
+    warn: (message) => console.warn(message),
+  },
+  apiKey: process.env.OPENAI_KEY,
+});
 
 async function createCompletion() {
-  const chatCompletionResponseOne = await openai.createChatCompletion({
+  const chatCompletionResponseOne = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "user",
+        contentTemplate: "Hello {{ name }}!",
+        contentInputs: { name: "Vivek" },
+      },
+    ],
+    model: "gpt-3.5-turbo",
+  });
+
+  console.log("chatCompletionResponseOne", chatCompletionResponseOne);
+
+  const chatCompletionResponseTwo = await openai.chat.completions.create({
     messages: [
       {
         role: "user",
@@ -29,17 +40,7 @@ async function createCompletion() {
     pipelineSlug: "testing-pipeline-id",
   });
 
-  const chatCompletionResponseTwo = await openai.createChatCompletion({
-    messages: [
-      {
-        role: "user",
-        contentTemplate: "Hello {{ name }}!",
-        contentInputs: { name: "Vivek" },
-      },
-    ],
-    model: "gpt-3.5-turbo",
-    pipelineSlug: "testing-pipeline-id",
-  });
+  console.log("chatCompletionResponseTwo", chatCompletionResponseTwo);
 }
 
 createCompletion();

@@ -200,11 +200,11 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
       stream: body.stream ?? false,
     }) as APIPromise<ChatCompletion> | APIPromise<Stream<ChatCompletionChunk>>;
 
+    const data = await completion;
+
     const endTime = Date.now();
 
     const elapsedTime = Math.floor(endTime - startTime);
-
-    const data = await completion;
 
     // user parameter is an input, not a model parameter
     const { user, ...modelParams } = baseCompletionOptions;
@@ -352,11 +352,11 @@ class GentraceCompletions extends OpenAI.Completions {
       stream: body.stream ?? false,
     }) as APIPromise<Completion> | APIPromise<Stream<Completion>>;
 
+    const data = await completion;
+
     const endTime = Date.now();
 
     const elapsedTime = Math.floor(endTime - startTime);
-
-    const data = await completion;
 
     // User and suffix parameters are inputs not model parameters
     const { user, suffix, ...partialModelParams } = baseCompletionOptions;
