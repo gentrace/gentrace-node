@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.15.3](https://github.com/gentrace/gentrace-node/compare/v0.15.2...v0.15.3) (2023-08-18)
+
+
+### Bug Fixes
+
+* Add support for edge environments ([#170](https://github.com/gentrace/gentrace-node/issues/170)) ([c00ed18](https://github.com/gentrace/gentrace-node/commit/c00ed18fe2c4cb9c9043f8d024eb32e77e6d7594))
+* Aggregate the stream response for chat completion and completion ([#174](https://github.com/gentrace/gentrace-node/issues/174)) ([aa1d7b5](https://github.com/gentrace/gentrace-node/commit/aa1d7b50ab230772ffd108c5666c2b0f119c2a30))
+
 ## [0.15.2](https://github.com/gentrace/gentrace-node/compare/v0.15.1...v0.15.2) (2023-07-31)
 
 
