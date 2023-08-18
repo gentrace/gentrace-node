@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.6](https://github.com/gentrace/gentrace-node/compare/v0.15.5...v0.15.6) (2023-08-18)
+
+
+### Bug Fixes
+
+* Handle simple OpenAI streaming usage case ([#179](https://github.com/gentrace/gentrace-node/issues/179)) ([0cb95a3](https://github.com/gentrace/gentrace-node/commit/0cb95a304685005eb8773060ee9ce00a751ba775))
+
 ## [0.15.5](https://github.com/gentrace/gentrace-node/compare/v0.15.4...v0.15.5) (2023-08-18)
 
 
