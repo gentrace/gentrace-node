@@ -185,6 +185,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
             for (const line of lines) {
               const message = line.replace(/^data: /, "");
               if (message === "[DONE]") {
+                const endStreamTime = Date.now();
                 finalData = createCompletionStreamResponse(
                   allLines
                 ) as CreateCompletionResponse;
@@ -192,7 +193,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                   new OpenAICreateCompletionStepRun(
                     elapsedTime,
                     new Date(startTime).toISOString(),
-                    new Date(endTime).toISOString(),
+                    new Date(endStreamTime).toISOString(),
                     {
                       prompt:
                         promptTemplate && promptInputs ? promptInputs : prompt,
@@ -340,6 +341,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
             for (const line of lines) {
               const message = line.replace(/^data: /, "");
               if (message === "[DONE]") {
+                const endStreamTime = Date.now();
                 finalData = createChatCompletionStreamResponse(
                   allLines
                 ) as CreateChatCompletionResponse;
@@ -347,7 +349,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                   new OpenAICreateChatCompletionStepRun(
                     elapsedTime,
                     new Date(startTime).toISOString(),
-                    new Date(endTime).toISOString(),
+                    new Date(endStreamTime).toISOString(),
                     { messages: renderedMessages, user },
                     modelParams,
                     finalData
