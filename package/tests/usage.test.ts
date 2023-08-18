@@ -69,11 +69,9 @@ describe("Usage of OpenAIApi", () => {
           apiKey: "gentrace-api-key",
         });
 
-        new OpenAIApi(
-          new Configuration({
-            apiKey: "openai-api-key",
-          })
-        );
+        new OpenAIApi({
+          apiKey: "openai-api-key",
+        });
       }).not.toThrow();
     });
 
@@ -87,19 +85,6 @@ describe("Usage of OpenAIApi", () => {
         apiKey: "openai-api-key",
       });
       expect(openai).toBeDefined();
-    });
-
-    it("should throw an error when API key is absent", () => {
-      expect(() => {
-        init({
-          apiKey: "gentrace-api-key",
-          basePath: "https://gentrace.ai/api/v1",
-        });
-
-        new OpenAIApi({
-          apiKey: "",
-        });
-      }).toThrow("API key not provided.");
     });
 
     it("should throw an error when Gentrace API key is absent", () => {

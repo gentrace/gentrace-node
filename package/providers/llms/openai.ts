@@ -159,7 +159,7 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
   // TODO: Fix issues with response typing here
   // @ts-ignore
   async create(
-    body: Chat.CompletionCreateParams & {
+    body: Omit<Chat.CompletionCreateParams, "messages"> & {
       messages: Array<ChatCompletionRequestMessageTemplate>;
       pipelineSlug?: string;
     },
@@ -226,10 +226,12 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
         pipelineRunId;
 
       return data as
-        | (Completion & { pipelineRunId: string })
-        | (Stream<Completion> & { pipelineRunId: string });
+        | (Completion & { pipelineRunId?: string })
+        | (Stream<Completion> & { pipelineRunId?: string });
     }
-    return data;
+    return data as
+      | (Completion & { pipelineRunId?: string })
+      | (Stream<Completion> & { pipelineRunId?: string });
   }
 }
 
@@ -292,7 +294,7 @@ class GentraceCompletions extends OpenAI.Completions {
 
   // @ts-ignore
   async create(
-    body: CompletionCreateParams & {
+    body: Omit<CompletionCreateParams, "prompt"> & {
       prompt?:
         | string
         | Array<string>
@@ -380,10 +382,12 @@ class GentraceCompletions extends OpenAI.Completions {
         pipelineRunId;
 
       return data as
-        | (Completion & { pipelineRunId: string })
-        | (Stream<Completion> & { pipelineRunId: string });
+        | (Completion & { pipelineRunId?: string })
+        | (Stream<Completion> & { pipelineRunId?: string });
     }
-    return data;
+    return data as
+      | (Completion & { pipelineRunId?: string })
+      | (Stream<Completion> & { pipelineRunId?: string });
   }
 }
 
