@@ -52,6 +52,24 @@ function createRenderedChatMessages(
   return newMessages;
 }
 
+export class GentraceStream<Item> implements AsyncIterable<Item> {
+  constructor(private stream: Stream<Item>) {}
+
+  async *[Symbol.asyncIterator](): AsyncIterator<Item, any, undefined> {
+    try {
+      for await (const item of this.stream) {
+        // Yield each item from the original stream
+        yield item;
+      }
+
+      // TODO: add logic to add step run
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") return;
+      throw error; // re-throw the error to be caught by the caller
+    }
+  }
+}
+
 class GentraceEmbeddings extends OpenAI.Embeddings {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
@@ -202,6 +220,14 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
 
     const data = await completion;
 
+    let finalData = data as
+      | ChatCompletion
+      | GentraceStream<ChatCompletionChunk>;
+
+    if (body.stream) {
+      finalData = new GentraceStream(data as Stream<ChatCompletionChunk>);
+    }
+
     const endTime = Date.now();
 
     const elapsedTime = Math.floor(endTime - startTime);
@@ -216,7 +242,7 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
         new Date(endTime).toISOString(),
         { messages: renderedMessages, user },
         modelParams,
-        data
+        finalData
       )
     );
 
@@ -225,13 +251,13 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
       (data as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
-      return data as
-        | (Completion & { pipelineRunId?: string })
-        | (Stream<Completion> & { pipelineRunId?: string });
+      return finalData as
+        | (ChatCompletion & { pipelineRunId?: string })
+        | (GentraceStream<ChatCompletion> & { pipelineRunId?: string });
     }
-    return data as
-      | (Completion & { pipelineRunId?: string })
-      | (Stream<Completion> & { pipelineRunId?: string });
+    return finalData as
+      | (ChatCompletion & { pipelineRunId?: string })
+      | (GentraceStream<ChatCompletion> & { pipelineRunId?: string });
   }
 }
 
@@ -484,7 +510,7 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
     modelParams: Omit<Chat.CompletionCreateParams, "messages" | "user">,
     response:
       | OpenAI.Chat.Completions.ChatCompletion
-      | Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+      | GentraceStream<OpenAI.Chat.Completions.ChatCompletionChunk>
   ) {
     super(
       "openai",
