@@ -13,20 +13,20 @@ const openai = new OpenAIApi(
 );
 
 async function createCompletion() {
-  const completionResponse = await openai.createCompletion({
-    pipelineSlug: "testing-pipeline-id",
-    model: "text-davinci-003",
-    promptTemplate: "Write a brief summary of the history of {{ company }}: ",
-    promptInputs: {
-      company: "Google",
+  const completionResponse = await openai.createCompletion(
+    {
+      pipelineSlug: "testing-pipeline-id",
+      model: "text-davinci-003",
+      promptTemplate: "Write a brief summary of the history of {{ company }}: ",
+      promptInputs: {
+        company: "Google",
+      },
+      stream: true,
     },
-    stream: true,
-  });
-
-  console.log(
-    "Completion response",
-    JSON.stringify(completionResponse.data, null, 2)
+    { responseType: "stream" }
   );
+
+  console.log("Completion response", completionResponse);
 }
 
 createCompletion();
