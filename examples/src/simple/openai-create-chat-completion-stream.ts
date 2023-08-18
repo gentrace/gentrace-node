@@ -30,7 +30,10 @@ async function createCompletion() {
     stream: true,
   });
 
-  console.log("chat completion response", chatCompletionResponse);
+  console.log(
+    "chat completion response",
+    JSON.stringify(chatCompletionResponse.data, null, 2)
+  );
 }
 
 createCompletion();
