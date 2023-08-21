@@ -13,7 +13,7 @@ const openai = new OpenAIApi({
 });
 
 async function createCompletion() {
-  const completionResponse = (await openai.completions.create({
+  const completionResponse = await openai.completions.create({
     pipelineSlug: "testing-pipeline-id",
     model: "text-davinci-003",
     promptTemplate:
@@ -22,7 +22,7 @@ async function createCompletion() {
       company: "Google",
     },
     stream: true,
-  })) as Stream<Completion>;
+  });
 
   for await (const part of completionResponse) {
     console.log(part.choices[0]?.text || "");
