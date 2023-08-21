@@ -324,8 +324,16 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
       );
     }
 
-    if (isSelfContainedPipelineRun && !body.stream) {
-      const { pipelineRunId } = await pipelineRun.submit();
+    if (isSelfContainedPipelineRun) {
+      let pipelineRunId = "";
+
+      if (!body.stream) {
+        const submitInfo = await pipelineRun.submit();
+        pipelineRunId = submitInfo.pipelineRunId;
+      } else {
+        pipelineRunId = pipelineRun.getId();
+      }
+
       (finalData as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
@@ -335,6 +343,7 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
             pipelineRunId?: string;
           });
     }
+
     return finalData as
       | GentraceChatCompletion
       | (GentraceStream<ChatCompletionChunk> & {
@@ -540,8 +549,16 @@ class GentraceCompletions extends OpenAI.Completions {
       );
     }
 
-    if (isSelfContainedPipelineRun && !body.stream) {
-      const { pipelineRunId } = await pipelineRun.submit();
+    if (isSelfContainedPipelineRun) {
+      let pipelineRunId = "";
+
+      if (!body.stream) {
+        const submitInfo = await pipelineRun.submit();
+        pipelineRunId = submitInfo.pipelineRunId;
+      } else {
+        pipelineRunId = pipelineRun.getId();
+      }
+
       (finalData as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
@@ -551,6 +568,7 @@ class GentraceCompletions extends OpenAI.Completions {
             pipelineRunId?: string;
           });
     }
+
     return finalData as
       | GentraceCompletion
       | (GentraceStream<Completion> & {

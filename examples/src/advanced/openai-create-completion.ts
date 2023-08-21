@@ -25,6 +25,7 @@ async function createCompletion() {
     promptInputs: {
       company: "Google",
     },
+    stream: true,
   });
 
   console.log("Completion response: ", completionResponse);

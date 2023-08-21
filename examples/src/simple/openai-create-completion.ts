@@ -18,9 +18,14 @@ async function createCompletion() {
     promptInputs: {
       company: "Google",
     },
+    stream: true,
   });
 
-  console.log("Completion response: ", completionResponse);
+  for await (const message of completionResponse) {
+    console.log("Message", message.choices[0]);
+  }
+
+  console.log("PRI", completionResponse.pipelineRunId);
 }
 
 createCompletion();

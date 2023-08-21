@@ -24,9 +24,10 @@ async function createCompletion() {
       },
     ],
     model: "gpt-3.5-turbo",
-    stream: true,
-    // pipelineSlug: "testing-pipeline-id",
+    pipelineSlug: "testing-pipeline-id",
   });
+
+  console.log("PRI", response.pipelineRunId);
 
   for await (const message of response) {
     console.log("Message", message.choices[0]);
