@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { Configuration, OpenAIApi } from "../openai";
+import { OpenAIApi } from "../openai";
 import { init } from "../providers";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 import { sleep } from "../providers/utils";
@@ -68,19 +68,17 @@ describe("test_openai_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi(
-      new Configuration({
-        apiKey: "openai-api-key",
-      })
-    );
+    const openai = new OpenAIApi({
+      apiKey: "openai-api-key",
+    });
 
-    const completionResponse = await openai.createCompletion({
+    const completionResponse = await openai.completions.create({
       model: "text-davinci-003",
       promptTemplate: "Write a brief summary of the history of {{ company }}: ",
       promptInputs: {
         company: "Google",
       },
-      pipelineId: "test-completion-response",
+      pipelineSlug: "test-completion-response",
     });
 
     expect(completionResponse.pipelineRunId).toMatch(/[0-9a-fA-F-]{36}/);
@@ -91,12 +89,11 @@ describe("test_openai_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi(
-      new Configuration({
-        apiKey: "openai-api-key",
-      })
-    );
-    const completionResponse = await openai.createCompletion({
+    const openai = new OpenAIApi({
+      apiKey: "openai-api-key",
+    });
+
+    const completionResponse = await openai.completions.create({
       model: "text-davinci-003",
       promptTemplate: "Write a brief summary of the history of {{ company }}: ",
       promptInputs: {

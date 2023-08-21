@@ -1,12 +1,10 @@
 import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
-import { RunResponse } from "../models/run-response";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
-import type { OpenAIPipelineHandler } from "./llms/openai";
+import { RunResponse } from "../models/run-response";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
-import type { PineconePipelineHandler } from "./vectorstores/pinecone";
 
 export class PipelineRun {
   private pipeline: Pipeline;
@@ -29,13 +27,15 @@ export class PipelineRun {
 
   async getOpenAI() {
     if (this.pipeline.pipelineHandlers.has("openai")) {
-      const handler = this.pipeline.pipelineHandlers.get("openai");
-      const clonedHandler: OpenAIPipelineHandler = Object.assign(
-        Object.create(Object.getPrototypeOf(handler)),
-        handler
-      );
-      clonedHandler.setPipelineRun(this);
-      return clonedHandler;
+      const { OpenAIPipelineHandler } = await import("./llms/openai.js");
+      const openAIHandler = new OpenAIPipelineHandler({
+        pipeline: this.pipeline,
+        pipelineRun: this,
+        gentraceConfig: this.pipeline.config,
+        ...this.pipeline.openAIConfig,
+      });
+
+      return openAIHandler;
     } else {
       throw new Error(
         "Did not find OpenAI handler. Did you call setup() on the pipeline?"
@@ -45,13 +45,17 @@ export class PipelineRun {
 
   async getPinecone() {
     if (this.pipeline.pipelineHandlers.has("pinecone")) {
-      const handler = this.pipeline.pipelineHandlers.get("pinecone");
-      const clonedHandler: PineconePipelineHandler = Object.assign(
-        Object.create(Object.getPrototypeOf(handler)),
-        handler
+      const { PineconePipelineHandler } = await import(
+        "./vectorstores/pinecone.js"
       );
-      clonedHandler.setPipelineRun(this);
-      return clonedHandler;
+      const pineconeHandler = new PineconePipelineHandler({
+        pipeline: this.pipeline,
+        pipelineRun: this,
+        config: this.pipeline.pineconeConfig,
+        gentraceConfig: this.pipeline.config,
+      });
+
+      return pineconeHandler;
     } else {
       throw new Error(
         "Did not find Pinecone handler. Did you call setup() on the pipeline?"

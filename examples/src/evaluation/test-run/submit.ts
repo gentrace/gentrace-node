@@ -1,6 +1,6 @@
-import { init, runTest, Pipeline, Configuration } from "@gentrace/node";
+import { init, Pipeline, runTest } from "@gentrace/node";
 
-const PIPELINE_SLUG = "creating-pipeilne";
+const PIPELINE_SLUG = "testing-pipeline-id";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
@@ -10,9 +10,9 @@ init({
 
 const pipeline = new Pipeline({
   slug: PIPELINE_SLUG,
-  openAIConfig: new Configuration({
+  openAIConfig: {
     apiKey: process.env.OPENAI_KEY,
-  }),
+  },
 });
 
 async function submitTestRun() {

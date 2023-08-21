@@ -11,7 +11,6 @@ import {
   PipelineRun,
 } from "../providers";
 import { setupServer, SetupServer } from "msw/node";
-import { Configuration } from "../openai";
 import { getTestCounter } from "../providers/utils";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 
@@ -491,9 +490,9 @@ describe("Usage of Evaluation functionality", () => {
     await runTest(slug, async (testCase) => {
       const pipeline = new Pipeline({
         slug: slug,
-        openAIConfig: new Configuration({
+        openAIConfig: {
           apiKey: process.env.OPENAI_KEY,
-        }),
+        },
       });
 
       const runner = pipeline.start();
@@ -525,9 +524,9 @@ describe("Usage of Evaluation functionality", () => {
     await runTest(slug, async (testCase) => {
       const pipeline = new Pipeline({
         slug: slug,
-        openAIConfig: new Configuration({
+        openAIConfig: {
           apiKey: process.env.OPENAI_KEY,
-        }),
+        },
       });
 
       const runner = pipeline.start();
@@ -560,9 +559,9 @@ describe("Usage of Evaluation functionality", () => {
       runTest(slug, async (testCase) => {
         const pipeline = new Pipeline({
           slug: slug,
-          openAIConfig: new Configuration({
+          openAIConfig: {
             apiKey: process.env.OPENAI_KEY,
-          }),
+          },
         });
 
         const runner = pipeline.start();
@@ -594,9 +593,9 @@ describe("Usage of Evaluation functionality", () => {
       runTest(slug, async (testCase) => {
         const pipeline = new Pipeline({
           slug: slug,
-          openAIConfig: new Configuration({
+          openAIConfig: {
             apiKey: process.env.OPENAI_KEY,
-          }),
+          },
         });
 
         const runner = pipeline.start();

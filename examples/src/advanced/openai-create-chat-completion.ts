@@ -1,5 +1,4 @@
 import { init, Pipeline } from "@gentrace/node";
-import { Configuration } from "openai";
 
 async function createChatCompletion() {
   init({
@@ -8,10 +7,10 @@ async function createChatCompletion() {
   });
 
   const pipeline = new Pipeline({
-    slug: "create-completion-pipeline",
-    openAIConfig: new Configuration({
+    slug: "testing-pipeline-id",
+    openAIConfig: {
       apiKey: process.env.OPENAI_KEY,
-    }),
+    },
   });
 
   await pipeline.setup();
@@ -20,12 +19,22 @@ async function createChatCompletion() {
 
   const openAi = await runner.getOpenAI();
 
-  const chatCompletionResponse = await openAi.createChatCompletion({
+  const chatCompletionResponse = await openAi.chat.completions.create({
+    messages: [{ role: "user", content: "Hello!" }],
+    model: "gpt-3.5-turbo",
+    stream: true,
+  });
+
+  for await (const message of chatCompletionResponse) {
+    console.log("Message", message.choices[0]);
+  }
+
+  const chatCompletionResponseTwo = await openAi.chat.completions.create({
     messages: [{ role: "user", content: "Hello!" }],
     model: "gpt-3.5-turbo",
   });
 
-  console.log("chatCompletionResponse", chatCompletionResponse.data);
+  console.log("chatCompletionResponse", chatCompletionResponse);
 
   const pipelineRunId = await runner.submit();
 

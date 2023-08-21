@@ -1,6 +1,5 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { Configuration } from "../openai";
 import { init, Pipeline, PipelineRun } from "../providers";
 import stringify from "json-stable-stringify";
 import { sleep } from "../providers/utils";
@@ -68,9 +67,9 @@ describe("test_openai_completion_pipeline", () => {
 
     const pipeline = new Pipeline({
       slug: "create-completion-pipeline",
-      openAIConfig: new Configuration({
+      openAIConfig: {
         apiKey: process.env.OPENAI_KEY,
-      }),
+      },
     });
 
     const runner = new PipelineRun({
@@ -97,9 +96,9 @@ describe("test_openai_completion_pipeline", () => {
 
     const pipeline = new Pipeline({
       slug: "create-completion-pipeline",
-      openAIConfig: new Configuration({
+      openAIConfig: {
         apiKey: process.env.OPENAI_KEY,
-      }),
+      },
     });
 
     const runner = new PipelineRun({
@@ -138,9 +137,9 @@ describe("test_openai_completion_pipeline", () => {
 
     const pipeline = new Pipeline({
       slug: "create-completion-pipeline",
-      openAIConfig: new Configuration({
+      openAIConfig: {
         apiKey: process.env.OPENAI_KEY,
-      }),
+      },
     });
 
     const runner = new PipelineRun({
@@ -173,9 +172,9 @@ describe("test_openai_completion_pipeline", () => {
 
     const pipeline = new Pipeline({
       slug: "create-completion-pipeline",
-      openAIConfig: new Configuration({
+      openAIConfig: {
         apiKey: process.env.OPENAI_KEY,
-      }),
+      },
     });
 
     const runner = new PipelineRun({
@@ -204,9 +203,9 @@ describe("test_openai_completion_pipeline", () => {
 
     const pipeline = new Pipeline({
       slug: "create-completion-pipeline",
-      openAIConfig: new Configuration({
+      openAIConfig: {
         apiKey: process.env.OPENAI_KEY,
-      }),
+      },
     });
 
     const runner = new PipelineRun({
@@ -243,9 +242,9 @@ describe("test_openai_completion_pipeline", () => {
 
     const pipeline = new Pipeline({
       slug: "create-completion-pipeline",
-      openAIConfig: new Configuration({
+      openAIConfig: {
         apiKey: process.env.OPENAI_KEY,
-      }),
+      },
     });
 
     const runner = new PipelineRun({

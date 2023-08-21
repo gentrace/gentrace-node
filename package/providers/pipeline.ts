@@ -1,4 +1,4 @@
-import type { Configuration as OpenAIConfiguration } from "openai/dist/configuration";
+import { ClientOptions } from "openai";
 import { Configuration as GentraceConfiguration } from "../configuration";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
@@ -12,7 +12,7 @@ export class Pipeline {
   public id: string;
   public slug: string;
   public pineconeConfig: PineconeConfiguration;
-  public openAIConfig: OpenAIConfiguration;
+  public openAIConfig: ClientOptions;
   public config: GentraceConfiguration;
   public pipelineHandlers: Map<string, any> = new Map();
 
@@ -44,7 +44,7 @@ export class Pipeline {
      * @deprecated Declare the base path in the init() call instead.
      */
     basePath?: string;
-    openAIConfig?: OpenAIConfiguration;
+    openAIConfig?: ClientOptions;
     pineconeConfig?: PineconeConfiguration;
     logger?: {
       info: (message: string, context?: any) => void;
@@ -130,8 +130,8 @@ export class Pipeline {
         const { OpenAIPipelineHandler } = await import("./llms/openai.js");
         const openAIHandler = new OpenAIPipelineHandler({
           pipeline: this,
-          config: this.openAIConfig,
           gentraceConfig: this.config,
+          ...this.openAIConfig,
         });
         this.pipelineHandlers.set("openai", openAIHandler);
       } catch (e) {

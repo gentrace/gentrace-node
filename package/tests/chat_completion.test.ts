@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { Configuration, OpenAIApi } from "../openai";
+import { OpenAIApi } from "../openai";
 import { config } from "dotenv";
 import { deinit, init } from "../providers/init";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
@@ -88,12 +88,10 @@ describe("test_openai_chat_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi(
-      new Configuration({
-        apiKey: "openai-api-key",
-      })
-    );
-    const chatCompletionResponse = await openai.createChatCompletion({
+    const openai = new OpenAIApi({
+      apiKey: "openai-api-key",
+    });
+    const chatCompletionResponse = await openai.chat.completions.create({
       messages: [
         {
           role: "user",
@@ -102,7 +100,7 @@ describe("test_openai_chat_completion_pipeline", () => {
         },
       ],
       model: "gpt-3.5-turbo",
-      pipelineId: "testing-pipeline-id",
+      pipelineSlug: "testing-pipeline-id",
     });
 
     expect(chatCompletionResponse.pipelineRunId).toMatch(/[0-9a-fA-F-]{36}/);
@@ -113,12 +111,11 @@ describe("test_openai_chat_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi(
-      new Configuration({
-        apiKey: "openai-api-key",
-      })
-    );
-    const chatCompletionResponse = await openai.createChatCompletion({
+    const openai = new OpenAIApi({
+      apiKey: "openai-api-key",
+    });
+
+    const chatCompletionResponse = await openai.chat.completions.create({
       messages: [
         {
           role: "user",

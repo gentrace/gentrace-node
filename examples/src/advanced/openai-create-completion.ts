@@ -1,5 +1,4 @@
 import { init, Pipeline } from "@gentrace/node";
-import { Configuration } from "openai";
 
 async function createCompletion() {
   init({
@@ -8,10 +7,10 @@ async function createCompletion() {
   });
 
   const pipeline = new Pipeline({
-    slug: "completion-pipeline",
-    openAIConfig: new Configuration({
+    slug: "testing-pipeline-id",
+    openAIConfig: {
       apiKey: process.env.OPENAI_KEY,
-    }),
+    },
   });
 
   await pipeline.setup();
@@ -20,12 +19,13 @@ async function createCompletion() {
 
   const openAi = await runner.getOpenAI();
 
-  const completionResponse = await openAi.createCompletion({
+  const completionResponse = await openAi.completions.create({
     model: "text-davinci-003",
     promptTemplate: "Write a brief summary of the history of {{ company }}: ",
     promptInputs: {
       company: "Google",
     },
+    stream: true,
   });
 
   console.log("Completion response: ", completionResponse);

@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { Configuration, OpenAIApi } from "../openai";
+import { OpenAIApi } from "../openai";
 import { config } from "dotenv";
 import { init } from "../providers";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
@@ -69,16 +69,14 @@ describe("test_openai_embedding_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi(
-      new Configuration({
-        apiKey: "openai-api-key",
-      })
-    );
+    const openai = new OpenAIApi({
+      apiKey: "openai-api-key",
+    });
 
-    const embeddingResponse = await openai.createEmbedding({
+    const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-ada-002",
       input: "testing",
-      pipelineId: "testing-pipeline-id",
+      pipelineSlug: "testing-pipeline-id",
     });
 
     expect(embeddingResponse.pipelineRunId).toMatch(/[0-9a-fA-F-]{36}/);

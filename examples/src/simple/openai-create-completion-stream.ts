@@ -12,12 +12,19 @@ const openai = new OpenAIApi({
 
 async function createCompletion() {
   const completionResponse = await openai.completions.create({
-    pipelineSlug: "testing-pipeline-id",
+    // pipelineSlug: "testing-pipeline-id",
     model: "text-davinci-003",
-    prompt: "This is a test.",
+    promptTemplate:
+      "Write a 500 word summary of the history of {{ company }}. Make it long: ",
+    promptInputs: {
+      company: "Google",
+    },
+    stream: true,
   });
 
-  console.log("completion response", completionResponse);
+  for await (const part of completionResponse) {
+    console.log(part.choices[0]?.text || "");
+  }
 }
 
 createCompletion();

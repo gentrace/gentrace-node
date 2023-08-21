@@ -1,27 +1,25 @@
 import { init } from "@gentrace/node";
-import { OpenAIApi, Configuration } from "@gentrace/node/openai";
+import { OpenAIApi } from "@gentrace/node/openai";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   basePath: "http://localhost:3000/api/v1",
 });
 
-const openai = new OpenAIApi(
-  new Configuration({
-    gentraceLogger: {
-      info: (message) => console.log(message),
-      warn: (message) => console.warn(message),
-    },
-    apiKey: process.env.OPENAI_KEY,
-  })
-);
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const openai = new OpenAIApi({
+  apiKey: process.env.OPENAI_KEY,
+});
 
 async function createCompletion() {
-  const chatCompletionResponse = await openai.createChatCompletion({
+  const response = await openai.chat.completions.create({
     messages: [
       {
         role: "user",
-        contentTemplate: "Hello {{ name }}!",
+        contentTemplate: "Hello {{ name }}! Write a 1000 word summary",
         contentInputs: { name: "Vivek" },
       },
     ],
@@ -29,7 +27,11 @@ async function createCompletion() {
     pipelineSlug: "testing-pipeline-id",
   });
 
-  console.log("chat completion response", chatCompletionResponse);
+  console.log("PRI", response.pipelineRunId);
+
+  for await (const message of response) {
+    console.log("Message", message.choices[0]);
+  }
 }
 
 createCompletion();
