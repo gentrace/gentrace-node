@@ -80,7 +80,6 @@ export class GentraceStream<Item> implements AsyncIterable<Item> {
     this.partialStepRun.elapsedTime = elapsedTime;
     this.partialStepRun.endTime = new Date(endTime).toISOString();
 
-    console.log("consolidatedResponse", consolidatedResponse);
     this.partialStepRun.outputs = consolidatedResponse;
 
     this.pipelineRun?.addStepRunNode(this.partialStepRun);
@@ -330,6 +329,28 @@ class GentraceChat extends OpenAI.Chat {
   }
 }
 
+interface GentraceCompletionCreateParams
+  extends Omit<CompletionCreateParams, "prompt"> {
+  prompt?: string | Array<string> | Array<number> | Array<Array<number>> | null;
+  promptTemplate?: string;
+  promptInputs: Record<string, string>;
+  pipelineSlug?: string;
+}
+
+interface GentraceCompletionCreateParamsStreaming
+  extends GentraceCompletionCreateParams {
+  stream: true;
+}
+
+interface GentraceCompletionCreateParamsNonStreaming
+  extends GentraceCompletionCreateParams {
+  stream?: false | null;
+}
+
+type GentraceCompletion = Completion & {
+  pipelineRunId?: string;
+};
+
 class GentraceCompletions extends OpenAI.Completions {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
@@ -353,20 +374,22 @@ class GentraceCompletions extends OpenAI.Completions {
   }
 
   // @ts-ignore
+  create(
+    body: GentraceCompletionCreateParamsNonStreaming,
+    options?: RequestOptions
+  ): APIPromise<GentraceCompletion>;
+
+  // @ts-ignore
+  create(
+    body: GentraceCompletionCreateParamsStreaming,
+    options?: RequestOptions
+  ): APIPromise<GentraceStream<GentraceCompletion>>;
+
+  // @ts-ignore
   async create(
-    body: Omit<CompletionCreateParams, "prompt"> & {
-      prompt?:
-        | string
-        | Array<string>
-        | Array<number>
-        | Array<Array<number>>
-        | null;
-      promptTemplate?: string;
-      promptInputs: Record<string, string>;
-      pipelineSlug?: string;
-    },
+    body: GentraceCompletionCreateParams,
     requestOptions?: RequestOptions
-  ) {
+  ): Promise<GentraceCompletion | GentraceStream<GentraceCompletion>> {
     const { pipelineSlug } = body;
     let isSelfContainedPipelineRun = !this.pipelineRun && !!pipelineSlug;
 
@@ -465,12 +488,10 @@ class GentraceCompletions extends OpenAI.Completions {
         pipelineRunId;
 
       return finalData as
-        | (Completion & { pipelineRunId?: string })
-        | (Stream<Completion> & { pipelineRunId?: string });
+        | GentraceCompletion
+        | GentraceStream<GentraceCompletion>;
     }
-    return finalData as
-      | (Completion & { pipelineRunId?: string })
-      | (Stream<Completion> & { pipelineRunId?: string });
+    return finalData as GentraceCompletion | GentraceStream<GentraceCompletion>;
   }
 }
 
