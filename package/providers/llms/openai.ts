@@ -839,7 +839,7 @@ function createCompletionStreamResponse(streamList: StreamDelta[]) {
 
   const finalResponse: Record<string, any> = {
     id,
-    // Override this so it doesn't show chat.completion.chunk
+    // Override this so it doesn't show chat.completion.chunk.
     object: "text_completion",
     created,
     model,
