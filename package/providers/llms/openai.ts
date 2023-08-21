@@ -53,19 +53,40 @@ function createRenderedChatMessages(
 }
 
 export class GentraceStream<Item> implements AsyncIterable<Item> {
-  constructor(private stream: Stream<Item>) {}
+  constructor(
+    private stream: Stream<Item>,
+    private pipelineRun: PipelineRun,
+    private partialStepRun: StepRun,
+    private isSelfContained: boolean,
+    private aggregator: (streamList: any[]) => Record<string, any>
+  ) {}
 
   async *[Symbol.asyncIterator](): AsyncIterator<Item, any, undefined> {
-    try {
-      for await (const item of this.stream) {
-        // Yield each item from the original stream
-        yield item;
-      }
+    const allItems: Item[] = [];
 
-      // TODO: add logic to add step run
-    } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") return;
-      throw error; // re-throw the error to be caught by the caller
+    for await (const item of this.stream) {
+      // Yield each item from the original stream
+      yield item;
+
+      allItems.push(item);
+    }
+
+    const consolidatedResponse = this.aggregator(allItems);
+
+    const endTime = Date.now();
+
+    const elapsedTime = endTime - Date.parse(this.partialStepRun.startTime);
+
+    this.partialStepRun.elapsedTime = elapsedTime;
+    this.partialStepRun.endTime = new Date(endTime).toISOString();
+
+    console.log("consolidatedResponse", consolidatedResponse);
+    this.partialStepRun.outputs = consolidatedResponse;
+
+    this.pipelineRun?.addStepRunNode(this.partialStepRun);
+
+    if (this.isSelfContained) {
+      await this.pipelineRun.submit();
     }
   }
 }
@@ -184,11 +205,11 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
     requestOptions?: RequestOptions
   ) {
     const { pipelineSlug } = body;
-    let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
+    let isSelfContainedPipelineRun = !this.pipelineRun && !!pipelineSlug;
 
     let pipelineRun = this.pipelineRun;
 
-    if (isSelfContainedPullRequest) {
+    if (isSelfContainedPipelineRun) {
       const pipeline = new Pipeline({
         id: pipelineSlug,
         slug: pipelineSlug,
@@ -224,10 +245,6 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
       | ChatCompletion
       | GentraceStream<ChatCompletionChunk>;
 
-    if (body.stream) {
-      finalData = new GentraceStream(data as Stream<ChatCompletionChunk>);
-    }
-
     const endTime = Date.now();
 
     const elapsedTime = Math.floor(endTime - startTime);
@@ -235,20 +252,37 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
     // user parameter is an input, not a model parameter
     const { user, ...modelParams } = baseCompletionOptions;
 
-    pipelineRun?.addStepRunNode(
-      new OpenAICreateChatCompletionStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        { messages: renderedMessages, user },
-        modelParams,
-        finalData
-      )
-    );
+    if (body.stream) {
+      finalData = new GentraceStream(
+        data as Stream<ChatCompletionChunk>,
+        pipelineRun,
+        new OpenAICreateChatCompletionStepRun(
+          0,
+          new Date(startTime).toISOString(),
+          "",
+          { messages: renderedMessages, user },
+          modelParams,
+          finalData
+        ),
+        !!isSelfContainedPipelineRun,
+        createChatCompletionStreamResponse
+      );
+    } else {
+      pipelineRun?.addStepRunNode(
+        new OpenAICreateChatCompletionStepRun(
+          elapsedTime,
+          new Date(startTime).toISOString(),
+          new Date(endTime).toISOString(),
+          { messages: renderedMessages, user },
+          modelParams,
+          finalData
+        )
+      );
+    }
 
-    if (isSelfContainedPullRequest) {
+    if (isSelfContainedPipelineRun && !body.stream) {
       const { pipelineRunId } = await pipelineRun.submit();
-      (data as unknown as { pipelineRunId: string }).pipelineRunId =
+      (finalData as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
       return finalData as
@@ -334,11 +368,11 @@ class GentraceCompletions extends OpenAI.Completions {
     requestOptions?: RequestOptions
   ) {
     const { pipelineSlug } = body;
-    let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
+    let isSelfContainedPipelineRun = !this.pipelineRun && !!pipelineSlug;
 
     let pipelineRun = this.pipelineRun;
 
-    if (isSelfContainedPullRequest) {
+    if (isSelfContainedPipelineRun) {
       const pipeline = new Pipeline({
         id: pipelineSlug,
         slug: pipelineSlug,
@@ -380,6 +414,8 @@ class GentraceCompletions extends OpenAI.Completions {
 
     const data = await completion;
 
+    let finalData = data as Completion | GentraceStream<Completion>;
+
     const endTime = Date.now();
 
     const elapsedTime = Math.floor(endTime - startTime);
@@ -387,31 +423,52 @@ class GentraceCompletions extends OpenAI.Completions {
     // User and suffix parameters are inputs not model parameters
     const { user, suffix, ...partialModelParams } = baseCompletionOptions;
 
-    pipelineRun?.addStepRunNode(
-      new OpenAICreateCompletionStepRun(
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        {
-          prompt: promptTemplate && promptInputs ? promptInputs : prompt,
-          user,
-          suffix,
-        },
-        { ...partialModelParams, promptTemplate },
-        data
-      )
-    );
+    if (body.stream) {
+      finalData = new GentraceStream(
+        data as Stream<Completion>,
+        pipelineRun,
+        new OpenAICreateCompletionStepRun(
+          0,
+          new Date(startTime).toISOString(),
+          "",
+          {
+            prompt: promptTemplate && promptInputs ? promptInputs : prompt,
+            user,
+            suffix,
+          },
+          { ...partialModelParams, promptTemplate },
+          finalData
+        ),
+        !!isSelfContainedPipelineRun,
+        createCompletionStreamResponse
+      );
+    } else {
+      pipelineRun?.addStepRunNode(
+        new OpenAICreateCompletionStepRun(
+          elapsedTime,
+          new Date(startTime).toISOString(),
+          new Date(endTime).toISOString(),
+          {
+            prompt: promptTemplate && promptInputs ? promptInputs : prompt,
+            user,
+            suffix,
+          },
+          { ...partialModelParams, promptTemplate },
+          finalData
+        )
+      );
+    }
 
-    if (isSelfContainedPullRequest) {
+    if (isSelfContainedPipelineRun && !body.stream) {
       const { pipelineRunId } = await pipelineRun.submit();
-      (data as unknown as { pipelineRunId: string }).pipelineRunId =
+      (finalData as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
-      return data as
+      return finalData as
         | (Completion & { pipelineRunId?: string })
         | (Stream<Completion> & { pipelineRunId?: string });
     }
-    return data as
+    return finalData as
       | (Completion & { pipelineRunId?: string })
       | (Stream<Completion> & { pipelineRunId?: string });
   }
@@ -551,7 +608,7 @@ class OpenAICreateCompletionStepRun extends StepRun {
     modelParams: Omit<CompletionCreateParams, "prompt" | "user" | "suffix"> & {
       promptTemplate: string;
     },
-    response: Completion | Stream<Completion>
+    response: Completion | GentraceStream<Completion>
   ) {
     super(
       "openai",
@@ -590,4 +647,108 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
       response
     );
   }
+}
+
+function createChatCompletionStreamResponse(streamList: StreamDelta[]) {
+  let finalResponseString = "";
+  let model = "";
+  let id = "";
+  let created = 0;
+  for (const value of streamList) {
+    model = value.model;
+    id = value.id;
+    created = value.created;
+
+    if (value.choices && value.choices.length > 0) {
+      const firstChoice = value.choices[0];
+      if (firstChoice.text) {
+        finalResponseString += firstChoice.text;
+      } else if (firstChoice.delta && firstChoice.delta.content) {
+        finalResponseString += firstChoice.delta.content;
+      } else if (
+        firstChoice.finish_reason &&
+        firstChoice.finish_reason === "stop"
+      ) {
+        break;
+      }
+    }
+  }
+
+  const finalResponse: Record<string, any> = {
+    id,
+    // Override this so it doesn't show chat.completion.chunk
+    object: "chat.completion",
+    created,
+    model,
+    choices: [
+      {
+        finish_reason: null,
+        index: 0,
+        message: { content: finalResponseString, role: "assistant" },
+      },
+    ],
+  };
+
+  return finalResponse;
+}
+
+interface Choice {
+  text?: string;
+  delta?: {
+    content?: string;
+  };
+  index?: number;
+  finish_reason?: string;
+}
+
+interface StreamDelta {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: Choice[];
+}
+
+function createCompletionStreamResponse(streamList: StreamDelta[]) {
+  let finalResponseString = "";
+  let model = "";
+  let id = "";
+  let created = 0;
+  for (const value of streamList) {
+    model = value.model;
+    id = value.id;
+    created = value.created;
+
+    if (value.choices && value.choices.length > 0) {
+      const firstChoice = value.choices[0];
+      if (firstChoice.text) {
+        finalResponseString += firstChoice.text;
+      } else if (firstChoice.delta && firstChoice.delta.content) {
+        finalResponseString += firstChoice.delta.content;
+      } else if (
+        firstChoice.finish_reason &&
+        firstChoice.finish_reason === "stop"
+      ) {
+        break;
+      }
+    }
+  }
+
+  const finalResponse: Record<string, any> = {
+    id,
+    // Override this so it doesn't show chat.completion.chunk
+    object: "text_completion",
+    created,
+    model,
+    choices: [
+      {
+        text: finalResponseString,
+        index: 0,
+        logprobs: null,
+        finish_reason: "length",
+      },
+    ],
+  };
+
+  return finalResponse;
 }
