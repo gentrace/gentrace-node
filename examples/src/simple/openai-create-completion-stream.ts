@@ -1,7 +1,5 @@
 import { init } from "@gentrace/node";
 import { OpenAIApi } from "@gentrace/node/openai";
-import { Completion } from "openai/resources";
-import { Stream } from "openai/streaming";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",

@@ -9,7 +9,11 @@ import {
   CreateEmbeddingResponse,
   EmbeddingCreateParams,
 } from "openai/resources";
-import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
+import {
+  ChatCompletion,
+  ChatCompletionChunk,
+  CreateChatCompletionRequestMessage,
+} from "openai/resources/chat";
 import { Stream } from "openai/streaming";
 import { Configuration as GentraceConfiguration } from "../../configuration";
 import { Pipeline } from "../pipeline";
@@ -172,6 +176,30 @@ class GentraceEmbeddings extends OpenAI.Embeddings {
   }
 }
 
+interface GentraceChatCompletionCreateParams
+  extends Omit<Chat.CompletionCreateParams, "messages"> {
+  messages: Array<ChatCompletionRequestMessageTemplate>;
+  pipelineSlug?: string;
+}
+
+interface GentraceChatCompletionCreateParamsStreaming
+  extends GentraceChatCompletionCreateParams {
+  stream: true;
+}
+
+interface GentraceChatCompletionCreateParamsNonStreaming
+  extends GentraceChatCompletionCreateParams {
+  stream?: false | null;
+}
+
+type GentraceChatCompletion = ChatCompletion & {
+  pipelineRunId?: string;
+};
+
+type GentraceChatCompletionChunk = ChatCompletionChunk & {
+  pipelineRunId?: string;
+};
+
 class GentraceChatCompletions extends OpenAI.Chat.Completions {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
@@ -194,13 +222,21 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
     this.gentraceConfig = gentraceConfig;
   }
 
-  // TODO: Fix issues with response typing here
+  // @ts-ignore
+  create(
+    body: GentraceChatCompletionCreateParamsNonStreaming,
+    options?: RequestOptions
+  ): APIPromise<GentraceCompletion>;
+
+  // @ts-ignore
+  create(
+    body: GentraceChatCompletionCreateParamsStreaming,
+    options?: RequestOptions
+  ): APIPromise<GentraceStream<GentraceCompletion>>;
+
   // @ts-ignore
   async create(
-    body: Omit<Chat.CompletionCreateParams, "messages"> & {
-      messages: Array<ChatCompletionRequestMessageTemplate>;
-      pipelineSlug?: string;
-    },
+    body: GentraceChatCompletionCreateParams,
     requestOptions?: RequestOptions
   ) {
     const { pipelineSlug } = body;
@@ -285,12 +321,12 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
         pipelineRunId;
 
       return finalData as
-        | (ChatCompletion & { pipelineRunId?: string })
-        | (GentraceStream<ChatCompletion> & { pipelineRunId?: string });
+        | GentraceChatCompletion
+        | GentraceStream<GentraceChatCompletionChunk>;
     }
     return finalData as
-      | (ChatCompletion & { pipelineRunId?: string })
-      | (GentraceStream<ChatCompletion> & { pipelineRunId?: string });
+      | GentraceChatCompletion
+      | GentraceStream<GentraceChatCompletionChunk>;
   }
 }
 
@@ -377,13 +413,13 @@ class GentraceCompletions extends OpenAI.Completions {
   create(
     body: GentraceCompletionCreateParamsNonStreaming,
     options?: RequestOptions
-  ): APIPromise<GentraceCompletion>;
+  ): Promise<GentraceCompletion>;
 
   // @ts-ignore
   create(
     body: GentraceCompletionCreateParamsStreaming,
     options?: RequestOptions
-  ): APIPromise<GentraceStream<GentraceCompletion>>;
+  ): Promise<GentraceStream<GentraceCompletion>>;
 
   // @ts-ignore
   async create(

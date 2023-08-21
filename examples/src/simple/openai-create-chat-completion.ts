@@ -1,8 +1,5 @@
 import { init } from "@gentrace/node";
 import { OpenAIApi } from "@gentrace/node/openai";
-import { Completion } from "openai/resources";
-import { ChatCompletionChunk } from "openai/resources/chat";
-import { Stream } from "openai/streaming";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
@@ -18,7 +15,7 @@ const openai = new OpenAIApi({
 });
 
 async function createCompletion() {
-  const response = (await openai.chat.completions.create({
+  const response = await openai.chat.completions.create({
     messages: [
       {
         role: "user",
@@ -29,7 +26,7 @@ async function createCompletion() {
     model: "gpt-3.5-turbo",
     stream: true,
     pipelineSlug: "testing-pipeline-id",
-  })) as unknown as Stream<ChatCompletionChunk>;
+  });
 
   for await (const message of response) {
     console.log("Message", message.choices[0]);
