@@ -226,19 +226,28 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
   create(
     body: GentraceChatCompletionCreateParamsNonStreaming,
     options?: RequestOptions
-  ): APIPromise<GentraceCompletion>;
+  ): Promise<GentraceChatCompletion>;
 
   // @ts-ignore
   create(
     body: GentraceChatCompletionCreateParamsStreaming,
     options?: RequestOptions
-  ): APIPromise<GentraceStream<GentraceCompletion>>;
+  ): Promise<
+    GentraceStream<ChatCompletionChunk> & {
+      pipelineRunId?: string;
+    }
+  >;
 
   // @ts-ignore
   async create(
     body: GentraceChatCompletionCreateParams,
     requestOptions?: RequestOptions
-  ) {
+  ): Promise<
+    | GentraceChatCompletion
+    | (GentraceStream<ChatCompletionChunk> & {
+        pipelineRunId?: string;
+      })
+  > {
     const { pipelineSlug } = body;
     let isSelfContainedPipelineRun = !this.pipelineRun && !!pipelineSlug;
 
@@ -322,11 +331,15 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
 
       return finalData as
         | GentraceChatCompletion
-        | GentraceStream<GentraceChatCompletionChunk>;
+        | (GentraceStream<ChatCompletionChunk> & {
+            pipelineRunId?: string;
+          });
     }
     return finalData as
       | GentraceChatCompletion
-      | GentraceStream<GentraceChatCompletionChunk>;
+      | (GentraceStream<ChatCompletionChunk> & {
+          pipelineRunId?: string;
+        });
   }
 }
 
@@ -419,13 +432,22 @@ class GentraceCompletions extends OpenAI.Completions {
   create(
     body: GentraceCompletionCreateParamsStreaming,
     options?: RequestOptions
-  ): Promise<GentraceStream<GentraceCompletion>>;
+  ): Promise<
+    GentraceStream<Completion> & {
+      pipelineRunId?: string;
+    }
+  >;
 
   // @ts-ignore
   async create(
     body: GentraceCompletionCreateParams,
     requestOptions?: RequestOptions
-  ): Promise<GentraceCompletion | GentraceStream<GentraceCompletion>> {
+  ): Promise<
+    | GentraceCompletion
+    | (GentraceStream<Completion> & {
+        pipelineRunId?: string;
+      })
+  > {
     const { pipelineSlug } = body;
     let isSelfContainedPipelineRun = !this.pipelineRun && !!pipelineSlug;
 
@@ -525,9 +547,15 @@ class GentraceCompletions extends OpenAI.Completions {
 
       return finalData as
         | GentraceCompletion
-        | GentraceStream<GentraceCompletion>;
+        | (GentraceStream<Completion> & {
+            pipelineRunId?: string;
+          });
     }
-    return finalData as GentraceCompletion | GentraceStream<GentraceCompletion>;
+    return finalData as
+      | GentraceCompletion
+      | (GentraceStream<Completion> & {
+          pipelineRunId?: string;
+        });
   }
 }
 
