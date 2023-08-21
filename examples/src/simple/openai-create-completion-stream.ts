@@ -12,7 +12,7 @@ const openai = new OpenAIApi({
 
 async function createCompletion() {
   const completionResponse = await openai.completions.create({
-    pipelineSlug: "testing-pipeline-id",
+    // pipelineSlug: "testing-pipeline-id",
     model: "text-davinci-003",
     promptTemplate:
       "Write a 500 word summary of the history of {{ company }}. Make it long: ",

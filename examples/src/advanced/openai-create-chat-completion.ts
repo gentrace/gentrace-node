@@ -22,6 +22,16 @@ async function createChatCompletion() {
   const chatCompletionResponse = await openAi.chat.completions.create({
     messages: [{ role: "user", content: "Hello!" }],
     model: "gpt-3.5-turbo",
+    stream: true,
+  });
+
+  for await (const message of chatCompletionResponse) {
+    console.log("Message", message.choices[0]);
+  }
+
+  const chatCompletionResponseTwo = await openAi.chat.completions.create({
+    messages: [{ role: "user", content: "Hello!" }],
+    model: "gpt-3.5-turbo",
   });
 
   console.log("chatCompletionResponse", chatCompletionResponse);
