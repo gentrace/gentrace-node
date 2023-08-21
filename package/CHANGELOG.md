@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0](https://github.com/gentrace/gentrace-node/compare/v0.15.2...v1.0.0) (2023-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* Upgrade to OpenAI Node SDK version 4 ([#173](https://github.com/gentrace/gentrace-node/issues/173))
+
+### Features
+
+* Upgrade to OpenAI Node SDK version 4 ([#173](https://github.com/gentrace/gentrace-node/issues/173)) ([3396553](https://github.com/gentrace/gentrace-node/commit/339655353e8ed53503770afcff12c682845a8d53))
+
+
+### Bug Fixes
+
+* Add support for edge environments ([#170](https://github.com/gentrace/gentrace-node/issues/170)) ([c00ed18](https://github.com/gentrace/gentrace-node/commit/c00ed18fe2c4cb9c9043f8d024eb32e77e6d7594))
+* Create fake bug for testing release creation ([#186](https://github.com/gentrace/gentrace-node/issues/186)) ([078077d](https://github.com/gentrace/gentrace-node/commit/078077d8aebeafefbc2203f59eaa54dc74312969))
+
 ## [0.15.2](https://github.com/gentrace/gentrace-node/compare/v0.15.1...v0.15.2) (2023-07-31)
 
 
