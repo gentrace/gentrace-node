@@ -3,7 +3,7 @@ name: Release Please
 on:
   push:
     branches:
-      - v0
+      - v1
 
 permissions:
   contents: write
@@ -19,7 +19,7 @@ jobs:
         with:
           release-type: node
           path: package
-          default-branch: v0
+          default-branch: v1
 
       - uses: actions/checkout@v3
         if: ${{ steps.release.outputs['package--release_created'] }}
