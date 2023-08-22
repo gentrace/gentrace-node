@@ -13,6 +13,8 @@ Gentrace Node.js SDK
 </p>
 <!-- TEXT_SECTION:header:END -->
 
+> [!IMPORTANT]
+> This version of the Gentrace API only supports the OpenAI v3 SDK. This version is pinned to our `0.X.X` NPM package versions. Please visit [the `v1` branch](https://github.com/gentrace/gentrace-node/tree/v1) to see the code that supports the OpenAI v4 SDK.
 
 The Gentrace Node.js library provides convenient access to the Gentrace API from Node.js applications. Most of the code in this library is generated from our [OpenAPI specification](https://github.com/gentrace/gentrace-openapi).
 
