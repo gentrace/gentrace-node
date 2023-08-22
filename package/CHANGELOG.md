@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/gentrace/gentrace-node/compare/v1.0.0...v1.0.1) (2023-08-22)
+
+
+### Bug Fixes
+
+* Modify peer dependencies ([#191](https://github.com/gentrace/gentrace-node/issues/191)) ([76cb2c6](https://github.com/gentrace/gentrace-node/commit/76cb2c62d0d002da8c126f62280e3edfbab4780c))
+
 ## [1.0.0](https://github.com/gentrace/gentrace-node/compare/v0.15.2...v1.0.0) (2023-08-21)
 
 
