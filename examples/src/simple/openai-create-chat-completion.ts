@@ -21,7 +21,7 @@ async function createCompletion() {
     messages: [
       {
         role: "user",
-        contentTemplate: "Hello {{ name }}!",
+        contentTemplate: "Hello {{ name }}! Here's a pizza",
         contentInputs: { name: "Vivek" },
       },
     ],
