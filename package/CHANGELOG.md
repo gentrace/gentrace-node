@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/gentrace/gentrace-node/compare/v1.0.2...v1.0.3) (2023-08-28)
+
+
+### Bug Fixes
+
+* Fix slug not accepted in submitTestResult invocation ([#199](https://github.com/gentrace/gentrace-node/issues/199)) ([99ba62f](https://github.com/gentrace/gentrace-node/commit/99ba62f24631f9f7767aad43a6bf97ee16bdaf4d))
+
 ## [1.0.2](https://github.com/gentrace/gentrace-node/compare/v1.0.1...v1.0.2) (2023-08-28)
 
 
