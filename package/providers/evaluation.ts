@@ -39,8 +39,6 @@ export const getTestCases = async (pipelineSlug: string) => {
   if (!isUUID(pipelineSlug)) {
     const allPipelines = await getPipelines();
 
-    console.log("allPipelines", allPipelines);
-
     const matchingPipeline = allPipelines.find(
       (pipeline) => pipeline.slug === pipelineSlug
     );
