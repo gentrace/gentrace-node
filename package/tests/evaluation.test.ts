@@ -150,6 +150,7 @@ describe("Usage of Evaluation functionality", () => {
       archivedAt: string | null;
       labels: string[];
       name: string;
+      slug: "guess-the-year";
       organizationId: string;
       branch: string;
       cases: {
@@ -172,6 +173,7 @@ describe("Usage of Evaluation functionality", () => {
         archivedAt: null,
         labels: ["guessing"],
         name: "Guess the Year",
+        slug: "guess-the-year",
         organizationId: "fe05eab7-4f07-530d-8ed9-15aeae86e0db",
         branch: "main",
         cases: [
@@ -324,7 +326,7 @@ describe("Usage of Evaluation functionality", () => {
       );
 
       const submissionResponse = await submitTestResult(
-        "pipeline-id",
+        "guess-the-year",
         testCases,
         [{ value: "This are some outputs" }]
       );
@@ -348,7 +350,29 @@ describe("Usage of Evaluation functionality", () => {
       );
 
       const submissionResponse = await submitTestResult(
-        "pipeline-id",
+        "guess-the-year",
+        testCases,
+        [{ value: "This are some outputs" }]
+      );
+      expect(submissionResponse.runId).toBe(createTestResultResponse.resultId);
+    });
+
+    it("should pass if a UUID is directly passed", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const testCases = await getTestCases("pipeline-id");
+
+      expect(testCases.length).toBe(1);
+
+      expect(stringify(testCases)).toBe(
+        stringify(getTestCasesResponse.testCases)
+      );
+
+      const submissionResponse = await submitTestResult(
+        "9685b34e-2cac-5bd2-8751-c9e34ff9fd98",
         testCases,
         [{ value: "This are some outputs" }]
       );
