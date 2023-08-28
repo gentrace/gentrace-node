@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/gentrace/gentrace-node/compare/v1.0.3...v1.0.4) (2023-08-28)
+
+
+### Bug Fixes
+
+* Fix slug not accepted in test cases ([#205](https://github.com/gentrace/gentrace-node/issues/205)) ([af4b4a3](https://github.com/gentrace/gentrace-node/commit/af4b4a3a057d0e0e7aed7d994bdf4ade06c91114))
+
 ## [1.0.3](https://github.com/gentrace/gentrace-node/compare/v1.0.2...v1.0.3) (2023-08-28)
 
 
