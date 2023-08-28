@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.7](https://github.com/gentrace/gentrace-node/compare/v0.15.6...v0.15.7) (2023-08-28)
+
+
+### Bug Fixes
+
+* Fix not passing inputs and templates for chat completion ([#197](https://github.com/gentrace/gentrace-node/issues/197)) ([cb63fc6](https://github.com/gentrace/gentrace-node/commit/cb63fc6e33e9b552cc4a7d15716ced324970e07d))
+
 ## [0.15.6](https://github.com/gentrace/gentrace-node/compare/v0.15.5...v0.15.6) (2023-08-18)
 
 
