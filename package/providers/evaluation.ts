@@ -119,15 +119,21 @@ export const constructSubmissionPayload = (
   return body;
 };
 
+function isUUID(str: string): boolean {
+  const uuidPattern =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+  return uuidPattern.test(str);
+}
+
 /**
  * Submits test results by creating TestResult objects from given test cases and corresponding outputs.
- * @deprecated Use {@link runTest} instead.
+ * To use a Gentrace runner to capture intermediate steps, use {@link runTest} instead.
  *
  * NOTE: We have renamed TestResult -> TestRun, TestRun -> TestResult, and TestSet -> Pipeline.
  *
  * @async
  * @function
- * @param {string} pipelineId - The identifier of the pipeline.
+ * @param {string} pipelineSlug - The slug of the pipeline
  * @param {TestCase[]} testCases - An array of TestCase objects.
  * @param {string[]} outputs - An array of outputs corresponding to each TestCase.
  *
@@ -137,7 +143,7 @@ export const constructSubmissionPayload = (
  * @returns {Promise<TestRunPost200Response>} The response data from the Gentrace API's testRunPost method.
  */
 export const submitTestResult = async (
-  pipelineId: string,
+  pipelineSlug: string,
   testCases: TestCase[],
   outputsList: Record<string, any>[]
 ) => {
@@ -162,6 +168,24 @@ export const submitTestResult = async (
       return run;
     }
   );
+
+  let pipelineId = pipelineSlug;
+
+  if (!isUUID(pipelineSlug)) {
+    const allPipelines = await getPipelines();
+
+    const matchingPipeline = allPipelines.find(
+      (pipeline) => pipeline.slug === pipelineSlug
+    );
+
+    if (!matchingPipeline) {
+      throw new Error(
+        `Could not find the specified pipeline (${pipelineSlug})`
+      );
+    }
+
+    pipelineId = matchingPipeline.id;
+  }
 
   const body: TestRunPostRequest = {
     setId: pipelineId,
