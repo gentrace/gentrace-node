@@ -27,11 +27,7 @@ async function createCompletion() {
     pipelineSlug: "testing-pipeline-id",
   });
 
-  console.log("PRI", response.pipelineRunId);
-
-  for await (const message of response) {
-    console.log("Message", message.choices[0]);
-  }
+  console.log("Data", response);
 }
 
 createCompletion();
