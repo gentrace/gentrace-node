@@ -275,6 +275,15 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
 
     const renderedMessages = createRenderedChatMessages(messages);
 
+    const contentTemplatesArray = messages.map<string | null>((message) => {
+      return message.contentTemplate ?? null;
+    });
+
+    const contentInputsArray = messages.map<Record<string, string> | null>(
+      (message) => {
+        return message.contentInputs ?? null;
+      }
+    );
     const startTime = Date.now();
 
     const completion = this.post("/chat/completions", {
@@ -304,8 +313,12 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
           0,
           new Date(startTime).toISOString(),
           "",
-          { messages: renderedMessages, user },
-          modelParams,
+          {
+            messages: renderedMessages,
+            user,
+            contentInputs: contentInputsArray,
+          },
+          { ...modelParams, contentTemplates: contentTemplatesArray },
           finalData
         ),
         !!isSelfContainedPipelineRun,
@@ -317,8 +330,12 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
           elapsedTime,
           new Date(startTime).toISOString(),
           new Date(endTime).toISOString(),
-          { messages: renderedMessages, user },
-          modelParams,
+          {
+            messages: renderedMessages,
+            user,
+            contentInputs: contentInputsArray,
+          },
+          { ...modelParams, contentTemplates: contentTemplatesArray },
           finalData
         )
       );
@@ -666,8 +683,11 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
     inputs: {
       messages?: Array<Chat.CreateChatCompletionRequestMessage>;
       user?: string;
+      contentInputs?: Record<string, string>[];
     },
-    modelParams: Omit<Chat.CompletionCreateParams, "messages" | "user">,
+    modelParams: Omit<Chat.CompletionCreateParams, "messages" | "user"> & {
+      contentTemplates?: string[];
+    },
     response:
       | OpenAI.Chat.Completions.ChatCompletion
       | GentraceStream<OpenAI.Chat.Completions.ChatCompletionChunk>
