@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/gentrace/gentrace-node/compare/v1.0.1...v1.0.2) (2023-08-28)
+
+
+### Bug Fixes
+
+* Ensure that templates and inputs are provided in payload ([#195](https://github.com/gentrace/gentrace-node/issues/195)) ([0587ecb](https://github.com/gentrace/gentrace-node/commit/0587ecbfdb411b07fc3736b9b01eec47bfb56841))
+
 ## [1.0.1](https://github.com/gentrace/gentrace-node/compare/v1.0.0...v1.0.1) (2023-08-22)
 
 
