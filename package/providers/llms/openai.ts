@@ -296,9 +296,22 @@ export class OpenAIPipelineHandler extends OpenAIApi {
 
         const renderedMessages = createRenderedChatMessages(messages);
 
+        const contentTemplatesArray = messages.map<string | null>((message) => {
+          return message.contentTemplate ?? null;
+        });
+
+        const contentInputsArray = messages.map<Record<string, string> | null>(
+          (message) => {
+            return message.contentInputs ?? null;
+          }
+        );
+
         const startTime = Date.now();
         const completion = await super.createChatCompletion(
-          { messages: renderedMessages, ...baseCompletionOptions },
+          {
+            messages: renderedMessages,
+            ...baseCompletionOptions,
+          },
           options
         );
 
@@ -361,8 +374,12 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                     elapsedTime,
                     new Date(startTime).toISOString(),
                     new Date(endStreamTime).toISOString(),
-                    { messages: renderedMessages, user },
-                    modelParams,
+                    {
+                      messages: renderedMessages,
+                      user,
+                      contentInputs: contentInputsArray,
+                    },
+                    { ...modelParams, contentTemplates: contentTemplatesArray },
                     finalData
                   )
                 );
@@ -397,8 +414,12 @@ export class OpenAIPipelineHandler extends OpenAIApi {
               elapsedTime,
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
-              { messages: renderedMessages, user },
-              modelParams,
+              {
+                messages: renderedMessages,
+                user,
+                contentInputs: contentInputsArray,
+              },
+              { ...modelParams, contentTemplates: contentTemplatesArray },
               finalData
             )
           );
@@ -521,8 +542,11 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
     inputs: {
       messages?: Array<ChatCompletionRequestMessage>;
       user?: string;
+      contentInputs?: Record<string, string>[];
     },
-    modelParams: Omit<CreateChatCompletionRequest, "messages" | "user">,
+    modelParams: Omit<CreateChatCompletionRequest, "messages" | "user"> & {
+      contentTemplates?: string[];
+    },
     response: CreateCompletionResponse
   ) {
     super(
