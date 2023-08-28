@@ -25,13 +25,31 @@ export type TestResult = TestRunPostRequestTestResultsInner;
 /**
  * Retrieves test cases for a given pipeline ID from the Gentrace API
  * @async
- * @param {string} pipelineId - The ID of the pipeline to retrieve.
+ * @param {string} pipelineSlug - The pipeline slug
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
  * @returns {Promise<Array<TestCase>>} A Promise that resolves with an array of test cases.
  */
-export const getTestCases = async (pipelineId: string) => {
+export const getTestCases = async (pipelineSlug: string) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  let pipelineId = pipelineSlug;
+
+  if (!isUUID(pipelineSlug)) {
+    const allPipelines = await getPipelines();
+
+    const matchingPipeline = allPipelines.find(
+      (pipeline) => pipeline.slug === pipelineSlug
+    );
+
+    if (!matchingPipeline) {
+      throw new Error(
+        `Could not find the specified pipeline (${pipelineSlug})`
+      );
+    }
+
+    pipelineId = matchingPipeline.id;
   }
 
   const response = await globalGentraceApi.testCaseGet(pipelineId);
