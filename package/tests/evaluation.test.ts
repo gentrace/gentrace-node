@@ -317,7 +317,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("pipeline-id");
+      const testCases = await getTestCases("guess-the-year");
 
       expect(testCases.length).toBe(1);
 
@@ -341,7 +341,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("pipeline-id");
+      const testCases = await getTestCases("guess-the-year");
 
       expect(testCases.length).toBe(1);
 
@@ -363,7 +363,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("pipeline-id");
+      const testCases = await getTestCases("guess-the-year");
 
       expect(testCases.length).toBe(1);
 
@@ -385,7 +385,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api/v1",
       });
 
-      const testCases = await getTestCases("pipeline-id");
+      const testCases = await getTestCases("guess-the-year");
 
       expect(testCases.length).toBe(1);
 
