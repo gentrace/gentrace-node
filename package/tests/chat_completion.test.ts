@@ -131,4 +131,31 @@ describe("test_openai_chat_completion_pipeline", () => {
 
     expect(chatCompletionResponse.pipelineRunId).toBeUndefined();
   });
+
+  it("should allow a user ID in the constructor", async () => {
+    init({
+      apiKey: "gentrace-api-key",
+    });
+
+    const openai = new OpenAIApi(
+      new Configuration({
+        apiKey: "openai-api-key",
+      })
+    );
+    const chatCompletionResponse = await openai.createChatCompletion({
+      messages: [
+        {
+          role: "user",
+          contentTemplate: "Hello {{ name }}!",
+          contentInputs: { name: "Vivek" },
+        },
+      ],
+      model: "gpt-3.5-turbo",
+      gentrace: {
+        userId: "user-id",
+      },
+    });
+
+    expect(chatCompletionResponse.pipelineRunId).toBeUndefined();
+  });
 });

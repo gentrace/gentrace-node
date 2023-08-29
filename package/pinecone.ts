@@ -1,6 +1,6 @@
 import { Configuration as GentraceConfiguration } from "./configuration";
 import { globalGentraceConfig } from "./providers/init";
-import { PineconePipelineHandler } from "./providers/vectorstores/pinecone";
+import { PineconePipelineHandler } from "./handlers/vectorstores/pinecone";
 
 class PineconeClient extends PineconePipelineHandler {
   constructor(params?: {

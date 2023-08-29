@@ -2,11 +2,11 @@ import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
 import { RunResponse } from "../models/run-response";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
-import type { OpenAIPipelineHandler } from "./llms/openai";
+import type { OpenAIPipelineHandler } from "../handlers/llms/openai";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
-import type { PineconePipelineHandler } from "./vectorstores/pinecone";
+import type { PineconePipelineHandler } from "../handlers/vectorstores/pinecone";
 import Context from "./context";
 
 export class PipelineRun {

@@ -12,12 +12,12 @@ import {
   OpenAIApi,
   Configuration as OpenAIConfiguration,
 } from "openai";
-import { StepRun } from "../step-run";
-import { Pipeline } from "../pipeline";
-import { PipelineRun } from "../pipeline-run";
+import { StepRun } from "../../providers/step-run";
+import { Pipeline } from "../../providers/pipeline";
+import { PipelineRun } from "../../providers/pipeline-run";
 import { Configuration as GentraceConfiguration } from "../../configuration";
-import { GentraceParams } from "../utils";
-import Context from "../context";
+import { GentraceParams } from "../../providers/utils";
+import Context from "../../providers/context";
 
 type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -108,24 +108,12 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @throws {RequiredError}
    * @memberof OpenAIApi
    */
-  public async createCompletion(
+  public async createCompletionInner(
     createCompletionRequest: CreateCompletionTemplateRequest,
     options?: AxiosRequestConfig
   ): Promise<
     AxiosResponse<CreateCompletionResponse, any> & { pipelineRunId?: string }
   > {
-    let isSelfContainedPipelineRun =
-      !this.pipelineRun && createCompletionRequest.pipelineSlug;
-
-    if (
-      !isSelfContainedPipelineRun &&
-      createCompletionRequest.gentrace?.userId
-    ) {
-      throw new Error(
-        'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-      );
-    }
-
     return await this.setupSelfContainedPipelineRun<
       AxiosResponse<CreateCompletionResponse, any>
     >(
@@ -286,7 +274,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @throws {RequiredError}
    * @memberof OpenAIApi
    */
-  public async createChatCompletion(
+  public async createChatCompletionInner(
     createChatCompletionRequest: CreateChatCompletionTemplateRequest,
     options?: AxiosRequestConfig
   ): Promise<
@@ -294,18 +282,6 @@ export class OpenAIPipelineHandler extends OpenAIApi {
       pipelineRunId?: string;
     }
   > {
-    let isSelfContainedPullRequest =
-      !this.pipelineRun && createChatCompletionRequest.pipelineSlug;
-
-    if (
-      !isSelfContainedPullRequest &&
-      createChatCompletionRequest.gentrace?.userId
-    ) {
-      throw new Error(
-        'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-      );
-    }
-
     return this.setupSelfContainedPipelineRun(
       createChatCompletionRequest.pipelineId ??
         createChatCompletionRequest.pipelineSlug,
@@ -469,24 +445,12 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @throws {RequiredError}
    * @memberof OpenAIApi
    */
-  public async createEmbedding(
+  public async createEmbeddingInner(
     createEmbeddingRequest: CreateEmbeddingRequest & GentraceParams,
     options?: AxiosRequestConfig
   ): Promise<
     AxiosResponse<CreateEmbeddingResponse, any> & { pipelineRunId?: string }
   > {
-    let isSelfContainedPullRequest =
-      !this.pipelineRun && createEmbeddingRequest.pipelineSlug;
-
-    if (
-      !isSelfContainedPullRequest &&
-      createEmbeddingRequest.gentrace?.userId
-    ) {
-      throw new Error(
-        'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-      );
-    }
-
     return this.setupSelfContainedPipelineRun(
       createEmbeddingRequest.pipelineId ?? createEmbeddingRequest.pipelineSlug,
       options,

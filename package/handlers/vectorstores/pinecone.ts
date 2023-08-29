@@ -15,11 +15,11 @@ import {
   VectorOperationsApi,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 import { Configuration as GentraceConfiguration } from "../../configuration";
-import Context from "../context";
-import { PineconeConfiguration, Pipeline } from "../pipeline";
-import { PipelineRun } from "../pipeline-run";
-import { StepRun } from "../step-run";
-import { GentraceParams } from "../utils";
+import Context from "../../providers/context";
+import { PineconeConfiguration, Pipeline } from "../../providers/pipeline";
+import { PipelineRun } from "../../providers/pipeline-run";
+import { StepRun } from "../../providers/step-run";
+import { GentraceParams } from "../../providers/utils";
 
 type PineconePipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -121,15 +121,6 @@ export class PineconePipelineHandler extends PineconeClient {
       requestParameters: FetchRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
-      let isSelfContainedPullRequest =
-        !this.pipelineRun && requestParameters.gentrace?.userId;
-
-      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
-        throw new Error(
-          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-        );
-      }
-
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -170,14 +161,6 @@ export class PineconePipelineHandler extends PineconeClient {
       requestParameters: UpdateOperationRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
-      let isSelfContainedPullRequest =
-        !this.pipelineRun && requestParameters.gentrace?.userId;
-
-      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
-        throw new Error(
-          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-        );
-      }
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -221,14 +204,6 @@ export class PineconePipelineHandler extends PineconeClient {
       requestParameters: QueryOperationRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
-      let isSelfContainedPullRequest =
-        !this.pipelineRun && requestParameters.gentrace?.userId;
-
-      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
-        throw new Error(
-          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-        );
-      }
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -275,14 +250,6 @@ export class PineconePipelineHandler extends PineconeClient {
       requestParameters: UpsertOperationRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
-      let isSelfContainedPullRequest =
-        !this.pipelineRun && requestParameters.gentrace?.userId;
-
-      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
-        throw new Error(
-          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-        );
-      }
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -321,14 +288,6 @@ export class PineconePipelineHandler extends PineconeClient {
       deleteRequest: Delete1Request & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
-      let isSelfContainedPullRequest =
-        !this.pipelineRun && deleteRequest.gentrace?.userId;
-
-      if (!isSelfContainedPullRequest && deleteRequest.gentrace?.userId) {
-        throw new Error(
-          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
-        );
-      }
       return this.setupSelfContainedPipelineRun(
         deleteRequest.pipelineId ?? deleteRequest.pipelineSlug,
         async (pipelineRun) => {
