@@ -16,7 +16,8 @@ import { StepRun } from "../step-run";
 import { Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 import { Configuration as GentraceConfiguration } from "../../configuration";
-import { OptionalPipelineInfo } from "../utils";
+import { GentraceParams } from "../utils";
+import Context from "../context";
 
 type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -113,6 +114,18 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   ): Promise<
     AxiosResponse<CreateCompletionResponse, any> & { pipelineRunId?: string }
   > {
+    let isSelfContainedPipelineRun =
+      !this.pipelineRun && createCompletionRequest.pipelineSlug;
+
+    if (
+      !isSelfContainedPipelineRun &&
+      createCompletionRequest.gentrace?.userId
+    ) {
+      throw new Error(
+        'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+      );
+    }
+
     return await this.setupSelfContainedPipelineRun<
       AxiosResponse<CreateCompletionResponse, any>
     >(
@@ -211,7 +224,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                       suffix,
                     },
                     { ...partialModelParams, promptTemplate },
-                    finalData
+                    finalData,
+                    createCompletionRequest?.gentrace ?? {}
                   )
                 );
                 return; // Stream finished
@@ -251,7 +265,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                 suffix,
               },
               { ...partialModelParams, promptTemplate },
-              finalData
+              finalData,
+              createCompletionRequest?.gentrace ?? {}
             )
           );
         }
@@ -279,6 +294,18 @@ export class OpenAIPipelineHandler extends OpenAIApi {
       pipelineRunId?: string;
     }
   > {
+    let isSelfContainedPullRequest =
+      !this.pipelineRun && createChatCompletionRequest.pipelineSlug;
+
+    if (
+      !isSelfContainedPullRequest &&
+      createChatCompletionRequest.gentrace?.userId
+    ) {
+      throw new Error(
+        'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+      );
+    }
+
     return this.setupSelfContainedPipelineRun(
       createChatCompletionRequest.pipelineId ??
         createChatCompletionRequest.pipelineSlug,
@@ -380,7 +407,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                       contentInputs: contentInputsArray,
                     },
                     { ...modelParams, contentTemplates: contentTemplatesArray },
-                    finalData
+                    finalData,
+                    createChatCompletionRequest?.gentrace ?? {}
                   )
                 );
 
@@ -420,7 +448,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
                 contentInputs: contentInputsArray,
               },
               { ...modelParams, contentTemplates: contentTemplatesArray },
-              finalData
+              finalData,
+              createChatCompletionRequest?.gentrace ?? {}
             )
           );
         }
@@ -441,11 +470,23 @@ export class OpenAIPipelineHandler extends OpenAIApi {
    * @memberof OpenAIApi
    */
   public async createEmbedding(
-    createEmbeddingRequest: CreateEmbeddingRequest & OptionalPipelineInfo,
+    createEmbeddingRequest: CreateEmbeddingRequest & GentraceParams,
     options?: AxiosRequestConfig
   ): Promise<
     AxiosResponse<CreateEmbeddingResponse, any> & { pipelineRunId?: string }
   > {
+    let isSelfContainedPullRequest =
+      !this.pipelineRun && createEmbeddingRequest.pipelineSlug;
+
+    if (
+      !isSelfContainedPullRequest &&
+      createEmbeddingRequest.gentrace?.userId
+    ) {
+      throw new Error(
+        'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+      );
+    }
+
     return this.setupSelfContainedPipelineRun(
       createEmbeddingRequest.pipelineId ?? createEmbeddingRequest.pipelineSlug,
       options,
@@ -475,7 +516,8 @@ export class OpenAIPipelineHandler extends OpenAIApi {
             new Date(endTime).toISOString(),
             { ...inputParams },
             { model },
-            completion.data
+            completion.data,
+            createEmbeddingRequest?.gentrace ?? {}
           )
         );
 
@@ -511,7 +553,8 @@ class OpenAICreateCompletionStepRun extends StepRun {
     modelParams: Omit<CreateCompletionRequest, "prompt" | "user" | "suffix"> & {
       promptTemplate: string;
     },
-    response: CreateCompletionResponse
+    response: CreateCompletionResponse,
+    context: Context
   ) {
     super(
       "openai",
@@ -521,7 +564,8 @@ class OpenAICreateCompletionStepRun extends StepRun {
       endTime,
       inputs,
       modelParams,
-      response
+      response,
+      context
     );
   }
 }
@@ -547,7 +591,8 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
     modelParams: Omit<CreateChatCompletionRequest, "messages" | "user"> & {
       contentTemplates?: string[];
     },
-    response: CreateCompletionResponse
+    response: CreateCompletionResponse,
+    context: Context
   ) {
     super(
       "openai",
@@ -557,7 +602,8 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
       endTime,
       inputs,
       modelParams,
-      response
+      response,
+      context
     );
   }
 }
@@ -573,7 +619,8 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
     endTime: string,
     inputs: Omit<CreateEmbeddingRequest, "model">,
     modelParams: Omit<CreateEmbeddingRequest, "input" | "user">,
-    response: CreateEmbeddingResponse
+    response: CreateEmbeddingResponse,
+    context: Context
   ) {
     super(
       "openai",
@@ -583,7 +630,8 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
       endTime,
       inputs,
       modelParams,
-      response
+      response,
+      context
     );
   }
 }
@@ -591,7 +639,7 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
 export type CreateCompletionTemplateRequest = CreateCompletionRequest & {
   promptTemplate?: string;
   promptInputs?: Record<string, string>;
-} & OptionalPipelineInfo;
+} & GentraceParams;
 
 type ChatCompletionRequestMessageTemplate = Omit<
   ChatCompletionRequestMessage,
@@ -607,7 +655,7 @@ export type CreateChatCompletionTemplateRequest = Omit<
   "messages"
 > & {
   messages: ChatCompletionRequestMessageTemplate[];
-} & OptionalPipelineInfo;
+} & GentraceParams;
 
 function createRenderedChatMessages(
   messages: ChatCompletionRequestMessageTemplate[]

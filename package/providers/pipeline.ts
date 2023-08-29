@@ -1,5 +1,6 @@
 import type { Configuration as OpenAIConfiguration } from "openai/dist/configuration";
 import { Configuration as GentraceConfiguration } from "../configuration";
+import Context from "./context";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
 
@@ -143,7 +144,7 @@ export class Pipeline {
     }
   }
 
-  start() {
-    return new PipelineRun({ pipeline: this });
+  start(context: Context) {
+    return new PipelineRun({ pipeline: this, context });
   }
 }

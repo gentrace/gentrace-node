@@ -1,6 +1,9 @@
-export type OptionalPipelineInfo = {
+import Context from "./context";
+
+export type GentraceParams = {
   pipelineId?: string;
   pipelineSlug?: string;
+  gentrace?: Context;
 };
 
 export function sleep(ms: number) {

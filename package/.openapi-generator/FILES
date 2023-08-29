@@ -12,6 +12,7 @@ models/pipeline.ts
 models/pipelines-get200-response.ts
 models/run-request.ts
 models/run-response.ts
+models/step-run-context.ts
 models/step-run-provider.ts
 models/step-run.ts
 models/test-case-get200-response.ts

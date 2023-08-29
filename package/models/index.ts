@@ -5,6 +5,7 @@ export * from "./pipelines-get200-response";
 export * from "./run-request";
 export * from "./run-response";
 export * from "./step-run";
+export * from "./step-run-context";
 export * from "./step-run-provider";
 export * from "./test-case";
 export * from "./test-case-get200-response";

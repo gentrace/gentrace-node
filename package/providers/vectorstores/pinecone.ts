@@ -15,10 +15,11 @@ import {
   VectorOperationsApi,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 import { Configuration as GentraceConfiguration } from "../../configuration";
+import Context from "../context";
 import { PineconeConfiguration, Pipeline } from "../pipeline";
 import { PipelineRun } from "../pipeline-run";
 import { StepRun } from "../step-run";
-import { OptionalPipelineInfo } from "../utils";
+import { GentraceParams } from "../utils";
 
 type PineconePipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -112,14 +113,23 @@ export class PineconePipelineHandler extends PineconeClient {
     type FetchFunctionType = typeof apiHandler.fetch;
 
     type ModifiedFetchFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<FetchFunctionType, FetchRequest & OptionalPipelineInfo>
+      ModifyFirstParam<FetchFunctionType, FetchRequest & GentraceParams>
     >;
 
     const boundFetch = apiHandler.fetch.bind(apiHandler);
     const fetch: ModifiedFetchFunction = async (
-      requestParameters: FetchRequest & OptionalPipelineInfo,
+      requestParameters: FetchRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
+      let isSelfContainedPullRequest =
+        !this.pipelineRun && requestParameters.gentrace?.userId;
+
+      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
+        throw new Error(
+          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+        );
+      }
+
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -134,7 +144,8 @@ export class PineconePipelineHandler extends PineconeClient {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { ...requestParameters },
-              response
+              response,
+              requestParameters.gentrace ?? {}
             )
           );
 
@@ -150,15 +161,23 @@ export class PineconePipelineHandler extends PineconeClient {
     type ModifiedUpdateFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
         UpdateFunctionType,
-        UpdateOperationRequest & OptionalPipelineInfo
+        UpdateOperationRequest & GentraceParams
       >
     >;
 
     const boundUpdate = apiHandler.update.bind(apiHandler);
     const update: ModifiedUpdateFunction = async (
-      requestParameters: UpdateOperationRequest & OptionalPipelineInfo,
+      requestParameters: UpdateOperationRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
+      let isSelfContainedPullRequest =
+        !this.pipelineRun && requestParameters.gentrace?.userId;
+
+      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
+        throw new Error(
+          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+        );
+      }
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -175,7 +194,8 @@ export class PineconePipelineHandler extends PineconeClient {
               new Date(endTime).toISOString(),
 
               { ...updateRequest },
-              response
+              response,
+              requestParameters.gentrace ?? {}
             )
           );
 
@@ -191,16 +211,24 @@ export class PineconePipelineHandler extends PineconeClient {
     type ModifiedQueryFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
         QueryFunctionType,
-        QueryOperationRequest & OptionalPipelineInfo
+        QueryOperationRequest & GentraceParams
       >
     >;
 
     const boundQuery = apiHandler.query.bind(apiHandler);
 
     const query: ModifiedQueryFunction = async (
-      requestParameters: QueryOperationRequest & OptionalPipelineInfo,
+      requestParameters: QueryOperationRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
+      let isSelfContainedPullRequest =
+        !this.pipelineRun && requestParameters.gentrace?.userId;
+
+      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
+        throw new Error(
+          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+        );
+      }
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -221,7 +249,8 @@ export class PineconePipelineHandler extends PineconeClient {
               new Date(endTime).toISOString(),
               { ...inputs },
               { ...modelParams },
-              response
+              response,
+              requestParameters.gentrace ?? {}
             )
           );
 
@@ -237,15 +266,23 @@ export class PineconePipelineHandler extends PineconeClient {
     type ModifiedUpsertFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
         UpsertFunctionType,
-        UpsertOperationRequest & OptionalPipelineInfo
+        UpsertOperationRequest & GentraceParams
       >
     >;
 
     const boundUpsert = apiHandler.upsert.bind(apiHandler);
     const upsert: ModifiedUpsertFunction = async (
-      requestParameters: UpsertOperationRequest & OptionalPipelineInfo,
+      requestParameters: UpsertOperationRequest & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
+      let isSelfContainedPullRequest =
+        !this.pipelineRun && requestParameters.gentrace?.userId;
+
+      if (!isSelfContainedPullRequest && requestParameters.gentrace?.userId) {
+        throw new Error(
+          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+        );
+      }
       return this.setupSelfContainedPipelineRun(
         requestParameters.pipelineId ?? requestParameters.pipelineSlug,
         async (pipelineRun) => {
@@ -261,7 +298,8 @@ export class PineconePipelineHandler extends PineconeClient {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { ...upsertRequest },
-              response
+              response,
+              requestParameters.gentrace ?? {}
             )
           );
 
@@ -275,17 +313,22 @@ export class PineconePipelineHandler extends PineconeClient {
     type DeleteFunctionType = typeof apiHandler.delete1;
 
     type ModifiedDeleteFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
-        DeleteFunctionType,
-        Delete1Request & OptionalPipelineInfo
-      >
+      ModifyFirstParam<DeleteFunctionType, Delete1Request & GentraceParams>
     >;
 
     const boundDelete = apiHandler.delete1.bind(apiHandler);
     const delete1: ModifiedDeleteFunction = async (
-      deleteRequest: Delete1Request & OptionalPipelineInfo,
+      deleteRequest: Delete1Request & GentraceParams,
       initOverrides?: RequestInit | InitOverrideFunction
     ) => {
+      let isSelfContainedPullRequest =
+        !this.pipelineRun && deleteRequest.gentrace?.userId;
+
+      if (!isSelfContainedPullRequest && deleteRequest.gentrace?.userId) {
+        throw new Error(
+          'Cannot specify userId directly on this method with the advanced runner API. You must supply the user ID with pipeline.start({ userid: "my-user-id" }).'
+        );
+      }
       return this.setupSelfContainedPipelineRun(
         deleteRequest.pipelineId ?? deleteRequest.pipelineSlug,
         async (pipelineRun) => {
@@ -300,7 +343,8 @@ export class PineconePipelineHandler extends PineconeClient {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { ...deleteRequest },
-              response
+              response,
+              deleteRequest.gentrace ?? {}
             )
           );
 
@@ -336,7 +380,8 @@ class PineconeFetchStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: FetchRequest,
-    response: FetchResponse
+    response: FetchResponse,
+    context: Context
   ) {
     super(
       "pinecone",
@@ -346,7 +391,8 @@ class PineconeFetchStepRun extends StepRun {
       endTime,
       inputs,
       {},
-      response
+      response,
+      context ?? {}
     );
   }
 }
@@ -361,7 +407,8 @@ class PineconeQueryStepRun extends StepRun {
     endTime: string,
     inputs: Omit<QueryRequest, "topK" | "filter">,
     modelParams: Pick<QueryRequest, "topK" | "filter">,
-    response: QueryResponse
+    response: QueryResponse,
+    context: Context
   ) {
     super(
       "pinecone",
@@ -371,7 +418,8 @@ class PineconeQueryStepRun extends StepRun {
       endTime,
       inputs,
       modelParams,
-      response
+      response,
+      context ?? {}
     );
   }
 }
@@ -385,7 +433,8 @@ class PineconeUpdateStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: UpdateRequest,
-    response: object
+    response: object,
+    context: Context
   ) {
     super(
       "pinecone",
@@ -395,7 +444,8 @@ class PineconeUpdateStepRun extends StepRun {
       endTime,
       inputs,
       {},
-      response
+      response,
+      context ?? {}
     );
   }
 }
@@ -409,7 +459,8 @@ class PineconeUpsertStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: UpsertRequest,
-    response: object
+    response: object,
+    context: Context
   ) {
     super(
       "pinecone",
@@ -419,7 +470,8 @@ class PineconeUpsertStepRun extends StepRun {
       endTime,
       inputs,
       {},
-      response
+      response,
+      context ?? {}
     );
   }
 }
@@ -433,7 +485,8 @@ class PineconeDeleteStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: Delete1Request,
-    response: object
+    response: object,
+    context: Context
   ) {
     super(
       "pinecone",
@@ -443,7 +496,8 @@ class PineconeDeleteStepRun extends StepRun {
       endTime,
       inputs,
       {},
-      response
+      response,
+      context ?? {}
     );
   }
 }

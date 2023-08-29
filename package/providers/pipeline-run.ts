@@ -7,15 +7,25 @@ import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
 import type { PineconePipelineHandler } from "./vectorstores/pinecone";
+import Context from "./context";
 
 export class PipelineRun {
   private pipeline: Pipeline;
   public stepRuns: StepRun[];
 
+  private context?: Context;
+
   private id: string = v4();
 
-  constructor({ pipeline }: { pipeline: Pipeline }) {
+  constructor({
+    pipeline,
+    context,
+  }: {
+    pipeline: Pipeline;
+    context?: Context;
+  }) {
     this.pipeline = pipeline;
+    this.context = context;
     this.stepRuns = [];
   }
 
@@ -25,6 +35,15 @@ export class PipelineRun {
 
   getId() {
     return this.id;
+  }
+
+  getContext() {
+    return this.context;
+  }
+
+  updateContext(updatedContext: Partial<Context>) {
+    this.context = { ...this.context, ...updatedContext };
+    return this.context;
   }
 
   async getOpenAI() {
@@ -108,7 +127,8 @@ export class PipelineRun {
           endTimeNew,
           step.inputs,
           step.modelParams ?? {},
-          step.outputs
+          step.outputs,
+          step.context ?? {}
         )
       );
     } else {
@@ -123,7 +143,8 @@ export class PipelineRun {
           startAndEndTime,
           step.inputs,
           step.modelParams ?? {},
-          step.outputs
+          step.outputs,
+          step.context ?? {}
         )
       );
     }
@@ -182,7 +203,8 @@ export class PipelineRun {
         new Date(endTime).toISOString(),
         resolvedInputs,
         stepInfo?.modelParams ?? {},
-        modifiedOuput
+        modifiedOuput,
+        stepInfo?.context ?? {}
       )
     );
 
@@ -220,6 +242,7 @@ export class PipelineRun {
           modelParams,
           inputs,
           outputs,
+          context: stepRunContext,
         }) => {
           return {
             provider: {
@@ -232,6 +255,10 @@ export class PipelineRun {
             elapsedTime,
             startTime,
             endTime,
+            context: {
+              ...(this.context ?? {}),
+              ...(stepRunContext ?? {}),
+            },
           };
         }
       ),
