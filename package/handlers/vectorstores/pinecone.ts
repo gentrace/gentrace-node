@@ -28,14 +28,14 @@ type PineconePipelineHandlerOptions = {
   gentraceConfig: GentraceConfiguration;
 };
 
-type ModifyFirstParam<T, U> = T extends (
+export type ModifyFirstParam<T, U> = T extends (
   param1: infer P,
   ...args: infer A
 ) => infer R
   ? (param1: U, ...args: A) => R
   : never;
 
-type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
+export type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
   ...args: Parameters<T>
 ) => Promise<Awaited<ReturnType<T>> & { pipelineRunId: string }>;
 
@@ -107,7 +107,7 @@ export class PineconePipelineHandler extends PineconeClient {
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues
-  public Index(index: string) {
+  public IndexInner(index: string) {
     const apiHandler = super.Index(index);
 
     type FetchFunctionType = typeof apiHandler.fetch;
