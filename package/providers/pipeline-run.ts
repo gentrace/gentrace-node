@@ -8,6 +8,8 @@ import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
 import type { PineconePipelineHandler } from "../handlers/vectorstores/pinecone";
 import Context from "./context";
+import { AdvancedOpenAIApi } from "./advanced/openai";
+import { AdvancedPineconeClient } from "./advanced/pinecone";
 
 export class PipelineRun {
   private pipeline: Pipeline;
@@ -49,7 +51,7 @@ export class PipelineRun {
   async getOpenAI() {
     if (this.pipeline.pipelineHandlers.has("openai")) {
       const handler = this.pipeline.pipelineHandlers.get("openai");
-      const clonedHandler: OpenAIPipelineHandler = Object.assign(
+      const clonedHandler: AdvancedOpenAIApi = Object.assign(
         Object.create(Object.getPrototypeOf(handler)),
         handler
       );
@@ -65,7 +67,7 @@ export class PipelineRun {
   async getPinecone() {
     if (this.pipeline.pipelineHandlers.has("pinecone")) {
       const handler = this.pipeline.pipelineHandlers.get("pinecone");
-      const clonedHandler: PineconePipelineHandler = Object.assign(
+      const clonedHandler: AdvancedPineconeClient = Object.assign(
         Object.create(Object.getPrototypeOf(handler)),
         handler
       );

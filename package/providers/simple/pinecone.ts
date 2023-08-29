@@ -54,7 +54,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         FetchFunctionType,
         FetchRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace: {
+            gentrace?: {
               userId?: string;
             };
           }
@@ -68,7 +68,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         UpdateFunctionType,
         UpdateOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace: {
+            gentrace?: {
               userId?: string;
             };
           }
@@ -82,7 +82,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         QueryFunctionType,
         QueryOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace: {
+            gentrace?: {
               userId?: string;
             };
           }
@@ -96,7 +96,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         UpsertFunctionType,
         UpsertOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace: {
+            gentrace?: {
               userId?: string;
             };
           }
@@ -110,7 +110,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         DeleteFunctionType,
         Delete1Request &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace: {
+            gentrace?: {
               userId?: string;
             };
           }

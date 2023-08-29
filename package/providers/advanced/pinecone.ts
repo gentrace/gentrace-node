@@ -28,7 +28,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         FetchRequest &
           Omit<GentraceParams, "gentrace"> & {
             // TODO: Add future required params here
-            gentrace: {};
+            gentrace?: {};
           }
       >
     >;
@@ -41,7 +41,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         UpdateOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
             // TODO: Add future required params here
-            gentrace: {};
+            gentrace?: {};
           }
       >
     >;
@@ -54,7 +54,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         QueryOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
             // TODO: Add future required params here
-            gentrace: {};
+            gentrace?: {};
           }
       >
     >;
@@ -67,7 +67,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         UpsertOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
             // TODO: Add future required params here
-            gentrace: {};
+            gentrace?: {};
           }
       >
     >;
@@ -80,7 +80,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         Delete1Request &
           Omit<GentraceParams, "gentrace"> & {
             // TODO: Add future required params here
-            gentrace: {};
+            gentrace?: {};
           }
       >
     >;
@@ -100,4 +100,4 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
   }
 }
 
-export { AdvancedPineconeClient as PineconeClient };
+export { AdvancedPineconeClient };

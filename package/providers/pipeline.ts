@@ -109,10 +109,13 @@ export class Pipeline {
   async setup() {
     if (this.pineconeConfig) {
       try {
-        const { PineconePipelineHandler } = await import(
-          "../handlers/vectorstores/pinecone.js"
+        const { AdvancedPineconeClient } = await import(
+          // TODO: Remove this once we have a better strategy for dynamic imports
+          process.env.NODE_ENV === "test"
+            ? "./advanced/pinecone"
+            : "./advanced/pinecone.js"
         );
-        const pineconeHandler = new PineconePipelineHandler({
+        const pineconeHandler = new AdvancedPineconeClient({
           pipeline: this,
           config: this.pineconeConfig,
           gentraceConfig: this.config,
@@ -120,6 +123,7 @@ export class Pipeline {
         await pineconeHandler.init();
         this.pipelineHandlers.set("pinecone", pineconeHandler);
       } catch (e) {
+        console.error("Error", e);
         throw new Error(
           "Please install Pinecone as a dependency with, e.g. `yarn add @pinecone-database/pinecone`"
         );
@@ -128,7 +132,12 @@ export class Pipeline {
 
     if (this.openAIConfig) {
       try {
-        const { AdvancedOpenAIApi } = await import("./advanced/openai.js");
+        const { AdvancedOpenAIApi } = await import(
+          // TODO: Remove this once we have a better strategy for dynamic imports
+          process.env.NODE_ENV === "test"
+            ? "./advanced/openai"
+            : "./advanced/openai.js"
+        );
         const openAIHandler = new AdvancedOpenAIApi({
           pipeline: this,
           config: this.openAIConfig,
@@ -144,7 +153,7 @@ export class Pipeline {
     }
   }
 
-  start(context?: Context) {
+  start(context?: Pick<Context, "userId">) {
     return new PipelineRun({ pipeline: this, context });
   }
 }
