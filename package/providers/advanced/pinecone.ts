@@ -1,10 +1,3 @@
-import { Configuration as GentraceConfiguration } from "../../configuration";
-import { globalGentraceConfig } from "../../providers/init";
-import {
-  FunctionWithPipelineRunId,
-  ModifyFirstParam,
-  PineconePipelineHandler,
-} from "../../handlers/vectorstores/pinecone";
 import {
   Delete1Request,
   FetchRequest,
@@ -13,6 +6,11 @@ import {
   UpsertOperationRequest,
   VectorOperationsApi,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
+import {
+  FunctionWithPipelineRunId,
+  ModifyFirstParam,
+  PineconePipelineHandler,
+} from "../../handlers/vectorstores/pinecone";
 import { GentraceParams } from "../utils";
 
 class AdvancedPineconeClient extends PineconePipelineHandler {
