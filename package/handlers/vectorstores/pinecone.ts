@@ -15,10 +15,10 @@ import {
   VectorOperationsApi,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 import { Configuration as GentraceConfiguration } from "../../configuration";
-import { PineconeConfiguration, Pipeline } from "../pipeline";
-import { PipelineRun } from "../pipeline-run";
-import { StepRun } from "../step-run";
-import { OptionalPipelineInfo } from "../utils";
+import { PineconeConfiguration, Pipeline } from "../../providers/pipeline";
+import { PipelineRun } from "../../providers/pipeline-run";
+import { StepRun } from "../../providers/step-run";
+import { OptionalPipelineInfo } from "../../providers/utils";
 
 type PineconePipelineHandlerOptions = {
   pipelineRun?: PipelineRun;

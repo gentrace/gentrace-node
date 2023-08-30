@@ -109,7 +109,7 @@ export class Pipeline {
     if (this.pineconeConfig) {
       try {
         const { PineconePipelineHandler } = await import(
-          "./vectorstores/pinecone.js"
+          "../handlers/vectorstores/pinecone.js"
         );
         const pineconeHandler = new PineconePipelineHandler({
           pipeline: this,
@@ -127,7 +127,9 @@ export class Pipeline {
 
     if (this.openAIConfig) {
       try {
-        const { OpenAIPipelineHandler } = await import("./llms/openai.js");
+        const { OpenAIPipelineHandler } = await import(
+          "../handlers/llms/openai.js"
+        );
         const openAIHandler = new OpenAIPipelineHandler({
           pipeline: this,
           gentraceConfig: this.config,

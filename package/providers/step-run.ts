@@ -1,3 +1,5 @@
+import Context from "./context";
+
 export class StepRun {
   public provider: string;
   public invocation: string;
@@ -9,6 +11,7 @@ export class StepRun {
   public inputs: any;
   public modelParams: any;
   public outputs: any;
+  public context: Context;
 
   constructor(
     provider: string,
@@ -18,7 +21,8 @@ export class StepRun {
     endTime: string,
     inputs: any,
     modelParams: any,
-    outputs: any
+    outputs: any,
+    context: Context
   ) {
     this.provider = provider;
     this.invocation = invocation;
@@ -29,6 +33,7 @@ export class StepRun {
     this.inputs = inputs;
     this.modelParams = modelParams;
     this.outputs = outputs;
+    this.context = context;
   }
 }
 

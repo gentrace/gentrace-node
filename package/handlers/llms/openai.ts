@@ -16,11 +16,12 @@ import {
 } from "openai/resources/chat";
 import { Stream } from "openai/streaming";
 import { Configuration as GentraceConfiguration } from "../../configuration";
-import { Pipeline } from "../pipeline";
-import { PipelineRun } from "../pipeline-run";
-import { StepRun } from "../step-run";
+import Context from "../../providers/context";
+import { Pipeline } from "../../providers/pipeline";
+import { PipelineRun } from "../../providers/pipeline-run";
+import { StepRun } from "../../providers/step-run";
 
-type OpenAIPipelineHandlerOptions = {
+export type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
   pipeline?: Pipeline;
   gentraceConfig: GentraceConfiguration;
@@ -94,7 +95,7 @@ export class GentraceStream<Item> implements AsyncIterable<Item> {
   }
 }
 
-class GentraceEmbeddings extends OpenAI.Embeddings {
+export class GentraceEmbeddings extends OpenAI.Embeddings {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
@@ -116,9 +117,8 @@ class GentraceEmbeddings extends OpenAI.Embeddings {
     this.gentraceConfig = gentraceConfig;
   }
 
-  // @ts-ignore
-  async create(
-    body: EmbeddingCreateParams & { pipelineSlug?: string },
+  async createInner(
+    body: EmbeddingCreateParams & { pipelineSlug?: string; gentrace?: Context },
     options?: RequestOptions
   ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
     const { pipelineSlug, ...newPayload } = body;
@@ -160,7 +160,8 @@ class GentraceEmbeddings extends OpenAI.Embeddings {
         new Date(endTime).toISOString(),
         { ...inputParams },
         { model },
-        completion
+        completion,
+        body?.gentrace ?? {}
       )
     );
 
@@ -176,31 +177,28 @@ class GentraceEmbeddings extends OpenAI.Embeddings {
   }
 }
 
-interface GentraceChatCompletionCreateParams
+export interface GentraceChatCompletionCreateParams
   extends Omit<Chat.CompletionCreateParams, "messages"> {
   messages: Array<ChatCompletionRequestMessageTemplate>;
   pipelineSlug?: string;
+  gentrace?: Context;
 }
 
-interface GentraceChatCompletionCreateParamsStreaming
+export interface GentraceChatCompletionCreateParamsStreaming
   extends GentraceChatCompletionCreateParams {
   stream: true;
 }
 
-interface GentraceChatCompletionCreateParamsNonStreaming
+export interface GentraceChatCompletionCreateParamsNonStreaming
   extends GentraceChatCompletionCreateParams {
   stream?: false | null;
 }
 
-type GentraceChatCompletion = ChatCompletion & {
+export type GentraceChatCompletion = ChatCompletion & {
   pipelineRunId?: string;
 };
 
-type GentraceChatCompletionChunk = ChatCompletionChunk & {
-  pipelineRunId?: string;
-};
-
-class GentraceChatCompletions extends OpenAI.Chat.Completions {
+export class GentraceChatCompletions extends OpenAI.Chat.Completions {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
@@ -223,23 +221,7 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
   }
 
   // @ts-ignore
-  create(
-    body: GentraceChatCompletionCreateParamsNonStreaming,
-    options?: RequestOptions
-  ): Promise<GentraceChatCompletion>;
-
-  // @ts-ignore
-  create(
-    body: GentraceChatCompletionCreateParamsStreaming,
-    options?: RequestOptions
-  ): Promise<
-    GentraceStream<ChatCompletionChunk> & {
-      pipelineRunId?: string;
-    }
-  >;
-
-  // @ts-ignore
-  async create(
+  async createInner(
     body: GentraceChatCompletionCreateParams,
     requestOptions?: RequestOptions
   ): Promise<
@@ -319,7 +301,8 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
             contentInputs: contentInputsArray,
           },
           { ...modelParams, contentTemplates: contentTemplatesArray },
-          finalData
+          finalData,
+          body?.gentrace ?? {}
         ),
         !!isSelfContainedPipelineRun,
         createChatCompletionStreamResponse
@@ -336,7 +319,8 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
             contentInputs: contentInputsArray,
           },
           { ...modelParams, contentTemplates: contentTemplatesArray },
-          finalData
+          finalData,
+          body?.gentrace ?? {}
         )
       );
     }
@@ -369,64 +353,30 @@ class GentraceChatCompletions extends OpenAI.Chat.Completions {
   }
 }
 
-class GentraceChat extends OpenAI.Chat {
-  private pipelineRun?: PipelineRun;
-  private pipeline?: Pipeline;
-  private gentraceConfig: GentraceConfiguration;
-
-  // @ts-ignore
-  public completions: GentraceChatCompletions;
-
-  constructor({
-    client,
-    pipelineRun,
-    pipeline,
-    gentraceConfig,
-  }: {
-    client: OpenAI;
-    pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
-    gentraceConfig: GentraceConfiguration;
-  }) {
-    super(client);
-    this.pipelineRun = pipelineRun;
-    this.pipeline = pipeline;
-    this.gentraceConfig = gentraceConfig;
-
-    // @ts-ignore
-    this.completions = new GentraceChatCompletions({
-      // @ts-ignore
-      client,
-      pipelineRun,
-      pipeline,
-      gentraceConfig,
-    });
-  }
-}
-
-interface GentraceCompletionCreateParams
+export interface GentraceCompletionCreateParams
   extends Omit<CompletionCreateParams, "prompt"> {
   prompt?: string | Array<string> | Array<number> | Array<Array<number>> | null;
   promptTemplate?: string;
   promptInputs: Record<string, string>;
   pipelineSlug?: string;
+  gentrace?: Context;
 }
 
-interface GentraceCompletionCreateParamsStreaming
+export interface GentraceCompletionCreateParamsStreaming
   extends GentraceCompletionCreateParams {
   stream: true;
 }
 
-interface GentraceCompletionCreateParamsNonStreaming
+export interface GentraceCompletionCreateParamsNonStreaming
   extends GentraceCompletionCreateParams {
   stream?: false | null;
 }
 
-type GentraceCompletion = Completion & {
+export type GentraceCompletion = Completion & {
   pipelineRunId?: string;
 };
 
-class GentraceCompletions extends OpenAI.Completions {
+export class GentraceCompletions extends OpenAI.Completions {
   private pipelineRun?: PipelineRun;
   private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
@@ -448,24 +398,7 @@ class GentraceCompletions extends OpenAI.Completions {
     this.gentraceConfig = gentraceConfig;
   }
 
-  // @ts-ignore
-  create(
-    body: GentraceCompletionCreateParamsNonStreaming,
-    options?: RequestOptions
-  ): Promise<GentraceCompletion>;
-
-  // @ts-ignore
-  create(
-    body: GentraceCompletionCreateParamsStreaming,
-    options?: RequestOptions
-  ): Promise<
-    GentraceStream<Completion> & {
-      pipelineRunId?: string;
-    }
-  >;
-
-  // @ts-ignore
-  async create(
+  async createInner(
     body: GentraceCompletionCreateParams,
     requestOptions?: RequestOptions
   ): Promise<
@@ -544,7 +477,8 @@ class GentraceCompletions extends OpenAI.Completions {
             suffix,
           },
           { ...partialModelParams, promptTemplate },
-          finalData
+          finalData,
+          body?.gentrace ?? {}
         ),
         !!isSelfContainedPipelineRun,
         createCompletionStreamResponse
@@ -561,7 +495,8 @@ class GentraceCompletions extends OpenAI.Completions {
             suffix,
           },
           { ...partialModelParams, promptTemplate },
-          finalData
+          finalData,
+          body?.gentrace ?? {}
         )
       );
     }
@@ -608,15 +543,6 @@ export class OpenAIPipelineHandler extends OpenAI {
   private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
 
-  // @ts-ignore
-  completions: GentraceCompletions;
-
-  // @ts-ignore
-  chat: GentraceChat;
-
-  // @ts-ignore
-  embeddings: GentraceEmbeddings;
-
   constructor({
     pipelineRun,
     pipeline,
@@ -628,32 +554,6 @@ export class OpenAIPipelineHandler extends OpenAI {
     this.pipelineRun = pipelineRun;
     this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
-
-    // @ts-ignore
-    this.completions = new GentraceCompletions({
-      // @ts-ignore
-      client: this,
-      pipelineRun,
-      pipeline,
-      gentraceConfig,
-    });
-
-    // @ts-ignore
-    this.chat = new GentraceChat({
-      // @ts-ignore
-      client: this,
-      pipelineRun,
-      pipeline,
-      gentraceConfig,
-    });
-
-    this.embeddings = new GentraceEmbeddings({
-      // @ts-ignore
-      client: this,
-      pipelineRun,
-      pipeline,
-      gentraceConfig,
-    });
   }
 
   public setPipelineRun(pipelineRun: PipelineRun) {
@@ -690,7 +590,8 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
     },
     response:
       | OpenAI.Chat.Completions.ChatCompletion
-      | GentraceStream<OpenAI.Chat.Completions.ChatCompletionChunk>
+      | GentraceStream<OpenAI.Chat.Completions.ChatCompletionChunk>,
+    context: Context
   ) {
     super(
       "openai",
@@ -700,7 +601,8 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
       endTime,
       inputs,
       modelParams,
-      response
+      response,
+      context
     );
   }
 }
@@ -731,7 +633,8 @@ class OpenAICreateCompletionStepRun extends StepRun {
     modelParams: Omit<CompletionCreateParams, "prompt" | "user" | "suffix"> & {
       promptTemplate: string;
     },
-    response: Completion | GentraceStream<Completion>
+    response: Completion | GentraceStream<Completion>,
+    context: Context
   ) {
     super(
       "openai",
@@ -741,7 +644,8 @@ class OpenAICreateCompletionStepRun extends StepRun {
       endTime,
       inputs,
       modelParams,
-      response
+      response,
+      context
     );
   }
 }
@@ -757,7 +661,8 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
     endTime: string,
     inputs: Omit<EmbeddingCreateParams, "model">,
     modelParams: Omit<EmbeddingCreateParams, "input" | "user">,
-    response: CreateEmbeddingResponse
+    response: CreateEmbeddingResponse,
+    context: Context
   ) {
     super(
       "openai",
@@ -767,7 +672,8 @@ class OpenAICreateEmbeddingStepRun extends StepRun {
       endTime,
       inputs,
       modelParams,
-      response
+      response,
+      context
     );
   }
 }

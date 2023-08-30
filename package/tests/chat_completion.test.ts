@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { OpenAIApi } from "../openai";
+import OpenAI from "../openai";
 import { config } from "dotenv";
 import { deinit, init } from "../providers/init";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
@@ -111,7 +111,7 @@ describe("test_openai_chat_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi({
+    const openai = new OpenAI({
       apiKey: "openai-api-key",
     });
 

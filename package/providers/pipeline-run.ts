@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
+import Context from "./context";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
@@ -10,11 +11,20 @@ export class PipelineRun {
   private pipeline: Pipeline;
   public stepRuns: StepRun[];
 
+  private context?: Context;
+
   private id: string = v4();
 
-  constructor({ pipeline }: { pipeline: Pipeline }) {
+  constructor({
+    pipeline,
+    context,
+  }: {
+    pipeline: Pipeline;
+    context?: Context;
+  }) {
     this.pipeline = pipeline;
     this.stepRuns = [];
+    this.context = context;
   }
 
   getPipeline() {
@@ -25,9 +35,20 @@ export class PipelineRun {
     return this.id;
   }
 
+  getContext() {
+    return this.context;
+  }
+
+  updateContext(updatedContext: Partial<Context>) {
+    this.context = { ...this.context, ...updatedContext };
+    return this.context;
+  }
+
   async getOpenAI() {
     if (this.pipeline.pipelineHandlers.has("openai")) {
-      const { OpenAIPipelineHandler } = await import("./llms/openai.js");
+      const { OpenAIPipelineHandler } = await import(
+        "../handlers/llms/openai.js"
+      );
       const openAIHandler = new OpenAIPipelineHandler({
         pipeline: this.pipeline,
         pipelineRun: this,
@@ -46,7 +67,7 @@ export class PipelineRun {
   async getPinecone() {
     if (this.pipeline.pipelineHandlers.has("pinecone")) {
       const { PineconePipelineHandler } = await import(
-        "./vectorstores/pinecone.js"
+        "../handlers/vectorstores/pinecone.js"
       );
       const pineconeHandler = new PineconePipelineHandler({
         pipeline: this.pipeline,
@@ -112,7 +133,8 @@ export class PipelineRun {
           endTimeNew,
           step.inputs,
           step.modelParams ?? {},
-          step.outputs
+          step.outputs,
+          step.context ?? {}
         )
       );
     } else {
@@ -127,7 +149,8 @@ export class PipelineRun {
           startAndEndTime,
           step.inputs,
           step.modelParams ?? {},
-          step.outputs
+          step.outputs,
+          step.context ?? {}
         )
       );
     }
@@ -186,7 +209,8 @@ export class PipelineRun {
         new Date(endTime).toISOString(),
         resolvedInputs,
         stepInfo?.modelParams ?? {},
-        modifiedOuput
+        modifiedOuput,
+        stepInfo?.context ?? {}
       )
     );
 
@@ -224,6 +248,7 @@ export class PipelineRun {
           modelParams,
           inputs,
           outputs,
+          context: stepRunContext,
         }) => {
           return {
             provider: {
@@ -236,6 +261,10 @@ export class PipelineRun {
             elapsedTime,
             startTime,
             endTime,
+            context: {
+              ...(this.context ?? {}),
+              ...(stepRunContext ?? {}),
+            },
           };
         }
       ),

@@ -12,4 +12,16 @@
  * Do not edit the class manually.
  */
 
-export * from "./api/core-api";
+/**
+ *
+ * @export
+ * @interface StepRunContext
+ */
+export interface StepRunContext {
+  /**
+   *
+   * @type {string}
+   * @memberof StepRunContext
+   */
+  userId?: string;
+}
