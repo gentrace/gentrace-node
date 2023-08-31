@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "module": "ESNext",
+    "declaration": true,
+    "outDir": "dist",
+    "target": "ES6",
+    "noImplicitAny": true,
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["node_modules/@types"]
+  },
+  "exclude": ["dist", "node_modules"]
+}

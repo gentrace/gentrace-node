@@ -1,36 +1,81 @@
+# Turborepo starter
 
-<!-- TEXT_SECTION:header:START -->
-<h1 align="center">
-Gentrace Node.js SDK
-</h1>
-<p align="center">
-  <a href="https://github.com/gentrace/gentrace-node/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Gentrace is released under the MIT license." />
-  </a>
-  <a href="https://github.com/gentrace/gentrace-node/actions/workflows/release-please.yaml">
-    <img src="https://github.com/gentrace/gentrace-node/actions/workflows/release-please.yaml/badge.svg" alt="Release Github action status" />
-  </a>
-</p>
-<!-- TEXT_SECTION:header:END -->
+This is an official starter Turborepo.
 
-> [!IMPORTANT]
-> This version of the Gentrace API only supports the OpenAI v4 SDK. This version is pinned to our `1.X.X` NPM package versions. Please visit [the `v0` branch](https://github.com/gentrace/gentrace-node/tree/v0) to see the code that supports the OpenAI v3 SDK.
+## Using this example
 
-The Gentrace Node.js library provides convenient access to the Gentrace API from Node.js applications. Most of the code in this library is generated from our [OpenAPI specification](https://github.com/gentrace/gentrace-openapi).
+Run the following command:
 
-**Important note: this library is meant for server-side usage only, as using it in client-side browser code will expose your secret API key.**
-
-## Installation
-
-```bash
-$ npm install @gentrace/node
+```sh
+npx create-turbo@latest
 ```
 
-## Getting started
+## What's inside?
 
-Visit our [Node.JS monitoring guides](https://docs.gentrace.ai/docs/typescript-nodejs-sdk) to learn how to get started.
+This Turborepo includes the following packages/apps:
 
-### API reference 
+### Apps and Packages
 
-Visit our [API reference](https://docs.gentrace.ai/reference/post_pipeline-run) to construct API requests interactively.
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `ui`: a stub React component library shared by both `web` and `docs` applications
+- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm build
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm dev
+```
+
+### Remote Caching
+
+Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+
+```
+cd my-turborepo
+npx turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
+- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
+- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
+- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
+- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
+- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
