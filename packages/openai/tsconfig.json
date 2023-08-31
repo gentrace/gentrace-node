@@ -3,12 +3,13 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["ES2019", "DOM"],
-    "paths": {
-      "@gentrace/core/*": ["../core/*"],
-      "@gentrace/core": ["../core/index"]
-    },
-    "baseUrl": "."
+    "rootDir": "src"
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../core/tsconfig.json"
+    }
+  ]
 }

@@ -1,6 +1,7 @@
 {
   "extends": "@gentrace/tsconfig/base.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist",
     "typeRoots": ["node_modules/@types"],
     "allowJs": true
