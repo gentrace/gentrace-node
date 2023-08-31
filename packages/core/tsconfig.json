@@ -4,7 +4,8 @@
     "composite": true,
     "outDir": "dist",
     "typeRoots": ["node_modules/@types"],
-    "allowJs": true
+    "allowJs": true,
+    "rootDir": "."
   },
   "include": ["./**/*.ts", "./**/*.js"],
   "exclude": ["node_modules", "dist"]
