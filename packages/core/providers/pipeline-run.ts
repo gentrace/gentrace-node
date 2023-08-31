@@ -2,7 +2,7 @@ import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
-import Context from "./context";
+import { Context } from "./context";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";

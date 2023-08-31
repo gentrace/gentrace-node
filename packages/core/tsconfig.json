@@ -1,6 +1,10 @@
 {
   "extends": "@gentrace/tsconfig/base.json",
   "compilerOptions": {
-    "outDir": "dist"
-  }
+    "outDir": "dist",
+    "typeRoots": ["node_modules/@types"],
+    "allowJs": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,5 +1,3 @@
-type Context = {
+export type Context = {
   userId?: string;
 };
-
-export default Context;

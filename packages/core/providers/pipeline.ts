@@ -1,5 +1,5 @@
 import { Configuration as GentraceConfiguration } from "../configuration";
-import Context from "./context";
+import { Context } from "./context";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
 

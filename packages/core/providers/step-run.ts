@@ -1,4 +1,4 @@
-import Context from "./context";
+import { Context } from "./context";
 
 export class StepRun {
   public provider: string;
