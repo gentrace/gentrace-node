@@ -1,0 +1,14 @@
+{
+  "extends": "@gentrace/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "lib": ["ES2019", "DOM"],
+    "paths": {
+      "@gentrace/core/*": ["../core/*"],
+      "@gentrace/core": ["../core/index"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

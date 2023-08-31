@@ -1,0 +1,45 @@
+{
+  "name": "@gentrace/openai",
+  "version": "4.0.0",
+  "description": "Gentrace OpenAI plugin for Node.JS",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gentrace/gentrace-node.git"
+  },
+  "keywords": [
+    "gentrace",
+    "openai"
+  ],
+  "author": "Gentrace",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "run-s clean typescript:compile rollup:compile",
+    "clean": "rimraf dist",
+    "typescript:compile": "tsc -p tsconfig.json",
+    "rollup:compile": "rollup --config rollup.config.mjs",
+    "test": "jest"
+  },
+  "dependencies": {
+    "openai": "^4.0.0",
+    "@gentrace/core": "workspace:^2.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^12.11.5",
+    "@types/uuid": "^9.0.1",
+    "dotenv": "^16.0.3",
+    "jest": "^29.5.0",
+    "msw": "^1.2.5",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.0",
+    "rollup": "^3.21.5",
+    "typescript": "~5.1.3",
+    "@gentrace/tsconfig": "workspace:*"
+  }
+}
