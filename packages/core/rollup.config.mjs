@@ -1,10 +1,8 @@
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
-import typescript from "@rollup/plugin-typescript";
-import copy from "rollup-plugin-copy";
 
 export default {
-  input: ["index.ts"],
+  input: ["dist/index.js"],
   output: [
     {
       dir: "dist",
@@ -20,14 +18,5 @@ export default {
       entryFileNames: "[name].mjs",
     },
   ],
-  plugins: [
-    typescript({
-      include: ["./**/*.ts", "./**/*.js"],
-    }),
-    copy({
-      targets: [{ src: "axios-unsafe-lib", dest: "dist/" }],
-    }),
-    json(),
-    commonjs(),
-  ],
+  plugins: [json(), commonjs()],
 };
