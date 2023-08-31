@@ -16,17 +16,17 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "run-s clean typescript:compile rollup:compile",
+    "build": "run-s clean rollup:compile",
     "clean": "rimraf dist",
-    "typescript:compile": "tsc -p tsconfig.json",
     "rollup:compile": "rollup --config rollup.config.mjs",
     "test": "jest"
   },
   "dependencies": {
-    "openai": "^4.0.0",
-    "@gentrace/core": "workspace:^2.0.0"
+    "@gentrace/core": "workspace:^2.0.0",
+    "openai": "^4.0.0"
   },
   "devDependencies": {
+    "@gentrace/tsconfig": "workspace:*",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-typescript": "^11.1.0",
@@ -39,7 +39,7 @@
     "npm-run-all": "^4.1.5",
     "rimraf": "^5.0.0",
     "rollup": "^3.21.5",
-    "typescript": "~5.1.3",
-    "@gentrace/tsconfig": "workspace:*"
+    "tslib": "^2.6.2",
+    "typescript": "~5.1.3"
   }
 }
