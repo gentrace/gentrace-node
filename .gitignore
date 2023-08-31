@@ -34,3 +34,13 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+dist
+
+wwwroot/*.js
+node_modules
+typings
+dist
+yarn-error.log
+.env
+

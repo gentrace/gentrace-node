@@ -1,0 +1,6 @@
+{
+  "extends": "@gentrace/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}

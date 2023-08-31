@@ -1,17 +1,37 @@
 {
-  "private": true,
+  "name": "gentrace-node",
+  "description": "Monorepo for Gentrace Node.js packages",
+  "repository": "git@github.com:gentrace/gentrace-node.git",
+  "author": "Gentrace",
+  "license": "MIT",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky install",
+    "commitlint": "commitlint --edit",
+    "lintstaged": "lint-staged"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,json}": [
+      "prettier --write"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.5.1",
+    "@commitlint/config-conventional": "^17.4.4",
+    "@gentrace/tsconfig": "workspace:*",
     "eslint": "^8.48.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.0",
     "prettier": "^3.0.3",
-    "tsconfig": "workspace:*",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@8.6.10",
-  "name": "testing-turborepo"
+  "packageManager": "pnpm@8.7.0"
 }
