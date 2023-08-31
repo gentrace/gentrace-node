@@ -1,6 +1,6 @@
-# Changelog
+# @gentrace/tsconfig
 
-## 2.1.0
+## 1.1.0
 
 ### Minor Changes
 
