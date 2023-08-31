@@ -14,7 +14,7 @@
     "lintstaged": "lint-staged",
     "changeset:add": "changeset",
     "changeset:version": "changeset version",
-    "changeset:release": "pnpm run build --filter \"@trigger.dev/*\" && changeset publish",
+    "changeset:release": "pnpm run build --filter \"@gentrace/*\" && changeset publish",
     "changeset:next": "changeset pre enter next",
     "changeset:normal": "changeset pre exit"
   },
