@@ -11,7 +11,12 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky install",
     "commitlint": "commitlint --edit",
-    "lintstaged": "lint-staged"
+    "lintstaged": "lint-staged",
+    "changeset:add": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:release": "pnpm run build --filter \"@trigger.dev/*\" && changeset publish",
+    "changeset:next": "changeset pre enter next",
+    "changeset:normal": "changeset pre exit"
   },
   "lint-staged": {
     "**/*.{ts,tsx,json}": [
