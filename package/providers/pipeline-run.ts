@@ -6,6 +6,8 @@ import Context from "./context";
 import { Pipeline } from "./pipeline";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
+import type { AdvancedPineconeClient as AdvancedPineconeClientType } from "./advanced/pinecone";
+import type { AdvancedOpenAI as AdvancedOpenAIType } from "./advanced/openai";
 
 export class PipelineRun {
   private pipeline: Pipeline;
@@ -46,17 +48,20 @@ export class PipelineRun {
 
   async getOpenAI() {
     if (this.pipeline.pipelineHandlers.has("openai")) {
-      const { OpenAIPipelineHandler } = await import(
-        "../handlers/llms/openai.js"
+      const { AdvancedOpenAI } = await import(
+        // TODO: Remove this once we have a better strategy for dynamic imports
+        process.env.NODE_ENV === "test"
+          ? "./advanced/openai"
+          : "./advanced/openai.js"
       );
-      const openAIHandler = new OpenAIPipelineHandler({
+      const openAIHandler = new AdvancedOpenAI({
         pipeline: this.pipeline,
         pipelineRun: this,
         gentraceConfig: this.pipeline.config,
         ...this.pipeline.openAIConfig,
       });
 
-      return openAIHandler;
+      return openAIHandler as AdvancedOpenAIType;
     } else {
       throw new Error(
         "Did not find OpenAI handler. Did you call setup() on the pipeline?"
@@ -66,17 +71,20 @@ export class PipelineRun {
 
   async getPinecone() {
     if (this.pipeline.pipelineHandlers.has("pinecone")) {
-      const { PineconePipelineHandler } = await import(
-        "../handlers/vectorstores/pinecone.js"
+      const { AdvancedPineconeClient } = await import(
+        // TODO: Remove this once we have a better strategy for dynamic imports
+        process.env.NODE_ENV === "test"
+          ? "./advanced/pinecone"
+          : "./advanced/pinecone.js"
       );
-      const pineconeHandler = new PineconePipelineHandler({
+      const pineconeHandler = new AdvancedPineconeClient({
         pipeline: this.pipeline,
         pipelineRun: this,
         config: this.pipeline.pineconeConfig,
         gentraceConfig: this.pipeline.config,
       });
 
-      return pineconeHandler;
+      return pineconeHandler as AdvancedPineconeClientType;
     } else {
       throw new Error(
         "Did not find Pinecone handler. Did you call setup() on the pipeline?"

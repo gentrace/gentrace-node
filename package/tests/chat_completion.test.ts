@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import { deinit, init } from "../providers/init";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 import { sleep } from "../providers/utils";
+import { Pipeline } from "../providers";
 
 config();
 
@@ -88,7 +89,7 @@ describe("test_openai_chat_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi({
+    const openai = new OpenAI({
       apiKey: "openai-api-key",
     });
     const chatCompletionResponse = await openai.chat.completions.create({
@@ -123,9 +124,50 @@ describe("test_openai_chat_completion_pipeline", () => {
           contentInputs: { name: "Vivek" },
         },
       ],
+      gentrace: {
+        userId: "my-user-id",
+      },
       model: "gpt-3.5-turbo",
     });
 
     expect(chatCompletionResponse.pipelineRunId).toBeUndefined();
+  });
+
+  it("should work properly when using OpenAI wrapper advanced module (specify a context)", async () => {
+    init({
+      apiKey: "gentrace-api-key",
+    });
+
+    const pipeline = new Pipeline({
+      slug: "openai-advanced",
+      openAIConfig: {
+        apiKey: "my-api-key",
+      },
+    });
+
+    await pipeline.setup();
+
+    const runner = pipeline.start({
+      userId: "user-id",
+    });
+
+    const openai = await runner.getOpenAI();
+
+    const chatCompletionResponse = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "user",
+          contentTemplate: "Hello {{ name }}!",
+          contentInputs: { name: "Vivek" },
+        },
+      ],
+      model: "gpt-3.5-turbo",
+    });
+
+    expect(chatCompletionResponse.pipelineRunId).not.toBeDefined();
+
+    const result = await runner.submit();
+
+    expect(result.pipelineRunId).toBeDefined();
   });
 });

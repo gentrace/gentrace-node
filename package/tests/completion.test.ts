@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { OpenAIApi } from "../openai";
+import OpenAI from "../openai";
 import { init } from "../providers";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 import { sleep } from "../providers/utils";
@@ -68,7 +68,7 @@ describe("test_openai_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi({
+    const openai = new OpenAI({
       apiKey: "openai-api-key",
     });
 
@@ -89,7 +89,7 @@ describe("test_openai_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const openai = new OpenAIApi({
+    const openai = new OpenAI({
       apiKey: "openai-api-key",
     });
 

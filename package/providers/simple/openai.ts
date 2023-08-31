@@ -73,6 +73,26 @@ class SimpleOpenAI extends OpenAIPipelineHandler {
       ...oaiOptions,
       gentraceConfig,
     });
+
+    // @ts-ignore
+    this.completions = new SimpleGentraceCompletions({
+      // @ts-ignore
+      client: this,
+      ...options,
+    });
+
+    // @ts-ignore
+    this.chat = new SimpleGentraceChat({
+      // @ts-ignore
+      client: this,
+      ...options,
+    });
+
+    this.embeddings = new SimpleGentraceEmbeddings({
+      // @ts-ignore
+      client: this,
+      ...options,
+    });
   }
 }
 
@@ -98,7 +118,10 @@ class SimpleGentraceEmbeddings extends GentraceEmbeddings {
 
   // @ts-ignore
   async create(
-    body: EmbeddingCreateParams & { pipelineSlug?: string },
+    body: EmbeddingCreateParams & {
+      pipelineSlug?: string;
+      gentrace?: Pick<Context, "userId">;
+    },
     options?: RequestOptions
   ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
     return super.createInner(body, options);
@@ -211,13 +234,17 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
 
   // @ts-ignore
   create(
-    body: GentraceChatCompletionCreateParamsNonStreaming,
+    body: Omit<GentraceChatCompletionCreateParamsNonStreaming, "gentrace"> & {
+      gentrace?: Pick<Context, "userId">;
+    },
     options?: RequestOptions
   ): Promise<GentraceChatCompletion>;
 
   // @ts-ignore
   create(
-    body: GentraceChatCompletionCreateParamsStreaming,
+    body: Omit<GentraceChatCompletionCreateParamsStreaming, "gentrace"> & {
+      gentrace?: Pick<Context, "userId">;
+    },
     options?: RequestOptions
   ): Promise<
     GentraceStream<ChatCompletionChunk> & {
@@ -227,7 +254,9 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
 
   // @ts-ignore
   async create(
-    body: GentraceChatCompletionCreateParams,
+    body: Omit<GentraceChatCompletionCreateParams, "gentrace"> & {
+      gentrace?: Pick<Context, "userId">;
+    },
     requestOptions?: RequestOptions
   ): Promise<
     | GentraceChatCompletion

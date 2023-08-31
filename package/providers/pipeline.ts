@@ -1,5 +1,6 @@
 import { ClientOptions } from "openai";
 import { Configuration as GentraceConfiguration } from "../configuration";
+import Context from "./context";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
 
@@ -108,10 +109,13 @@ export class Pipeline {
   async setup() {
     if (this.pineconeConfig) {
       try {
-        const { PineconePipelineHandler } = await import(
-          "../handlers/vectorstores/pinecone.js"
+        const { AdvancedPineconeClient } = await import(
+          // TODO: Remove this once we have a better strategy for dynamic imports
+          process.env.NODE_ENV === "test"
+            ? "./advanced/pinecone"
+            : "./advanced/pinecone.js"
         );
-        const pineconeHandler = new PineconePipelineHandler({
+        const pineconeHandler = new AdvancedPineconeClient({
           pipeline: this,
           config: this.pineconeConfig,
           gentraceConfig: this.config,
@@ -127,14 +131,18 @@ export class Pipeline {
 
     if (this.openAIConfig) {
       try {
-        const { OpenAIPipelineHandler } = await import(
-          "../handlers/llms/openai.js"
+        const { AdvancedOpenAI } = await import(
+          // TODO: Remove this once we have a better strategy for dynamic imports
+          process.env.NODE_ENV === "test"
+            ? "./advanced/openai"
+            : "./advanced/openai.js"
         );
-        const openAIHandler = new OpenAIPipelineHandler({
+        const openAIHandler = new AdvancedOpenAI({
           pipeline: this,
+          config: this.openAIConfig,
           gentraceConfig: this.config,
-          ...this.openAIConfig,
         });
+
         this.pipelineHandlers.set("openai", openAIHandler);
       } catch (e) {
         console.error('Error importing "openai" package', e);
@@ -145,7 +153,7 @@ export class Pipeline {
     }
   }
 
-  start() {
-    return new PipelineRun({ pipeline: this });
+  start(context?: Pick<Context, "userId">) {
+    return new PipelineRun({ pipeline: this, context });
   }
 }

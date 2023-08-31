@@ -1,3 +1,10 @@
+import Context from "./context";
+
+export type GentraceParams = {
+  pipelineSlug?: string;
+  gentrace?: Context;
+};
+
 export type OptionalPipelineInfo = {
   pipelineId?: string;
   pipelineSlug?: string;
