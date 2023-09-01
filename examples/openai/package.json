@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "tsx src/index.ts"
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "start": "run-s clean entrypoint",
+    "entrypoint": "tsx src/index.ts"
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.0",

@@ -16,8 +16,9 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "run-s clean rollup:compile",
-    "clean": "rimraf dist",
+    "build": "run-s clean typescript:compile rollup:compile",
+    "typescript:compile": "tsc -p tsconfig.json",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "rollup:compile": "rollup --config rollup.config.mjs",
     "test": "jest"
   },

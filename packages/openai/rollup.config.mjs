@@ -1,9 +1,8 @@
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
-import typescript from "@rollup/plugin-typescript";
 
 export default {
-  input: ["src/index.ts"],
+  input: ["dist/index.js"],
   output: [
     {
       dir: "dist",
@@ -19,5 +18,5 @@ export default {
       entryFileNames: "[name].mjs",
     },
   ],
-  plugins: [typescript(), json(), commonjs()],
+  plugins: [json(), commonjs()],
 };

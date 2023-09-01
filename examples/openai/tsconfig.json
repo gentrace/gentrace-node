@@ -9,9 +9,6 @@
   "exclude": ["node_modules", "dist"],
   "references": [
     {
-      "path": "../../packages/openai/tsconfig.json"
-    },
-    {
       "path": "../../packages/core/tsconfig.json"
     }
   ]
