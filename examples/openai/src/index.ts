@@ -8,8 +8,6 @@ init({
 
 const plugin = initPlugin({
   apiKey: process.env.OPENAI_KEY ?? "",
-  gentraceApiKey: process.env.GENTRACE_API_KEY ?? "",
-  gentraceBasePath: "http://localhost:3000/api/v1",
 });
 
 const pipeline = new Pipeline({

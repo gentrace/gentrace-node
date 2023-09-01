@@ -14,6 +14,7 @@ export const initPlugin: InitPluginFunction<
   SimpleOpenAI,
   AdvancedOpenAI
 > = (config: GentraceOpenAIClientOptions) => {
+  // TODO: initialize auth here
   return new OpenAIPlugin(config);
 };
 
