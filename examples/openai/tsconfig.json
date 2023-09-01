@@ -3,11 +3,15 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["ES2019", "DOM"],
-    "rootDir": "src"
+    "rootDir": "src",
+    "typeRoots": ["node_modules/@types"]
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules", "dist"],
   "references": [
+    {
+      "path": "../../packages/openai/tsconfig.json"
+    },
     {
       "path": "../../packages/core/tsconfig.json"
     }
