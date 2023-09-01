@@ -1,6 +1,8 @@
-function testing() {
-  return 1;
-}
+import {
+  GentracePlugin,
+  IGentracePlugin,
+  InitPluginFunction,
+} from "@gentrace/core";
 
 export default {
   testing,

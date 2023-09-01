@@ -4,6 +4,7 @@ import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
 import { Context } from "./context";
 import { Pipeline } from "./pipeline";
+import { GentracePlugin } from "./plugin";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
 
@@ -175,6 +176,10 @@ export class PipelineRun {
     );
 
     return returnValue;
+  }
+
+  public attach<P extends GentracePlugin>(plugin: P) {
+    return plugin.advanced();
   }
 
   public async submit(
