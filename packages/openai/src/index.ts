@@ -1,5 +1,3 @@
-import { OpenAIPlugin } from "./plugin";
+import { initPlugin, OpenAIPlugin } from "./plugin";
 
-export default {
-  OpenAIPlugin,
-};
+export { initPlugin, OpenAIPlugin };

@@ -1,7 +1,6 @@
 {
   "extends": "@gentrace/tsconfig/base.json",
   "compilerOptions": {
-    "composite": true,
     "outDir": "dist",
     "lib": ["ES2019", "DOM"],
     "rootDir": "src"
@@ -10,7 +9,10 @@
   "exclude": ["node_modules", "dist"],
   "references": [
     {
-      "path": "../core/tsconfig.json"
+      "path": "../../packages/openai/tsconfig.json"
+    },
+    {
+      "path": "../../packages/core/tsconfig.json"
     }
   ]
 }

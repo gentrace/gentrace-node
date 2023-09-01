@@ -44,3 +44,6 @@ dist
 yarn-error.log
 .env
 
+.rollup.cache
+tsconfig.tsbuildinfo
+
