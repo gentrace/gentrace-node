@@ -178,7 +178,7 @@ export class PipelineRun {
     return returnValue;
   }
 
-  public attach<P extends GentracePlugin>(plugin: P) {
+  public attach<C, S, A>(plugin: GentracePlugin<C, S, A>) {
     return plugin.advanced();
   }
 

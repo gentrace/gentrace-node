@@ -1,68 +1,29 @@
-export interface IGentracePlugin<S, A> {
-  simple(): Promise<S>;
+export interface IGentracePlugin<C, S, A> {
+  config: C;
 
-  advanced(): Promise<A>;
+  getConfig(): C;
+
+  auth<T>(): Promise<T>;
+
+  simple(): S;
+
+  advanced(): A;
 }
 
-export abstract class GentracePlugin<S, A> implements IGentracePlugin<S, A> {
-  abstract simple(): Promise<S>;
+export abstract class GentracePlugin<C, S, A>
+  implements IGentracePlugin<C, S, A>
+{
+  abstract config: C;
 
-  abstract advanced(): Promise<A>;
+  abstract getConfig(): C;
+
+  abstract auth<T>(): Promise<T>;
+
+  abstract simple(): S;
+
+  abstract advanced(): A;
 }
 
 export type InitPluginFunction<C extends object, S, A> = (
   config: C,
-) => GentracePlugin<S, A>;
-
-type OpenAIPluginSimple = {
-  name: string;
-  version: string;
-  description: string;
-};
-
-type OpenAIPluginAdvanced = {
-  name: string;
-  version: string;
-  description: string;
-  config: OpenAIConfig;
-};
-
-type OpenAIConfig = {
-  advanced: string;
-};
-
-class OpenAIPlugin extends GentracePlugin<
-  OpenAIPluginSimple,
-  OpenAIPluginAdvanced
-> {
-  constructor(private config: OpenAIConfig) {
-    super();
-  }
-
-  async simple(): Promise<OpenAIPluginSimple> {
-    return {
-      name: "OpenAIPlugin",
-      version: "0.0.1",
-      description: "OpenAIPlugin",
-    };
-  }
-
-  async advanced(): Promise<OpenAIPluginAdvanced> {
-    return {
-      name: "OpenAIPlugin",
-      version: "0.0.1",
-      description: "OpenAIPlugin",
-      config: this.config,
-    };
-  }
-}
-
-function runner<S, A>(plugin: GentracePlugin<S, A>) {
-  return plugin.advanced();
-}
-
-async function testing() {
-  const value = await runner(new OpenAIPlugin({ advanced: "advanced" }));
-}
-
-testing();
+) => GentracePlugin<C, S, A>;

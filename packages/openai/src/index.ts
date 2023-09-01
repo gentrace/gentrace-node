@@ -1,9 +1,5 @@
-import {
-  GentracePlugin,
-  IGentracePlugin,
-  InitPluginFunction,
-} from "@gentrace/core";
+import { OpenAIPlugin } from "./plugin";
 
 export default {
-  testing,
+  OpenAIPlugin,
 };
