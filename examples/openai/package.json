@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "start": "run-s clean entrypoint",
-    "entrypoint": "dotenv tsx src/index.ts"
+    "start": "dotenv tsx"
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.0",

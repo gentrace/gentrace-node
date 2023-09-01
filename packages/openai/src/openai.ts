@@ -114,7 +114,7 @@ export class GentraceEmbeddings extends OpenAI.Embeddings {
     body: EmbeddingCreateParams & { pipelineSlug?: string; gentrace?: Context },
     options?: RequestOptions,
   ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
-    const { pipelineSlug, ...newPayload } = body;
+    const { pipelineSlug, gentrace, ...newPayload } = body;
     const { model, ...inputParams } = newPayload;
 
     let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
@@ -241,6 +241,7 @@ export class GentraceChatCompletions extends OpenAI.Chat.Completions {
     const {
       messages,
       pipelineSlug: _pipelineSlug,
+      gentrace,
       ...baseCompletionOptions
     } = body;
 
@@ -416,6 +417,7 @@ export class GentraceCompletions extends OpenAI.Completions {
       promptInputs,
       prompt,
       pipelineSlug: _pipelineSlug,
+      gentrace,
       ...baseCompletionOptions
     } = body;
 

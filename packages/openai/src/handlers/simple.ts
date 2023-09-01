@@ -81,6 +81,7 @@ class SimpleOpenAI extends OpenAIPipelineHandler {
       // @ts-ignore
       client: this,
       ...options,
+      gentraceConfig,
     });
 
     // @ts-ignore
@@ -88,12 +89,14 @@ class SimpleOpenAI extends OpenAIPipelineHandler {
       // @ts-ignore
       client: this,
       ...options,
+      gentraceConfig,
     });
 
     this.embeddings = new SimpleGentraceEmbeddings({
       // @ts-ignore
       client: this,
       ...options,
+      gentraceConfig,
     });
   }
 }
