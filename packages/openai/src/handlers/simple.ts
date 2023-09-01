@@ -1,3 +1,10 @@
+import {
+  Configuration as GentraceConfiguration,
+  Context,
+  GENTRACE_API_KEY,
+  globalGentraceConfig,
+  PipelineRun,
+} from "@gentrace/core";
 import OpenAI from "openai";
 import { RequestOptions } from "openai/core";
 import {
@@ -6,14 +13,6 @@ import {
   EmbeddingCreateParams,
 } from "openai/resources";
 import { ChatCompletionChunk } from "openai/resources/chat";
-import {
-  Configuration as GentraceConfiguration,
-  Pipeline,
-  PipelineRun,
-  Context,
-  GENTRACE_API_KEY,
-  globalGentraceConfig,
-} from "@gentrace/core";
 import {
   GentraceChatCompletion,
   GentraceChatCompletionCreateParams,
@@ -103,18 +102,15 @@ class SimpleGentraceEmbeddings extends GentraceEmbeddings {
   constructor({
     client,
     pipelineRun,
-    pipeline,
     gentraceConfig,
   }: {
     client: OpenAI;
     pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
     gentraceConfig: GentraceConfiguration;
   }) {
     super({
       client,
       gentraceConfig,
-      pipeline,
       pipelineRun,
     });
   }
@@ -135,17 +131,14 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
   constructor({
     client,
     pipelineRun,
-    pipeline,
     gentraceConfig,
   }: {
     client: OpenAI;
     pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
     gentraceConfig: GentraceConfiguration;
   }) {
     super({
       client,
-      pipeline,
       pipelineRun,
       gentraceConfig,
     });
@@ -194,12 +187,10 @@ export class SimpleGentraceChat extends OpenAI.Chat {
   constructor({
     client,
     pipelineRun,
-    pipeline,
     gentraceConfig,
   }: {
     client: OpenAI;
     pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
     gentraceConfig: GentraceConfiguration;
   }) {
     super(client);
@@ -209,7 +200,6 @@ export class SimpleGentraceChat extends OpenAI.Chat {
       // @ts-ignore
       client,
       pipelineRun,
-      pipeline,
       gentraceConfig,
     });
   }
@@ -219,18 +209,15 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
   constructor({
     client,
     pipelineRun,
-    pipeline,
     gentraceConfig,
   }: {
     client: OpenAI;
     pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
     gentraceConfig: GentraceConfiguration;
   }) {
     super({
       client,
       pipelineRun,
-      pipeline,
       gentraceConfig,
     });
   }

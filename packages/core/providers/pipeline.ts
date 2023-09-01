@@ -112,10 +112,8 @@ export class Pipeline<T extends { [key: string]: GentracePlugin<any, any> }> {
         }),
       ]),
     );
-    return {
-      ...newPipelineRun,
-      ...argMap,
-    } as PipelineRun & {
+
+    return Object.assign(newPipelineRun, argMap) as PipelineRun & {
       [key in keyof T]: ReturnType<T[key]["advanced"]>;
     };
   }

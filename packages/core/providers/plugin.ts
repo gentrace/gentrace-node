@@ -7,8 +7,6 @@ export abstract class GentracePlugin<C, A> {
 
   abstract getConfig(): C;
 
-  abstract auth<T>(): Promise<T>;
-
   abstract advanced<
     T extends { [key: string]: GentracePlugin<any, any> },
   >(params: {

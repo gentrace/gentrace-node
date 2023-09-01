@@ -1,15 +1,21 @@
 import { v4 } from "uuid";
 import { CoreApi } from "../api/core-api";
+import { Configuration } from "../configuration";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
 import { Context } from "./context";
-import { Pipeline } from "./pipeline";
-import { GentracePlugin } from "./plugin";
 import { PartialStepRunType, StepRun } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
 
+interface PipelineLike {
+  slug: string;
+  config: Configuration;
+  logInfo: (message: string) => void;
+  logWarn: (message: string | Error) => void;
+}
+
 export class PipelineRun {
-  private pipeline: Pipeline;
+  private pipeline: PipelineLike;
   public stepRuns: StepRun[];
 
   private context?: Context;
@@ -20,7 +26,7 @@ export class PipelineRun {
     pipeline,
     context,
   }: {
-    pipeline: Pipeline;
+    pipeline: PipelineLike;
     context?: Context;
   }) {
     this.pipeline = pipeline;
@@ -196,8 +202,7 @@ export class PipelineRun {
 
     const submission = coreApi.runPost({
       id: this.id,
-      // @deprecated: only use slug in future releases
-      slug: this.pipeline.slug ?? this.pipeline.id,
+      slug: this.pipeline.slug,
       collectionMethod: RunRequestCollectionMethodEnum.Runner,
       stepRuns: this.stepRuns.map(
         ({

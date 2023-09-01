@@ -2,11 +2,9 @@ import {
   Configuration,
   GentracePlugin,
   InitPluginFunction,
-  Pipeline,
   PipelineRun,
 } from "@gentrace/core";
 import { AdvancedOpenAI } from "./handlers/advanced";
-import { SimpleOpenAI } from "./handlers/simple";
 import { GentraceClientOptions as GentraceOpenAIClientOptions } from "./openai";
 
 export const initPlugin: InitPluginFunction<
@@ -34,16 +32,13 @@ export class OpenAIPlugin extends GentracePlugin<
   }
 
   advanced({
-    pipeline,
     pipelineRun,
     gentraceConfig,
   }: {
-    pipeline: Pipeline;
     pipelineRun: PipelineRun;
     gentraceConfig: Configuration;
   }): AdvancedOpenAI {
     return new AdvancedOpenAI({
-      pipeline,
       pipelineRun,
       gentraceConfig,
       ...this.config,

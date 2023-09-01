@@ -21,7 +21,6 @@ import { Stream } from "openai/streaming";
 
 export type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
-  pipeline?: Pipeline;
   gentraceConfig: GentraceConfiguration;
 };
 
@@ -95,23 +94,19 @@ export class GentraceStream<Item> implements AsyncIterable<Item> {
 
 export class GentraceEmbeddings extends OpenAI.Embeddings {
   private pipelineRun?: PipelineRun;
-  private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
 
   constructor({
     client,
     pipelineRun,
-    pipeline,
     gentraceConfig,
   }: {
     client: OpenAI;
     pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
     gentraceConfig: GentraceConfiguration;
   }) {
     super(client);
     this.pipelineRun = pipelineRun;
-    this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
   }
 
@@ -198,23 +193,19 @@ export type GentraceChatCompletion = ChatCompletion & {
 
 export class GentraceChatCompletions extends OpenAI.Chat.Completions {
   private pipelineRun?: PipelineRun;
-  private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
 
   constructor({
     client,
     pipelineRun,
-    pipeline,
     gentraceConfig,
   }: {
     client: OpenAI;
     pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
     gentraceConfig: GentraceConfiguration;
   }) {
     super(client);
     this.pipelineRun = pipelineRun;
-    this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
   }
 
@@ -376,23 +367,19 @@ export type GentraceCompletion = Completion & {
 
 export class GentraceCompletions extends OpenAI.Completions {
   private pipelineRun?: PipelineRun;
-  private pipeline?: Pipeline;
   private gentraceConfig: GentraceConfiguration;
 
   constructor({
     client,
     pipelineRun,
-    pipeline,
     gentraceConfig,
   }: {
     client: OpenAI;
     pipelineRun?: PipelineRun;
-    pipeline?: Pipeline;
     gentraceConfig: GentraceConfiguration;
   }) {
     super(client);
     this.pipelineRun = pipelineRun;
-    this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
   }
 
@@ -539,28 +526,17 @@ export type GentraceClientOptions = ClientOptions & {
 
 export class OpenAIPipelineHandler extends OpenAI {
   protected pipelineRun?: PipelineRun;
-  protected pipeline?: Pipeline;
   protected gentraceConfig: GentraceConfiguration;
 
   constructor({
     pipelineRun,
-    pipeline,
     gentraceConfig,
     ...oaiOptions
   }: ClientOptions & OpenAIPipelineHandlerOptions) {
     super(oaiOptions);
 
     this.pipelineRun = pipelineRun;
-    this.pipeline = pipeline;
     this.gentraceConfig = gentraceConfig;
-  }
-
-  public setPipelineRun(pipelineRun: PipelineRun) {
-    this.pipelineRun = pipelineRun;
-  }
-
-  public setPipeline(pipeline: Pipeline) {
-    this.pipeline = pipeline;
   }
 }
 
