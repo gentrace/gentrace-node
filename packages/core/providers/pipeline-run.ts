@@ -178,14 +178,6 @@ export class PipelineRun {
     return returnValue;
   }
 
-  public attach<C, S, A>(plugin: GentracePlugin<C, S, A>) {
-    return plugin.advanced({
-      pipelineRun: this,
-      pipeline: this.pipeline,
-      gentraceConfig: this.pipeline.config,
-    });
-  }
-
   public async submit(
     { waitForServer }: { waitForServer: boolean } = { waitForServer: false },
   ) {

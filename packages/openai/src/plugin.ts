@@ -11,7 +11,6 @@ import { GentraceClientOptions as GentraceOpenAIClientOptions } from "./openai";
 
 export const initPlugin: InitPluginFunction<
   GentraceOpenAIClientOptions,
-  SimpleOpenAI,
   AdvancedOpenAI
 > = (config: GentraceOpenAIClientOptions) => {
   // TODO: initialize auth here
@@ -20,7 +19,6 @@ export const initPlugin: InitPluginFunction<
 
 export class OpenAIPlugin extends GentracePlugin<
   GentraceOpenAIClientOptions,
-  SimpleOpenAI,
   AdvancedOpenAI
 > {
   constructor(public config: GentraceOpenAIClientOptions) {

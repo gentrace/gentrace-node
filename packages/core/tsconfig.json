@@ -5,7 +5,8 @@
     "outDir": "dist",
     "typeRoots": ["node_modules/@types"],
     "allowJs": true,
-    "rootDir": "."
+    "rootDir": ".",
+    "lib": ["ES2019"]
   },
   "include": ["./**/*.ts", "./**/*.js"],
   "exclude": ["node_modules", "dist"]

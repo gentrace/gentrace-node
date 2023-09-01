@@ -2,17 +2,18 @@ import { Configuration as GentraceConfiguration } from "../configuration";
 import { Context } from "./context";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
+import { GentracePlugin } from "./plugin";
 
 export type PineconeConfiguration = {
   apiKey: string;
   environment: string;
 };
 
-export class Pipeline {
+export class Pipeline<T extends { [key: string]: GentracePlugin<any, any> }> {
   public id: string;
   public slug: string;
   public config: GentraceConfiguration;
-  public pipelineHandlers: Map<string, any> = new Map();
+  public plugins: T;
 
   constructor({
     slug,
@@ -20,6 +21,7 @@ export class Pipeline {
     apiKey,
     basePath,
     logger,
+    plugins,
   }: {
     slug?: string;
 
@@ -44,9 +46,11 @@ export class Pipeline {
       info: (message: string, context?: any) => void;
       warn: (message: string | Error, context?: any) => void;
     };
+    plugins?: T;
   }) {
     this.id = id;
     this.slug = slug;
+    this.plugins = plugins;
 
     if (!slug && !id) {
       throw new Error("Please provide the Pipeline slug");
@@ -93,14 +97,26 @@ export class Pipeline {
     }
   }
 
-  /**
-   * Setup the pipeline by initializing the pipeline handlers for all provider handlers
-   */
-  async setup() {
-    // TODO: Redo
-  }
-
-  start(context?: Pick<Context, "userId">) {
-    return new PipelineRun({ pipeline: this, context });
+  start(
+    context?: Pick<Context, "userId">,
+  ): PipelineRun & { [key in keyof T]: ReturnType<T[key]["advanced"]> } {
+    const newPipelineRun = new PipelineRun({ pipeline: this, context });
+    const argList = Object.entries(this.plugins);
+    const argMap = Object.fromEntries(
+      argList.map(([k, v]) => [
+        k,
+        v.advanced({
+          pipeline: this,
+          pipelineRun: newPipelineRun,
+          gentraceConfig: this.config,
+        }),
+      ]),
+    );
+    return {
+      ...newPipelineRun,
+      ...argMap,
+    } as PipelineRun & {
+      [key in keyof T]: ReturnType<T[key]["advanced"]>;
+    };
   }
 }

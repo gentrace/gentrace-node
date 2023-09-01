@@ -12,14 +12,17 @@ const plugin = initPlugin({
 
 const pipeline = new Pipeline({
   slug: "testing-pipeline-id",
+  plugins: {
+    openai: plugin,
+  },
 });
 
 async function createChatCompletion() {
   const runner = pipeline.start();
 
-  const openAi = runner.attach(plugin);
+  const openai = runner.openai;
 
-  const chatCompletionResponse = await openAi.chat.completions.create({
+  const chatCompletionResponse = await openai.chat.completions.create({
     messages: [{ role: "user", content: "Hello!" }],
     model: "gpt-3.5-turbo",
     stream: true,
@@ -29,7 +32,7 @@ async function createChatCompletion() {
     console.log("Message", message.choices[0]);
   }
 
-  const chatCompletionResponseTwo = await openAi.chat.completions.create({
+  const chatCompletionResponseTwo = await openai.chat.completions.create({
     messages: [{ role: "user", content: "Hello!" }],
     model: "gpt-3.5-turbo",
   });
