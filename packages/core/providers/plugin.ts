@@ -1,3 +1,7 @@
+import { Configuration } from "../configuration";
+import { Pipeline } from "./pipeline";
+import { PipelineRun } from "./pipeline-run";
+
 export interface IGentracePlugin<C, S, A> {
   config: C;
 
@@ -5,9 +9,11 @@ export interface IGentracePlugin<C, S, A> {
 
   auth<T>(): Promise<T>;
 
-  simple(): S;
-
-  advanced(): A;
+  advanced(params: {
+    pipeline: Pipeline;
+    pipelineRun: PipelineRun;
+    gentraceConfig: Configuration;
+  }): A;
 }
 
 export abstract class GentracePlugin<C, S, A>
@@ -19,9 +25,11 @@ export abstract class GentracePlugin<C, S, A>
 
   abstract auth<T>(): Promise<T>;
 
-  abstract simple(): S;
-
-  abstract advanced(): A;
+  abstract advanced(params: {
+    pipeline: Pipeline;
+    pipelineRun: PipelineRun;
+    gentraceConfig: Configuration;
+  }): A;
 }
 
 export type InitPluginFunction<C extends object, S, A> = (

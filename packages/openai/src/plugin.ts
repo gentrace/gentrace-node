@@ -1,39 +1,49 @@
 import {
+  Configuration,
   GentracePlugin,
-  PipelineRun,
-  IGentracePlugin,
   InitPluginFunction,
+  Pipeline,
 } from "@gentrace/core";
 import { AdvancedOpenAI } from "./handlers/advanced";
 import { SimpleOpenAI } from "./handlers/simple";
+import { GentraceClientOptions as GentraceOpenAIClientOptions } from "./openai";
 
-type OpenAIConfig = {
-  apiKey: string;
+export const initPlugin: InitPluginFunction<
+  GentraceOpenAIClientOptions,
+  SimpleOpenAI,
+  AdvancedOpenAI
+> = (config: GentraceOpenAIClientOptions) => {
+  return new OpenAIPlugin(config);
 };
 
 export class OpenAIPlugin extends GentracePlugin<
-  OpenAIConfig,
+  GentraceOpenAIClientOptions,
   SimpleOpenAI,
   AdvancedOpenAI
 > {
-  constructor(public config: OpenAIConfig) {
+  constructor(public config: GentraceOpenAIClientOptions) {
     super();
   }
 
-  getConfig(): OpenAIConfig {
+  getConfig(): GentraceOpenAIClientOptions {
     return this.config;
   }
 
   async auth<T>(): Promise<T> {
-    // Nothing for OpenAI
     return;
   }
 
-  simple(): SimpleOpenAI {
-    return new SimpleOpenAI();
-  }
-
-  advanced(): AdvancedOpenAI {
-    return new AdvancedOpenAI();
+  advanced({
+    pipeline,
+    gentraceConfig,
+  }: {
+    pipeline: Pipeline;
+    gentraceConfig: Configuration;
+  }): AdvancedOpenAI {
+    return new AdvancedOpenAI({
+      pipeline,
+      gentraceConfig,
+      ...this.config,
+    });
   }
 }
