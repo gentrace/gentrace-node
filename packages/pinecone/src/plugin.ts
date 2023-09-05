@@ -4,25 +4,25 @@ import {
   InitPluginFunction,
   PipelineRun,
 } from "@gentrace/core";
-import { AdvancedOpenAIApi } from "./handlers/advanced";
-import { OpenAIConfiguration } from "./handlers/simple";
+import { AdvancedPineconeClient } from "./handlers/advanced";
+import { PineconeConfiguration } from "./pinecone";
 
 export const initPlugin: InitPluginFunction<
-  OpenAIConfiguration,
-  AdvancedOpenAIApi
-> = (config: OpenAIConfiguration) => {
-  return new OpenAIPlugin(config);
+  PineconeConfiguration,
+  AdvancedPineconeClient
+> = (config: PineconeConfiguration) => {
+  return new PineconePlugin(config);
 };
 
-export class OpenAIPlugin extends GentracePlugin<
-  OpenAIConfiguration,
-  AdvancedOpenAIApi
+export class PineconePlugin extends GentracePlugin<
+  PineconeConfiguration,
+  AdvancedPineconeClient
 > {
-  constructor(public config: OpenAIConfiguration) {
+  constructor(public config: PineconeConfiguration) {
     super();
   }
 
-  getConfig(): OpenAIConfiguration {
+  getConfig(): PineconeConfiguration {
     return this.config;
   }
 
@@ -36,8 +36,8 @@ export class OpenAIPlugin extends GentracePlugin<
   }: {
     pipelineRun: PipelineRun;
     gentraceConfig: GentraceConfiguration;
-  }): AdvancedOpenAIApi {
-    return new AdvancedOpenAIApi({
+  }): AdvancedPineconeClient {
+    return new AdvancedPineconeClient({
       pipelineRun,
       gentraceConfig,
       config: this.config,

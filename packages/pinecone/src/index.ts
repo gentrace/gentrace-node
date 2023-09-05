@@ -1,9 +1,4 @@
-import { SimpleOpenAIApi, OpenAIConfiguration } from "./handlers/simple";
-import { initPlugin, OpenAIPlugin } from "./plugin";
+import { SimplePineconeClient } from "./handlers/simple";
+import { initPlugin, PineconePlugin } from "./plugin";
 
-export {
-  initPlugin,
-  OpenAIPlugin,
-  SimpleOpenAIApi as OpenAIApi,
-  OpenAIConfiguration as Configuration,
-};
+export { initPlugin, PineconePlugin, SimplePineconeClient as PineconeClient };
