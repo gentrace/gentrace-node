@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.7
+
+### Patch Changes
+
+- d753973: Fix issue with privacy script not changing the name
+- Updated dependencies [d753973]
+  - @gentrace/core@2.1.7
+
 ## 4.0.6
 
 ### Patch Changes
