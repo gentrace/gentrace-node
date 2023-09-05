@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.4
+
+### Patch Changes
+
+- 07590a9: Make modifications to the installation process
+- Updated dependencies [07590a9]
+  - @gentrace/core@2.1.4
+
 ## 4.0.3
 
 ### Patch Changes
