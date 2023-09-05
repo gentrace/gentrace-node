@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.11
+
+### Patch Changes
+
+- 5fcdd89: Modify the lockfile installation semantics
+- Updated dependencies [5fcdd89]
+  - @gentrace/core@2.1.5
+
 ## 0.1.10
 
 ### Patch Changes

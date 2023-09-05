@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.5
+
+### Patch Changes
+
+- 5fcdd89: Modify the lockfile installation semantics
+- Updated dependencies [5fcdd89]
+  - @gentrace/core@2.1.5
+
 ## 4.0.4
 
 ### Patch Changes

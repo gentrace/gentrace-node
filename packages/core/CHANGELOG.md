@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.5
+
+### Patch Changes
+
+- 5fcdd89: Modify the lockfile installation semantics
+
 ## 2.1.4
 
 ### Patch Changes
