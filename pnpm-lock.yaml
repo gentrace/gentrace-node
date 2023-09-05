@@ -32,6 +32,9 @@ importers:
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
+      tsx:
+        specifier: ^3.12.8
+        version: 3.12.8
       turbo:
         specifier: latest
         version: 1.10.13
@@ -39,10 +42,10 @@ importers:
   examples/openai:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.1.0
+        specifier: workspace:^2.1.2
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: workspace:^4.0.0
+        specifier: workspace:^4.0.2
         version: link:../../packages/openai
     devDependencies:
       '@gentrace/tsconfig':
@@ -100,10 +103,10 @@ importers:
   examples/openai-v3:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.1.0
+        specifier: workspace:^2.1.2
         version: link:../../packages/core
       '@gentrace/openai-v3':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.3.2
         version: link:../../packages/openai-v3
     devDependencies:
       '@gentrace/tsconfig':
@@ -161,10 +164,10 @@ importers:
   examples/pinecone:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.1.0
+        specifier: workspace:^2.1.2
         version: link:../../packages/core
       '@gentrace/pinecone':
-        specifier: workspace:^0.1.0
+        specifier: workspace:^0.1.7
         version: link:../../packages/pinecone
     devDependencies:
       '@gentrace/tsconfig':
@@ -298,7 +301,7 @@ importers:
   packages/openai:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.1.2
         version: link:../core
       openai:
         specifier: ^4.0.0
@@ -353,7 +356,7 @@ importers:
   packages/openai-v3:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.1.2
         version: link:../core
       axios:
         specifier: ~0.26.1
@@ -411,7 +414,7 @@ importers:
   packages/pinecone:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.0.0
+        specifier: workspace:^2.1.2
         version: link:../core
       '@pinecone-database/pinecone':
         specifier: ^0.1.6

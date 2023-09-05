@@ -1,0 +1,55 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - mono
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      published_packages: ${{ steps.changesets.outputs.publishedPackages }}
+      published: ${{ steps.changesets.outputs.published }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+          
+      - name: Build assets
+        run: pnpm -w run build
+
+      # First, deploy everything but OpenAI v3
+      - name: 🚀 Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm run changeset:version
+          commit: "chore: Update version for release"
+          title: "chore: Update version for release"
+          publish: pnpm run changeset:release
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_REPO_PAT }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Modify privacy
+        run: |
+
+      # Then, deploy OpenAI v3
+      - name: 🚀 Publish (OpenAI v3)
+        run: |
+          pnpm run changeset:publish
