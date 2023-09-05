@@ -1,5 +1,13 @@
 # @gentrace/openai-v3
 
+## 3.3.3
+
+### Patch Changes
+
+- 8bb4e90: Fix a few smaller issues with deploy
+- Updated dependencies [8bb4e90]
+  - @gentrace/core@2.1.3
+
 ## 3.3.2
 
 ### Patch Changes
