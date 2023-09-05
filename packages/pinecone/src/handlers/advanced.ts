@@ -1,3 +1,4 @@
+import { AdvancedContext } from "@gentrace/core";
 import {
   Delete1Request,
   FetchRequest,
@@ -25,8 +26,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         FetchFunctionType,
         FetchRequest &
           Omit<GentraceParams, "gentrace"> & {
-            // TODO: Add future required params here
-            gentrace?: {};
+            gentrace?: AdvancedContext;
           }
       >
     >;
@@ -38,8 +38,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         UpdateFunctionType,
         UpdateOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            // TODO: Add future required params here
-            gentrace?: {};
+            gentrace?: AdvancedContext;
           }
       >
     >;
@@ -51,8 +50,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         QueryFunctionType,
         QueryOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            // TODO: Add future required params here
-            gentrace?: {};
+            gentrace?: AdvancedContext;
           }
       >
     >;
@@ -64,8 +62,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         UpsertFunctionType,
         UpsertOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            // TODO: Add future required params here
-            gentrace?: {};
+            gentrace?: AdvancedContext;
           }
       >
     >;
@@ -77,8 +74,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
         DeleteFunctionType,
         Delete1Request &
           Omit<GentraceParams, "gentrace"> & {
-            // TODO: Add future required params here
-            gentrace?: {};
+            gentrace?: AdvancedContext;
           }
       >
     >;

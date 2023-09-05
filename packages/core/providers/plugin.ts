@@ -1,4 +1,5 @@
 import { Configuration } from "../configuration";
+import { SimpleHandler } from "./handler";
 import { Pipeline } from "./pipeline";
 import { PipelineRun } from "./pipeline-run";
 
@@ -17,5 +18,5 @@ export abstract class GentracePlugin<C, A> {
 }
 
 export type InitPluginFunction<C extends object, A> = (
-  config: C,
+  config: C | SimpleHandler<C>,
 ) => Promise<GentracePlugin<C, A>>;

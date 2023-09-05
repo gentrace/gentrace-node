@@ -1,12 +1,15 @@
 import {
   globalGentraceConfig,
   Configuration as GentraceConfiguration,
+  SimpleContext,
+  SimpleHandler,
 } from "@gentrace/core";
 import {
   FunctionWithPipelineRunId,
   ModifyFirstParam,
   PineconePipelineHandler,
   GentraceParams,
+  PineconeConfiguration,
 } from "../pinecone";
 import {
   Delete1Request,
@@ -17,7 +20,10 @@ import {
   VectorOperationsApi,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 
-class SimplePineconeClient extends PineconePipelineHandler {
+class SimplePineconeClient
+  extends PineconePipelineHandler
+  implements SimpleHandler<PineconeConfiguration>
+{
   constructor(params?: {
     /**
      * @deprecated Declare the API key in the init() call instead.
@@ -44,6 +50,9 @@ class SimplePineconeClient extends PineconePipelineHandler {
       gentraceConfig,
     });
   }
+  getConfig(): PineconeConfiguration {
+    return this.config;
+  }
 
   // @ts-ignore: hack to avoid base class inheritance issues
   public Index(index: string) {
@@ -56,9 +65,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         FetchFunctionType,
         FetchRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -70,9 +77,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         UpdateFunctionType,
         UpdateOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -84,9 +89,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         QueryFunctionType,
         QueryOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -98,9 +101,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         UpsertFunctionType,
         UpsertOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -112,9 +113,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         DeleteFunctionType,
         Delete1Request &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;

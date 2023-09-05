@@ -2,6 +2,7 @@ import {
   Configuration,
   GentracePlugin,
   InitPluginFunction,
+  isConfig,
   PipelineRun,
 } from "@gentrace/core";
 import { AdvancedOpenAI } from "./handlers/advanced";
@@ -10,8 +11,12 @@ import { GentraceClientOptions as GentraceOpenAIClientOptions } from "./openai";
 export const initPlugin: InitPluginFunction<
   GentraceOpenAIClientOptions,
   AdvancedOpenAI
-> = async (config: GentraceOpenAIClientOptions) => {
-  return new OpenAIPlugin(config);
+> = async (config) => {
+  if (isConfig(config)) {
+    return new OpenAIPlugin(config);
+  }
+
+  return new OpenAIPlugin(config.getConfig());
 };
 
 export class OpenAIPlugin extends GentracePlugin<
@@ -24,10 +29,6 @@ export class OpenAIPlugin extends GentracePlugin<
 
   getConfig(): GentraceOpenAIClientOptions {
     return this.config;
-  }
-
-  async auth<T>(): Promise<T> {
-    return;
   }
 
   advanced({

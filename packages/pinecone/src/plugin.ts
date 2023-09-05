@@ -3,25 +3,37 @@ import {
   GentracePlugin,
   globalGentraceConfig,
   InitPluginFunction,
+  isConfig,
   PipelineRun,
 } from "@gentrace/core";
-import { PineconeClient as PurePineconeClient } from "@pinecone-database/pinecone";
 import { AdvancedPineconeClient } from "./handlers/advanced";
 import { PineconeConfiguration } from "./pinecone";
 
 export const initPlugin: InitPluginFunction<
   PineconeConfiguration,
   AdvancedPineconeClient
-> = async (config: PineconeConfiguration) => {
+> = async (configOrSimpleHandler) => {
+  if (isConfig(configOrSimpleHandler)) {
+    const pureClient = new AdvancedPineconeClient({
+      config: configOrSimpleHandler,
+      gentraceConfig: globalGentraceConfig,
+    });
+    await pureClient.init({
+      apiKey: configOrSimpleHandler.apiKey,
+      environment: configOrSimpleHandler.environment,
+    });
+    return new PineconePlugin(configOrSimpleHandler, pureClient);
+  }
+
   const pureClient = new AdvancedPineconeClient({
-    config,
+    config: configOrSimpleHandler.getConfig(),
     gentraceConfig: globalGentraceConfig,
   });
-  await pureClient.init({
-    apiKey: config.apiKey,
-    environment: config.environment,
-  });
-  return new PineconePlugin(config, pureClient);
+
+  const extractedConfig = configOrSimpleHandler.getConfig();
+
+  await pureClient.init(extractedConfig);
+  return new PineconePlugin(extractedConfig, pureClient);
 };
 
 export class PineconePlugin extends GentracePlugin<
@@ -37,10 +49,6 @@ export class PineconePlugin extends GentracePlugin<
 
   getConfig(): PineconeConfiguration {
     return this.config;
-  }
-
-  async auth<T>(): Promise<T> {
-    return;
   }
 
   advanced({

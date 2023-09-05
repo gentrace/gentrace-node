@@ -28,7 +28,6 @@ export type PineconeConfiguration = {
 };
 
 export type GentraceParams = {
-  pipelineId?: string;
   pipelineSlug?: string;
   gentrace?: Context;
 };
@@ -51,9 +50,9 @@ export type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
 ) => Promise<Awaited<ReturnType<T>> & { pipelineRunId: string }>;
 
 export class PineconePipelineHandler extends PineconeClient {
-  private pipelineRun?: PipelineRun;
-  private gentraceConfig: GentraceConfiguration;
-  private config?: PineconeConfiguration;
+  protected pipelineRun?: PipelineRun;
+  protected gentraceConfig: GentraceConfiguration;
+  protected config?: PineconeConfiguration;
 
   constructor({
     pipelineRun,
@@ -109,6 +108,9 @@ export class PineconePipelineHandler extends PineconeClient {
    * Pinecone-specific function overrides listed below
    */
   public async init(params?: PineconeConfiguration) {
+    if (params) {
+      this.config = params;
+    }
     await super.init(params ? params : this.config);
   }
 
@@ -128,7 +130,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
           const response = await boundFetch(requestParameters, initOverrides);
@@ -168,7 +170,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const { updateRequest } = requestParameters;
           const startTime = Date.now();
@@ -211,7 +213,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const { queryRequest } = requestParameters;
 
@@ -257,7 +259,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const { upsertRequest } = requestParameters;
           const startTime = Date.now();
@@ -295,7 +297,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        deleteRequest.pipelineId ?? deleteRequest.pipelineSlug,
+        deleteRequest.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
           const response = await boundDelete(deleteRequest, initOverrides);
