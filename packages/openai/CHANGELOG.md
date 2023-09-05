@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.6
+
+### Patch Changes
+
+- 6ddcdaa: Fix a few different issues
+- Updated dependencies [6ddcdaa]
+  - @gentrace/core@2.1.6
+
 ## 4.0.5
 
 ### Patch Changes
