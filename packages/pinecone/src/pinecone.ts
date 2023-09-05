@@ -48,7 +48,7 @@ export type ModifyFirstParam<T, U> = T extends (
 
 export type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
   ...args: Parameters<T>
-) => Promise<Awaited<ReturnType<T>> & { pipelineRunid: string }>;
+) => Promise<Awaited<ReturnType<T>> & { pipelineRunId: string }>;
 
 export class PineconePipelineHandler extends PineconeClient {
   private pipelineRun?: PipelineRun;

@@ -1,6 +1,7 @@
 import {
   Configuration as GentraceConfiguration,
   GentracePlugin,
+  globalGentraceConfig,
   InitPluginFunction,
   PipelineRun,
 } from "@gentrace/core";
@@ -12,7 +13,10 @@ export const initPlugin: InitPluginFunction<
   PineconeConfiguration,
   AdvancedPineconeClient
 > = async (config: PineconeConfiguration) => {
-  const pureClient = new PurePineconeClient();
+  const pureClient = new AdvancedPineconeClient({
+    config,
+    gentraceConfig: globalGentraceConfig,
+  });
   await pureClient.init({
     apiKey: config.apiKey,
     environment: config.environment,
@@ -26,7 +30,7 @@ export class PineconePlugin extends GentracePlugin<
 > {
   constructor(
     public config: PineconeConfiguration,
-    private pureClient: PurePineconeClient,
+    private pureClient: AdvancedPineconeClient,
   ) {
     super();
   }
@@ -46,38 +50,23 @@ export class PineconePlugin extends GentracePlugin<
     pipelineRun: PipelineRun;
     gentraceConfig: GentraceConfiguration;
   }): AdvancedPineconeClient {
-    const advancedClient = new AdvancedPineconeClient({
-      pipelineRun,
-      gentraceConfig,
-      config: this.config,
-    });
+    // Hack to allow initialization in the initPlugin() function
+    const clonedHandler = Object.create(
+      this.pureClient,
+    ) as AdvancedPineconeClient;
 
-    // @ts-ignore
-    console.log(
-      "testing",
-      // @ts-ignore
-      advancedClient.__proto__,
-      // @ts-ignore
-      advancedClient.__proto__.constructor.name,
-      // @ts-ignore
-      advancedClient.__proto__.__proto__,
-      // @ts-ignore
-      advancedClient.__proto__.__proto__.constructor.name,
-      // @ts-ignore
-      advancedClient.__proto__.__proto__.__proto__,
-      // @ts-ignore
-      advancedClient.__proto__.__proto__.__proto__.constructor.name,
-      advancedClient.apiKey,
+    const advancedClientPrototype = Object.create(
+      Object.getPrototypeOf(clonedHandler),
     );
 
-    advancedClient.apiKey = this.pureClient.apiKey;
-    advancedClient.environment = this.pureClient.environment;
-    advancedClient.projectName = this.pureClient.projectName;
+    const handlerPrototype = Object.create(
+      Object.getPrototypeOf(advancedClientPrototype),
+    );
 
-    // @ts-ignore: Hack to ignore prototype patching. Two prototype hops are necessary:
-    // AdvancedPineconeClient -> PineconePipelineHandler -> PineconeClient.
-    advancedClient.__proto__.__proto__.__proto__ = this.pureClient;
+    advancedClientPrototype.__proto__ = handlerPrototype;
 
-    return advancedClient;
+    clonedHandler.setPipelineRun(pipelineRun);
+
+    return clonedHandler;
   }
 }
