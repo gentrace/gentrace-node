@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.2
+
+### Patch Changes
+
+- Convert private to public packages
+
 ## 2.1.1
 
 ### Patch Changes

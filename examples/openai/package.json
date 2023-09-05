@@ -7,8 +7,8 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.1.0",
-    "@gentrace/openai": "workspace:^4.0.0"
+    "@gentrace/core": "workspace:^2.1.2",
+    "@gentrace/openai": "workspace:^4.0.2"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",

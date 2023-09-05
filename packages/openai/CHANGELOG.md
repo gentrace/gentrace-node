@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.2
+
+### Patch Changes
+
+- Convert private to public packages
+- Updated dependencies
+  - @gentrace/core@2.1.2
+
 ## 4.0.1
 
 ### Patch Changes
