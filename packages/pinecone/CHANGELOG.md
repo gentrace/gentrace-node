@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.14
+
+### Patch Changes
+
+- 2d1ebd5: Fix issues with trying to publish already published packages
+- Updated dependencies [2d1ebd5]
+  - @gentrace/core@2.1.8
+
 ## 0.1.13
 
 ### Patch Changes
