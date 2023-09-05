@@ -1,5 +1,13 @@
 # @gentrace/openai-v3
 
+## 3.3.9
+
+### Patch Changes
+
+- 3601617: Fix issues with privacy toggle
+- Updated dependencies [3601617]
+  - @gentrace/core@2.1.9
+
 ## 3.3.8
 
 ### Patch Changes
