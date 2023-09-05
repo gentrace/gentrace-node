@@ -1,4 +1,4 @@
-import { Configuration as GentraceConfiguration } from "../configuration";
+import { Configuration as Configuration } from "../configuration";
 import { Context } from "./context";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
@@ -12,7 +12,7 @@ export type PineconeConfiguration = {
 export class Pipeline<T extends { [key: string]: GentracePlugin<any, any> }> {
   public id: string;
   public slug: string;
-  public config: GentraceConfiguration;
+  public config: Configuration;
   public plugins: T;
 
   constructor({
@@ -66,7 +66,7 @@ export class Pipeline<T extends { [key: string]: GentracePlugin<any, any> }> {
           "The apiKey parameter is deprecated. Please declare the API key in the init() call instead.",
         );
       }
-      this.config = new GentraceConfiguration({
+      this.config = new Configuration({
         apiKey,
         basePath,
         logger,
