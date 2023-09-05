@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.12
+
+### Patch Changes
+
+- 6ddcdaa: Fix a few different issues
+- Updated dependencies [6ddcdaa]
+  - @gentrace/core@2.1.6
+
 ## 0.1.11
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.6
+
+### Patch Changes
+
+- 6ddcdaa: Fix a few different issues
+
 ## 2.1.5
 
 ### Patch Changes

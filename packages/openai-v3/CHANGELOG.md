@@ -1,5 +1,13 @@
 # @gentrace/openai-v3
 
+## 3.3.6
+
+### Patch Changes
+
+- 6ddcdaa: Fix a few different issues
+- Updated dependencies [6ddcdaa]
+  - @gentrace/core@2.1.6
+
 ## 3.3.5
 
 ### Patch Changes
