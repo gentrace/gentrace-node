@@ -14,7 +14,7 @@
     "lintstaged": "lint-staged",
     "changeset:add": "changeset",
     "changeset:version": "changeset version",
-    "changeset:release": "changeset publish",
+    "changeset:publish": "changeset publish",
     "changeset:next": "changeset pre enter next",
     "changeset:normal": "changeset pre exit"
   },
