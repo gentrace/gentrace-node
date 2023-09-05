@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.4
+
+### Patch Changes
+
+- 07590a9: Make modifications to the installation process
+
 ## 2.1.3
 
 ### Patch Changes

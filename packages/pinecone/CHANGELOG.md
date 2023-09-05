@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.10
+
+### Patch Changes
+
+- 07590a9: Make modifications to the installation process
+- Updated dependencies [07590a9]
+  - @gentrace/core@2.1.4
+
 ## 0.1.9
 
 ### Patch Changes
