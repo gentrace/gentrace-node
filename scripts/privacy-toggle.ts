@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
+import { getPackages } from "@manypkg/get-packages";
 
 function writeOpenAIPackageJson(path: string, privacy: boolean) {
   // Define the path to the package.json file.
@@ -24,5 +25,14 @@ function writeOpenAIPackageJson(path: string, privacy: boolean) {
   console.log("Updated package.json to set private property to true.");
 }
 
-writeOpenAIPackageJson("../packages/openai/package.json", true);
-writeOpenAIPackageJson("../packages/openai-v3/package.json", false);
+const packages = getPackages(process.cwd());
+
+packages.then((packages) => {
+  for (const p of packages.packages) {
+    if (p.packageJson.name === "@gentrace/openai-v3") {
+      writeOpenAIPackageJson("../packages/openai-v3/package.json", false);
+    } else {
+      writeOpenAIPackageJson(`${p.dir}/package.json`, true);
+    }
+  }
+});
