@@ -40,7 +40,7 @@ jobs:
       - name: 🔐 Setup npm auth
         run: |
           echo "registry=https://registry.npmjs.org" >> ~/.npmrc
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" >> ~/.npmrc
 
       # First, deploy everything but OpenAI v3
       - name: 🚀 Publish
@@ -53,7 +53,7 @@ jobs:
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_REPO_PAT }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
       # Then, deploy OpenAI v3
       - name: 🚀 Publish (OpenAI v3)
