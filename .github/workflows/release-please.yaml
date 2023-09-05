@@ -48,6 +48,7 @@ jobs:
           
       - name: Modify privacy
         run: |
+          pnpx tsx scripts/privacy-toggle.ts
 
       # Then, deploy OpenAI v3
       - name: 🚀 Publish (OpenAI v3)
