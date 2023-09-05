@@ -1,0 +1,16 @@
+{
+  "extends": "@gentrace/tsconfig/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist",
+    "lib": ["ES2019", "DOM"],
+    "rootDir": "src"
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../core/tsconfig.json"
+    }
+  ]
+}

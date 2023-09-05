@@ -1,4 +1,4 @@
-import { Configuration as GentraceConfiguration } from "../configuration";
+import { Configuration as Configuration } from "../configuration";
 import { CoreApi } from "../api";
 import { getProcessEnv } from "./utils";
 
@@ -16,7 +16,7 @@ export let GENTRACE_COMMIT = "";
 
 export let GENTRACE_RUN_NAME = "";
 
-export let globalGentraceConfig: GentraceConfiguration | null = null;
+export let globalGentraceConfig: Configuration | null = null;
 
 export let globalGentraceApi: CoreApi | null = null;
 
@@ -61,7 +61,7 @@ export function init(values?: {
     GENTRACE_BASE_PATH = basePath;
   }
 
-  globalGentraceConfig = new GentraceConfiguration({
+  globalGentraceConfig = new Configuration({
     apiKey: GENTRACE_API_KEY,
     basePath: GENTRACE_BASE_PATH,
   });
