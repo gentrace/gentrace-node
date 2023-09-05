@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.7
+
+### Patch Changes
+
+- d753973: Fix issue with privacy script not changing the name
+
 ## 2.1.6
 
 ### Patch Changes

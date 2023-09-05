@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.13
+
+### Patch Changes
+
+- d753973: Fix issue with privacy script not changing the name
+- Updated dependencies [d753973]
+  - @gentrace/core@2.1.7
+
 ## 0.1.12
 
 ### Patch Changes
