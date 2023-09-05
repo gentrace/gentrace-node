@@ -1,5 +1,13 @@
 # @gentrace/openai-v3
 
+## 3.3.5
+
+### Patch Changes
+
+- 5fcdd89: Modify the lockfile installation semantics
+- Updated dependencies [5fcdd89]
+  - @gentrace/core@2.1.5
+
 ## 3.3.4
 
 ### Patch Changes
