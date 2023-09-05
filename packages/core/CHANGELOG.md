@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.9
+
+### Patch Changes
+
+- 3601617: Fix issues with privacy toggle
+
 ## 2.1.8
 
 ### Patch Changes

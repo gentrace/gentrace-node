@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.15
+
+### Patch Changes
+
+- 3601617: Fix issues with privacy toggle
+- Updated dependencies [3601617]
+  - @gentrace/core@2.1.9
+
 ## 0.1.14
 
 ### Patch Changes
