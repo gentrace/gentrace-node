@@ -2,12 +2,14 @@ import {
   globalGentraceConfig,
   Configuration as GentraceConfiguration,
   SimpleContext,
+  SimpleHandler,
 } from "@gentrace/core";
 import {
   FunctionWithPipelineRunId,
   ModifyFirstParam,
   PineconePipelineHandler,
   GentraceParams,
+  PineconeConfiguration,
 } from "../pinecone";
 import {
   Delete1Request,
@@ -18,7 +20,10 @@ import {
   VectorOperationsApi,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 
-class SimplePineconeClient extends PineconePipelineHandler {
+class SimplePineconeClient
+  extends PineconePipelineHandler
+  implements SimpleHandler<PineconeConfiguration>
+{
   constructor(params?: {
     /**
      * @deprecated Declare the API key in the init() call instead.
@@ -44,6 +49,9 @@ class SimplePineconeClient extends PineconePipelineHandler {
     super({
       gentraceConfig,
     });
+  }
+  getConfig(): PineconeConfiguration {
+    return this.config;
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues

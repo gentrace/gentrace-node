@@ -6,18 +6,18 @@ init({
   basePath: "http://localhost:3000/api/v1",
 });
 
-const plugin = initPlugin({
-  apiKey: process.env.OPENAI_KEY ?? "",
-});
-
-const pipeline = new Pipeline({
-  slug: "testing-pipeline-id",
-  plugins: {
-    openai: plugin,
-  },
-});
-
 async function createChatCompletion() {
+  const plugin = await initPlugin({
+    apiKey: process.env.OPENAI_KEY ?? "",
+  });
+
+  const pipeline = new Pipeline({
+    slug: "testing-pipeline-id",
+    plugins: {
+      openai: plugin,
+    },
+  });
+
   const runner = pipeline.start();
 
   const openai = runner.openai;

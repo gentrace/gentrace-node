@@ -50,9 +50,9 @@ export type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
 ) => Promise<Awaited<ReturnType<T>> & { pipelineRunId: string }>;
 
 export class PineconePipelineHandler extends PineconeClient {
-  private pipelineRun?: PipelineRun;
-  private gentraceConfig: GentraceConfiguration;
-  private config?: PineconeConfiguration;
+  protected pipelineRun?: PipelineRun;
+  protected gentraceConfig: GentraceConfiguration;
+  protected config?: PineconeConfiguration;
 
   constructor({
     pipelineRun,

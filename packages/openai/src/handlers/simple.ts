@@ -5,6 +5,7 @@ import {
   globalGentraceConfig,
   PipelineRun,
   SimpleContext,
+  SimpleHandler,
 } from "@gentrace/core";
 import OpenAI from "openai";
 import { RequestOptions } from "openai/core";
@@ -31,7 +32,10 @@ import {
   OpenAIPipelineHandler,
 } from "../openai";
 
-class SimpleOpenAI extends OpenAIPipelineHandler {
+class SimpleOpenAI
+  extends OpenAIPipelineHandler
+  implements SimpleHandler<GentraceClientOptions>
+{
   // @ts-ignore
   completions: SimpleGentraceCompletions;
 
@@ -99,6 +103,13 @@ class SimpleOpenAI extends OpenAIPipelineHandler {
       ...options,
       gentraceConfig,
     });
+  }
+  getConfig(): GentraceClientOptions {
+    return this.config;
+  }
+
+  setPipelineRun(pipelineRun: PipelineRun): void {
+    this.pipelineRun = pipelineRun;
   }
 }
 

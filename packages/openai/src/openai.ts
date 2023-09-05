@@ -527,16 +527,18 @@ export type GentraceClientOptions = ClientOptions & {
 };
 
 export class OpenAIPipelineHandler extends OpenAI {
+  protected config: GentraceClientOptions;
   protected pipelineRun?: PipelineRun;
   protected gentraceConfig: GentraceConfiguration;
 
   constructor({
     pipelineRun,
     gentraceConfig,
-    ...oaiOptions
+    ...config
   }: ClientOptions & OpenAIPipelineHandlerOptions) {
-    super(oaiOptions);
+    super(config);
 
+    this.config = config;
     this.pipelineRun = pipelineRun;
     this.gentraceConfig = gentraceConfig;
   }

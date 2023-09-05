@@ -27,9 +27,9 @@ type OpenAIPipelineHandlerOptions = {
 };
 
 export class OpenAIPipelineHandler extends OpenAIApi {
-  private pipelineRun?: PipelineRun;
-  private config?: OpenAIConfiguration;
-  private gentraceConfig: Configuration;
+  protected pipelineRun?: PipelineRun;
+  protected config?: OpenAIConfiguration;
+  protected gentraceConfig: Configuration;
 
   constructor({
     pipelineRun,

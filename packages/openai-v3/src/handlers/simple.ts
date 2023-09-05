@@ -3,10 +3,13 @@ import {
   Context,
   GENTRACE_API_KEY,
   globalGentraceConfig,
+  SimpleHandler,
+  PipelineRun,
   SimpleContext,
 } from "@gentrace/core";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
+  Configuration,
   Configuration as OpenAIConfiguration,
   ConfigurationParameters as OpenAIConfigurationParameters,
   CreateChatCompletionResponse,
@@ -76,7 +79,10 @@ type CreateEmbeddingRequestRestricted = Omit<
   gentrace?: SimpleContext;
 };
 
-class SimpleOpenAIApi extends OpenAIPipelineHandler {
+class SimpleOpenAIApi
+  extends OpenAIPipelineHandler
+  implements SimpleHandler<OpenAIConfiguration>
+{
   constructor(modifiedOAIConfig: ModifiedOpenAIConfiguration) {
     if (!modifiedOAIConfig.apiKey) {
       throw new Error("API key not provided.");
@@ -113,6 +119,14 @@ class SimpleOpenAIApi extends OpenAIPipelineHandler {
       config: modifiedOAIConfig,
       gentraceConfig,
     });
+  }
+
+  getConfig(): OpenAIConfiguration {
+    return this.config;
+  }
+
+  setPipelineRun(pipelineRun: PipelineRun): void {
+    this.pipelineRun = pipelineRun;
   }
 
   /**
