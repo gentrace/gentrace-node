@@ -1,13 +1,8 @@
-import { Configuration as Configuration } from "../configuration";
+import { Configuration } from "../configuration";
 import { Context } from "./context";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
 import { GentracePlugin } from "./plugin";
-
-export type PineconeConfiguration = {
-  apiKey: string;
-  environment: string;
-};
 
 export class Pipeline<T extends { [key: string]: GentracePlugin<any, any> }> {
   public id: string;

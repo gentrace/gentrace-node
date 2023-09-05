@@ -18,4 +18,4 @@ export abstract class GentracePlugin<C, A> {
 
 export type InitPluginFunction<C extends object, A> = (
   config: C,
-) => GentracePlugin<C, A>;
+) => Promise<GentracePlugin<C, A>>;
