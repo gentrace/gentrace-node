@@ -108,6 +108,9 @@ export class PineconePipelineHandler extends PineconeClient {
    * Pinecone-specific function overrides listed below
    */
   public async init(params?: PineconeConfiguration) {
+    if (params) {
+      this.config = params;
+    }
     await super.init(params ? params : this.config);
   }
 

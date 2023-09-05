@@ -31,6 +31,7 @@ export const initPlugin: InitPluginFunction<
   });
 
   const extractedConfig = configOrSimpleHandler.getConfig();
+
   await pureClient.init(extractedConfig);
   return new PineconePlugin(extractedConfig, pureClient);
 };

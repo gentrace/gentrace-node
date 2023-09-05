@@ -8,5 +8,5 @@ export interface SimpleHandler<C extends object> {
 
 export function isConfig<C extends object>(f: C | SimpleHandler<C>): f is C {
   // Naive check but works well
-  return (f as any).apiKey !== undefined;
+  return (f as any).getConfig === undefined;
 }
