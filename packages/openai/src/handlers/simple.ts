@@ -4,6 +4,7 @@ import {
   GENTRACE_API_KEY,
   globalGentraceConfig,
   PipelineRun,
+  SimpleContext,
 } from "@gentrace/core";
 import OpenAI from "openai";
 import { RequestOptions } from "openai/core";
@@ -122,7 +123,7 @@ class SimpleGentraceEmbeddings extends GentraceEmbeddings {
   async create(
     body: EmbeddingCreateParams & {
       pipelineSlug?: string;
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: SimpleContext;
     },
     options?: RequestOptions,
   ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
@@ -150,7 +151,7 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceCompletionCreateParamsNonStreaming, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: SimpleContext;
     },
     options?: RequestOptions,
   ): Promise<GentraceCompletion>;
@@ -158,7 +159,7 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceCompletionCreateParamsStreaming, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: SimpleContext;
     },
     options?: RequestOptions,
   ): Promise<
@@ -170,7 +171,7 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   async create(
     body: Omit<GentraceCompletionCreateParams, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: SimpleContext;
     },
     requestOptions?: RequestOptions,
   ): Promise<
@@ -228,7 +229,7 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceChatCompletionCreateParamsNonStreaming, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: SimpleContext;
     },
     options?: RequestOptions,
   ): Promise<GentraceChatCompletion>;
@@ -236,7 +237,7 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceChatCompletionCreateParamsStreaming, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: SimpleContext;
     },
     options?: RequestOptions,
   ): Promise<
@@ -248,7 +249,7 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   async create(
     body: Omit<GentraceChatCompletionCreateParams, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: SimpleContext;
     },
     requestOptions?: RequestOptions,
   ): Promise<

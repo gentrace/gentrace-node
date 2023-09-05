@@ -3,6 +3,7 @@ import {
   Context,
   GENTRACE_API_KEY,
   globalGentraceConfig,
+  SimpleContext,
 } from "@gentrace/core";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
@@ -54,18 +55,14 @@ type CreateChatCompletionTemplateRequestRestricted = Omit<
   CreateChatCompletionTemplateRequest,
   "gentrace"
 > & {
-  gentrace?: {
-    userId?: string;
-  };
+  gentrace?: SimpleContext;
 };
 
 type CreateCompletionTemplateRequestRestricted = Omit<
   CreateCompletionTemplateRequest,
   "gentrace"
 > & {
-  gentrace?: {
-    userId?: string;
-  };
+  gentrace?: SimpleContext;
 };
 
 type CreateEmbeddingRequestRestricted = Omit<
@@ -76,9 +73,7 @@ type CreateEmbeddingRequestRestricted = Omit<
   },
   "gentrace"
 > & {
-  gentrace?: {
-    userId?: string;
-  };
+  gentrace?: SimpleContext;
 };
 
 class SimpleOpenAIApi extends OpenAIPipelineHandler {

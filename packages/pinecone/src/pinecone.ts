@@ -28,7 +28,6 @@ export type PineconeConfiguration = {
 };
 
 export type GentraceParams = {
-  pipelineId?: string;
   pipelineSlug?: string;
   gentrace?: Context;
 };
@@ -128,7 +127,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
           const response = await boundFetch(requestParameters, initOverrides);
@@ -168,7 +167,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const { updateRequest } = requestParameters;
           const startTime = Date.now();
@@ -211,7 +210,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const { queryRequest } = requestParameters;
 
@@ -257,7 +256,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineId ?? requestParameters.pipelineSlug,
+        requestParameters.pipelineSlug,
         async (pipelineRun) => {
           const { upsertRequest } = requestParameters;
           const startTime = Date.now();
@@ -295,7 +294,7 @@ export class PineconePipelineHandler extends PineconeClient {
       initOverrides?: RequestInit | InitOverrideFunction,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        deleteRequest.pipelineId ?? deleteRequest.pipelineSlug,
+        deleteRequest.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
           const response = await boundDelete(deleteRequest, initOverrides);

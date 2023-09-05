@@ -1,4 +1,5 @@
 import {
+  AdvancedContext,
   Configuration as GentraceConfiguration,
   Context,
   PipelineRun,
@@ -91,7 +92,7 @@ class AdvancedGentraceEmbeddings extends GentraceEmbeddings {
   async create(
     body: EmbeddingCreateParams & {
       pipelineSlug?: string;
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: AdvancedContext;
     },
     options?: RequestOptions,
   ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
@@ -119,7 +120,7 @@ export class AdvancedGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceCompletionCreateParamsNonStreaming, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: AdvancedContext;
     },
     options?: RequestOptions,
   ): Promise<GentraceCompletion>;
@@ -127,7 +128,7 @@ export class AdvancedGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceCompletionCreateParamsStreaming, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: AdvancedContext;
     },
     options?: RequestOptions,
   ): Promise<
@@ -139,7 +140,7 @@ export class AdvancedGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   async create(
     body: Omit<GentraceCompletionCreateParams, "gentrace"> & {
-      gentrace?: Pick<Context, "userId">;
+      gentrace?: AdvancedContext;
     },
     requestOptions?: RequestOptions,
   ): Promise<
@@ -197,7 +198,7 @@ class AdvancedGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceChatCompletionCreateParamsNonStreaming, "gentrace"> & {
-      gentrace?: {};
+      gentrace?: AdvancedContext;
     },
     options?: RequestOptions,
   ): Promise<GentraceChatCompletion>;
@@ -205,7 +206,7 @@ class AdvancedGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceChatCompletionCreateParamsStreaming, "gentrace"> & {
-      gentrace?: {};
+      gentrace?: AdvancedContext;
     },
     options?: RequestOptions,
   ): Promise<
@@ -217,7 +218,7 @@ class AdvancedGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   async create(
     body: Omit<GentraceChatCompletionCreateParams, "gentrace"> & {
-      gentrace?: {};
+      gentrace?: AdvancedContext;
     },
     requestOptions?: RequestOptions,
   ): Promise<

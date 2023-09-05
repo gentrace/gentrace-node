@@ -1,6 +1,7 @@
 import {
   globalGentraceConfig,
   Configuration as GentraceConfiguration,
+  SimpleContext,
 } from "@gentrace/core";
 import {
   FunctionWithPipelineRunId,
@@ -56,9 +57,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         FetchFunctionType,
         FetchRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -70,9 +69,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         UpdateFunctionType,
         UpdateOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -84,9 +81,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         QueryFunctionType,
         QueryOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -98,9 +93,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         UpsertFunctionType,
         UpsertOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
@@ -112,9 +105,7 @@ class SimplePineconeClient extends PineconePipelineHandler {
         DeleteFunctionType,
         Delete1Request &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: {
-              userId?: string;
-            };
+            gentrace?: SimpleContext;
           }
       >
     >;
