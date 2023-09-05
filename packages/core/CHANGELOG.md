@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.8
+
+### Patch Changes
+
+- 2d1ebd5: Fix issues with trying to publish already published packages
+
 ## 2.1.7
 
 ### Patch Changes
