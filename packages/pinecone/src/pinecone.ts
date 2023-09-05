@@ -48,7 +48,7 @@ export type ModifyFirstParam<T, U> = T extends (
 
 export type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
   ...args: Parameters<T>
-) => Promise<Awaited<ReturnType<T>> & { pipelineRunId: string }>;
+) => Promise<Awaited<ReturnType<T>> & { pipelineRunid: string }>;
 
 export class PineconePipelineHandler extends PineconeClient {
   private pipelineRun?: PipelineRun;
@@ -81,8 +81,6 @@ export class PineconePipelineHandler extends PineconeClient {
 
     if (isSelfContainedPipelineRun) {
       const pipeline = new Pipeline({
-        // @deprecated: remove this and favor only the slug in future releases
-        id: pipelineId,
         slug: pipelineId,
         apiKey: this.gentraceConfig.apiKey,
         basePath: this.gentraceConfig.basePath,

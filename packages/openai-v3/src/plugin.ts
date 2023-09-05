@@ -10,7 +10,7 @@ import { OpenAIConfiguration } from "./handlers/simple";
 export const initPlugin: InitPluginFunction<
   OpenAIConfiguration,
   AdvancedOpenAIApi
-> = (config: OpenAIConfiguration) => {
+> = async (config: OpenAIConfiguration) => {
   return new OpenAIPlugin(config);
 };
 

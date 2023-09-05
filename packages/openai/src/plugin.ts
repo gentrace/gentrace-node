@@ -10,7 +10,7 @@ import { GentraceClientOptions as GentraceOpenAIClientOptions } from "./openai";
 export const initPlugin: InitPluginFunction<
   GentraceOpenAIClientOptions,
   AdvancedOpenAI
-> = (config: GentraceOpenAIClientOptions) => {
+> = async (config: GentraceOpenAIClientOptions) => {
   return new OpenAIPlugin(config);
 };
 
