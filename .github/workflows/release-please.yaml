@@ -66,6 +66,9 @@ jobs:
         run: |
           pnpx tsx scripts/privacy-toggle.ts
 
+      - name: Sleep to allow NPM to properly update their package indices
+        run: sleep 7
+
       # Then, deploy OpenAI v3
       - name: 🚀 Publish (OpenAI v3)
         if: steps.changesets.outputs.hasChangesets == 'false'

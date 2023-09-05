@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
-function writePackageJson(path: string, privacy: boolean) {
+function writeOpenAIPackageJson(path: string, privacy: boolean) {
   // Define the path to the package.json file.
   const packageJsonPath = join(__dirname, path);
 
@@ -14,6 +14,7 @@ function writePackageJson(path: string, privacy: boolean) {
     packageJson.private = true;
   } else {
     delete packageJson["private"];
+    packageJson["name"] = "@gentrace/openai";
   }
 
   // Write the modified package.json back to the file.
@@ -23,5 +24,5 @@ function writePackageJson(path: string, privacy: boolean) {
   console.log("Updated package.json to set private property to true.");
 }
 
-writePackageJson("../packages/openai/package.json", true);
-writePackageJson("../packages/openai-v3/package.json", false);
+writeOpenAIPackageJson("../packages/openai/package.json", true);
+writeOpenAIPackageJson("../packages/openai-v3/package.json", false);
