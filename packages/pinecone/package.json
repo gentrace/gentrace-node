@@ -1,14 +1,16 @@
 {
-  "name": "@gentrace/openai-v3",
-  "version": "3.3.0",
-  "description": "Gentrace OpenAI v3 plugin for Node.JS",
+  "name": "@gentrace/pinecone",
+  "version": "0.1.6",
+  "description": "Gentrace Pinecone v3 plugin for Node.JS",
   "repository": {
     "type": "git",
     "url": "git@github.com:gentrace/gentrace-node.git"
   },
   "keywords": [
     "gentrace",
-    "openai"
+    "pinecone",
+    "vectordb",
+    "embeddings"
   ],
   "author": "Gentrace",
   "license": "MIT",
@@ -24,8 +26,7 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.0.0",
-    "@pinecone-database/pinecone": "^0.1.6",
-    "axios": "~0.26.1"
+    "@pinecone-database/pinecone": "^0.1.6"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",

@@ -52,9 +52,31 @@ export class PineconePlugin extends GentracePlugin<
       config: this.config,
     });
 
+    // @ts-ignore
+    console.log(
+      "testing",
+      // @ts-ignore
+      advancedClient.__proto__,
+      // @ts-ignore
+      advancedClient.__proto__.constructor.name,
+      // @ts-ignore
+      advancedClient.__proto__.__proto__,
+      // @ts-ignore
+      advancedClient.__proto__.__proto__.constructor.name,
+      // @ts-ignore
+      advancedClient.__proto__.__proto__.__proto__,
+      // @ts-ignore
+      advancedClient.__proto__.__proto__.__proto__.constructor.name,
+      advancedClient.apiKey,
+    );
+
+    advancedClient.apiKey = this.pureClient.apiKey;
+    advancedClient.environment = this.pureClient.environment;
+    advancedClient.projectName = this.pureClient.projectName;
+
     // @ts-ignore: Hack to ignore prototype patching. Two prototype hops are necessary:
     // AdvancedPineconeClient -> PineconePipelineHandler -> PineconeClient.
-    advancedClient.__proto__.__proto__ = this.pureClient;
+    advancedClient.__proto__.__proto__.__proto__ = this.pureClient;
 
     return advancedClient;
   }
