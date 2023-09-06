@@ -13,7 +13,9 @@ Gentrace Node.js Monorepo
 <!-- TEXT_SECTION:header:END -->
 
 > [!IMPORTANT]
-> This version of the Node.JS SDK is a monorepo that contains multiple different packages. Previously, we had separated [our v0 branch](https://github.com/gentrace/gentrace-node/tree/v0) and [our v1 branch]((https://github.com/gentrace/gentrace-node/tree/v1) to support OpenAI v3 and v4, respectively. Visit the above URLs to learn more about how to install those specific versions.
+> This version of the Node.JS SDK is a monorepo that contains multiple different packages. Previously, we had separated [our v0 branch](https://github.com/gentrace/gentrace-node/tree/v0) and [our v1 branch](https://github.com/gentrace/gentrace-node/tree/v1) to support OpenAI v3 and v4, respectively. 
+> 
+> Visit the above URLs to learn more about how to install those deprecated packages.
 
 
 ## Packages
