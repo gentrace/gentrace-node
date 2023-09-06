@@ -1,5 +1,15 @@
 # @gentrace/pinecone
 
+## 0.1.17
+
+### Patch Changes
+
+- f54e583: Fix issues with frozen lockfile
+- afce438: Fix issue with pnpm lock file
+- Updated dependencies [f54e583]
+- Updated dependencies [afce438]
+  - @gentrace/core@2.1.11
+
 ## 0.1.16
 
 ### Patch Changes
