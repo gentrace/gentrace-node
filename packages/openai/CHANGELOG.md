@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.10
+
+### Patch Changes
+
+- 2bf3e0f: Fix issues with workflows and tests
+- Updated dependencies [2bf3e0f]
+  - @gentrace/core@2.1.10
+
 ## 4.0.9
 
 ### Patch Changes

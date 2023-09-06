@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.16
+
+### Patch Changes
+
+- 2bf3e0f: Fix issues with workflows and tests
+- Updated dependencies [2bf3e0f]
+  - @gentrace/core@2.1.10
+
 ## 0.1.15
 
 ### Patch Changes
