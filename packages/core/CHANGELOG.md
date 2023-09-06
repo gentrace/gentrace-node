@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.11
+
+### Patch Changes
+
+- f54e583: Fix issues with frozen lockfile
+- afce438: Fix issue with pnpm lock file
+
 ## 2.1.10
 
 ### Patch Changes
