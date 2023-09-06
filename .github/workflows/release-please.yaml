@@ -56,6 +56,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_REPO_PAT }}
           NPM_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
+      # Hack to allow the OpenAI v3 to be deployed even though
+      # v4 also has the same package name.
       - name: Modify privacy
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
