@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.12
+
+### Patch Changes
+
+- 40073c3: Fix issues with test
+
 ## 2.1.11
 
 ### Patch Changes

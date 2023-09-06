@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/openai-v3",
-  "version": "3.3.11",
+  "version": "3.3.12",
   "description": "Gentrace OpenAI v3 plugin for Node.JS",
   "private": true,
   "repository": {
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "axios": "~0.26.1",
-    "@gentrace/core": "workspace:^2.1.11",
+    "@gentrace/core": "workspace:^2.1.12",
     "openai": "^3.0.0"
   },
   "devDependencies": {

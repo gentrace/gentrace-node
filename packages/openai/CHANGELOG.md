@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.12
+
+### Patch Changes
+
+- 40073c3: Fix issues with test
+- Updated dependencies [40073c3]
+  - @gentrace/core@2.1.12
+
 ## 4.0.11
 
 ### Patch Changes
