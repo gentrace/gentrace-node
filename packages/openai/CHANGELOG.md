@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.13
+
+### Patch Changes
+
+- 6bfceb0: Fix issues with utility files
+- Updated dependencies [6bfceb0]
+  - @gentrace/core@2.1.13
+
 ## 4.0.12
 
 ### Patch Changes

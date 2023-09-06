@@ -46,13 +46,13 @@ importers:
     dependencies:
       '@gentrace/core':
         specifier: ^2.1.2
-        version: 2.1.12
+        version: link:../../packages/core
       '@gentrace/openai':
         specifier: ^4.0.2
-        version: 4.0.12
+        version: link:../../packages/openai
       '@gentrace/pinecone':
         specifier: ^0.1.18
-        version: 0.1.18
+        version: link:../../packages/pinecone
     devDependencies:
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -371,7 +371,7 @@ importers:
   packages/openai:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.1.12
+        specifier: workspace:^2.1.13
         version: link:../core
       openai:
         specifier: ^4.0.0
@@ -426,7 +426,7 @@ importers:
   packages/openai-v3:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.1.12
+        specifier: workspace:^2.1.13
         version: link:../core
       axios:
         specifier: ~0.26.1
@@ -484,7 +484,7 @@ importers:
   packages/pinecone:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.1.12
+        specifier: workspace:^2.1.13
         version: link:../core
       '@pinecone-database/pinecone':
         specifier: ^0.1.6
@@ -2354,36 +2354,6 @@ packages:
     resolution: {integrity: sha512-ZSjtmelB7IJfWD2Fvb7+Z+ChTIKWq6kjda95fLcQKNS5aheVHn4IkfgRQE3sIIzTcSLwLcLZUD9UBt+V7+h+Pw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
-
-  /@gentrace/core@2.1.12:
-    resolution: {integrity: sha512-38Bhj9lxbGFv5YMYIeWcp9b5hOfwrj+xe1Wvvs6oKm3kIzxw/O5e0Q2Fk3LWJ8Jhm7mhkYvHTA0TTR9y42FAuA==}
-    dependencies:
-      axios: 1.5.0
-      mustache: 4.2.0
-      uuid: 9.0.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
-  /@gentrace/openai@4.0.12:
-    resolution: {integrity: sha512-GmyBxJKkBs+Wvk0oBwQX8RvGXfetRsEoaqSLVhmVUkXzAZ9Bp+aOmVmB8jwTd9xVPQhrFEpUw0y1HcZ5NZ0+fQ==}
-    dependencies:
-      '@gentrace/core': 2.1.12
-      openai: 4.3.1
-    transitivePeerDependencies:
-      - debug
-      - encoding
-    dev: false
-
-  /@gentrace/pinecone@0.1.18:
-    resolution: {integrity: sha512-lJENfnMOl0KR59exksz7Wh1nh9jJzBh14SwtlY7VVpMm+2V1HO68e4ACsnK9oLSbwMhUlOUZMRPAoRNmoNkE5g==}
-    dependencies:
-      '@gentrace/core': 2.1.12
-      '@pinecone-database/pinecone': 0.1.6
-    transitivePeerDependencies:
-      - debug
-      - encoding
-    dev: false
 
   /@humanwhocodes/config-array@0.11.10:
     resolution: {integrity: sha512-KVVjQmNUepDVGXNuoRRdmmEjruj0KfiGSbS8LVc12LMsWDQzRXJ0qdhN8L8uUigKpfEHRhlaQFY0ib1tnUbNeQ==}
