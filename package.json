@@ -14,7 +14,7 @@
     "commitlint": "commitlint --edit",
     "lintstaged": "lint-staged",
     "changeset:add": "changeset",
-    "changeset:version": "changeset version",
+    "changeset:version": "changeset version && pnpm i",
     "changeset:publish": "changeset publish",
     "changeset:next": "changeset pre enter next",
     "changeset:normal": "changeset pre exit"
