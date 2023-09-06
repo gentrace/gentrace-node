@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.10
+
+### Patch Changes
+
+- 2bf3e0f: Fix issues with workflows and tests
+
 ## 2.1.9
 
 ### Patch Changes
