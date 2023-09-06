@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/pinecone",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Gentrace Pinecone plugin for Node.JS",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "rollup:compile": "rollup --config rollup.config.mjs"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.1.12",
+    "@gentrace/core": "workspace:^2.1.13",
     "@pinecone-database/pinecone": "^0.1.6"
   },
   "devDependencies": {

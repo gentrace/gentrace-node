@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.13
+
+### Patch Changes
+
+- 6bfceb0: Fix issues with utility files
+
 ## 2.1.12
 
 ### Patch Changes

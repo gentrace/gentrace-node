@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.19
+
+### Patch Changes
+
+- 6bfceb0: Fix issues with utility files
+- Updated dependencies [6bfceb0]
+  - @gentrace/core@2.1.13
+
 ## 0.1.18
 
 ### Patch Changes
