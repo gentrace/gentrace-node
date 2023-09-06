@@ -1,6 +1,5 @@
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
 import { getPackages } from "@manypkg/get-packages";
+import { readFileSync, writeFileSync } from "fs";
 
 function writeOpenAIPackageJson(path: string, privacy: boolean) {
   // Read the package.json file.

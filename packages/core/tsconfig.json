@@ -6,7 +6,8 @@
     "typeRoots": ["node_modules/@types"],
     "allowJs": true,
     "rootDir": ".",
-    "lib": ["ES2019", "DOM"]
+    "lib": ["ES2019", "DOM"],
+    "types": ["jest", "node"]
   },
   "include": ["./**/*.ts", "./**/*.js"],
   "exclude": ["node_modules", "dist"]

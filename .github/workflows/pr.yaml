@@ -10,33 +10,25 @@ jobs:
         node-version: ['18.15.0', '16.13.1']
     
     steps:
-      - uses: actions/checkout@v3
-
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      
+      - name: ⎔ Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8.7.0
+         
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: package/package-lock.json
-        if: ${{ steps.release.outputs['package--release_created'] }}
+          cache: 'pnpm'
 
-      - name: Install and build
-        run: |
-          cd package
-          npm ci
-          npm run build
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
           
-      - name: Create .env file
-        run: |
-          cd package
-          touch .env
-          echo GENTRACE_API_KEY=test-api-key >> .env
-          echo OPENAI_KEY=test-api-key >> .env
-          echo OPENAI_ORG_ID=test-org-id >> .env
-          echo PINECONE_API_KEY=test-api-key >> .env
-          echo PINECONE_ENVIRONMENT=test-environment >> .env
-
-      - name: Run Jest tests
-        run: |
-          cd package
-          npm run test
+      - name: Build assets
+        run: pnpm -w run build
+          
+      - name: Run tests
+        run: pnpm run test
