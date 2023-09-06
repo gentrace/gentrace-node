@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 0.1.18
+
+### Patch Changes
+
+- 40073c3: Fix issues with test
+- Updated dependencies [40073c3]
+  - @gentrace/core@2.1.12
+
 ## 0.1.17
 
 ### Patch Changes
