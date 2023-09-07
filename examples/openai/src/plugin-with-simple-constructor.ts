@@ -1,4 +1,4 @@
-import { initPlugin, OpenAIApi } from "@gentrace/openai";
+import OpenAI, { initPlugin } from "@gentrace/openai";
 import { init, Pipeline } from "@gentrace/core";
 
 init({
@@ -7,7 +7,7 @@ init({
 });
 
 async function createChatCompletion() {
-  const openaiSimple = new OpenAIApi({
+  const openaiSimple = new OpenAI({
     apiKey: process.env.OPENAI_KEY,
   });
 

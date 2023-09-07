@@ -1,12 +1,12 @@
 import { init } from "@gentrace/core";
-import { OpenAIApi } from "@gentrace/openai";
+import { OpenAI } from "@gentrace/openai";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   basePath: "http://localhost:3000/api/v1",
 });
 
-const openai = new OpenAIApi({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_KEY,
 });
 
