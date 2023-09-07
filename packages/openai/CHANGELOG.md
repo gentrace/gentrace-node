@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.0.14
+
+### Patch Changes
+
+- 9118f4e: Fix import naming of OpenAI v4 plugin
+
 ## 4.0.13
 
 ### Patch Changes
