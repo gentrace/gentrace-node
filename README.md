@@ -36,17 +36,17 @@ _Gentrace Pinecone_ (`@gentrace/pinecone`): plugin for the Pinecone SDK.
 ## Installation
 
 ```bash
-$ # Gentrace core
-$ npm install @gentrace/core
-$
-$ # Gentrace OpenAI v3 plugin
-$ npm install @gentrace/openai@v3
-$
-$ # Gentrace OpenAI v4 plugin
-$ npm install @gentrace/openai@v4
-$
-$ # Gentrace Pinecone plugin
-$ npm install @gentrace/pinecone
+# Gentrace core
+npm install @gentrace/core
+
+# Gentrace OpenAI v3 plugin
+npm install @gentrace/openai@v3
+
+# Gentrace OpenAI v4 plugin
+npm install @gentrace/openai@v4
+
+# Gentrace Pinecone plugin
+npm install @gentrace/pinecone
 ```
 
 ## Getting started
