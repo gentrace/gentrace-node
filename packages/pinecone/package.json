@@ -21,7 +21,8 @@
     "build": "run-s clean typescript:compile rollup:compile",
     "typescript:compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "rollup:compile": "rollup --config rollup.config.mjs"
+    "rollup:compile": "rollup --config rollup.config.mjs",
+    "test": "jest"
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.13",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
+    "@mswjs/interceptors": "^0.17.9",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-typescript": "^11.1.0",
