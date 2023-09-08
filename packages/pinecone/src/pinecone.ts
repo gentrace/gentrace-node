@@ -1,34 +1,30 @@
 import {
+  Configuration as GentraceConfiguration,
+  Context,
+  Pipeline,
+  PipelineRun,
+  StepRun,
+} from "@gentrace/core";
+import {
+  DeleteManyOptions,
   DeleteOneOptions,
   FetchOptions,
+  Index,
   Pinecone,
   PineconeRecord,
   QueryOptions,
   RecordMetadata,
   UpdateOptions,
-} from "@pinecone-database/pinecone";
-import {
-  Delete1Request,
-  FetchRequest,
   FetchResponse,
-  InitOverrideFunction,
-  QueryOperationRequest,
   QueryRequest,
   QueryResponse,
-  UpdateOperationRequest,
   UpdateRequest,
-  UpsertOperationRequest,
   UpsertRequest,
-  UpsertResponse,
-  VectorOperationsApi,
-} from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
+} from "@pinecone-database/pinecone";
 import {
-  Configuration as GentraceConfiguration,
-  Context,
-  PipelineRun,
-  Pipeline,
-  StepRun,
-} from "@gentrace/core";
+  FetchRequest,
+  UpsertResponse,
+} from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 
 export type PineconeConfiguration = {
   apiKey: string;
@@ -51,6 +47,14 @@ export type ModifyFirstParam<T, U> = T extends (
   ...args: infer A
 ) => infer R
   ? (param1: U, ...args: A) => R
+  : never;
+
+export type ModifySecondParam<T, U> = T extends (
+  param1: infer P1,
+  param2: infer P2,
+  ...args: infer A
+) => infer R
+  ? (param1: P1, param2: U, ...args: A) => R
   : never;
 
 type AppendGentraceParams<F extends (...args: any[]) => any> = (
@@ -275,13 +279,13 @@ export class PineconePipelineHandler extends Pinecone {
     // @ts-ignore
     apiHandler.upsert = upsert;
 
-    type DeleteFunctionType = typeof apiHandler.deleteOne;
+    type DeleteOneFunctionType = typeof apiHandler.deleteOne;
 
     type ModifiedDeleteOneFunction = FunctionWithPipelineRunId<
-      AppendGentraceParams<DeleteFunctionType>
+      AppendGentraceParams<DeleteOneFunctionType>
     >;
 
-    const boundDelete = apiHandler.deleteOne.bind(apiHandler);
+    const boundOneDelete = apiHandler.deleteOne.bind(apiHandler);
     const deleteOne: ModifiedDeleteOneFunction = async (
       recordId: DeleteOneOptions,
       gentraceParams?: GentraceParams,
@@ -290,12 +294,12 @@ export class PineconePipelineHandler extends Pinecone {
         gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
-          const response = await boundDelete(recordId);
+          const response = await boundOneDelete(recordId);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
           pipelineRun?.addStepRunNode(
-            new PineconeDeleteStepRun(
+            new PineconeDeleteOneStepRun(
               elapsedTime,
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
@@ -313,8 +317,82 @@ export class PineconePipelineHandler extends Pinecone {
     // @ts-ignore
     apiHandler.deleteOne = deleteOne;
 
-    type ModifiedVectorOperationsApi = Omit<
-      VectorOperationsApi,
+    type DeleteManyFunctionType = typeof apiHandler.deleteMany;
+
+    type ModifiedDeleteManyFunction = FunctionWithPipelineRunId<
+      AppendGentraceParams<DeleteManyFunctionType>
+    >;
+
+    const boundManyDelete = apiHandler.deleteMany.bind(apiHandler);
+    const deleteMany: ModifiedDeleteManyFunction = async (
+      options: DeleteManyOptions,
+      gentraceParams?: GentraceParams,
+    ) => {
+      return this.setupSelfContainedPipelineRun(
+        gentraceParams?.pipelineSlug,
+        async (pipelineRun) => {
+          const startTime = Date.now();
+          const response = await boundManyDelete(options);
+          const endTime = Date.now();
+          const elapsedTime = Math.floor(endTime - startTime);
+
+          pipelineRun?.addStepRunNode(
+            new PineconeDeleteManyStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              { options },
+              response,
+              gentraceParams.gentrace ?? {},
+            ),
+          );
+
+          return response;
+        },
+      );
+    };
+
+    // @ts-ignore
+    apiHandler.deleteMany = deleteMany;
+
+    type DeleteAllFunctionType = typeof apiHandler.deleteAll;
+
+    type ModifiedDeleteAllFunction = FunctionWithPipelineRunId<
+      AppendGentraceParams<DeleteAllFunctionType>
+    >;
+
+    const boundAllDelete = apiHandler.deleteAll.bind(apiHandler);
+    const deleteAll: ModifiedDeleteAllFunction = async (
+      gentraceParams?: GentraceParams,
+    ) => {
+      return this.setupSelfContainedPipelineRun(
+        gentraceParams?.pipelineSlug,
+        async (pipelineRun) => {
+          const startTime = Date.now();
+          const response = await boundAllDelete();
+          const endTime = Date.now();
+          const elapsedTime = Math.floor(endTime - startTime);
+
+          pipelineRun?.addStepRunNode(
+            new PineconeDeleteAllStepRun(
+              elapsedTime,
+              new Date(startTime).toISOString(),
+              new Date(endTime).toISOString(),
+              response,
+              gentraceParams.gentrace ?? {},
+            ),
+          );
+
+          return response;
+        },
+      );
+    };
+
+    // @ts-ignore
+    apiHandler.deleteAll = deleteAll;
+
+    type ModifiedIndex = Omit<
+      Index,
       "fetch" | "update" | "query" | "upsert" | "deleteOne"
     > & {
       fetch: ModifiedFetchFunction;
@@ -322,22 +400,24 @@ export class PineconePipelineHandler extends Pinecone {
       query: ModifiedQueryFunction;
       upsert: ModifiedUpsertFunction;
       deleteOne: ModifiedDeleteOneFunction;
+      deleteMany: ModifiedDeleteManyFunction;
+      deleteAll: ModifiedDeleteAllFunction;
     };
 
     // @ts-ignore
-    return apiHandler as ModifiedVectorOperationsApi;
+    return apiHandler as ModifiedIndex;
   }
 }
 
 class PineconeFetchStepRun extends StepRun {
-  public inputs: FetchRequest;
+  public inputs: { ids: FetchOptions };
   public response: FetchResponse;
 
   constructor(
     elapsedTime: number,
     startTime: string,
     endTime: string,
-    inputs: FetchRequest,
+    inputs: { ids: FetchOptions },
     response: FetchResponse,
     context: Context,
   ) {
@@ -434,8 +514,8 @@ class PineconeUpsertStepRun extends StepRun {
   }
 }
 
-class PineconeDeleteStepRun extends StepRun {
-  public inputs: Delete1Request;
+class PineconeDeleteOneStepRun extends StepRun {
+  public inputs: DeleteOneOptions;
   public response: object;
 
   constructor(
@@ -453,6 +533,56 @@ class PineconeDeleteStepRun extends StepRun {
       startTime,
       endTime,
       inputs,
+      {},
+      response,
+      context ?? {},
+    );
+  }
+}
+
+class PineconeDeleteManyStepRun extends StepRun {
+  public inputs: DeleteManyOptions;
+  public response: object;
+
+  constructor(
+    elapsedTime: number,
+    startTime: string,
+    endTime: string,
+    inputs: { options: DeleteManyOptions },
+    response: object,
+    context: Context,
+  ) {
+    super(
+      "pinecone",
+      "pinecone_indexDeleteMany",
+      elapsedTime,
+      startTime,
+      endTime,
+      inputs,
+      {},
+      response,
+      context ?? {},
+    );
+  }
+}
+
+class PineconeDeleteAllStepRun extends StepRun {
+  public response: object;
+
+  constructor(
+    elapsedTime: number,
+    startTime: string,
+    endTime: string,
+    response: object,
+    context: Context,
+  ) {
+    super(
+      "pinecone",
+      "pinecone_indexDeleteAll",
+      elapsedTime,
+      startTime,
+      endTime,
+      {},
       {},
       response,
       context ?? {},

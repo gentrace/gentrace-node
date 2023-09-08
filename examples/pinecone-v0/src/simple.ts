@@ -1,5 +1,5 @@
 import { init } from "@gentrace/core";
-import { PineconeClient } from "@gentrace/pinecone";
+import { PineconeClient } from "@gentrace/pinecone-v0";
 import { DEFAULT_VECTOR } from "./utils";
 
 init({

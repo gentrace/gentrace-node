@@ -1,5 +1,5 @@
 import { init, Pipeline } from "@gentrace/core";
-import { initPlugin, PineconeClient } from "@gentrace/pinecone";
+import { initPlugin, PineconeClient } from "@gentrace/pinecone-v0";
 import { DEFAULT_VECTOR } from "./utils";
 
 async function createChatCompletion() {
