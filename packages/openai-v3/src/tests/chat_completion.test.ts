@@ -1,15 +1,12 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../index";
-import { config } from "dotenv";
 import { deinit, init } from "@gentrace/core";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 
 async function sleep(seconds: number) {
   return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
-
-config();
 
 describe("test_openai_chat_completion_pipeline", () => {
   const chatCompletionResponse = {
