@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.2",
-    "@gentrace/pinecone": "workspace:^0.1.7"
+    "@gentrace/pinecone-v0": "workspace:^0.1.7"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",

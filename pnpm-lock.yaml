@@ -52,7 +52,7 @@ importers:
         version: link:../../packages/openai
       '@gentrace/pinecone':
         specifier: ^0.1.18
-        version: link:../../packages/pinecone
+        version: 0.1.20
     devDependencies:
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -228,14 +228,14 @@ importers:
         specifier: ~5.1.3
         version: 5.1.6
 
-  examples/pinecone:
+  examples/pinecone-v0:
     dependencies:
       '@gentrace/core':
         specifier: workspace:^2.1.2
         version: link:../../packages/core
-      '@gentrace/pinecone':
+      '@gentrace/pinecone-v0':
         specifier: workspace:^0.1.7
-        version: link:../../packages/pinecone
+        version: link:../../packages/pinecone-v0
     devDependencies:
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -485,6 +485,64 @@ importers:
         version: 5.1.6
 
   packages/pinecone:
+    dependencies:
+      '@gentrace/core':
+        specifier: workspace:^2.1.14
+        version: link:../core
+      '@pinecone-database/pinecone':
+        specifier: ^1.0.0
+        version: 1.0.0
+    devDependencies:
+      '@gentrace/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@mswjs/interceptors':
+        specifier: ^0.17.9
+        version: 0.17.9
+      '@rollup/plugin-commonjs':
+        specifier: ^24.1.0
+        version: 24.1.0(rollup@3.28.1)
+      '@rollup/plugin-json':
+        specifier: ^6.0.0
+        version: 6.0.0(rollup@3.28.1)
+      '@rollup/plugin-typescript':
+        specifier: ^11.1.0
+        version: 11.1.3(rollup@3.28.1)(tslib@2.6.2)(typescript@5.1.6)
+      '@types/jest':
+        specifier: ^29.5.1
+        version: 29.5.4
+      '@types/node':
+        specifier: ^12.11.5
+        version: 12.20.55
+      '@types/uuid':
+        specifier: ^9.0.1
+        version: 9.0.3
+      dotenv:
+        specifier: ^16.0.3
+        version: 16.3.1
+      jest:
+        specifier: ^29.5.0
+        version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1)
+      msw:
+        specifier: ^1.2.5
+        version: 1.2.5(typescript@5.1.6)
+      npm-run-all:
+        specifier: ^4.1.5
+        version: 4.1.5
+      rimraf:
+        specifier: ^5.0.0
+        version: 5.0.1
+      rollup:
+        specifier: ^3.21.5
+        version: 3.28.1
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+      typescript:
+        specifier: ~5.1.3
+        version: 5.1.6
+
+  packages/pinecone-v0:
     dependencies:
       '@gentrace/core':
         specifier: workspace:^2.1.14
@@ -2361,6 +2419,26 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
+  /@gentrace/core@2.1.14:
+    resolution: {integrity: sha512-YKXcLSRooiz+RdTkReVq68AUODLgNaEWdY4+rAPKNUY9u6JwntOg/jc7UzK1ORm+AwCidY9QOhO1BbWGrkQqCQ==}
+    dependencies:
+      axios: 1.5.0
+      mustache: 4.2.0
+      uuid: 9.0.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /@gentrace/pinecone@0.1.20:
+    resolution: {integrity: sha512-rx3q1AfsTjK9K8HPMJXG9sX4occF5hgQmtrDkLTagbEoM69Ue+Dl66jvw9ItB6nkOS1yHYFHc1+4oMlT5mSXsQ==}
+    dependencies:
+      '@gentrace/core': 2.1.14
+      '@pinecone-database/pinecone': 0.1.6
+    transitivePeerDependencies:
+      - debug
+      - encoding
+    dev: false
+
   /@humanwhocodes/config-array@0.11.10:
     resolution: {integrity: sha512-KVVjQmNUepDVGXNuoRRdmmEjruj0KfiGSbS8LVc12LMsWDQzRXJ0qdhN8L8uUigKpfEHRhlaQFY0ib1tnUbNeQ==}
     engines: {node: '>=10.10.0'}
@@ -2765,6 +2843,18 @@ packages:
       - encoding
     dev: false
 
+  /@pinecone-database/pinecone@1.0.0:
+    resolution: {integrity: sha512-CtsfbK4qTDjnS56FVH64FEWNVnhwOyheBlLe3e9T6o9Gaxc00f/079JWUUiZ1lrkc3K/YkmlYYOXbdGyKP2z3A==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@sinclair/typebox': 0.28.20
+      '@types/web': 0.0.99
+      ajv: 8.12.0
+      cross-fetch: 3.1.8
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@pkgjs/parseargs@0.11.0:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -2841,6 +2931,10 @@ packages:
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
+
+  /@sinclair/typebox@0.28.20:
+    resolution: {integrity: sha512-QCF3BGfacwD+3CKhGsMeixnwOmX4AWgm61nKkNdRStyLVu0mpVFYlDSY8gVBOOED1oSwzbJauIWl/+REj8K5+w==}
+    dev: false
 
   /@sinonjs/commons@3.0.0:
     resolution: {integrity: sha512-jXBtWAF4vmdNmZgD5FoKsVLv3rPgDnLgPbU84LIJ3otV44vJlDRokVng5v8NFJdCf/da9legHcKaRuZs4L7faA==}
@@ -3020,6 +3114,10 @@ packages:
     resolution: {integrity: sha512-taHQQH/3ZyI3zP8M/puluDEIEvtQHVYcC6y3N8ijFtAd28+Ey/G4sg1u2gB01S8MwybLOKAp9/yCMu/uR5l3Ug==}
     dev: true
 
+  /@types/web@0.0.99:
+    resolution: {integrity: sha512-xMz3tOvtkZzc7RpQrDNiLe5sfMmP+fz8bOxHIZ/U8qXyvzDX4L4Ss1HCjor/O9DSelba+1iXK1VM7lruX28hiQ==}
+    dev: false
+
   /@types/yargs-parser@21.0.0:
     resolution: {integrity: sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA==}
     dev: true
@@ -3097,7 +3195,6 @@ packages:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
       uri-js: 4.4.1
-    dev: true
 
   /ansi-colors@4.1.3:
     resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
@@ -4258,7 +4355,6 @@ packages:
 
   /fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
-    dev: true
 
   /fast-glob@3.3.1:
     resolution: {integrity: sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg==}
@@ -5683,7 +5779,6 @@ packages:
 
   /json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
-    dev: true
 
   /json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
@@ -6554,7 +6649,6 @@ packages:
   /punycode@2.3.0:
     resolution: {integrity: sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==}
     engines: {node: '>=6'}
-    dev: true
 
   /pure-rand@6.0.2:
     resolution: {integrity: sha512-6Yg0ekpKICSjPswYOuC5sku/TSWaRYlA0qsXqJgM/d/4pLPHPuTxK7Nbf7jFKzAeedUhR8C7K9Uv63FBsSo8xQ==}
@@ -6692,7 +6786,6 @@ packages:
   /require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /require-main-filename@2.0.0:
     resolution: {integrity: sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==}
@@ -7569,7 +7662,6 @@ packages:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
     dependencies:
       punycode: 2.3.0
-    dev: true
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
