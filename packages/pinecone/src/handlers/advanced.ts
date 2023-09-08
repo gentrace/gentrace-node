@@ -16,8 +16,8 @@ import {
 
 class AdvancedPineconeClient extends PineconePipelineHandler {
   // @ts-ignore: hack to avoid base class inheritance issues
-  public Index(index: string) {
-    const apiHandler = super.IndexInner(index);
+  public index(index: string) {
+    const apiHandler = super.indexInner(index);
 
     type FetchFunctionType = typeof apiHandler.fetch;
 

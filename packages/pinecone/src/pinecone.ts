@@ -1,4 +1,12 @@
-import { PineconeClient } from "@pinecone-database/pinecone";
+import {
+  DeleteOneOptions,
+  FetchOptions,
+  Pinecone,
+  PineconeRecord,
+  QueryOptions,
+  RecordMetadata,
+  UpdateOptions,
+} from "@pinecone-database/pinecone";
 import {
   Delete1Request,
   FetchRequest,
@@ -45,14 +53,18 @@ export type ModifyFirstParam<T, U> = T extends (
   ? (param1: U, ...args: A) => R
   : never;
 
+type AppendGentraceParams<F extends (...args: any[]) => any> = (
+  ...args: [...Parameters<F>, GentraceParams]
+) => ReturnType<F>;
+
 export type FunctionWithPipelineRunId<T extends (...args: any[]) => any> = (
   ...args: Parameters<T>
 ) => Promise<Awaited<ReturnType<T>> & { pipelineRunId: string }>;
 
-export class PineconePipelineHandler extends PineconeClient {
+export class PineconePipelineHandler extends Pinecone {
   protected pipelineRun?: PipelineRun;
   protected gentraceConfig: GentraceConfiguration;
-  protected config?: PineconeConfiguration;
+  protected configProtected?: PineconeConfiguration;
 
   constructor({
     pipelineRun,
@@ -60,7 +72,7 @@ export class PineconePipelineHandler extends PineconeClient {
     gentraceConfig,
   }: PineconePipelineHandlerOptions) {
     super();
-    this.config = config;
+    this.configProtected = config;
 
     this.pipelineRun = pipelineRun;
     this.gentraceConfig = gentraceConfig;
@@ -104,36 +116,26 @@ export class PineconePipelineHandler extends PineconeClient {
     return returnValue;
   }
 
-  /*
-   * Pinecone-specific function overrides listed below
-   */
-  public async init(params?: PineconeConfiguration) {
-    if (params) {
-      this.config = params;
-    }
-    await super.init(params ? params : this.config);
-  }
-
   // @ts-ignore: hack to avoid base class inheritance issues
-  public IndexInner(index: string) {
-    const apiHandler = super.Index(index);
+  public indexInner(index: string) {
+    const apiHandler = super.index(index);
 
     type FetchFunctionType = typeof apiHandler.fetch;
 
     type ModifiedFetchFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<FetchFunctionType, FetchRequest & GentraceParams>
+      AppendGentraceParams<FetchFunctionType>
     >;
 
     const boundFetch = apiHandler.fetch.bind(apiHandler);
     const fetch: ModifiedFetchFunction = async (
-      requestParameters: FetchRequest & GentraceParams,
-      initOverrides?: RequestInit | InitOverrideFunction,
+      options: FetchOptions,
+      gentraceParams?: GentraceParams,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineSlug,
+        gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
-          const response = await boundFetch(requestParameters, initOverrides);
+          const response = await boundFetch(options);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -142,9 +144,9 @@ export class PineconePipelineHandler extends PineconeClient {
               elapsedTime,
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
-              { ...requestParameters },
+              { ids: options },
               response,
-              requestParameters.gentrace ?? {},
+              gentraceParams?.gentrace ?? {},
             ),
           );
 
@@ -153,28 +155,26 @@ export class PineconePipelineHandler extends PineconeClient {
       );
     };
 
+    // @ts-ignore
     apiHandler.fetch = fetch;
 
     type UpdateFunctionType = typeof apiHandler.update;
 
     type ModifiedUpdateFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
-        UpdateFunctionType,
-        UpdateOperationRequest & GentraceParams
-      >
+      ModifyFirstParam<UpdateFunctionType, UpdateOptions & GentraceParams>
     >;
 
     const boundUpdate = apiHandler.update.bind(apiHandler);
     const update: ModifiedUpdateFunction = async (
-      requestParameters: UpdateOperationRequest & GentraceParams,
-      initOverrides?: RequestInit | InitOverrideFunction,
+      options: UpdateOptions & GentraceParams,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineSlug,
+        options.pipelineSlug,
         async (pipelineRun) => {
-          const { updateRequest } = requestParameters;
+          const { gentrace, pipelineSlug, ...originalOptions } = options;
+
           const startTime = Date.now();
-          const response = await boundUpdate(requestParameters, initOverrides);
+          const response = await boundUpdate(options);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -184,9 +184,9 @@ export class PineconePipelineHandler extends PineconeClient {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
 
-              { ...updateRequest },
+              { ...originalOptions },
               response,
-              requestParameters.gentrace ?? {},
+              options.gentrace ?? {},
             ),
           );
 
@@ -200,29 +200,25 @@ export class PineconePipelineHandler extends PineconeClient {
     type QueryFunctionType = typeof apiHandler.query;
 
     type ModifiedQueryFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
-        QueryFunctionType,
-        QueryOperationRequest & GentraceParams
-      >
+      ModifyFirstParam<QueryFunctionType, QueryOptions & GentraceParams>
     >;
 
     const boundQuery = apiHandler.query.bind(apiHandler);
 
     const query: ModifiedQueryFunction = async (
-      requestParameters: QueryOperationRequest & GentraceParams,
-      initOverrides?: RequestInit | InitOverrideFunction,
+      options: QueryOptions & GentraceParams,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineSlug,
+        options.pipelineSlug,
         async (pipelineRun) => {
-          const { queryRequest } = requestParameters;
+          const { gentrace, pipelineSlug, ...originalOptions } = options;
 
           const startTime = Date.now();
-          const response = await boundQuery(requestParameters, initOverrides);
+          const response = await boundQuery(originalOptions);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
-          const { topK, filter, ...inputs } = queryRequest;
+          const { topK, filter, ...inputs } = originalOptions;
           const modelParams = { topK, filter };
 
           pipelineRun?.addStepRunNode(
@@ -233,7 +229,7 @@ export class PineconePipelineHandler extends PineconeClient {
               { ...inputs },
               { ...modelParams },
               response,
-              requestParameters.gentrace ?? {},
+              options.gentrace ?? {},
             ),
           );
 
@@ -247,23 +243,16 @@ export class PineconePipelineHandler extends PineconeClient {
     type UpsertFunctionType = typeof apiHandler.upsert;
 
     type ModifiedUpsertFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
-        UpsertFunctionType,
-        UpsertOperationRequest & GentraceParams
-      >
+      AppendGentraceParams<UpsertFunctionType>
     >;
 
     const boundUpsert = apiHandler.upsert.bind(apiHandler);
-    const upsert: ModifiedUpsertFunction = async (
-      requestParameters: UpsertOperationRequest & GentraceParams,
-      initOverrides?: RequestInit | InitOverrideFunction,
-    ) => {
+    const upsert: ModifiedUpsertFunction = async (records, gentraceParams) => {
       return this.setupSelfContainedPipelineRun(
-        requestParameters.pipelineSlug,
+        gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
-          const { upsertRequest } = requestParameters;
           const startTime = Date.now();
-          const response = await boundUpsert(requestParameters, initOverrides);
+          const response = await boundUpsert(records);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -272,9 +261,9 @@ export class PineconePipelineHandler extends PineconeClient {
               elapsedTime,
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
-              { ...upsertRequest },
+              { records },
               response,
-              requestParameters.gentrace ?? {},
+              gentraceParams.gentrace ?? {},
             ),
           );
 
@@ -283,24 +272,25 @@ export class PineconePipelineHandler extends PineconeClient {
       );
     };
 
+    // @ts-ignore
     apiHandler.upsert = upsert;
 
-    type DeleteFunctionType = typeof apiHandler.delete1;
+    type DeleteFunctionType = typeof apiHandler.deleteOne;
 
-    type ModifiedDeleteFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<DeleteFunctionType, Delete1Request & GentraceParams>
+    type ModifiedDeleteOneFunction = FunctionWithPipelineRunId<
+      AppendGentraceParams<DeleteFunctionType>
     >;
 
-    const boundDelete = apiHandler.delete1.bind(apiHandler);
-    const delete1: ModifiedDeleteFunction = async (
-      deleteRequest: Delete1Request & GentraceParams,
-      initOverrides?: RequestInit | InitOverrideFunction,
+    const boundDelete = apiHandler.deleteOne.bind(apiHandler);
+    const deleteOne: ModifiedDeleteOneFunction = async (
+      recordId: DeleteOneOptions,
+      gentraceParams?: GentraceParams,
     ) => {
       return this.setupSelfContainedPipelineRun(
-        deleteRequest.pipelineSlug,
+        gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
-          const response = await boundDelete(deleteRequest, initOverrides);
+          const response = await boundDelete(recordId);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -309,9 +299,9 @@ export class PineconePipelineHandler extends PineconeClient {
               elapsedTime,
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
-              { ...deleteRequest },
+              { recordId },
               response,
-              deleteRequest.gentrace ?? {},
+              gentraceParams.gentrace ?? {},
             ),
           );
 
@@ -320,17 +310,18 @@ export class PineconePipelineHandler extends PineconeClient {
       );
     };
 
-    apiHandler.delete1 = delete1;
+    // @ts-ignore
+    apiHandler.deleteOne = deleteOne;
 
     type ModifiedVectorOperationsApi = Omit<
       VectorOperationsApi,
-      "fetch" | "update" | "query" | "upsert" | "delete1"
+      "fetch" | "update" | "query" | "upsert" | "deleteOne"
     > & {
       fetch: ModifiedFetchFunction;
       update: ModifiedUpdateFunction;
       query: ModifiedQueryFunction;
       upsert: ModifiedUpsertFunction;
-      delete1: ModifiedDeleteFunction;
+      deleteOne: ModifiedDeleteOneFunction;
     };
 
     // @ts-ignore
@@ -425,7 +416,7 @@ class PineconeUpsertStepRun extends StepRun {
     elapsedTime: number,
     startTime: string,
     endTime: string,
-    inputs: UpsertRequest,
+    inputs: { records: PineconeRecord<RecordMetadata>[] },
     response: object,
     context: Context,
   ) {
@@ -451,7 +442,7 @@ class PineconeDeleteStepRun extends StepRun {
     elapsedTime: number,
     startTime: string,
     endTime: string,
-    inputs: Delete1Request,
+    inputs: { recordId: DeleteOneOptions },
     response: object,
     context: Context,
   ) {
