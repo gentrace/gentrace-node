@@ -1,5 +1,17 @@
 # @gentrace/pinecone
 
+## 0.1.20
+
+### Patch Changes
+
+- bb2ec90: Fix issues with dependencies
+- 2cb370f: Fix issue with dotenv in tests
+- 792f29c: Add tests for all packages, fix issues with empty plugins in core
+- Updated dependencies [bb2ec90]
+- Updated dependencies [2cb370f]
+- Updated dependencies [792f29c]
+  - @gentrace/core@2.1.14
+
 ## 0.1.19
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.14
+
+### Patch Changes
+
+- bb2ec90: Fix issues with dependencies
+- 2cb370f: Fix issue with dotenv in tests
+- 792f29c: Add tests for all packages, fix issues with empty plugins in core
+
 ## 2.1.13
 
 ### Patch Changes
