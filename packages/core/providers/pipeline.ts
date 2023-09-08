@@ -96,7 +96,7 @@ export class Pipeline<T extends { [key: string]: GentracePlugin<any, any> }> {
     context?: Pick<Context, "userId">,
   ): PipelineRun & { [key in keyof T]: ReturnType<T[key]["advanced"]> } {
     const newPipelineRun = new PipelineRun({ pipeline: this, context });
-    const argList = Object.entries(this.plugins);
+    const argList = Object.entries(this.plugins ?? {});
     const argMap = Object.fromEntries(
       argList.map(([k, v]) => [
         k,
