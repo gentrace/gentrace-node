@@ -1,17 +1,15 @@
 import { AdvancedContext } from "@gentrace/core";
 import {
-  Delete1Request,
-  FetchRequest,
-  QueryOperationRequest,
-  UpdateOperationRequest,
-  UpsertOperationRequest,
-  VectorOperationsApi,
-} from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
+  Index,
+  QueryOptions,
+  UpdateOptions,
+} from "@pinecone-database/pinecone";
 import {
   FunctionWithPipelineRunId,
-  ModifyFirstParam,
-  PineconePipelineHandler,
   GentraceParams,
+  ModifyFirstParam,
+  ModifySecondParam,
+  PineconePipelineHandler,
 } from "../pinecone";
 
 class AdvancedPineconeClient extends PineconePipelineHandler {
@@ -22,12 +20,11 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
     type FetchFunctionType = typeof apiHandler.fetch;
 
     type ModifiedFetchFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
+      ModifySecondParam<
         FetchFunctionType,
-        FetchRequest &
-          Omit<GentraceParams, "gentrace"> & {
-            gentrace?: AdvancedContext;
-          }
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: AdvancedContext;
+        }
       >
     >;
 
@@ -36,7 +33,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
     type ModifiedUpdateFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
         UpdateFunctionType,
-        UpdateOperationRequest &
+        UpdateOptions &
           Omit<GentraceParams, "gentrace"> & {
             gentrace?: AdvancedContext;
           }
@@ -48,7 +45,7 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
     type ModifiedQueryFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
         QueryFunctionType,
-        QueryOperationRequest &
+        QueryOptions &
           Omit<GentraceParams, "gentrace"> & {
             gentrace?: AdvancedContext;
           }
@@ -58,39 +55,67 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
     type UpsertFunctionType = typeof apiHandler.upsert;
 
     type ModifiedUpsertFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
+      ModifySecondParam<
         UpsertFunctionType,
-        UpsertOperationRequest &
-          Omit<GentraceParams, "gentrace"> & {
-            gentrace?: AdvancedContext;
-          }
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: AdvancedContext;
+        }
       >
     >;
 
-    type DeleteFunctionType = typeof apiHandler.delete1;
+    type DeleteOneFunctionType = typeof apiHandler.deleteOne;
 
-    type ModifiedDeleteFunction = FunctionWithPipelineRunId<
+    type ModifiedDeleteOneFunction = FunctionWithPipelineRunId<
+      ModifySecondParam<
+        DeleteOneFunctionType,
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: AdvancedContext;
+        }
+      >
+    >;
+
+    type DeleteManyFunctionType = typeof apiHandler.deleteMany;
+
+    type ModifiedDeleteManyFunction = FunctionWithPipelineRunId<
+      ModifySecondParam<
+        DeleteManyFunctionType,
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: AdvancedContext;
+        }
+      >
+    >;
+
+    type DeleteAllFunctionType = typeof apiHandler.deleteAll;
+
+    type ModifiedDeleteAllFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
-        DeleteFunctionType,
-        Delete1Request &
-          Omit<GentraceParams, "gentrace"> & {
-            gentrace?: AdvancedContext;
-          }
+        DeleteAllFunctionType,
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: AdvancedContext;
+        }
       >
     >;
 
-    type ModifiedVectorOperationsApi = Omit<
-      VectorOperationsApi,
-      "fetch" | "update" | "query" | "upsert" | "delete1"
+    type ModifiedAdvancedIndex = Omit<
+      Index,
+      | "fetch"
+      | "update"
+      | "query"
+      | "upsert"
+      | "deleteOne"
+      | "deleteMany"
+      | "deleteAll"
     > & {
       fetch: ModifiedFetchFunction;
       update: ModifiedUpdateFunction;
       query: ModifiedQueryFunction;
       upsert: ModifiedUpsertFunction;
-      delete1: ModifiedDeleteFunction;
+      deleteOne: ModifiedDeleteOneFunction;
+      deleteMany: ModifiedDeleteManyFunction;
+      deleteAll: ModifiedDeleteAllFunction;
     };
 
-    return apiHandler as ModifiedVectorOperationsApi;
+    return apiHandler as ModifiedAdvancedIndex;
   }
 }
 
