@@ -1,11 +1,8 @@
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
 import { Configuration, OpenAIApi } from "../index";
-import { config } from "dotenv";
 import { init } from "@gentrace/core";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
-
-config();
 
 describe("test_openai_embedding_pipeline", () => {
   const embeddingResponse = {
