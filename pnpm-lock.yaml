@@ -462,9 +462,6 @@ importers:
       '@types/uuid':
         specifier: ^9.0.1
         version: 9.0.3
-      dotenv:
-        specifier: ^16.0.3
-        version: 16.3.1
       jest:
         specifier: ^29.5.0
         version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1)
