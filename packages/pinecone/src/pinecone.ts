@@ -20,16 +20,12 @@ import {
   QueryResponse,
   UpdateRequest,
   UpsertRequest,
+  PineconeConfiguration,
 } from "@pinecone-database/pinecone";
 import {
   FetchRequest,
   UpsertResponse,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
-
-export type PineconeConfiguration = {
-  apiKey: string;
-  environment: string;
-};
 
 export type GentraceParams = {
   pipelineSlug?: string;
@@ -75,7 +71,7 @@ export class PineconePipelineHandler extends Pinecone {
     config,
     gentraceConfig,
   }: PineconePipelineHandlerOptions) {
-    super();
+    super(config);
     this.configProtected = config;
 
     this.pipelineRun = pipelineRun;

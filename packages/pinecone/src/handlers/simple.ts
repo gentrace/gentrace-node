@@ -5,6 +5,7 @@ import {
 } from "@gentrace/core";
 import {
   Index,
+  PineconeConfiguration,
   QueryOptions,
   UpdateOptions,
 } from "@pinecone-database/pinecone";
@@ -13,11 +14,10 @@ import {
   GentraceParams,
   ModifyFirstParam,
   ModifySecondParam,
-  PineconeConfiguration,
   PineconePipelineHandler,
 } from "../pinecone";
 
-class SimplePineconeClient
+class SimplePinecone
   extends PineconePipelineHandler
   implements SimpleHandler<PineconeConfiguration>
 {
@@ -30,6 +30,7 @@ class SimplePineconeClient
 
     super({
       gentraceConfig: globalGentraceConfig,
+      config,
     });
 
     this.configProtected = config;
@@ -37,6 +38,11 @@ class SimplePineconeClient
 
   getConfig(): PineconeConfiguration {
     return this.configProtected;
+  }
+
+  // @ts-ignore
+  public Index(index: string) {
+    return this.index(index);
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues
@@ -145,4 +151,4 @@ class SimplePineconeClient
   }
 }
 
-export { SimplePineconeClient };
+export { SimplePinecone };

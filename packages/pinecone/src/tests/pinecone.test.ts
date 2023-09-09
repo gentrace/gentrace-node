@@ -1,9 +1,9 @@
+import { init, Pipeline } from "@gentrace/core";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 import { rest } from "msw";
 import { setupServer, SetupServer } from "msw/node";
-import { PineconeClient, initPlugin } from "../index";
-import { init, Pipeline } from "@gentrace/core";
 import { DEFAULT_VECTOR } from "../fixtures";
+import { initPlugin, Pinecone } from "../index";
 
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -95,7 +95,7 @@ describe("test_pinecone_completion_pipeline", () => {
   });
 
   afterAll(async () => {
-    await sleep(30);
+    await sleep(1);
     interceptor.dispose();
     server.close();
   });
@@ -105,19 +105,16 @@ describe("test_pinecone_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const pinecone = new PineconeClient();
-
-    await pinecone.init({
+    const pinecone = new Pinecone({
       apiKey: "fake-api-key",
       environment: "dev",
     });
 
-    const index = await pinecone.Index("openai-trec");
+    const index = await pinecone.index("openai-trec");
 
-    const fetchResponse = await index.fetch({
-      ids: ["3890"],
+    const fetchResponse = await index.fetch(["3890"], {
       gentrace: {
-        userId: "user-id",
+        userId: "test-user-id",
       },
     });
 
@@ -129,18 +126,15 @@ describe("test_pinecone_completion_pipeline", () => {
       apiKey: "gentrace-api-key",
     });
 
-    const pinecone = new PineconeClient();
-
-    await pinecone.init({
+    const pinecone = new Pinecone({
       apiKey: "fake-api-key",
       environment: "dev",
     });
 
-    const index = await pinecone.Index("openai-trec");
+    const index = await pinecone.index("openai-trec");
 
-    const fetchResponse = await index.fetch({
+    const fetchResponse = await index.fetch(["3890"], {
       pipelineSlug: "my-slug",
-      ids: ["3890"],
     });
 
     expect(fetchResponse.pipelineRunId).toBeDefined();
@@ -169,8 +163,8 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const index = await pinecone.Index("openai-trec");
 
-    const fetchResponse = await index.fetch({
-      ids: ["3890"],
+    const fetchResponse = await index.fetch(["3890"], {
+      pipelineSlug: "my-slug",
     });
 
     expect(fetchResponse.pipelineRunId).not.toBeDefined();
@@ -197,11 +191,10 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const pinecone = await runner.pinecone;
 
-    const index = await pinecone.Index("openai-trec");
+    const index = await pinecone.index("openai-trec");
 
-    const fetchResponse = await index.fetch({
+    const fetchResponse = await index.fetch(["3890"], {
       pipelineSlug: "my-slug",
-      ids: ["3890"],
     });
 
     expect(fetchResponse.pipelineRunId).not.toBeDefined();
@@ -234,11 +227,10 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const pinecone = await runner.pinecone;
 
-    const index = await pinecone.Index("openai-trec");
+    const index = await pinecone.index("openai-trec");
 
-    const fetchResponse = await index.fetch({
+    const fetchResponse = await index.fetch(["3890"], {
       pipelineSlug: "my-slug",
-      ids: ["3890"],
     });
 
     expect(fetchResponse.pipelineRunId).not.toBeDefined();

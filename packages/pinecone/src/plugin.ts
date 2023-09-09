@@ -1,49 +1,29 @@
 import {
   Configuration as GentraceConfiguration,
   GentracePlugin,
-  globalGentraceConfig,
   InitPluginFunction,
   isConfig,
   PipelineRun,
 } from "@gentrace/core";
-import { AdvancedPineconeClient } from "./handlers/advanced";
-import { PineconeConfiguration } from "./pinecone";
+import { PineconeConfiguration } from "@pinecone-database/pinecone";
+import { AdvancedPinecone } from "./handlers/advanced";
 
 export const initPlugin: InitPluginFunction<
   PineconeConfiguration,
-  AdvancedPineconeClient
+  AdvancedPinecone
 > = async (configOrSimpleHandler) => {
   if (isConfig(configOrSimpleHandler)) {
-    const pureClient = new AdvancedPineconeClient({
-      config: configOrSimpleHandler,
-      gentraceConfig: globalGentraceConfig,
-    });
-    await pureClient.init({
-      apiKey: configOrSimpleHandler.apiKey,
-      environment: configOrSimpleHandler.environment,
-    });
-    return new PineconePlugin(configOrSimpleHandler, pureClient);
+    return new PineconePlugin(configOrSimpleHandler);
   }
 
-  const pureClient = new AdvancedPineconeClient({
-    config: configOrSimpleHandler.getConfig(),
-    gentraceConfig: globalGentraceConfig,
-  });
-
-  const extractedConfig = configOrSimpleHandler.getConfig();
-
-  await pureClient.init(extractedConfig);
-  return new PineconePlugin(extractedConfig, pureClient);
+  return new PineconePlugin(configOrSimpleHandler.getConfig());
 };
 
 export class PineconePlugin extends GentracePlugin<
   PineconeConfiguration,
-  AdvancedPineconeClient
+  AdvancedPinecone
 > {
-  constructor(
-    public config: PineconeConfiguration,
-    private pureClient: AdvancedPineconeClient,
-  ) {
+  constructor(public config: PineconeConfiguration) {
     super();
   }
 
@@ -57,24 +37,11 @@ export class PineconePlugin extends GentracePlugin<
   }: {
     pipelineRun: PipelineRun;
     gentraceConfig: GentraceConfiguration;
-  }): AdvancedPineconeClient {
-    // Hack to allow initialization in the initPlugin() function
-    const clonedHandler = Object.create(
-      this.pureClient,
-    ) as AdvancedPineconeClient;
-
-    const advancedClientPrototype = Object.create(
-      Object.getPrototypeOf(clonedHandler),
-    );
-
-    const handlerPrototype = Object.create(
-      Object.getPrototypeOf(advancedClientPrototype),
-    );
-
-    advancedClientPrototype.__proto__ = handlerPrototype;
-
-    clonedHandler.setPipelineRun(pipelineRun);
-
-    return clonedHandler;
+  }): AdvancedPinecone {
+    return new AdvancedPinecone({
+      pipelineRun,
+      gentraceConfig,
+      config: this.config,
+    });
   }
 }

@@ -12,7 +12,12 @@ import {
   PineconePipelineHandler,
 } from "../pinecone";
 
-class AdvancedPineconeClient extends PineconePipelineHandler {
+class AdvancedPinecone extends PineconePipelineHandler {
+  // @ts-ignore
+  public Index(index: string) {
+    return this.index(index);
+  }
+
   // @ts-ignore: hack to avoid base class inheritance issues
   public index(index: string) {
     const apiHandler = super.indexInner(index);
@@ -119,4 +124,4 @@ class AdvancedPineconeClient extends PineconePipelineHandler {
   }
 }
 
-export { AdvancedPineconeClient };
+export { AdvancedPinecone };
