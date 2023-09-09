@@ -60,8 +60,9 @@ describe("test_pinecone_completion_pipeline", () => {
           body: JSON.stringify(pineconeProjectName),
         });
       } else if (
-        request.url.href ===
-        "https://openai-trec-openai-trec.svc.dev.pinecone.io/vectors/fetch?ids=3890"
+        request.url.href.startsWith(
+          "https://openai-trec-openai-trec.svc.dev.pinecone.io/vectors/fetch?ids=3890",
+        )
       ) {
         return request.respondWith({
           status: 200,
