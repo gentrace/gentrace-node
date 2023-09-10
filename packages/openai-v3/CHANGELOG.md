@@ -1,5 +1,13 @@
 # @gentrace/openai-v3
 
+## 3.3.15
+
+### Patch Changes
+
+- 50f0fba: Refactor core logic, propagate changes to dependent packages, introduce v1 Pinecone plugin
+- Updated dependencies [50f0fba]
+  - @gentrace/core@2.1.15
+
 ## 3.3.14
 
 ### Patch Changes
