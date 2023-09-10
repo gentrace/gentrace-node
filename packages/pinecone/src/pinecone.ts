@@ -252,7 +252,8 @@ export class PineconePipelineHandler extends Pinecone {
         gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
-          const response = await boundUpsert(records);
+          const returnValue = await boundUpsert(records);
+
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -262,12 +263,11 @@ export class PineconePipelineHandler extends Pinecone {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { records },
-              response,
-              gentraceParams.gentrace ?? {},
+              gentraceParams?.gentrace ?? {},
             ),
           );
 
-          return response;
+          return returnValue;
         },
       );
     };
@@ -290,7 +290,7 @@ export class PineconePipelineHandler extends Pinecone {
         gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
-          const response = await boundOneDelete(recordId);
+          const returnValue = await boundOneDelete(recordId);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -300,12 +300,11 @@ export class PineconePipelineHandler extends Pinecone {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { recordId },
-              response,
               gentraceParams.gentrace ?? {},
             ),
           );
 
-          return response;
+          return returnValue;
         },
       );
     };
@@ -328,7 +327,7 @@ export class PineconePipelineHandler extends Pinecone {
         gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
-          const response = await boundManyDelete(options);
+          const returnValue = await boundManyDelete(options);
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -338,12 +337,11 @@ export class PineconePipelineHandler extends Pinecone {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { options },
-              response,
               gentraceParams.gentrace ?? {},
             ),
           );
 
-          return response;
+          return returnValue;
         },
       );
     };
@@ -365,7 +363,7 @@ export class PineconePipelineHandler extends Pinecone {
         gentraceParams?.pipelineSlug,
         async (pipelineRun) => {
           const startTime = Date.now();
-          const response = await boundAllDelete();
+          const returnValue = await boundAllDelete();
           const endTime = Date.now();
           const elapsedTime = Math.floor(endTime - startTime);
 
@@ -374,12 +372,11 @@ export class PineconePipelineHandler extends Pinecone {
               elapsedTime,
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
-              response,
               gentraceParams.gentrace ?? {},
             ),
           );
 
-          return response;
+          return returnValue;
         },
       );
     };
@@ -493,7 +490,6 @@ class PineconeUpsertStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: { records: PineconeRecord<RecordMetadata>[] },
-    response: object,
     context: Context,
   ) {
     super(
@@ -504,7 +500,7 @@ class PineconeUpsertStepRun extends StepRun {
       endTime,
       inputs,
       {},
-      response,
+      {},
       context ?? {},
     );
   }
@@ -519,7 +515,6 @@ class PineconeDeleteOneStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: { recordId: DeleteOneOptions },
-    response: object,
     context: Context,
   ) {
     super(
@@ -530,7 +525,7 @@ class PineconeDeleteOneStepRun extends StepRun {
       endTime,
       inputs,
       {},
-      response,
+      {},
       context ?? {},
     );
   }
@@ -545,7 +540,6 @@ class PineconeDeleteManyStepRun extends StepRun {
     startTime: string,
     endTime: string,
     inputs: { options: DeleteManyOptions },
-    response: object,
     context: Context,
   ) {
     super(
@@ -556,7 +550,7 @@ class PineconeDeleteManyStepRun extends StepRun {
       endTime,
       inputs,
       {},
-      response,
+      {},
       context ?? {},
     );
   }
@@ -569,7 +563,6 @@ class PineconeDeleteAllStepRun extends StepRun {
     elapsedTime: number,
     startTime: string,
     endTime: string,
-    response: object,
     context: Context,
   ) {
     super(
@@ -580,7 +573,7 @@ class PineconeDeleteAllStepRun extends StepRun {
       endTime,
       {},
       {},
-      response,
+      {},
       context ?? {},
     );
   }

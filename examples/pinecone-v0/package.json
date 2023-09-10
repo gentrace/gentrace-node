@@ -1,5 +1,5 @@
 {
-  "name": "@examples/pinecone",
+  "name": "@examples/pinecone-v0",
   "version": "0.1.0",
   "private": true,
   "scripts": {

@@ -6,7 +6,9 @@
     "lib": ["ES2019", "DOM"],
     "rootDir": "src",
     "typeRoots": ["node_modules/@types"],
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    // Certain types in dependent packages within the Pinecone v1 repository aren't well-formed
+    "skipLibCheck": true
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules", "dist"],
