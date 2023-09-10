@@ -53,6 +53,12 @@ export type ModifySecondParam<T, U> = T extends (
   ? (param1: P1, param2?: U, ...args: A) => R
   : never;
 
+export type ModifyReturnType<T, NewReturn> = T extends (
+  ...args: infer A
+) => infer R
+  ? (...args: A) => NewReturn
+  : never;
+
 type AppendGentraceParams<F extends (...args: any[]) => any> = (
   ...args: [...Parameters<F>, GentraceParams]
 ) => ReturnType<F>;
@@ -117,8 +123,11 @@ export class PineconePipelineHandler extends Pinecone {
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues
-  public indexInner<T extends RecordMetadata = RecordMetadata>(index: string) {
-    const apiHandler = super.index<T>(index);
+  public indexInner<T extends RecordMetadata = RecordMetadata>(
+    index: string,
+    namespace: string = "",
+  ) {
+    const apiHandler = new Index<T>(index, this.configProtected, namespace);
 
     type FetchFunctionType = typeof apiHandler.fetch;
 
@@ -384,6 +393,15 @@ export class PineconePipelineHandler extends Pinecone {
     // @ts-ignore
     apiHandler.deleteAll = deleteAll;
 
+    type ModifiedNamespaceFunction = (namespace: string) => ModifiedIndex;
+
+    const namespaceFn: ModifiedNamespaceFunction = (namespace: string) => {
+      return this.indexInner(index, namespace);
+    };
+
+    // @ts-ignore
+    apiHandler.namespace = namespaceFn;
+
     type ModifiedIndex = Omit<
       Index,
       "fetch" | "update" | "query" | "upsert" | "deleteOne"
@@ -395,6 +413,7 @@ export class PineconePipelineHandler extends Pinecone {
       deleteOne: ModifiedDeleteOneFunction;
       deleteMany: ModifiedDeleteManyFunction;
       deleteAll: ModifiedDeleteAllFunction;
+      namespace: ModifiedNamespaceFunction;
     };
 
     // @ts-ignore

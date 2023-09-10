@@ -129,6 +129,8 @@ class SimplePinecone
       >
     >;
 
+    type NamespaceFunction = typeof apiHandler.namespace;
+
     type ModifiedSimpleIndex = Omit<
       Index,
       | "fetch"
@@ -138,6 +140,7 @@ class SimplePinecone
       | "deleteOne"
       | "deleteMany"
       | "deleteAll"
+      | "namespace"
     > & {
       fetch: ModifiedFetchFunction;
       update: ModifiedUpdateFunction;
@@ -146,6 +149,7 @@ class SimplePinecone
       deleteOne: ModifiedDeleteOneFunction;
       deleteMany: ModifiedDeleteManyFunction;
       deleteAll: ModifiedDeleteAllFunction;
+      namespace: NamespaceFunction;
     };
 
     return apiHandler as ModifiedSimpleIndex;
