@@ -50,7 +50,7 @@ export type ModifySecondParam<T, U> = T extends (
   param2: infer P2,
   ...args: infer A
 ) => infer R
-  ? (param1: P1, param2: U, ...args: A) => R
+  ? (param1: P1, param2?: U, ...args: A) => R
   : never;
 
 type AppendGentraceParams<F extends (...args: any[]) => any> = (

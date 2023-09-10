@@ -10,7 +10,7 @@
   "exclude": ["node_modules", "dist"],
   "references": [
     {
-      "path": "../../packages/pinecone-v0/tsconfig.json"
+      "path": "../../packages/pinecone/tsconfig.json"
     },
     {
       "path": "../../packages/core/tsconfig.json"
