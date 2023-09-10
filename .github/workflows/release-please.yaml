@@ -42,7 +42,7 @@ jobs:
           echo "registry=https://registry.npmjs.org" >> ~/.npmrc
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" >> ~/.npmrc
 
-      # First, deploy everything but OpenAI v3
+      # H/T (trigger.dev): https://github.com/triggerdotdev/trigger.dev/blob/main/.github/workflows/release.yml#L66
       - name: 🚀 Publish
         id: changesets
         uses: changesets/action@v1

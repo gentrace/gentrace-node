@@ -8,7 +8,7 @@ import {
 import { AdvancedOpenAI } from "./handlers/advanced";
 import { GentraceClientOptions as GentraceOpenAIClientOptions } from "./openai";
 
-export const initOpenAIPlugin: InitPluginFunction<
+export const initPlugin: InitPluginFunction<
   GentraceOpenAIClientOptions,
   AdvancedOpenAI
 > = async (config) => {

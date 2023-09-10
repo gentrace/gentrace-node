@@ -1,72 +1,64 @@
 import {
   globalGentraceConfig,
-  Configuration as GentraceConfiguration,
   SimpleContext,
   SimpleHandler,
 } from "@gentrace/core";
 import {
-  FunctionWithPipelineRunId,
-  ModifyFirstParam,
-  PineconePipelineHandler,
-  GentraceParams,
+  Index,
   PineconeConfiguration,
-} from "../pinecone";
+  QueryOptions,
+  RecordMetadata,
+  UpdateOptions,
+} from "@pinecone-database/pinecone";
 import {
-  Delete1Request,
-  FetchRequest,
-  QueryOperationRequest,
-  UpdateOperationRequest,
-  UpsertOperationRequest,
-  VectorOperationsApi,
-} from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
+  FunctionWithPipelineRunId,
+  GentraceParams,
+  ModifiedNamespaceFunction,
+  ModifyFirstParam,
+  ModifySecondParam,
+  PineconePipelineHandler,
+} from "../pinecone";
 
-class SimplePineconeClient
+class SimplePinecone
   extends PineconePipelineHandler
   implements SimpleHandler<PineconeConfiguration>
 {
-  constructor(params?: {
-    /**
-     * @deprecated Declare the API key in the init() call instead.
-     */
-    gentraceApiKey?: string;
-    /**
-     * @deprecated Declare the base path in the init() call instead.
-     */
-    gentraceBasePath?: string;
-  }) {
-    const { gentraceApiKey, gentraceBasePath } = params ?? {};
-    let gentraceConfig: GentraceConfiguration | null = null;
-
-    if (gentraceApiKey) {
-      gentraceConfig = new GentraceConfiguration({
-        apiKey: gentraceApiKey,
-        basePath: gentraceBasePath,
-      });
-    } else {
-      gentraceConfig = globalGentraceConfig;
+  constructor(config: PineconeConfiguration) {
+    if (!config) {
+      throw new Error(
+        "Pinecone configuration with API key and environment is required",
+      );
     }
 
     super({
-      gentraceConfig,
+      gentraceConfig: globalGentraceConfig,
+      config,
     });
+
+    this.configProtected = config;
   }
+
   getConfig(): PineconeConfiguration {
-    return this.config;
+    return this.configProtected;
+  }
+
+  // @ts-ignore
+  public Index<T extends RecordMetadata = RecordMetadata>(index: string) {
+    return this.index<T>(index);
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues
-  public Index(index: string) {
-    const apiHandler = super.IndexInner(index);
+  public index<T extends RecordMetadata = RecordMetadata>(index: string) {
+    const apiHandler = super.indexInner<T>(index);
 
     type FetchFunctionType = typeof apiHandler.fetch;
 
     type ModifiedFetchFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
+      ModifySecondParam<
         FetchFunctionType,
-        FetchRequest &
-          Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
-          }
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: SimpleContext;
+        }
       >
     >;
 
@@ -75,7 +67,7 @@ class SimplePineconeClient
     type ModifiedUpdateFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
         UpdateFunctionType,
-        UpdateOperationRequest &
+        UpdateOptions &
           Omit<GentraceParams, "gentrace"> & {
             gentrace?: SimpleContext;
           }
@@ -87,7 +79,7 @@ class SimplePineconeClient
     type ModifiedQueryFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
         QueryFunctionType,
-        QueryOperationRequest &
+        QueryOptions &
           Omit<GentraceParams, "gentrace"> & {
             gentrace?: SimpleContext;
           }
@@ -97,40 +89,70 @@ class SimplePineconeClient
     type UpsertFunctionType = typeof apiHandler.upsert;
 
     type ModifiedUpsertFunction = FunctionWithPipelineRunId<
-      ModifyFirstParam<
+      ModifySecondParam<
         UpsertFunctionType,
-        UpsertOperationRequest &
-          Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
-          }
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: SimpleContext;
+        }
       >
     >;
 
-    type DeleteFunctionType = typeof apiHandler.delete1;
+    type DeleteOneFunctionType = typeof apiHandler.deleteOne;
 
-    type ModifiedDeleteFunction = FunctionWithPipelineRunId<
+    type ModifiedDeleteOneFunction = FunctionWithPipelineRunId<
+      ModifySecondParam<
+        DeleteOneFunctionType,
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: SimpleContext;
+        }
+      >
+    >;
+
+    type DeleteManyFunctionType = typeof apiHandler.deleteMany;
+
+    type ModifiedDeleteManyFunction = FunctionWithPipelineRunId<
+      ModifySecondParam<
+        DeleteManyFunctionType,
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: SimpleContext;
+        }
+      >
+    >;
+
+    type DeleteAllFunctionType = typeof apiHandler.deleteAll;
+
+    type ModifiedDeleteAllFunction = FunctionWithPipelineRunId<
       ModifyFirstParam<
-        DeleteFunctionType,
-        Delete1Request &
-          Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
-          }
+        DeleteAllFunctionType,
+        Omit<GentraceParams, "gentrace"> & {
+          gentrace?: SimpleContext;
+        }
       >
     >;
 
-    type ModifiedVectorOperationsApi = Omit<
-      VectorOperationsApi,
-      "fetch" | "update" | "query" | "upsert" | "delete1"
+    type ModifiedSimpleIndex = Omit<
+      Index,
+      | "fetch"
+      | "update"
+      | "query"
+      | "upsert"
+      | "deleteOne"
+      | "deleteMany"
+      | "deleteAll"
+      | "namespace"
     > & {
       fetch: ModifiedFetchFunction;
       update: ModifiedUpdateFunction;
       query: ModifiedQueryFunction;
       upsert: ModifiedUpsertFunction;
-      delete1: ModifiedDeleteFunction;
+      deleteOne: ModifiedDeleteOneFunction;
+      deleteMany: ModifiedDeleteManyFunction;
+      deleteAll: ModifiedDeleteAllFunction;
+      namespace: ModifiedNamespaceFunction;
     };
 
-    return apiHandler as ModifiedVectorOperationsApi;
+    return apiHandler as ModifiedSimpleIndex;
   }
 }
 
-export { SimplePineconeClient };
+export { SimplePinecone };

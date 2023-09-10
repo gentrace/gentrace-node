@@ -1,5 +1,5 @@
 import { init } from "@gentrace/core";
-import { PineconeClient } from "@gentrace/pinecone";
+import { Pinecone } from "@gentrace/pinecone";
 import { DEFAULT_VECTOR } from "./utils";
 
 init({
@@ -7,27 +7,28 @@ init({
   basePath: "http://localhost:3000/api/v1",
 });
 
-const pinecone = new PineconeClient();
+const pinecone = new Pinecone({
+  apiKey: process.env.PINECONE_API_KEY ?? "",
+  environment: process.env.PINECONE_ENVIRONMENT ?? "",
+});
 
 async function upsertPineconeIndex() {
-  await pinecone.init({
-    apiKey: process.env.PINECONE_API_KEY ?? "",
-    environment: process.env.PINECONE_ENVIRONMENT ?? "",
-  });
+  const index = await pinecone.Index("openai-trec").namespace("testing");
 
-  const index = await pinecone.Index("openai-trec");
-
-  const upsertResponse = await index.upsert({
-    pipelineSlug: "testing-pipeline-id",
-    upsertRequest: {
-      vectors: [
-        {
-          id: String(Math.floor(Math.random() * 10000)),
-          values: DEFAULT_VECTOR,
-        },
-      ],
+  const upsertResponse = await index.upsert(
+    [
+      {
+        id: String(Math.floor(Math.random() * 10000)),
+        values: DEFAULT_VECTOR,
+      },
+    ],
+    {
+      pipelineSlug: "testing-pipeline-id",
+      gentrace: {
+        userId: "testing-user-id",
+      },
     },
-  });
+  );
   console.log("upsertResponse", upsertResponse, upsertResponse.pipelineRunId);
 }
 

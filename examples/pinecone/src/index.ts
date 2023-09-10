@@ -24,19 +24,15 @@ async function createChatCompletion() {
 
   const pinecone = await runner.pinecone;
 
-  const index = await pinecone.Index("openai-trec");
+  const index = await pinecone.Index("openai-trec").namespace("testing");
 
   try {
-    const upsertResponse = await index.upsert({
-      upsertRequest: {
-        vectors: [
-          {
-            id: String(Math.floor(Math.random() * 10000)),
-            values: DEFAULT_VECTOR,
-          },
-        ],
+    const upsertResponse = await index.upsert([
+      {
+        id: String(Math.floor(Math.random() * 10000)),
+        values: DEFAULT_VECTOR,
       },
-    });
+    ]);
 
     console.log("upsertResponse", upsertResponse);
   } catch (e) {

@@ -1,0 +1,19 @@
+{
+  "extends": "@gentrace/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "lib": ["ES2019", "DOM"],
+    "rootDir": "src",
+    "typeRoots": ["node_modules/@types"]
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../../packages/pinecone-v0/tsconfig.json"
+    },
+    {
+      "path": "../../packages/core/tsconfig.json"
+    }
+  ]
+}

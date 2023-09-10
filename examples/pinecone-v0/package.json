@@ -1,5 +1,5 @@
 {
-  "name": "@examples/pinecone",
+  "name": "@examples/pinecone-v0",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.2",
-    "@gentrace/pinecone": "workspace:^1.0.0"
+    "@gentrace/pinecone-v0": "workspace:^0.1.7"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
