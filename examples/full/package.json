@@ -9,7 +9,7 @@
   "dependencies": {
     "@gentrace/core": "^2.1.2",
     "@gentrace/openai": "^4.0.2",
-    "@gentrace/pinecone": "^0.1.18"
+    "@gentrace/pinecone": "^1.0.0"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
