@@ -117,8 +117,8 @@ export class PineconePipelineHandler extends Pinecone {
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues
-  public indexInner(index: string) {
-    const apiHandler = super.index(index);
+  public indexInner<T extends RecordMetadata = RecordMetadata>(index: string) {
+    const apiHandler = super.index<T>(index);
 
     type FetchFunctionType = typeof apiHandler.fetch;
 

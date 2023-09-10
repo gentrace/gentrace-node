@@ -7,6 +7,7 @@ import {
   Index,
   PineconeConfiguration,
   QueryOptions,
+  RecordMetadata,
   UpdateOptions,
 } from "@pinecone-database/pinecone";
 import {
@@ -41,13 +42,13 @@ class SimplePinecone
   }
 
   // @ts-ignore
-  public Index(index: string) {
-    return this.index(index);
+  public Index<T extends RecordMetadata = RecordMetadata>(index: string) {
+    return this.index<T>(index);
   }
 
   // @ts-ignore: hack to avoid base class inheritance issues
-  public index(index: string) {
-    const apiHandler = super.indexInner(index);
+  public index<T extends RecordMetadata = RecordMetadata>(index: string) {
+    const apiHandler = super.indexInner<T>(index);
 
     type FetchFunctionType = typeof apiHandler.fetch;
 

@@ -2,6 +2,12 @@ import { init, Pipeline } from "@gentrace/core";
 import { initPlugin } from "@gentrace/pinecone";
 import { DEFAULT_VECTOR } from "./utils";
 
+type MovieMetadata = {
+  title: string;
+  genre: string;
+  runtime: number;
+};
+
 async function createChatCompletion() {
   init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
@@ -24,17 +30,18 @@ async function createChatCompletion() {
 
   const pinecone = await runner.pinecone;
 
-  const index = await pinecone.Index("openai-trec").namespace("testing");
+  const index = await pinecone.index<MovieMetadata>("openai-trec");
 
   try {
-    const upsertResponse = await index.upsert([
-      {
-        id: String(Math.floor(Math.random() * 10000)),
-        values: DEFAULT_VECTOR,
-      },
-    ]);
+    const response = await index.fetch(["1234"]);
 
-    console.log("upsertResponse", upsertResponse);
+    const movieRecord = response.records["1234"];
+
+    if (movieRecord && movieRecord.metadata) {
+      console.log(movieRecord.metadata.genre);
+    }
+
+    console.log("upsertResponse", response);
   } catch (e) {
     console.error("monkies", e.message);
     return;
