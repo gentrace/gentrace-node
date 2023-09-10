@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.15
+
+### Patch Changes
+
+- 50f0fba: Refactor core logic, propagate changes to dependent packages, introduce v1 Pinecone plugin
+
 ## 2.1.14
 
 ### Patch Changes
