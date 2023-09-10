@@ -2,6 +2,7 @@
   "name": "@gentrace/pinecone-v0",
   "version": "0.1.20",
   "description": "Gentrace Pinecone v0 plugin for Node.JS",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git@github.com:gentrace/gentrace-node.git"
