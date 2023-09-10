@@ -5,6 +5,7 @@ import { DEFAULT_VECTOR } from "./utils";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
+  basePath: "http://localhost:3000/api/v1",
 });
 
 async function full() {
@@ -48,16 +49,12 @@ async function full() {
 
   const index = await pinecone.Index("openai-trec");
 
-  const upsertResponse = await index.upsert({
-    upsertRequest: {
-      vectors: [
-        {
-          id: String(Math.floor(Math.random() * 10000)),
-          values: DEFAULT_VECTOR,
-        },
-      ],
+  const upsertResponse = await index.upsert([
+    {
+      id: String(Math.floor(Math.random() * 10000)),
+      values: DEFAULT_VECTOR,
     },
-  });
+  ]);
 
   const pipelineRunId = await runner.submit();
 

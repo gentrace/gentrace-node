@@ -51,8 +51,8 @@ importers:
         specifier: ^4.0.2
         version: link:../../packages/openai
       '@gentrace/pinecone':
-        specifier: ^0.1.18
-        version: 0.1.20
+        specifier: ^1.0.0
+        version: link:../../packages/pinecone
     devDependencies:
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -2479,26 +2479,6 @@ packages:
     resolution: {integrity: sha512-ZSjtmelB7IJfWD2Fvb7+Z+ChTIKWq6kjda95fLcQKNS5aheVHn4IkfgRQE3sIIzTcSLwLcLZUD9UBt+V7+h+Pw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
-
-  /@gentrace/core@2.1.14:
-    resolution: {integrity: sha512-YKXcLSRooiz+RdTkReVq68AUODLgNaEWdY4+rAPKNUY9u6JwntOg/jc7UzK1ORm+AwCidY9QOhO1BbWGrkQqCQ==}
-    dependencies:
-      axios: 1.5.0
-      mustache: 4.2.0
-      uuid: 9.0.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
-  /@gentrace/pinecone@0.1.20:
-    resolution: {integrity: sha512-rx3q1AfsTjK9K8HPMJXG9sX4occF5hgQmtrDkLTagbEoM69Ue+Dl66jvw9ItB6nkOS1yHYFHc1+4oMlT5mSXsQ==}
-    dependencies:
-      '@gentrace/core': 2.1.14
-      '@pinecone-database/pinecone': 0.1.6
-    transitivePeerDependencies:
-      - debug
-      - encoding
-    dev: false
 
   /@humanwhocodes/config-array@0.11.10:
     resolution: {integrity: sha512-KVVjQmNUepDVGXNuoRRdmmEjruj0KfiGSbS8LVc12LMsWDQzRXJ0qdhN8L8uUigKpfEHRhlaQFY0ib1tnUbNeQ==}
