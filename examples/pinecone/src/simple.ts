@@ -13,7 +13,7 @@ const pinecone = new Pinecone({
 });
 
 async function upsertPineconeIndex() {
-  const index = await pinecone.Index("openai-trec");
+  const index = await pinecone.Index("openai-trec").namespace("testing");
 
   const upsertResponse = await index.upsert(
     [

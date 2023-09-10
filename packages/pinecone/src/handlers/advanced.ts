@@ -8,6 +8,7 @@ import {
 import {
   FunctionWithPipelineRunId,
   GentraceParams,
+  ModifiedNamespaceFunction,
   ModifyFirstParam,
   ModifySecondParam,
   PineconePipelineHandler,
@@ -111,6 +112,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
       | "deleteOne"
       | "deleteMany"
       | "deleteAll"
+      | "namespace"
     > & {
       fetch: ModifiedFetchFunction;
       update: ModifiedUpdateFunction;
@@ -119,6 +121,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
       deleteOne: ModifiedDeleteOneFunction;
       deleteMany: ModifiedDeleteManyFunction;
       deleteAll: ModifiedDeleteAllFunction;
+      namespace: ModifiedNamespaceFunction;
     };
 
     return apiHandler as ModifiedAdvancedIndex;

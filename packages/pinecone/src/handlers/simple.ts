@@ -13,6 +13,7 @@ import {
 import {
   FunctionWithPipelineRunId,
   GentraceParams,
+  ModifiedNamespaceFunction,
   ModifyFirstParam,
   ModifySecondParam,
   PineconePipelineHandler,
@@ -129,8 +130,6 @@ class SimplePinecone
       >
     >;
 
-    type NamespaceFunction = typeof apiHandler.namespace;
-
     type ModifiedSimpleIndex = Omit<
       Index,
       | "fetch"
@@ -149,7 +148,7 @@ class SimplePinecone
       deleteOne: ModifiedDeleteOneFunction;
       deleteMany: ModifiedDeleteManyFunction;
       deleteAll: ModifiedDeleteAllFunction;
-      namespace: NamespaceFunction;
+      namespace: ModifiedNamespaceFunction;
     };
 
     return apiHandler as ModifiedSimpleIndex;
