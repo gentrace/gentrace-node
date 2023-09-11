@@ -367,7 +367,7 @@ export class PineconePipelineHandler extends Pinecone {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { recordId },
-              gentraceParams.gentrace ?? {},
+              gentraceParams?.gentrace ?? {},
             ),
           );
 
@@ -404,7 +404,7 @@ export class PineconePipelineHandler extends Pinecone {
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
               { options },
-              gentraceParams.gentrace ?? {},
+              gentraceParams?.gentrace ?? {},
             ),
           );
 
@@ -439,7 +439,7 @@ export class PineconePipelineHandler extends Pinecone {
               elapsedTime,
               new Date(startTime).toISOString(),
               new Date(endTime).toISOString(),
-              gentraceParams.gentrace ?? {},
+              gentraceParams?.gentrace ?? {},
             ),
           );
 
