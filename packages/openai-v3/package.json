@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/openai-v3",
-  "version": "3.3.15",
+  "version": "3.3.16",
   "description": "Gentrace OpenAI v3 plugin for Node.JS",
   "private": true,
   "repository": {

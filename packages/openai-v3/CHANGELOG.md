@@ -1,5 +1,11 @@
 # @gentrace/openai-v3
 
+## 3.3.16
+
+### Patch Changes
+
+- 4ec3372: Export step run classes for external modules
+
 ## 3.3.15
 
 ### Patch Changes

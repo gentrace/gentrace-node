@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/pinecone-v0",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "Gentrace Pinecone v0 plugin for Node.JS",
   "private": true,
   "repository": {

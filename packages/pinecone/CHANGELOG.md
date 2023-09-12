@@ -1,5 +1,12 @@
 # @gentrace/pinecone
 
+## 1.0.2
+
+### Patch Changes
+
+- 8ad84d4: Fix issue where Gentrace was a mandatory parameter
+- 4ec3372: Export step run classes for external modules
+
 ## 1.0.1
 
 ### Patch Changes

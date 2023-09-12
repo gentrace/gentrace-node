@@ -1,5 +1,11 @@
 # @gentrace/pinecone
 
+## 0.1.22
+
+### Patch Changes
+
+- 4ec3372: Export step run classes for external modules
+
 ## 0.1.21
 
 ### Patch Changes
