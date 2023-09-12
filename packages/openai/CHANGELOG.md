@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.0.17
+
+### Patch Changes
+
+- 4ec3372: Export step run classes for external modules
+
 ## 4.0.16
 
 ### Patch Changes
