@@ -465,7 +465,7 @@ export class PineconePipelineHandler extends Pinecone {
   }
 }
 
-class PineconeFetchStepRun extends StepRun {
+export class PineconeFetchStepRun extends StepRun {
   public inputs: { ids: FetchOptions };
   public response: FetchResponse;
 
@@ -491,7 +491,7 @@ class PineconeFetchStepRun extends StepRun {
   }
 }
 
-class PineconeQueryStepRun extends StepRun {
+export class PineconeQueryStepRun extends StepRun {
   public inputs: FetchRequest;
   public response: FetchResponse;
 
@@ -518,7 +518,7 @@ class PineconeQueryStepRun extends StepRun {
   }
 }
 
-class PineconeUpdateStepRun extends StepRun {
+export class PineconeUpdateStepRun extends StepRun {
   public inputs: FetchRequest;
   public response: FetchResponse;
 
@@ -544,7 +544,7 @@ class PineconeUpdateStepRun extends StepRun {
   }
 }
 
-class PineconeUpsertStepRun extends StepRun {
+export class PineconeUpsertStepRun extends StepRun {
   public inputs: UpsertRequest;
   public response: UpsertResponse;
 
@@ -569,7 +569,7 @@ class PineconeUpsertStepRun extends StepRun {
   }
 }
 
-class PineconeDeleteOneStepRun extends StepRun {
+export class PineconeDeleteOneStepRun extends StepRun {
   public inputs: DeleteOneOptions;
   public response: object;
 
@@ -594,7 +594,7 @@ class PineconeDeleteOneStepRun extends StepRun {
   }
 }
 
-class PineconeDeleteManyStepRun extends StepRun {
+export class PineconeDeleteManyStepRun extends StepRun {
   public inputs: DeleteManyOptions;
   public response: object;
 
@@ -619,7 +619,7 @@ class PineconeDeleteManyStepRun extends StepRun {
   }
 }
 
-class PineconeDeleteAllStepRun extends StepRun {
+export class PineconeDeleteAllStepRun extends StepRun {
   public response: object;
 
   constructor(

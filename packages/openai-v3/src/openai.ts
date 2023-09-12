@@ -484,7 +484,7 @@ export class OpenAIPipelineHandler extends OpenAIApi {
   }
 }
 
-class OpenAICreateCompletionStepRun extends StepRun {
+export class OpenAICreateCompletionStepRun extends StepRun {
   public inputs: {
     prompt?: Record<string, string>;
     user?: string;
@@ -527,7 +527,7 @@ class OpenAICreateCompletionStepRun extends StepRun {
   }
 }
 
-class OpenAICreateChatCompletionStepRun extends StepRun {
+export class OpenAICreateChatCompletionStepRun extends StepRun {
   public modelParams: Omit<CreateChatCompletionRequest, "messages" | "user">;
   public inputs: {
     messages?: Array<ChatCompletionRequestMessage>;
@@ -565,7 +565,7 @@ class OpenAICreateChatCompletionStepRun extends StepRun {
   }
 }
 
-class OpenAICreateEmbeddingStepRun extends StepRun {
+export class OpenAICreateEmbeddingStepRun extends StepRun {
   public inputs: Omit<CreateEmbeddingRequest, "model">;
   public modelParams: Omit<CreateEmbeddingRequest, "input" | "user">;
   public response: CreateEmbeddingResponse;

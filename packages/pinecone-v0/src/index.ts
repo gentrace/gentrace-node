@@ -1,4 +1,21 @@
 import { SimplePineconeClient } from "./handlers/simple";
 import { initPlugin, PineconePlugin } from "./plugin";
 
-export { initPlugin, PineconePlugin, SimplePineconeClient as PineconeClient };
+import {
+  PineconeDeleteStepRun,
+  PineconeFetchStepRun,
+  PineconeQueryStepRun,
+  PineconeUpdateStepRun,
+  PineconeUpsertStepRun,
+} from "./pinecone";
+
+export {
+  initPlugin,
+  PineconePlugin,
+  SimplePineconeClient as PineconeClient,
+  PineconeDeleteStepRun,
+  PineconeFetchStepRun,
+  PineconeQueryStepRun,
+  PineconeUpdateStepRun,
+  PineconeUpsertStepRun,
+};
