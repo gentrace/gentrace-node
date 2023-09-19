@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.16
+
+### Patch Changes
+
+- 2c6a728: Add more test case endpoints for creation and updating
+
 ## 2.1.15
 
 ### Patch Changes
