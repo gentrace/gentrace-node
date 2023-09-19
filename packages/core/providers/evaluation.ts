@@ -10,6 +10,7 @@ import {
   TestCasePost200ResponseOneOf,
   TestCasePost200ResponseOneOf1,
   CreateMultipleTestCases,
+  UpdateTestCase,
 } from "../models";
 import {
   GENTRACE_BRANCH,
@@ -152,6 +153,23 @@ export const createTestCases = async (payload: CreateMultipleTestCases) => {
   }
 
   return data.creationCount;
+};
+
+export const updateTestCase = async (payload: UpdateTestCase) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const { id } = payload;
+
+  if (!isUUID(id)) {
+    throw new Error("Expected a valid test case ID.");
+  }
+
+  const response = await globalGentraceApi.testCasePatch(payload);
+  const data = response.data;
+
+  return data.caseId;
 };
 
 /**

@@ -11,6 +11,7 @@ import {
   PipelineRun,
   createTestCase,
   createTestCases,
+  updateTestCase,
 } from "../providers";
 import { setupServer, SetupServer } from "msw/node";
 import { getTestCounter } from "../providers/utils";
@@ -59,6 +60,10 @@ describe("Usage of Evaluation functionality", () => {
 
   let createMultipleCasesResponse = {
     creationCount: 2,
+  };
+
+  let updateTestCaseResponse = {
+    caseId: "87cca81f-f466-4433-a0d2-695c06d1355a",
   };
 
   let getFullPipelinesResponse: {
@@ -260,6 +265,14 @@ describe("Usage of Evaluation functionality", () => {
       ) {
         body = JSON.stringify(createMultipleCasesResponse);
       }
+
+      if (
+        request.method === "PATCH" &&
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+      ) {
+        body = JSON.stringify(updateTestCaseResponse);
+      }
+
       if (request.url.href.includes("https://gentrace.ai/api/v1/pipelines")) {
         const label = request.url.searchParams.get("label");
         if (label) {
@@ -318,6 +331,16 @@ describe("Usage of Evaluation functionality", () => {
             ctx.status(200),
             ctx.set("Content-Type", "application/json"),
             ctx.json(createSingleCaseResponse),
+          );
+        },
+      ),
+      rest.patch(
+        "https://gentrace.ai/api/v1/test-case",
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(updateTestCaseResponse),
           );
         },
       ),
@@ -482,6 +505,22 @@ describe("Usage of Evaluation functionality", () => {
       });
 
       expect(creationCount).toBe(2);
+    });
+
+    it("should give case ID if updating test case", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const caseId = await updateTestCase({
+        id: "87cca81f-f466-4433-a0d2-695c06d1355a",
+        name: "Test Case 1",
+        inputs: { a: 1, b: 2 },
+        expectedOutputs: { value: "This is some output" },
+      });
+
+      expect(caseId).toBe("87cca81f-f466-4433-a0d2-695c06d1355a");
     });
 
     it("should return pipelines when invoking the /api/v1/pipelines API", async () => {

@@ -23,7 +23,7 @@ export interface UpdateTestCase {
    * @type {string}
    * @memberof UpdateTestCase
    */
-  id?: string;
+  id: string;
   /**
    * Name of the test case
    * @type {string}
