@@ -9,6 +9,9 @@ import {
   submitTestResult,
   Pipeline,
   PipelineRun,
+  createTestCase,
+  createTestCases,
+  updateTestCase,
 } from "../providers";
 import { setupServer, SetupServer } from "msw/node";
 import { getTestCounter } from "../providers/utils";
@@ -49,6 +52,18 @@ describe("Usage of Evaluation functionality", () => {
         pipelineId: "12494e89-af19-4326-a12c-54e487337ecc",
       },
     ],
+  };
+
+  let createSingleCaseResponse = {
+    caseId: "87cca81f-f466-4433-a0d2-695c06d1355a",
+  };
+
+  let createMultipleCasesResponse = {
+    creationCount: 2,
+  };
+
+  let updateTestCaseResponse = {
+    caseId: "87cca81f-f466-4433-a0d2-695c06d1355a",
   };
 
   let getFullPipelinesResponse: {
@@ -232,9 +247,32 @@ describe("Usage of Evaluation functionality", () => {
       if (request.url.href === "https://gentrace.ai/api/v1/test-run") {
         body = JSON.stringify(createTestRunResponse);
       }
-      if (request.url.href.includes("https://gentrace.ai/api/v1/test-case")) {
+      if (
+        request.method === "GET" &&
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+      ) {
         body = JSON.stringify(getTestCasesResponse);
       }
+      if (
+        request.method === "POST" &&
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+      ) {
+        body = JSON.stringify(createSingleCaseResponse);
+      }
+      if (
+        request.method === "POST" &&
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+      ) {
+        body = JSON.stringify(createMultipleCasesResponse);
+      }
+
+      if (
+        request.method === "PATCH" &&
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+      ) {
+        body = JSON.stringify(updateTestCaseResponse);
+      }
+
       if (request.url.href.includes("https://gentrace.ai/api/v1/pipelines")) {
         const label = request.url.searchParams.get("label");
         if (label) {
@@ -276,6 +314,36 @@ describe("Usage of Evaluation functionality", () => {
           ctx.json(getTestCasesResponse),
         );
       }),
+      rest.post(
+        "https://gentrace.ai/api/v1/test-case",
+        async (req, res, ctx) => {
+          const payload = await req.json();
+
+          if (payload.testCases) {
+            return res(
+              ctx.status(200),
+              ctx.set("Content-Type", "application/json"),
+              ctx.json(createMultipleCasesResponse),
+            );
+          }
+
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(createSingleCaseResponse),
+          );
+        },
+      ),
+      rest.patch(
+        "https://gentrace.ai/api/v1/test-case",
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(updateTestCaseResponse),
+          );
+        },
+      ),
       rest.get("https://gentrace.ai/api/v1/pipelines", (req, res, ctx) => {
         const label = req.url.searchParams.get("label");
 
@@ -396,6 +464,63 @@ describe("Usage of Evaluation functionality", () => {
       expect(submitTestResult("pipeline-id", testCases, [])).rejects.toThrow(
         "The number of test cases must be equal to the number of outputs.",
       );
+    });
+
+    it("should give case ID if creating single test case", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const singleCase = await createTestCase({
+        pipelineSlug: "guess-the-year",
+        name: "Test Case 1",
+        inputs: { a: 1, b: 2 },
+        expectedOutputs: { value: "This is some output" },
+      });
+
+      expect(singleCase).toBe(createSingleCaseResponse.caseId);
+    });
+
+    it("should give case ID if creating multiple test cases", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const creationCount = await createTestCases({
+        pipelineSlug: "guess-the-year",
+        testCases: [
+          {
+            name: "Test Case 1",
+            inputs: { a: 1, b: 2 },
+            expectedOutputs: { value: "This is some output" },
+          },
+          {
+            name: "Test Case 2",
+            inputs: { a: 1, b: 2 },
+            expectedOutputs: { value: "This is some output" },
+          },
+        ],
+      });
+
+      expect(creationCount).toBe(2);
+    });
+
+    it("should give case ID if updating test case", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const caseId = await updateTestCase({
+        id: "87cca81f-f466-4433-a0d2-695c06d1355a",
+        name: "Test Case 1",
+        inputs: { a: 1, b: 2 },
+        expectedOutputs: { value: "This is some output" },
+      });
+
+      expect(caseId).toBe("87cca81f-f466-4433-a0d2-695c06d1355a");
     });
 
     it("should return pipelines when invoking the /api/v1/pipelines API", async () => {

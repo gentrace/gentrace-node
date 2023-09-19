@@ -5,6 +5,12 @@ import {
   TestResultPostRequestTestRunsInner,
   TestRunPostRequestTestResultsInner,
   TestRunPostRequest,
+  CreateSingleTestCase,
+  TestCasePost200Response,
+  TestCasePost200ResponseOneOf,
+  TestCasePost200ResponseOneOf1,
+  CreateMultipleTestCases,
+  UpdateTestCase,
 } from "../models";
 import {
   GENTRACE_BRANCH,
@@ -55,6 +61,115 @@ export const getTestCases = async (pipelineSlug: string) => {
   const response = await globalGentraceApi.testCaseGet(pipelineId);
   const testCases = response.data.testCases ?? [];
   return testCases;
+};
+
+function isTestCaseSingle(
+  response: TestCasePost200Response,
+): response is TestCasePost200ResponseOneOf {
+  return (response as TestCasePost200ResponseOneOf).caseId !== undefined;
+}
+
+/**
+ * Creates a single test case for a given pipeline ID from the Gentrace API
+ *
+ * @async
+ * @param {CreateSingleTestCase} payload - New test case payload
+ * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
+ * @returns {Promise<string>} A Promise that resolves to the created case ID
+ */
+export const createTestCase = async (payload: CreateSingleTestCase) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const { pipelineSlug } = payload;
+
+  let pipelineId = pipelineSlug;
+
+  if (!isUUID(pipelineSlug)) {
+    const allPipelines = await getPipelines();
+
+    const matchingPipeline = allPipelines.find(
+      (pipeline) => pipeline.slug === pipelineSlug,
+    );
+
+    if (!matchingPipeline) {
+      throw new Error(
+        `Could not find the specified pipeline (${pipelineSlug})`,
+      );
+    }
+
+    pipelineId = matchingPipeline.id;
+  }
+
+  const response = await globalGentraceApi.testCasePost(payload);
+  const data = response.data;
+
+  if (!isTestCaseSingle(data)) {
+    throw new Error("Expected a single test case to be created.");
+  }
+
+  return data.caseId;
+};
+
+/**
+ * Creates multiple test cases for a given pipeline ID from the Gentrace API
+ *
+ * @async
+ * @param {CreateMultipleTestCases} payload - New test case payloads
+ * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
+ * @returns {Promise<stringl>} A Promise that resolves to the number of test cases successfully created
+ */
+export const createTestCases = async (payload: CreateMultipleTestCases) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const { pipelineSlug } = payload;
+
+  let pipelineId = pipelineSlug;
+
+  if (!isUUID(pipelineSlug)) {
+    const allPipelines = await getPipelines();
+
+    const matchingPipeline = allPipelines.find(
+      (pipeline) => pipeline.slug === pipelineSlug,
+    );
+
+    if (!matchingPipeline) {
+      throw new Error(
+        `Could not find the specified pipeline (${pipelineSlug})`,
+      );
+    }
+
+    pipelineId = matchingPipeline.id;
+  }
+
+  const response = await globalGentraceApi.testCasePost(payload);
+  const data = response.data;
+
+  if (isTestCaseSingle(data)) {
+    throw new Error("Expected multiple test cases to be created.");
+  }
+
+  return data.creationCount;
+};
+
+export const updateTestCase = async (payload: UpdateTestCase) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const { id } = payload;
+
+  if (!isUUID(id)) {
+    throw new Error("Expected a valid test case ID.");
+  }
+
+  const response = await globalGentraceApi.testCasePatch(payload);
+  const data = response.data;
+
+  return data.caseId;
 };
 
 /**
