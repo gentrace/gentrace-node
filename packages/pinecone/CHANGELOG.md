@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 1.0.3
+
+### Patch Changes
+
+- 2c6a728: Add more test case endpoints for creation and updating
+- Updated dependencies [2c6a728]
+  - @gentrace/core@2.1.16
+
 ## 1.0.2
 
 ### Patch Changes

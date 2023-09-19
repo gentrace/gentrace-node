@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.0.18
+
+### Patch Changes
+
+- 2c6a728: Add more test case endpoints for creation and updating
+- Updated dependencies [2c6a728]
+  - @gentrace/core@2.1.16
+
 ## 4.0.17
 
 ### Patch Changes
