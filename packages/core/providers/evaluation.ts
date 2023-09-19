@@ -408,13 +408,11 @@ export const runTest = async (
       const testRun: TestRun = {
         caseId: testCase.id,
         stepRuns: pipelineRun.stepRuns.map((stepRun) => ({
-          provider: {
-            modelParams: stepRun.modelParams,
-            invocation: stepRun.invocation,
-            inputs: stepRun.inputs,
-            outputs: stepRun.outputs,
-            name: stepRun.provider,
-          },
+          modelParams: stepRun.modelParams,
+          invocation: stepRun.invocation,
+          inputs: stepRun.inputs,
+          outputs: stepRun.outputs,
+          providerName: stepRun.provider,
           elapsedTime: stepRun.elapsedTime,
           startTime: stepRun.startTime,
           endTime: stepRun.endTime,
