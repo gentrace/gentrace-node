@@ -206,7 +206,7 @@ export class PipelineRun {
       collectionMethod: RunRequestCollectionMethodEnum.Runner,
       stepRuns: this.stepRuns.map(
         ({
-          provider,
+          provider: providerName,
           elapsedTime,
           startTime,
           endTime,
@@ -217,16 +217,14 @@ export class PipelineRun {
           context: stepRunContext,
         }) => {
           return {
-            provider: {
-              name: provider,
-              invocation,
-              modelParams,
-              inputs,
-              outputs,
-            },
+            providerName,
             elapsedTime,
             startTime,
             endTime,
+            invocation,
+            modelParams,
+            inputs,
+            outputs,
             context: {
               ...(this.context ?? {}),
               ...(stepRunContext ?? {}),
