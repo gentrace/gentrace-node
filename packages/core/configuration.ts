@@ -116,7 +116,7 @@ export class Configuration {
       this.baseOptions = {};
     }
     this.baseOptions.headers = {
-      "User-Agent": `Gentrace/NodeJS`,
+      "User-Agent": `OpenAI/NodeJS`,
       Authorization: `Bearer ${this.apiKey}`,
       ...this.baseOptions.headers,
     };

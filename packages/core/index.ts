@@ -20,6 +20,7 @@ export {
   PipelinesGet200Response,
   RunRequest,
   RunResponse,
+  StepRun,
   StepRunProvider,
   TestCase,
   TestCaseGet200Response,

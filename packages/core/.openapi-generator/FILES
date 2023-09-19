@@ -5,6 +5,9 @@ base.ts
 common.ts
 configuration.ts
 index.ts
+models/create-multiple-test-cases-test-cases-inner.ts
+models/create-multiple-test-cases.ts
+models/create-single-test-case.ts
 models/feedback-request.ts
 models/feedback-response.ts
 models/index.ts
@@ -16,6 +19,11 @@ models/step-run-context.ts
 models/step-run-provider.ts
 models/step-run.ts
 models/test-case-get200-response.ts
+models/test-case-patch200-response.ts
+models/test-case-post-request.ts
+models/test-case-post200-response-one-of.ts
+models/test-case-post200-response-one-of1.ts
+models/test-case-post200-response.ts
 models/test-case.ts
 models/test-result-get200-response-stats.ts
 models/test-result-get200-response.ts
@@ -30,3 +38,4 @@ models/test-run-post-request-test-results-inner.ts
 models/test-run-post-request.ts
 models/test-run-post200-response.ts
 models/test-run.ts
+models/update-test-case.ts
