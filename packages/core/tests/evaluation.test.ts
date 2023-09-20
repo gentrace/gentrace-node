@@ -244,8 +244,10 @@ describe("Usage of Evaluation functionality", () => {
       if (request.url.href === "https://gentrace.ai/api/v1/test-result") {
         body = JSON.stringify(createTestResultResponse);
       }
-      if (request.url.href === "https://gentrace.ai/api/v1/test-run") {
-        body = JSON.stringify(createTestRunResponse);
+      if (
+        request.url.href === "https://gentrace.ai/api/v1/test-result-simple"
+      ) {
+        body = JSON.stringify(createTestResultResponse);
       }
       if (
         request.method === "GET" &&
@@ -300,13 +302,16 @@ describe("Usage of Evaluation functionality", () => {
           ctx.json(createTestResultResponse),
         );
       }),
-      rest.post("https://gentrace.ai/api/v1/test-run", (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.set("Content-Type", "application/json"),
-          ctx.json(createTestRunResponse),
-        );
-      }),
+      rest.post(
+        "https://gentrace.ai/api/v1/test-result-simple",
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(createTestResultResponse),
+          );
+        },
+      ),
       rest.get("https://gentrace.ai/api/v1/test-case", (req, res, ctx) => {
         return res(
           ctx.status(200),
@@ -400,7 +405,9 @@ describe("Usage of Evaluation functionality", () => {
       );
 
       // The API endpoint will return runId instead of resultId since it's deprecated
-      expect(submissionResponse.runId).toBe(createTestResultResponse.resultId);
+      expect(submissionResponse.resultId).toBe(
+        createTestResultResponse.resultId,
+      );
     });
 
     it("should create an instance when configuration is valid (gentrace.ai host)", async () => {
@@ -422,7 +429,9 @@ describe("Usage of Evaluation functionality", () => {
         testCases,
         [{ value: "This are some outputs" }],
       );
-      expect(submissionResponse.runId).toBe(createTestResultResponse.resultId);
+      expect(submissionResponse.resultId).toBe(
+        createTestResultResponse.resultId,
+      );
     });
 
     it("should pass if a UUID is directly passed", async () => {
@@ -444,7 +453,9 @@ describe("Usage of Evaluation functionality", () => {
         testCases,
         [{ value: "This are some outputs" }],
       );
-      expect(submissionResponse.runId).toBe(createTestResultResponse.resultId);
+      expect(submissionResponse.resultId).toBe(
+        createTestResultResponse.resultId,
+      );
     });
 
     it("should fails when parameters do not match", async () => {

@@ -30,11 +30,8 @@ models/test-result-get200-response1.ts
 models/test-result-post-request-test-runs-inner.ts
 models/test-result-post-request.ts
 models/test-result-post200-response.ts
+models/test-result-simple-post-request-test-runs-inner.ts
+models/test-result-simple-post-request.ts
 models/test-result.ts
-models/test-run-get200-response.ts
-models/test-run-post-request-test-results-inner-output-steps-inner.ts
-models/test-run-post-request-test-results-inner.ts
-models/test-run-post-request.ts
-models/test-run-post200-response.ts
 models/test-run.ts
 models/update-test-case.ts
