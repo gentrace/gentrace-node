@@ -1,15 +1,14 @@
 import {
+  CreateMultipleTestCases,
+  CreateSingleTestCase,
   Pipeline,
   TestCase,
-  TestResultPostRequest,
-  TestResultPostRequestTestRunsInner,
-  TestRunPostRequestTestResultsInner,
-  TestRunPostRequest,
-  CreateSingleTestCase,
   TestCasePost200Response,
   TestCasePost200ResponseOneOf,
-  TestCasePost200ResponseOneOf1,
-  CreateMultipleTestCases,
+  TestResultPostRequest,
+  TestResultPostRequestTestRunsInner,
+  TestResultSimplePostRequest,
+  TestResultSimplePostRequestTestRunsInner,
   UpdateTestCase,
 } from "../models";
 import {
@@ -26,7 +25,6 @@ import {
 } from "./utils";
 
 export type TestRun = TestResultPostRequestTestRunsInner;
-export type TestResult = TestRunPostRequestTestResultsInner;
 
 /**
  * Retrieves test cases for a given pipeline ID from the Gentrace API
@@ -172,54 +170,6 @@ export const updateTestCase = async (payload: UpdateTestCase) => {
   return data.caseId;
 };
 
-/**
- * @deprecated Use {@link runTest} instead.
- * Submits prepared test results to the Gentrace API for a given set ID. This method requires that you
- * create TestResult objects yourself. We recommend using the submitTestResults method instead.
- *
- * NOTE: We have renamed TestResult -> TestRun, TestRun -> TestResult, and TestSet -> Pipeline.
- *
- * @async
- * @param {string} setId - The ID of the test set associated with the test results.
- * @param {Array<TestResult>} testResults - An array of test results to submit.
- * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
- * @returns {Promise<TestRunPost200Response>} A Promise that resolves with the response data from the API.
- */
-export const submitPreparedTestResults = async (
-  setId: string,
-  testResults: TestResult[],
-) => {
-  if (!globalGentraceApi) {
-    throw new Error("Gentrace API key not initialized. Call init() first.");
-  }
-
-  const body: TestRunPostRequest = {
-    setId,
-    testResults,
-  };
-
-  if (GENTRACE_RUN_NAME) {
-    body.name = GENTRACE_RUN_NAME;
-  }
-
-  if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
-    body.branch =
-      GENTRACE_BRANCH.length > 0
-        ? GENTRACE_BRANCH
-        : getProcessEnv("GENTRACE_BRANCH");
-  }
-
-  if (GENTRACE_COMMIT || getProcessEnv("GENTRACE_COMMIT")) {
-    body.commit =
-      GENTRACE_COMMIT.length > 0
-        ? GENTRACE_COMMIT
-        : getProcessEnv("GENTRACE_COMMIT");
-  }
-
-  const response = await globalGentraceApi.testRunPost(body);
-  return response.data;
-};
-
 export const constructSubmissionPayload = (
   pipelineId: string,
   testRuns: TestRun[],
@@ -288,9 +238,9 @@ export const submitTestResult = async (
     );
   }
 
-  const testRuns: TestRunPostRequestTestResultsInner[] = testCases.map(
+  const testRuns: TestResultSimplePostRequestTestRunsInner[] = testCases.map(
     (testCase, index) => {
-      const run: TestRunPostRequestTestResultsInner = {
+      const run: TestResultSimplePostRequestTestRunsInner = {
         caseId: testCase.id,
         inputs: testCase.inputs,
         outputs: outputsList[index],
@@ -300,27 +250,9 @@ export const submitTestResult = async (
     },
   );
 
-  let pipelineId = pipelineSlug;
-
-  if (!isUUID(pipelineSlug)) {
-    const allPipelines = await getPipelines();
-
-    const matchingPipeline = allPipelines.find(
-      (pipeline) => pipeline.slug === pipelineSlug,
-    );
-
-    if (!matchingPipeline) {
-      throw new Error(
-        `Could not find the specified pipeline (${pipelineSlug})`,
-      );
-    }
-
-    pipelineId = matchingPipeline.id;
-  }
-
-  const body: TestRunPostRequest = {
-    setId: pipelineId,
-    testResults: testRuns,
+  const body: TestResultSimplePostRequest = {
+    pipelineSlug,
+    testRuns: testRuns,
   };
 
   if (GENTRACE_RUN_NAME) {
@@ -341,7 +273,7 @@ export const submitTestResult = async (
         : getProcessEnv("GENTRACE_COMMIT");
   }
 
-  const response = await globalGentraceApi.testRunPost(body);
+  const response = await globalGentraceApi.testResultSimplePost(body);
   return response.data;
 };
 
