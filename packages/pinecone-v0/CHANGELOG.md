@@ -1,5 +1,16 @@
 # @gentrace/pinecone
 
+## 0.2.0
+
+### Minor Changes
+
+- 6811d80: Add HTML rendering option for steps
+
+### Patch Changes
+
+- Updated dependencies [6811d80]
+  - @gentrace/core@2.2.0
+
 ## 0.1.24
 
 ### Patch Changes
