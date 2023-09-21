@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.17
+
+### Patch Changes
+
+- b630a04: Add in test-result-simple handler
+- cb5079a: fix: simpler Step Run
+- 69fd657: Fix issue with pipeline slug not specified as a mandatory parameter
+
 ## 2.1.16
 
 ### Patch Changes

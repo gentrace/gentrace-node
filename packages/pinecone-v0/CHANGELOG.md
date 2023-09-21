@@ -1,5 +1,17 @@
 # @gentrace/pinecone
 
+## 0.1.24
+
+### Patch Changes
+
+- b630a04: Add in test-result-simple handler
+- cb5079a: fix: simpler Step Run
+- 69fd657: Fix issue with pipeline slug not specified as a mandatory parameter
+- Updated dependencies [b630a04]
+- Updated dependencies [cb5079a]
+- Updated dependencies [69fd657]
+  - @gentrace/core@2.1.17
+
 ## 0.1.23
 
 ### Patch Changes
