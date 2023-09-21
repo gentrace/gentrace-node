@@ -10,20 +10,20 @@ import {
   CreateCompletionTemplateRequest,
   OpenAIPipelineHandler,
 } from "../openai";
-import { AdvancedContext, Context } from "@gentrace/core";
+import { PluginStepRunContext, Context } from "@gentrace/core";
 
 type CreateChatCompletionTemplateRequestRestricted = Omit<
   CreateChatCompletionTemplateRequest,
   "gentrace"
 > & {
-  gentrace?: AdvancedContext;
+  gentrace?: PluginStepRunContext;
 };
 
 type CreateCompletionTemplateRequestRestricted = Omit<
   CreateCompletionTemplateRequest,
   "gentrace"
 > & {
-  gentrace?: AdvancedContext;
+  gentrace?: PluginStepRunContext;
 };
 
 type CreateEmbeddingRequestRestricted = Omit<
@@ -34,7 +34,7 @@ type CreateEmbeddingRequestRestricted = Omit<
   },
   "gentrace"
 > & {
-  gentrace?: AdvancedContext;
+  gentrace?: PluginStepRunContext;
 };
 
 class AdvancedOpenAIApi extends OpenAIPipelineHandler {
