@@ -33,5 +33,4 @@ models/test-result-post200-response.ts
 models/test-result-simple-post-request-test-runs-inner.ts
 models/test-result-simple-post-request.ts
 models/test-result.ts
-models/test-run.ts
 models/update-test-case.ts

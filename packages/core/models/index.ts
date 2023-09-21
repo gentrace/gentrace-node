@@ -25,5 +25,4 @@ export * from "./test-result-post-request";
 export * from "./test-result-post-request-test-runs-inner";
 export * from "./test-result-simple-post-request";
 export * from "./test-result-simple-post-request-test-runs-inner";
-export * from "./test-run";
 export * from "./update-test-case";
