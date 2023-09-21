@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0
+
+### Minor Changes
+
+- 6811d80: Add HTML rendering option for steps
+
 ## 2.1.17
 
 ### Patch Changes

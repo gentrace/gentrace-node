@@ -1,5 +1,16 @@
 # @gentrace/openai-v3
 
+## 3.4.0
+
+### Minor Changes
+
+- 6811d80: Add HTML rendering option for steps
+
+### Patch Changes
+
+- Updated dependencies [6811d80]
+  - @gentrace/core@2.2.0
+
 ## 3.3.18
 
 ### Patch Changes
