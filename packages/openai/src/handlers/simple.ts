@@ -4,7 +4,7 @@ import {
   GENTRACE_API_KEY,
   globalGentraceConfig,
   PipelineRun,
-  SimpleContext,
+  PluginContext,
   SimpleHandler,
 } from "@gentrace/core";
 import OpenAI from "openai";
@@ -134,7 +134,7 @@ class SimpleGentraceEmbeddings extends GentraceEmbeddings {
   async create(
     body: EmbeddingCreateParams & {
       pipelineSlug?: string;
-      gentrace?: SimpleContext;
+      gentrace?: PluginContext;
     },
     options?: RequestOptions,
   ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
@@ -162,7 +162,7 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceCompletionCreateParamsNonStreaming, "gentrace"> & {
-      gentrace?: SimpleContext;
+      gentrace?: PluginContext;
     },
     options?: RequestOptions,
   ): Promise<GentraceCompletion>;
@@ -170,7 +170,7 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceCompletionCreateParamsStreaming, "gentrace"> & {
-      gentrace?: SimpleContext;
+      gentrace?: PluginContext;
     },
     options?: RequestOptions,
   ): Promise<
@@ -182,7 +182,7 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
   // @ts-ignore
   async create(
     body: Omit<GentraceCompletionCreateParams, "gentrace"> & {
-      gentrace?: SimpleContext;
+      gentrace?: PluginContext;
     },
     requestOptions?: RequestOptions,
   ): Promise<
@@ -240,7 +240,7 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceChatCompletionCreateParamsNonStreaming, "gentrace"> & {
-      gentrace?: SimpleContext;
+      gentrace?: PluginContext;
     },
     options?: RequestOptions,
   ): Promise<GentraceChatCompletion>;
@@ -248,7 +248,7 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   create(
     body: Omit<GentraceChatCompletionCreateParamsStreaming, "gentrace"> & {
-      gentrace?: SimpleContext;
+      gentrace?: PluginContext;
     },
     options?: RequestOptions,
   ): Promise<
@@ -260,7 +260,7 @@ class SimpleGentraceChatCompletions extends GentraceChatCompletions {
   // @ts-ignore
   async create(
     body: Omit<GentraceChatCompletionCreateParams, "gentrace"> & {
-      gentrace?: SimpleContext;
+      gentrace?: PluginContext;
     },
     requestOptions?: RequestOptions,
   ): Promise<

@@ -1,6 +1,6 @@
 import {
   globalGentraceConfig,
-  SimpleContext,
+  PluginContext,
   SimpleHandler,
 } from "@gentrace/core";
 import {
@@ -57,7 +57,7 @@ class SimplePinecone
       ModifySecondParam<
         FetchFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: SimpleContext;
+          gentrace?: PluginContext;
         }
       >
     >;
@@ -69,7 +69,7 @@ class SimplePinecone
         UpdateFunctionType,
         UpdateOptions &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
+            gentrace?: PluginContext;
           }
       >
     >;
@@ -81,7 +81,7 @@ class SimplePinecone
         QueryFunctionType,
         QueryOptions &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
+            gentrace?: PluginContext;
           }
       >
     >;
@@ -92,7 +92,7 @@ class SimplePinecone
       ModifySecondParam<
         UpsertFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: SimpleContext;
+          gentrace?: PluginContext;
         }
       >
     >;
@@ -103,7 +103,7 @@ class SimplePinecone
       ModifySecondParam<
         DeleteOneFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: SimpleContext;
+          gentrace?: PluginContext;
         }
       >
     >;
@@ -114,7 +114,7 @@ class SimplePinecone
       ModifySecondParam<
         DeleteManyFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: SimpleContext;
+          gentrace?: PluginContext;
         }
       >
     >;
@@ -125,7 +125,7 @@ class SimplePinecone
       ModifyFirstParam<
         DeleteAllFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: SimpleContext;
+          gentrace?: PluginContext;
         }
       >
     >;

@@ -38,5 +38,4 @@ export class StepRun {
 }
 
 export type StepRunType = typeof StepRun;
-
 export type PartialStepRunType = Partial<StepRun>;

@@ -662,6 +662,12 @@ describe("Usage of Evaluation functionality", () => {
         {
           modelParams: { b: 5 },
           invocation: "customAddition",
+          context: {
+            render: {
+              type: "html",
+              key: "a",
+            },
+          },
         },
       );
 

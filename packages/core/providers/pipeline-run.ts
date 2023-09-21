@@ -3,9 +3,13 @@ import { CoreApi } from "../api/core-api";
 import { Configuration } from "../configuration";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
-import { Context } from "./context";
-import { PartialStepRunType, StepRun } from "./step-run";
+import { Context, CoreStepRunContext } from "./context";
+import { StepRun, PartialStepRunType } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
+
+type PRStepRunType = Omit<PartialStepRunType, "context"> & {
+  context?: CoreStepRunContext;
+};
 
 interface PipelineLike {
   slug: string;
@@ -18,7 +22,7 @@ export class PipelineRun {
   private pipeline: PipelineLike;
   public stepRuns: StepRun[];
 
-  private context?: Context;
+  public context?: Context;
 
   private id: string = v4();
 
@@ -61,12 +65,12 @@ export class PipelineRun {
    * current timestamp. If it is empty, elapsed time is set to 0 and start time and end time are set to the current
    * timestamp.
    *
-   * @param {PartialStepRunType & { inputs: any; outputs: any; }} step The information about the step to checkpoint.
+   * @param {PRStepRunType & { inputs: any; outputs: any; }} step The information about the step to checkpoint.
    * This includes the inputs and outputs of the step, as well as optional provider, invocation and modelParams metadata.
    *
    * @example
    * const stepInfo = {
-   *   provider: 'MyProvider',
+   *   providerName: 'MyProvider',
    *   invocation: 'doSomething',
    *   inputs: { x: 10, y: 20 },
    *   outputs: { result: 30 }
@@ -78,7 +82,7 @@ export class PipelineRun {
    * @throws {Error} If the `StepRun` constructor or any other operations throw an error, it will be propagated.
    */
   checkpoint(
-    step: PartialStepRunType & {
+    step: PRStepRunType & {
       inputs: any;
       outputs: any;
     },
@@ -129,7 +133,7 @@ export class PipelineRun {
    * @template F Function type that extends (...args: any[]) => any
    * @param {F} func The function to be measured.
    * @param {Parameters<F>} inputs The parameters to be passed to the function.
-   * @param {Omit<PartialStepRunType, "inputs" | "outputs">} [stepInfo] Optional metadata for the function execution.
+   * @param {Omit<PRStepRunType, "inputs" | "outputs">} [stepInfo] Optional metadata for the function execution.
    * @returns {Promise<ReturnType<F>>} Returns a promise that resolves to the return type of the function.
    *
    * @example
@@ -145,7 +149,7 @@ export class PipelineRun {
   async measure<F extends (...args: any[]) => any>(
     func: F,
     inputs: Parameters<F>,
-    stepInfo?: Omit<PartialStepRunType, "inputs" | "outputs">,
+    stepInfo?: Omit<PRStepRunType, "inputs" | "outputs">,
   ): Promise<ReturnType<F>> {
     const startTime = Date.now();
     const returnValue = await func(...inputs);

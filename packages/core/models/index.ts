@@ -9,6 +9,7 @@ export * from "./run-request";
 export * from "./run-response";
 export * from "./step-run";
 export * from "./step-run-context";
+export * from "./step-run-context-render";
 export * from "./test-case";
 export * from "./test-case-get200-response";
 export * from "./test-case-patch200-response";

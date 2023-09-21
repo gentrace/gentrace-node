@@ -12,26 +12,22 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import { StepRunContextRender } from "./step-run-context-render";
-
 /**
  *
  * @export
- * @interface StepRunContext
+ * @interface StepRunContextRender
  */
-export interface StepRunContext {
+export interface StepRunContextRender {
   /**
    *
    * @type {string}
-   * @memberof StepRunContext
+   * @memberof StepRunContextRender
    */
-  userId?: string;
+  type: string;
   /**
    *
-   * @type {StepRunContextRender}
-   * @memberof StepRunContext
+   * @type {string}
+   * @memberof StepRunContextRender
    */
-  render?: StepRunContextRender;
+  key?: string;
 }

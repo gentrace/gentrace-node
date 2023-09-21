@@ -1,7 +1,14 @@
-export type Context = {
+type PipelineRunContext = {
   userId?: string;
 };
 
-export type SimpleContext = Pick<Context, "userId">;
+export type CoreStepRunContext = {
+  render?: {
+    type: "html";
+    key: string;
+  };
+};
 
-export type AdvancedContext = Omit<Context, "userId">;
+export type PluginContext = PipelineRunContext;
+export type PluginStepRunContext = Record<string, never>;
+export type Context = PipelineRunContext & CoreStepRunContext;

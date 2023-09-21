@@ -1,7 +1,7 @@
 import {
   globalGentraceConfig,
   Configuration as GentraceConfiguration,
-  SimpleContext,
+  PluginContext,
   SimpleHandler,
 } from "@gentrace/core";
 import {
@@ -65,7 +65,7 @@ class SimplePineconeClient
         FetchFunctionType,
         FetchRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
+            gentrace?: PluginContext;
           }
       >
     >;
@@ -77,7 +77,7 @@ class SimplePineconeClient
         UpdateFunctionType,
         UpdateOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
+            gentrace?: PluginContext;
           }
       >
     >;
@@ -89,7 +89,7 @@ class SimplePineconeClient
         QueryFunctionType,
         QueryOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
+            gentrace?: PluginContext;
           }
       >
     >;
@@ -101,7 +101,7 @@ class SimplePineconeClient
         UpsertFunctionType,
         UpsertOperationRequest &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
+            gentrace?: PluginContext;
           }
       >
     >;
@@ -113,7 +113,7 @@ class SimplePineconeClient
         DeleteFunctionType,
         Delete1Request &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: SimpleContext;
+            gentrace?: PluginContext;
           }
       >
     >;

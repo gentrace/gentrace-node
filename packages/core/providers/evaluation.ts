@@ -348,6 +348,7 @@ export const runTest = async (
           elapsedTime: stepRun.elapsedTime,
           startTime: stepRun.startTime,
           endTime: stepRun.endTime,
+          context: { ...pipelineRun.context, ...stepRun.context },
         })),
       };
 

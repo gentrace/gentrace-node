@@ -1,4 +1,4 @@
-import { AdvancedContext } from "@gentrace/core";
+import { PluginStepRunContext } from "@gentrace/core";
 import {
   Index,
   QueryOptions,
@@ -30,7 +30,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
       ModifySecondParam<
         FetchFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: AdvancedContext;
+          gentrace?: PluginStepRunContext;
         }
       >
     >;
@@ -42,7 +42,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
         UpdateFunctionType,
         UpdateOptions &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: AdvancedContext;
+            gentrace?: PluginStepRunContext;
           }
       >
     >;
@@ -54,7 +54,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
         QueryFunctionType,
         QueryOptions &
           Omit<GentraceParams, "gentrace"> & {
-            gentrace?: AdvancedContext;
+            gentrace?: PluginStepRunContext;
           }
       >
     >;
@@ -65,7 +65,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
       ModifySecondParam<
         UpsertFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: AdvancedContext;
+          gentrace?: PluginStepRunContext;
         }
       >
     >;
@@ -76,7 +76,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
       ModifySecondParam<
         DeleteOneFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: AdvancedContext;
+          gentrace?: PluginStepRunContext;
         }
       >
     >;
@@ -87,7 +87,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
       ModifySecondParam<
         DeleteManyFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: AdvancedContext;
+          gentrace?: PluginStepRunContext;
         }
       >
     >;
@@ -98,7 +98,7 @@ class AdvancedPinecone extends PineconePipelineHandler {
       ModifyFirstParam<
         DeleteAllFunctionType,
         Omit<GentraceParams, "gentrace"> & {
-          gentrace?: AdvancedContext;
+          gentrace?: PluginStepRunContext;
         }
       >
     >;
