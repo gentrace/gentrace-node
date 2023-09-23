@@ -11,10 +11,18 @@
     "gentrace",
     "cli"
   ],
+  "files": [
+    "dist/**/*"
+  ],
   "author": "Gentrace",
   "license": "MIT",
   "bin": {
     "gentrace": "./src/index.js"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "babel src --out-dir dist",
+    "all": "run-s clean build"
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.15",
@@ -29,9 +37,13 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.22.15",
+    "@babel/core": "^7.22.20",
+    "@babel/preset-react": "^7.22.15",
     "@types/node": "^12.11.5",
     "@types/uuid": "^9.0.1",
     "dotenv": "^16.0.3",
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.0"
   }
 }
