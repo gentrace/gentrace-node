@@ -1,5 +1,5 @@
 import { Box, Text } from "ink";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import fs from "fs";
 import { gentraceConfigFile } from "./utils.js";
 import clipboard from "clipboardy";
