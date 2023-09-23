@@ -1,8 +1,8 @@
-import { Box, Text } from "ink";
-import { useEffect, useState } from "react";
-import fs from "fs";
-import { gentraceConfigFile } from "./utils.js";
-import clipboard from "clipboardy";
+const { Box, Text } = require("ink");
+const { useEffect, useState } = require("react");
+const fs = require("fs");
+const { gentraceConfigFile } = require("./utils.js");
+const clipboard = require("clipboardy");
 
 function ConfigGet({ options }) {
   const [config, setConfig] = useState(null);
@@ -36,4 +36,5 @@ function ConfigGet({ options }) {
   );
 }
 
-export default ConfigGet;
+module.exports = ConfigGet;
+module.exports.default = ConfigGet;

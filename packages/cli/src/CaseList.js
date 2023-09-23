@@ -1,8 +1,9 @@
-import { getTestCases } from "@gentrace/core";
-import { Box, Text, useInput } from "ink";
-import React, { useEffect, useState } from "react";
-import { config } from "./utils.js";
-import clipboard from "clipboardy";
+const { getTestCases } = require("@gentrace/core");
+const { Box, Text, useInput } = require("ink");
+const React = require("react");
+const { useEffect, useState } = React;
+const { config } = require("./utils.js");
+const clipboard = require("clipboardy");
 
 function CaseList() {
   const [cases, setCases] = useState([]);
@@ -51,7 +52,7 @@ function CaseList() {
   }, [clipboardNotification]);
 
   return (
-    <>
+    <Box>
       <Box flexDirection="column">
         {cases.map((testCase, index) => (
           <Text key={testCase.id}>
@@ -69,8 +70,9 @@ function CaseList() {
           <Text color="green"> 📋 Copied to clipboard!</Text>
         </Box>
       )}
-    </>
+    </Box>
   );
 }
 
-export default CaseList;
+module.exports = CaseList;
+module.exports.default = CaseList;

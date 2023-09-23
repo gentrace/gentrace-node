@@ -1,7 +1,6 @@
 {
   "name": "@gentrace/cli",
   "version": "0.1.1",
-  "type": "module",
   "description": "Gentrace CLI",
   "repository": {
     "type": "git",
@@ -18,12 +17,12 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.15",
-    "clipboardy": "^3.0.0",
+    "clipboardy": "^2.0.0",
     "dotenv-cli": "^7.3.0",
-    "import-jsx": "^5.0.0",
-    "ink": "^4.4.1",
-    "ink-text-input": "^5.0.1",
-    "ora": "^7.0.1",
+    "import-jsx": "^4.0.0",
+    "ink": "^3.0.0",
+    "ink-text-input": "^4.0.0",
+    "ora": "^5.0.0",
     "react": "^18.2.0",
     "yargs": "^17.7.2",
     "zod": "^3.22.2"

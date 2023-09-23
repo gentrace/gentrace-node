@@ -1,11 +1,13 @@
-import { init } from "@gentrace/core";
-import { Text, render } from "ink";
-import React from "react";
-import CaseList from "./CaseList.js";
-import CaseCreate from "./CaseCreate.js";
-import ConfigGet from "./ConfigGet.js";
-import ConfigSet from "./ConfigSet.js";
-import { config } from "./utils.js";
+const { init } = require("@gentrace/core");
+const { Text, render } = require("ink");
+const React = require("react");
+const { config } = require("./utils.js");
+const importJsx = require("import-jsx");
+
+const CaseList = importJsx("./CaseList.js");
+const CaseCreate = importJsx("./CaseCreate.js");
+const ConfigGet = importJsx("./ConfigGet.js");
+const ConfigSet = importJsx("./ConfigSet.js");
 
 init({
   apiKey: config.apiKey ?? process.env.GENTRACE_API_KEY,
@@ -30,6 +32,10 @@ function Entrypoint({ command, options }) {
   }
 }
 
-export const run = (command, options) => {
+const run = (command, options) => {
   render(<Entrypoint command={command} options={options || {}} />);
+};
+
+module.exports = {
+  run,
 };

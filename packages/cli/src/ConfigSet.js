@@ -1,7 +1,8 @@
-import { Box, Text, useInput } from "ink";
-import TextInput from "ink-text-input";
-import React, { useEffect, useState } from "react";
-import { gentraceConfigFile, updateJsonFile } from "./utils.js";
+const { Box, Text, useInput } = require("ink");
+const TextInput = require("ink-text-input").default;
+const React = require("react");
+const { useEffect, useState } = React;
+const { gentraceConfigFile, updateJsonFile } = require("./utils.js");
 
 const OPTIONS = [
   {
@@ -115,4 +116,5 @@ function ConfigSet({ options }) {
   );
 }
 
-export default ConfigSet;
+module.exports = ConfigSet;
+module.exports.default = ConfigSet;

@@ -1,13 +1,15 @@
-#!/usr/bin/env NODE_NO_WARNINGS=1 node --loader=import-jsx
+#!/usr/bin/env NODE_NO_WARNINGS=1 node
 
 // Usage: only run this directly without using dotenv-cli (or equivalent) to run the
 // script. Otherwise, yargs will not be able to parse the command line arguments
 // correctly.
 
-import { hideBin } from "yargs/helpers";
-import yargs from "yargs/yargs";
-import { run } from "./entrypoint.js";
-import { ensureDotFilesCreated } from "./utils.js";
+const { hideBin } = require("yargs/helpers");
+const yargs = require("yargs/yargs");
+const { ensureDotFilesCreated } = require("./utils.js");
+const importJsx = require("import-jsx");
+
+const { run } = importJsx("./entrypoint.js");
 
 ensureDotFilesCreated();
 

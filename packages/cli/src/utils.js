@@ -1,13 +1,13 @@
-import fs from "fs";
-import os from "os";
+const fs = require("fs");
+const os = require("os");
 
 const homeDir = os.homedir();
 
-export const gentraceEnvDir = `${homeDir}/.gentrace`;
+const gentraceEnvDir = `${homeDir}/.gentrace`;
 
-export const gentraceConfigFile = `${gentraceEnvDir}/config.json`;
+const gentraceConfigFile = `${gentraceEnvDir}/config.json`;
 
-export function ensureDotFilesCreated() {
+function ensureDotFilesCreated() {
   if (!fs.existsSync(gentraceEnvDir)) {
     fs.mkdirSync(gentraceEnvDir);
   }
@@ -17,13 +17,13 @@ export function ensureDotFilesCreated() {
   }
 }
 
-export function getConfig() {
+function getConfig() {
   return JSON.parse(fs.readFileSync(gentraceConfigFile, "utf8"));
 }
 
-export const config = getConfig();
+const config = getConfig();
 
-export function updateJsonFile(filePath, newData, callback) {
+function updateJsonFile(filePath, newData, callback) {
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
       callback(err);
@@ -50,3 +50,11 @@ export function updateJsonFile(filePath, newData, callback) {
     }
   });
 }
+
+module.exports = {
+  ensureDotFilesCreated,
+  updateJsonFile,
+  config,
+  gentraceConfigFile,
+  gentraceEnvDir,
+};

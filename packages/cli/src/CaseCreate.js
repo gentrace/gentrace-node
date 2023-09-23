@@ -1,11 +1,11 @@
-import fs from "fs";
-import { useState } from "react";
-import { createTestCase, createTestCases } from "@gentrace/core";
-import { Box, Text } from "ink";
-import { useEffect } from "react";
-import { config } from "./utils.js";
-import z from "zod";
-import ora from "ora";
+const fs = require("fs");
+const useState = require("react").useState;
+const { createTestCase, createTestCases } = require("@gentrace/core");
+const { Box, Text } = require("ink");
+const useEffect = require("react").useEffect;
+const { config } = require("./utils.js");
+const z = require("zod");
+const ora = require("ora");
 
 const TestCaseSchema = z.object({
   name: z.string(),
@@ -124,4 +124,5 @@ function CaseCreate({ options }) {
   );
 }
 
-export default CaseCreate;
+module.exports = CaseCreate;
+module.exports.default = CaseCreate;
