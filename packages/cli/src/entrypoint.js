@@ -9,7 +9,6 @@ import { config } from "./utils.js";
 
 init({
   apiKey: config.apiKey ?? process.env.GENTRACE_API_KEY,
-  basePath: "http://localhost:3000/api/v1",
 });
 
 function Entrypoint({ command, options }) {
