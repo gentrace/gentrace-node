@@ -17,6 +17,12 @@ export function ensureDotFilesCreated() {
   }
 }
 
+export function getConfig() {
+  return JSON.parse(fs.readFileSync(gentraceConfigFile, "utf8"));
+}
+
+export const config = getConfig();
+
 export function updateJsonFile(filePath, newData, callback) {
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {

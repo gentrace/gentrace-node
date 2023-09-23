@@ -22,6 +22,13 @@ const OPTIONS = [
   {
     name: "activePipelineSlug",
     description: "Set active pipeline slug",
+    validate: (value) => {
+      if (!value) {
+        return [false, "Pipeline slug cannot be empty"];
+      }
+
+      return [true, null];
+    },
   },
 ];
 
@@ -81,11 +88,11 @@ function ConfigSet({ options }) {
           }}
           onSubmit={(value) => {
             if (OPTIONS[activeOption].validate) {
-              const [isValid, errorMessage] =
+              const [isValid, returnedMessage] =
                 OPTIONS[activeOption].validate(value);
 
               if (!isValid) {
-                errorMessage(errorMessage);
+                setErrorMessage(returnedMessage);
                 return;
               }
             }

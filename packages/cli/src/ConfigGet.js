@@ -9,8 +9,6 @@ function ConfigGet({ options }) {
   const [clipboardNotification, setClipboardNotification] = useState(false);
 
   useEffect(() => {
-    console.log("ConfigGet");
-
     fs.readFile(gentraceConfigFile, "utf8", (err, data) => {
       setConfig(JSON.stringify(JSON.parse(data), null, 2));
     });

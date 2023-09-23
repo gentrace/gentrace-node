@@ -1,6 +1,6 @@
 #!/usr/bin/env NODE_NO_WARNINGS=1 node --loader=import-jsx
 
-// Usage: only run this directly without using dotenv (or equivalent) to run the
+// Usage: only run this directly without using dotenv-cli (or equivalent) to run the
 // script. Otherwise, yargs will not be able to parse the command line arguments
 // correctly.
 
@@ -21,25 +21,26 @@ async function launch(command, options) {
 yargs(hideBin(process.argv))
   .command("cases", "Manage test cases", (yargs) => {
     yargs
-      .command("create", "Create test case", {}, () => launch("cases-create"))
+      .command(
+        "create",
+        "Create test case(s)",
+        (yargs) => {
+          yargs.option("file", {
+            alias: "file",
+            describe: "File containing test case(s)",
+            type: "string",
+            demandOption: true,
+          });
+        },
+        (argv) => launch("cases-create", argv)
+      )
       .command("get", "Get test cases", {}, () => launch("cases-get"));
   })
   .command("config", "Manage configuration", (yargs) => {
     yargs
-      .command(
-        "set",
-        "Set configuration options",
-        (yargs) => {
-          yargs.option("apiKey", {
-            alias: "apiKey",
-            describe: "API key to set",
-            type: "string",
-          });
-        },
-        (argv) => {
-          launch("config-set", argv);
-        }
-      )
+      .command("set", "Set configuration options", {}, () => {
+        launch("config-set");
+      })
       .command("get", "Get configuration options", {}, () => {
         launch("config-get");
       });

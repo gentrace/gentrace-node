@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { render, Text, useInput, Box } from "ink";
-import { init, getTestCases } from "@gentrace/core";
-import ConfigSet from "./ConfigSet.js";
+import { init } from "@gentrace/core";
+import { Text, render } from "ink";
+import React from "react";
+import CaseList from "./CaseList.js";
+import CaseCreate from "./CaseCreate.js";
 import ConfigGet from "./ConfigGet.js";
+import ConfigSet from "./ConfigSet.js";
+import { config } from "./utils.js";
 
 init({
-  apiKey: process.env.GENTRACE_API_KEY,
+  apiKey: config.apiKey ?? process.env.GENTRACE_API_KEY,
   basePath: "http://localhost:3000/api/v1",
 });
 
 function Entrypoint({ command, options }) {
   switch (command) {
     case "cases-create":
-      // Call API or handle logic for case creation
-
-      return <Text>Create Case Logic</Text>;
+      return <CaseCreate options={options} />;
 
     case "cases-get":
-      // Handle logic for getting cases
       return <CaseList />;
 
     case "config-set":
@@ -29,43 +29,6 @@ function Entrypoint({ command, options }) {
     default:
       return <Text>Unknown command</Text>;
   }
-}
-
-function CaseList() {
-  const [cases, setCases] = useState([]);
-  const [selectedOption, setSelectedOption] = React.useState(0);
-
-  useEffect(() => {
-    getTestCases("testing-pipeline-id").then((cases) => {
-      setCases(cases);
-    });
-  }, []);
-
-  useInput((input, key) => {
-    if (key.upArrow && selectedOption > 0) {
-      setSelectedOption((prev) => prev - 1);
-    }
-
-    if (key.downArrow && selectedOption < cases.length - 1) {
-      setSelectedOption((prev) => prev + 1);
-    }
-
-    if (key.return) {
-      console.log(`Selected: ${cases[selectedOption]}`);
-      process.exit();
-    }
-  });
-
-  return (
-    <Box flexDirection="column">
-      {cases.map((testCase, index) => (
-        <Text key={testCase.id}>
-          {selectedOption === index ? <Text color="green">{">"}</Text> : " "}
-          {testCase.name}
-        </Text>
-      ))}
-    </Box>
-  );
 }
 
 export const run = (command, options) => {

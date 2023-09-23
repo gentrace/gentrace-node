@@ -31,8 +31,10 @@
     "import-jsx": "^5.0.0",
     "ink": "^4.4.1",
     "ink-text-input": "^5.0.1",
+    "ora": "^7.0.1",
     "react": "^18.2.0",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
