@@ -11,13 +11,11 @@ import { ensureDotFilesCreated } from "./utils.js";
 
 ensureDotFilesCreated();
 
-// This will launch our React-Ink interface
 async function launch(command, options) {
   process.env.FORCE_COLOR = "1";
   run(command, options);
 }
 
-// Define your command structure
 yargs(hideBin(process.argv))
   .command("cases", "Manage test cases", (yargs) => {
     yargs
