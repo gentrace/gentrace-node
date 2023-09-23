@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.4
+
+### Patch Changes
+
+- 4a4ed91: Fix issues with react definition
+
 ## 0.1.3
 
 ### Patch Changes
