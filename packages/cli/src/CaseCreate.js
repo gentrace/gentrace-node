@@ -1,8 +1,7 @@
 import fs from "fs";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createTestCase, createTestCases } from "@gentrace/core";
 import { Box, Text } from "ink";
-import { useEffect } from "react";
 import { config } from "./utils.js";
 import z from "zod";
 import ora from "ora";
