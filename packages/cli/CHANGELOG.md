@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.2
+
+### Patch Changes
+
+- 071ca4b: Switch to babel
+
 ## 0.1.1
 
 ### Patch Changes
