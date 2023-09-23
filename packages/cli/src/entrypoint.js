@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { render, Text, useInput, Box } from "ink";
-import TextInput from "ink-text-input";
 import { init, getTestCases } from "@gentrace/core";
+import ConfigSet from "./ConfigSet.js";
+import ConfigGet from "./ConfigGet.js";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY,
   basePath: "http://localhost:3000/api/v1",
 });
 
-function GentraceApp({ command, options }) {
-  const [apiKey, setApiKey] = useState("");
-
+function Entrypoint({ command, options }) {
   switch (command) {
     case "cases-create":
       // Call API or handle logic for case creation
@@ -22,18 +21,10 @@ function GentraceApp({ command, options }) {
       return <CaseList />;
 
     case "config-set":
-      return (
-        <TextInput
-          value="Set API Key: "
-          onChange={(value) => {
-            setApiKey(value);
-          }}
-          onSubmit={() => {
-            console.log(apiKey);
-            process.exit();
-          }}
-        />
-      );
+      return <ConfigSet options={options} />;
+
+    case "config-get":
+      return <ConfigGet options={options} />;
 
     default:
       return <Text>Unknown command</Text>;
@@ -78,5 +69,5 @@ function CaseList() {
 }
 
 export const run = (command, options) => {
-  render(<GentraceApp command={command} options={options || {}} />);
+  render(<Entrypoint command={command} options={options || {}} />);
 };

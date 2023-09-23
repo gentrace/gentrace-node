@@ -1,34 +1,49 @@
 #!/usr/bin/env NODE_NO_WARNINGS=1 node --loader=import-jsx
 
+// Usage: only run this directly without using dotenv (or equivalent) to run the
+// script. Otherwise, yargs will not be able to parse the command line arguments
+// correctly.
+
 import { hideBin } from "yargs/helpers";
 import yargs from "yargs/yargs";
-import { run } from "./gentrace-interface.js";
+import { run } from "./entrypoint.js";
+import { ensureDotFilesCreated } from "./utils.js";
 
-const argv = yargs(hideBin(process.argv)).argv;
+ensureDotFilesCreated();
 
 // This will launch our React-Ink interface
-async function launchInterface(command, options) {
+async function launch(command, options) {
   process.env.FORCE_COLOR = "1";
   run(command, options);
 }
 
 // Define your command structure
-yargs(process.argv.slice(2))
-  .command("cases create", "create a case", {}, () =>
-    launchInterface("cases-create")
-  )
-  .command("cases get", "get cases", {}, () => launchInterface("cases-get"))
-  .command(
-    "config set",
-    "set config",
-    (yargs) => {
-      return yargs.option("apiKey", {
-        describe: "API key to set",
-        type: "string",
+yargs(hideBin(process.argv))
+  .command("cases", "Manage test cases", (yargs) => {
+    yargs
+      .command("create", "Create test case", {}, () => launch("cases-create"))
+      .command("get", "Get test cases", {}, () => launch("cases-get"));
+  })
+  .command("config", "Manage configuration", (yargs) => {
+    yargs
+      .command(
+        "set",
+        "Set configuration options",
+        (yargs) => {
+          yargs.option("apiKey", {
+            alias: "apiKey",
+            describe: "API key to set",
+            type: "string",
+          });
+        },
+        (argv) => {
+          launch("config-set", argv);
+        }
+      )
+      .command("get", "Get configuration options", {}, () => {
+        launch("config-get");
       });
-    },
-    (argv) => launchInterface("config-set", argv)
-  )
+  })
   .demandCommand(1, "") // requires at least one command
   .strict()
   .help().argv;
