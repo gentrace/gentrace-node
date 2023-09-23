@@ -17,7 +17,7 @@
   "author": "Gentrace",
   "license": "MIT",
   "bin": {
-    "gentrace": "./src/index.js"
+    "gentrace": "./dist/index.js"
   },
   "scripts": {
     "clean": "rimraf dist",
