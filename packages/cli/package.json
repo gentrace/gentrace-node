@@ -1,0 +1,37 @@
+{
+  "name": "@gentrace/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Gentrace CLI",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gentrace/gentrace-node.git"
+  },
+  "keywords": [
+    "gentrace",
+    "cli"
+  ],
+  "author": "Gentrace",
+  "license": "MIT",
+  "bin": {
+    "gentrace": "./src/index.js"
+  },
+  "dependencies": {
+    "@gentrace/core": "workspace:^2.1.15",
+    "clipboardy": "^3.0.0",
+    "dotenv-cli": "^7.3.0",
+    "import-jsx": "^5.0.0",
+    "ink": "^4.4.1",
+    "ink-text-input": "^5.0.1",
+    "ora": "^7.0.1",
+    "react": "^18.2.0",
+    "yargs": "^17.7.2",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12.11.5",
+    "@types/uuid": "^9.0.1",
+    "dotenv": "^16.0.3",
+    "npm-run-all": "^4.1.5"
+  }
+}
