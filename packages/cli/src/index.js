@@ -1,4 +1,4 @@
-#!/usr/bin/env NODE_NO_WARNINGS=1 node --loader=import-jsx
+#!/usr/bin/env NODE_NO_WARNINGS=1 node
 
 // Usage: only run this directly without using dotenv-cli (or equivalent) to run the
 // script. Otherwise, yargs will not be able to parse the command line arguments
