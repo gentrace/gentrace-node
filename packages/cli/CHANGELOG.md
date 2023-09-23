@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.3
+
+### Patch Changes
+
+- f2c7224: Fix package.json for entrypoint
+
 ## 0.1.2
 
 ### Patch Changes
