@@ -1,12 +1,12 @@
 import { getTestCases } from "@gentrace/core";
 import { Box, Text, useInput } from "ink";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { config } from "./utils.js";
 import clipboard from "clipboardy";
 
 function CaseList() {
   const [cases, setCases] = useState([]);
-  const [selectedOption, setSelectedOption] = React.useState(0);
+  const [selectedOption, setSelectedOption] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [clipboardNotification, setClipboardNotification] = useState(false);
 

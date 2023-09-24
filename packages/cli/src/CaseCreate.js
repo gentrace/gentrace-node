@@ -1,5 +1,5 @@
 import fs from "fs";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { createTestCase, createTestCases } from "@gentrace/core";
 import { Box, Text } from "ink";
 import { config } from "./utils.js";

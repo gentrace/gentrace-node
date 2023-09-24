@@ -2,7 +2,7 @@ import { updateTestCase } from "@gentrace/core";
 import fs from "fs";
 import { Box, Text } from "ink";
 import ora from "ora";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import z from "zod";
 
 const TestCaseUpdateSchema = z.object({
