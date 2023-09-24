@@ -32,6 +32,19 @@ yargs(hideBin(process.argv))
         },
         (argv) => launch("cases-create", argv)
       )
+      .command(
+        "update",
+        "Update test case(s)",
+        (yargs) => {
+          yargs.option("file", {
+            alias: "file",
+            describe: "File containing test case(s)",
+            type: "string",
+            demandOption: true,
+          });
+        },
+        (argv) => launch("cases-update", argv)
+      )
       .command("get", "Get test cases", {}, () => launch("cases-get"));
   })
   .command("config", "Manage configuration", (yargs) => {
