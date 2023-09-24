@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.7
+
+### Patch Changes
+
+- 41eee94: Do not require explicit React import
+
 ## 0.1.6
 
 ### Patch Changes
