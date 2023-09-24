@@ -22,6 +22,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "babel src --out-dir dist",
+    "babel:watch": "babel src --out-dir dist --watch",
     "all": "run-s clean build"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "dotenv-cli": "^7.3.0",
     "import-jsx": "^5.0.0",
     "ink": "^4.4.1",
+    "ink-link": "^3.0.0",
     "ink-text-input": "^5.0.1",
     "ora": "^7.0.1",
     "react": "^18.2.0",

@@ -1,5 +1,6 @@
 import { Box, Text, useInput } from "ink";
 import TextInput from "ink-text-input";
+import Link from "ink-link";
 import React, { useEffect, useState } from "react";
 import { gentraceConfigFile, updateJsonFile } from "./utils.js";
 
@@ -64,6 +65,11 @@ function ConfigSet({ options }) {
 
   return (
     <>
+      <Box paddingBottom={1}>
+        <Text color="green">
+          Configuration stored at ~/.gentrace/config.json
+        </Text>
+      </Box>
       {activeOption === null ? (
         <Box flexDirection="column">
           {OPTIONS.map((option, index) => (
@@ -80,34 +86,57 @@ function ConfigSet({ options }) {
       ) : null}
 
       {activeOption !== null ? (
-        <TextInput
-          placeholder={OPTIONS[activeOption].description}
-          value={activeOptionValue}
-          onChange={(value) => {
-            setActiveOptionValue(value);
-          }}
-          onSubmit={(value) => {
-            if (OPTIONS[activeOption].validate) {
-              const [isValid, returnedMessage] =
-                OPTIONS[activeOption].validate(value);
+        <Box paddingBottom={1}>
+          <TextInput
+            placeholder={OPTIONS[activeOption].description}
+            value={activeOptionValue}
+            onChange={(value) => {
+              setActiveOptionValue(value);
+            }}
+            onSubmit={(value) => {
+              if (OPTIONS[activeOption].validate) {
+                const [isValid, returnedMessage] =
+                  OPTIONS[activeOption].validate(value);
 
-              if (!isValid) {
-                setErrorMessage(returnedMessage);
-                return;
+                if (!isValid) {
+                  setErrorMessage(returnedMessage);
+                  return;
+                }
               }
-            }
 
-            updateJsonFile(
-              gentraceConfigFile,
-              {
-                [OPTIONS[activeOption].name]: value,
-              },
-              () => {
-                process.exit();
-              }
-            );
-          }}
-        />
+              updateJsonFile(
+                gentraceConfigFile,
+                {
+                  [OPTIONS[activeOption].name]: value,
+                },
+                () => {
+                  process.exit();
+                }
+              );
+            }}
+          />
+        </Box>
+      ) : null}
+
+      {activeOption !== null && OPTIONS[activeOption].name === "apiKey" ? (
+        <Box>
+          <Text>No API key?</Text>
+          <Text> </Text>
+          <Link url="https://gentrace.ai/settings/api-keys">
+            <Text>Create one here</Text>
+          </Link>
+        </Box>
+      ) : null}
+
+      {activeOption !== null &&
+      OPTIONS[activeOption].name === "activePipelineSlug" ? (
+        <Box>
+          <Text>No pipeline slug?</Text>
+          <Text> </Text>
+          <Link url="https://gentrace.ai/pipeline/new">
+            <Text>Create one here</Text>
+          </Link>
+        </Box>
       ) : null}
 
       {errorMessage ? <Text color="red">{errorMessage}</Text> : null}
