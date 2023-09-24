@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.5
+
+### Patch Changes
+
+- 29968d5: Add Link component in a few different places
+
 ## 0.1.4
 
 ### Patch Changes
