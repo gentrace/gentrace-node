@@ -1,6 +1,5 @@
 import { init } from "@gentrace/core";
 import { Text, render } from "ink";
-import React from "react";
 import CaseList from "./CaseList.js";
 import CaseCreate from "./CaseCreate.js";
 import ConfigGet from "./ConfigGet.js";

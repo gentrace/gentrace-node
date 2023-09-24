@@ -1,7 +1,7 @@
 import { Box, Text, useInput } from "ink";
 import TextInput from "ink-text-input";
 import Link from "ink-link";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { gentraceConfigFile, updateJsonFile } from "./utils.js";
 
 const OPTIONS = [
