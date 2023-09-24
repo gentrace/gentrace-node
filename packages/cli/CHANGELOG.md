@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.6
+
+### Patch Changes
+
+- 77bb59b: Add in update cases
+
 ## 0.1.5
 
 ### Patch Changes
