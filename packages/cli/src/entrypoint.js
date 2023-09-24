@@ -6,6 +6,7 @@ import CaseCreate from "./CaseCreate.js";
 import ConfigGet from "./ConfigGet.js";
 import ConfigSet from "./ConfigSet.js";
 import { config } from "./utils.js";
+import CaseUpdate from "./CaseUpdate.js";
 
 init({
   apiKey: config.apiKey ?? process.env.GENTRACE_API_KEY,
@@ -15,6 +16,9 @@ function Entrypoint({ command, options }) {
   switch (command) {
     case "cases-create":
       return <CaseCreate options={options} />;
+
+    case "cases-update":
+      return <CaseUpdate options={options} />;
 
     case "cases-get":
       return <CaseList />;
