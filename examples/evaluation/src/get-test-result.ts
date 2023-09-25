@@ -1,4 +1,4 @@
-import { getTestResults, init } from "@gentrace/core";
+import { getTestResult, init } from "@gentrace/core";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
@@ -6,12 +6,9 @@ init({
 });
 
 async function get() {
-  const results = await getTestResults("testing-pipeline-id");
+  const result = await getTestResult("ede8271a-699f-4db7-a198-2c51a99e2dab");
 
-  console.log(
-    "Results: ",
-    results.map((r) => r.id),
-  );
+  console.log("Result info", result.runs[0].steps);
 }
 
 get();

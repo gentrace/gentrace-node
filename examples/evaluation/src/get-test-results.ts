@@ -9,7 +9,7 @@ async function get() {
   const results = await getTestResults("testing-pipeline-id");
 
   console.log(
-    "results",
+    "Results: ",
     results.map((r) => r.id),
   );
 }
