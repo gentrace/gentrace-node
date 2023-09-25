@@ -8,10 +8,7 @@ init({
 async function get() {
   const results = await getTestResults("testing-pipeline-id");
 
-  console.log(
-    "Results: ",
-    results.map((r) => r.id),
-  );
+  console.log("Results: ", JSON.stringify(results, null, 2));
 }
 
 get();

@@ -357,6 +357,7 @@ export const getTestResults = async (pipelineSlug?: string) => {
   }
 
   const response = await globalGentraceApi.testResultGet(pipelineSlug);
+
   const testResults = response.data.testResults;
   return testResults;
 };

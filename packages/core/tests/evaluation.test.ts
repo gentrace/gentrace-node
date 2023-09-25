@@ -1,21 +1,21 @@
+import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 import stringify from "json-stable-stringify";
 import { rest } from "msw";
-import { deinit, init } from "../providers/init";
+import { SetupServer, setupServer } from "msw/node";
 import {
-  constructSubmissionPayload,
-  getTestCases,
-  getPipelines,
-  runTest,
-  submitTestResult,
   Pipeline,
-  PipelineRun,
+  constructSubmissionPayload,
   createTestCase,
   createTestCases,
+  getPipelines,
+  getTestCases,
+  getTestResults,
+  runTest,
+  submitTestResult,
   updateTestCase,
 } from "../providers";
-import { setupServer, SetupServer } from "msw/node";
+import { deinit, init } from "../providers/init";
 import { getTestCounter } from "../providers/utils";
-import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 
 describe("Usage of Evaluation functionality", () => {
   let server: SetupServer;
@@ -24,8 +24,132 @@ describe("Usage of Evaluation functionality", () => {
     resultId: "993F25D8-7B54-42E2-A50D-D143BCE1C5C4",
   };
 
-  let createTestRunResponse = {
-    runId: "993F25D8-7B54-42E2-A50D-D143BCE1C5C4",
+  let getTestResultsResponse: any = {
+    testResults: [
+      {
+        id: "be953c0c-00ea-4dfe-ad9b-9fecc98082f0",
+        createdAt: "2023-09-12T21:06:38.678Z",
+        updatedAt: "2023-09-12T21:06:38.678Z",
+        name: null,
+        pipelineId: "479f964f-e015-5ebd-bf63-23cf92ec4af5",
+        branch: null,
+        commit: null,
+        speedAvg: 949,
+        costAvg: 0,
+        runs: [
+          {
+            id: "57ec48cd-7d7d-40bf-a03c-ccf84ffd0681",
+            createdAt: "2023-09-12T21:06:38.678Z",
+            updatedAt: "2023-09-12T21:06:38.678Z",
+            caseId: "4ee2b9d2-5888-4444-aa95-1b138a7fcf35",
+            resultId: "be953c0c-00ea-4dfe-ad9b-9fecc98082f0",
+            evaluations: [
+              {
+                id: "62dfad86-6a8e-4411-99f2-4e2d86ad4d2b",
+                createdAt: "2023-09-12T21:06:38.678Z",
+                updatedAt: "2023-09-19T17:01:03.039Z",
+                isPending: false,
+                debug: {
+                  error: {
+                    date: "2023-09-19T17:01:03.038Z",
+                    message: "cannot read property 'startsWith' of undefined",
+                  },
+                },
+                evaluatorId: "cf820699-de30-463a-8bc7-3be29a639109",
+                runId: "57ec48cd-7d7d-40bf-a03c-ccf84ffd0681",
+                evalLabel: null,
+                evalValue: null,
+                manualCreatedByEmail: null,
+                billingGpt4InputTokens: 0,
+                billingGpt4OutputTokens: 0,
+                billingGpt35InputTokens: 0,
+                billingGpt35OutputTokens: 0,
+                evaluator: {
+                  id: "cf820699-de30-463a-8bc7-3be29a639109",
+                  createdAt: "2023-09-12T21:05:28.718Z",
+                  updatedAt: "2023-09-12T21:05:28.718Z",
+                  archivedAt: null,
+                  icon: null,
+                  name: "Starts With",
+                  options: [
+                    ["A", 1],
+                    ["B", 0],
+                  ],
+                  aiModel: null,
+                  pipelineId: "479f964f-e015-5ebd-bf63-23cf92ec4af5",
+                  processorId: null,
+                  heuristicFn:
+                    'function evaluate({ outputs }) {\n  const doesStartWith = outputs.value.startsWith("Subject:");\n  if (doesStartWith) {\n    return "A";\n  }\n  return "B";\n}',
+                  aiPromptFormat: null,
+                  humanPrompt: null,
+                  who: "HEURISTIC",
+                  valueType: "ENUM",
+                },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "200a955a-48b6-43c0-8d40-224bee37b9b8",
+        createdAt: "2023-09-12T21:05:41.455Z",
+        updatedAt: "2023-09-12T21:05:41.455Z",
+        name: null,
+        pipelineId: "479f964f-e015-5ebd-bf63-23cf92ec4af5",
+        branch: null,
+        commit: null,
+        speedAvg: 958,
+        costAvg: 0,
+        runs: [
+          {
+            id: "309dbdbc-f0fe-4ea2-bb49-31d9572be1ce",
+            createdAt: "2023-09-12T21:05:41.455Z",
+            updatedAt: "2023-09-12T21:05:41.455Z",
+            caseId: "4ee2b9d2-5888-4444-aa95-1b138a7fcf35",
+            resultId: "200a955a-48b6-43c0-8d40-224bee37b9b8",
+            evaluations: [
+              {
+                id: "1ca1007e-b14f-46e7-8821-edbbc17a3160",
+                createdAt: "2023-09-12T21:05:41.455Z",
+                updatedAt: "2023-09-12T21:05:41.455Z",
+                isPending: true,
+                debug: null,
+                evaluatorId: "cf820699-de30-463a-8bc7-3be29a639109",
+                runId: "309dbdbc-f0fe-4ea2-bb49-31d9572be1ce",
+                evalLabel: null,
+                evalValue: null,
+                manualCreatedByEmail: null,
+                billingGpt4InputTokens: 0,
+                billingGpt4OutputTokens: 0,
+                billingGpt35InputTokens: 0,
+                billingGpt35OutputTokens: 0,
+                evaluator: {
+                  id: "cf820699-de30-463a-8bc7-3be29a639109",
+                  createdAt: "2023-09-12T21:05:28.718Z",
+                  updatedAt: "2023-09-12T21:05:28.718Z",
+                  archivedAt: null,
+                  icon: null,
+                  name: "Starts With",
+                  options: [
+                    ["A", 1],
+                    ["B", 0],
+                  ],
+                  aiModel: null,
+                  pipelineId: "479f964f-e015-5ebd-bf63-23cf92ec4af5",
+                  processorId: null,
+                  heuristicFn:
+                    'function evaluate({ outputs }) {\n  const doesStartWith = outputs.value.startsWith("Subject:");\n  if (doesStartWith) {\n    return "A";\n  }\n  return "B";\n}',
+                  aiPromptFormat: null,
+                  humanPrompt: null,
+                  who: "HEURISTIC",
+                  valueType: "ENUM",
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   };
 
   let getTestCasesResponse: {
@@ -241,9 +365,20 @@ describe("Usage of Evaluation functionality", () => {
     interceptor.on("request", (request) => {
       let body: string = "";
 
-      if (request.url.href === "https://gentrace.ai/api/v1/test-result") {
+      if (
+        request.method === "POST" &&
+        request.url.href === "https://gentrace.ai/api/v1/test-result"
+      ) {
         body = JSON.stringify(createTestResultResponse);
       }
+
+      if (
+        request.method === "GET" &&
+        request.url.href.includes("https://gentrace.ai/api/v1/test-result")
+      ) {
+        body = JSON.stringify(getTestResultsResponse);
+      }
+
       if (
         request.url.href === "https://gentrace.ai/api/v1/test-result-simple"
       ) {
@@ -300,6 +435,13 @@ describe("Usage of Evaluation functionality", () => {
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
           ctx.json(createTestResultResponse),
+        );
+      }),
+      rest.get("https://gentrace.ai/api/v1/test-result", (req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.set("Content-Type", "application/json"),
+          ctx.json(getTestResultsResponse),
         );
       }),
       rest.post(
@@ -407,6 +549,21 @@ describe("Usage of Evaluation functionality", () => {
       // The API endpoint will return runId instead of resultId since it's deprecated
       expect(submissionResponse.resultId).toBe(
         createTestResultResponse.resultId,
+      );
+    });
+
+    it("should get all test results", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+      });
+
+      const results = await getTestResults("guess-the-year");
+
+      expect(results.length).toBe(2);
+
+      expect(stringify(results)).toBe(
+        stringify(getTestResultsResponse.testResults),
       );
     });
 
