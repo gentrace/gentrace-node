@@ -1171,11 +1171,7 @@ export class CoreApi extends BaseAPI {
   public testResultGet(pipelineSlug: string, options?: AxiosRequestConfig) {
     return CoreApiFp(this.configuration)
       .testResultGet(pipelineSlug, options)
-      .then(async (request) => {
-        const value = request(this.axios, this.basePath);
-        console.log("value", (await value).data);
-        return value;
-      });
+      .then((request) => request(this.axios, this.basePath));
   }
 
   /**
