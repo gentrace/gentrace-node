@@ -14,15 +14,19 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCasePost200ResponseOneOf } from "./test-case-post200-response-one-of";
+import { ExpandedPipeline } from "./expanded-pipeline";
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCasePost200ResponseOneOf1 } from "./test-case-post200-response-one-of1";
+import { ExpandedTestResultAllOf } from "./expanded-test-result-all-of";
+// May contain unused imports in some cases
+// @ts-ignore
+import { ExpandedTestRun } from "./expanded-test-run";
+// May contain unused imports in some cases
+// @ts-ignore
+import { TestResult } from "./test-result";
 
 /**
- * @type TestCasePost200Response
+ * @type ExpandedTestResult
  * @export
  */
-export type TestCasePost200Response =
-  | TestCasePost200ResponseOneOf
-  | TestCasePost200ResponseOneOf1;
+export type ExpandedTestResult = ExpandedTestResultAllOf & TestResult;
