@@ -56,16 +56,16 @@ export interface TestEvaluator {
   name: string;
   /**
    *
-   * @type {object}
+   * @type {Array<any>}
    * @memberof TestEvaluator
    */
-  options: object | null;
+  options: Array<any> | null;
   /**
    *
    * @type {string}
    * @memberof TestEvaluator
    */
-  aiModel?: TestEvaluatorAiModelEnum;
+  aiModel?: string | null;
   /**
    *
    * @type {string}
@@ -101,34 +101,11 @@ export interface TestEvaluator {
    * @type {string}
    * @memberof TestEvaluator
    */
-  who: TestEvaluatorWhoEnum;
+  who: string;
   /**
    *
    * @type {string}
    * @memberof TestEvaluator
    */
-  valueType: TestEvaluatorValueTypeEnum;
+  valueType: string;
 }
-
-export const TestEvaluatorAiModelEnum = {
-  _35: "OPENAI_3_5",
-  _4: "OPENAI_4",
-} as const;
-
-export type TestEvaluatorAiModelEnum =
-  (typeof TestEvaluatorAiModelEnum)[keyof typeof TestEvaluatorAiModelEnum];
-export const TestEvaluatorWhoEnum = {
-  Ai: "AI",
-  Heuristic: "HEURISTIC",
-  Human: "HUMAN",
-} as const;
-
-export type TestEvaluatorWhoEnum =
-  (typeof TestEvaluatorWhoEnum)[keyof typeof TestEvaluatorWhoEnum];
-export const TestEvaluatorValueTypeEnum = {
-  Enum: "ENUM",
-  Percentage: "PERCENTAGE",
-} as const;
-
-export type TestEvaluatorValueTypeEnum =
-  (typeof TestEvaluatorValueTypeEnum)[keyof typeof TestEvaluatorValueTypeEnum];

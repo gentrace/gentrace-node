@@ -47,17 +47,17 @@ export interface TestResult {
    * @type {string}
    * @memberof TestResult
    */
-  branch?: string;
+  branch?: string | null;
   /**
    * The commit that the test result was created from
    * @type {string}
    * @memberof TestResult
    */
-  commit?: string;
+  commit?: string | null;
   /**
    * The name of the test result
    * @type {string}
    * @memberof TestResult
    */
-  name?: string;
+  name?: string | null;
 }

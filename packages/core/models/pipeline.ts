@@ -12,10 +12,6 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import { TestCase } from "./test-case";
-
 /**
  *
  * @export
@@ -46,12 +42,6 @@ export interface Pipeline {
    * @memberof Pipeline
    */
   archivedAt?: string | null;
-  /**
-   * The array of test cases that belong to the pipeline
-   * @type {Array<TestCase>}
-   * @memberof Pipeline
-   */
-  cases: Array<TestCase>;
   /**
    * The labels attached to the pipeline
    * @type {Array<string>}

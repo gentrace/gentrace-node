@@ -14,7 +14,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { Pipeline } from "./pipeline";
+import { PipelinesGet200ResponsePipelinesInner } from "./pipelines-get200-response-pipelines-inner";
 
 /**
  *
@@ -24,8 +24,8 @@ import { Pipeline } from "./pipeline";
 export interface PipelinesGet200Response {
   /**
    *
-   * @type {Array<Pipeline>}
+   * @type {Array<PipelinesGet200ResponsePipelinesInner>}
    * @memberof PipelinesGet200Response
    */
-  pipelines: Array<Pipeline>;
+  pipelines: Array<PipelinesGet200ResponsePipelinesInner>;
 }

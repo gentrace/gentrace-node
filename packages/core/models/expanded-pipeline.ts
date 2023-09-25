@@ -20,9 +20,6 @@ import { ExpandedPipelineAllOf } from "./expanded-pipeline-all-of";
 import { Pipeline } from "./pipeline";
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCase } from "./test-case";
-// May contain unused imports in some cases
-// @ts-ignore
 import { TestEvaluator } from "./test-evaluator";
 
 /**
