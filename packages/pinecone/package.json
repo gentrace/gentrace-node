@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/pinecone",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Gentrace Pinecone v1 plugin for Node.JS",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.2.0",
+    "@gentrace/core": "workspace:^2.2.1",
     "@pinecone-database/pinecone": "^1.0.0"
   },
   "devDependencies": {

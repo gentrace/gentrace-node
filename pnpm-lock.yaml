@@ -411,7 +411,7 @@ importers:
   packages/cli:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.1.15
+        specifier: workspace:^2.2.1
         version: link:../core
       clipboardy:
         specifier: ^3.0.0
@@ -551,7 +551,7 @@ importers:
   packages/openai:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.2.0
+        specifier: workspace:^2.2.1
         version: link:../core
       openai:
         specifier: ^4.0.0
@@ -609,7 +609,7 @@ importers:
   packages/openai-v3:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.2.0
+        specifier: workspace:^2.2.1
         version: link:../core
       axios:
         specifier: ~0.26.1
@@ -667,7 +667,7 @@ importers:
   packages/pinecone:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.2.0
+        specifier: workspace:^2.2.1
         version: link:../core
       '@pinecone-database/pinecone':
         specifier: ^1.0.0
@@ -725,7 +725,7 @@ importers:
   packages/pinecone-v0:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.2.0
+        specifier: workspace:^2.2.1
         version: link:../core
       '@pinecone-database/pinecone':
         specifier: ^0.1.6
