@@ -14,15 +14,17 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCasePost200ResponseOneOf } from "./test-case-post200-response-one-of";
+import { Pipeline } from "./pipeline";
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCasePost200ResponseOneOf1 } from "./test-case-post200-response-one-of1";
+import { PipelinesGet200ResponsePipelinesInnerAllOf } from "./pipelines-get200-response-pipelines-inner-all-of";
+// May contain unused imports in some cases
+// @ts-ignore
+import { TestCase } from "./test-case";
 
 /**
- * @type TestCasePost200Response
+ * @type PipelinesGet200ResponsePipelinesInner
  * @export
  */
-export type TestCasePost200Response =
-  | TestCasePost200ResponseOneOf
-  | TestCasePost200ResponseOneOf1;
+export type PipelinesGet200ResponsePipelinesInner = Pipeline &
+  PipelinesGet200ResponsePipelinesInnerAllOf;

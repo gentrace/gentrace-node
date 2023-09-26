@@ -13,15 +13,7 @@
  */
 
 /**
- *
+ * @type ResolvedStepRunModelParams
  * @export
- * @interface TestResultPost200Response
  */
-export interface TestResultPost200Response {
-  /**
-   *
-   * @type {string}
-   * @memberof TestResultPost200Response
-   */
-  resultId: string;
-}
+export type ResolvedStepRunModelParams = string | { [key: string]: any };

@@ -14,15 +14,18 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCasePost200ResponseOneOf } from "./test-case-post200-response-one-of";
-// May contain unused imports in some cases
-// @ts-ignore
-import { TestCasePost200ResponseOneOf1 } from "./test-case-post200-response-one-of1";
+import { TestCase } from "./test-case";
 
 /**
- * @type TestCasePost200Response
+ *
  * @export
+ * @interface PipelinesGet200ResponsePipelinesInnerAllOf
  */
-export type TestCasePost200Response =
-  | TestCasePost200ResponseOneOf
-  | TestCasePost200ResponseOneOf1;
+export interface PipelinesGet200ResponsePipelinesInnerAllOf {
+  /**
+   *
+   * @type {Array<TestCase>}
+   * @memberof PipelinesGet200ResponsePipelinesInnerAllOf
+   */
+  cases?: Array<TestCase>;
+}

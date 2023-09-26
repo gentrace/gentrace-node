@@ -1,14 +1,17 @@
 import {
   CreateMultipleTestCases,
   CreateSingleTestCase,
+  ExpandedTestResult,
   Pipeline,
   TestCase,
   TestCasePost200Response,
   TestCasePost200ResponseOneOf,
+  TestResult,
   TestResultPostRequest,
   TestResultPostRequestTestRunsInner,
   TestResultSimplePostRequest,
   TestResultSimplePostRequestTestRunsInner,
+  TestResultStatusGet200Response,
   UpdateTestCase,
 } from "../models";
 import {
@@ -301,6 +304,62 @@ export const getPipelines = async (params?: PipelineParams) => {
 
   const response = await globalGentraceApi.pipelinesGet(...parameters);
   return response.data.pipelines;
+};
+
+/**
+ * Retrieves a test result from the Gentrace API.
+ * @async
+ * @param {string} resultId - The ID of the test result.
+ * @returns {Promise<ExpandedTestResult>} - A promise that resolves to the test result.
+ * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
+ */
+export const getTestResult = async (resultId: string) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const response = await globalGentraceApi.testResultIdGet(resultId);
+  const testResult = response.data;
+  return testResult;
+};
+
+type StatusInfo = TestResultStatusGet200Response;
+
+/**
+ * Retrieves the status of a test result from the Gentrace API.
+ * @async
+ * @param {string} resultId - The ID of the test result.
+ * @returns {Promise<StatusInfo>} - A promise that resolves to the test result.
+ * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
+ */
+export const getTestResultStatus = async (
+  resultId: string,
+): Promise<StatusInfo> => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const response = await globalGentraceApi.testResultStatusGet(resultId);
+  const statusInfo = response.data;
+  return statusInfo;
+};
+
+/**
+ * Retrieves test results from the Gentrace API.
+ * @async
+ * @param {string} pipelineSlug - The slug of the pipeline.
+ * @returns {Promise<Array<TestResult>>} - A promise that resolves to the test results.
+ * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
+ */
+export const getTestResults = async (pipelineSlug?: string) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const response = await globalGentraceApi.testResultGet(pipelineSlug);
+
+  const testResults = response.data.testResults;
+  return testResults;
 };
 
 /**

@@ -14,15 +14,18 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCasePost200ResponseOneOf } from "./test-case-post200-response-one-of";
-// May contain unused imports in some cases
-// @ts-ignore
-import { TestCasePost200ResponseOneOf1 } from "./test-case-post200-response-one-of1";
+import { TestEvaluator } from "./test-evaluator";
 
 /**
- * @type TestCasePost200Response
+ *
  * @export
+ * @interface ExpandedPipelineAllOf
  */
-export type TestCasePost200Response =
-  | TestCasePost200ResponseOneOf
-  | TestCasePost200ResponseOneOf1;
+export interface ExpandedPipelineAllOf {
+  /**
+   *
+   * @type {Array<TestEvaluator>}
+   * @memberof ExpandedPipelineAllOf
+   */
+  evaluators?: Array<TestEvaluator>;
+}
