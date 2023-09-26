@@ -10,6 +10,7 @@ export * from "./expanded-test-run-all-of";
 export * from "./feedback-request";
 export * from "./feedback-response";
 export * from "./full-run";
+export * from "./metadata-value-object";
 export * from "./pipeline";
 export * from "./pipelines-get200-response";
 export * from "./pipelines-get200-response-pipelines-inner";

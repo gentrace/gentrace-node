@@ -204,13 +204,35 @@ export class PipelineRun {
 
     this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
 
-    const submission = coreApi.runPost({
-      id: this.id,
-      slug: this.pipeline.slug,
-      collectionMethod: RunRequestCollectionMethodEnum.Runner,
-      stepRuns: this.stepRuns.map(
-        ({
-          provider: providerName,
+    let mergedMetadata = {};
+
+    const updatedStepRuns = this.stepRuns.map(
+      ({
+        provider: providerName,
+        elapsedTime,
+        startTime,
+        endTime,
+        invocation,
+        modelParams,
+        inputs,
+        outputs,
+        context: stepRunContext,
+      }) => {
+        let { metadata: thisContextMetadata, ...restThisContext } =
+          this.context ?? {};
+
+        let { metadata: stepRunContextMetadata, ...restStepRunContext } =
+          stepRunContext ?? {};
+
+        // Merge metadata
+        mergedMetadata = {
+          ...mergedMetadata,
+          ...thisContextMetadata,
+          ...stepRunContextMetadata,
+        };
+
+        return {
+          providerName,
           elapsedTime,
           startTime,
           endTime,
@@ -218,24 +240,20 @@ export class PipelineRun {
           modelParams,
           inputs,
           outputs,
-          context: stepRunContext,
-        }) => {
-          return {
-            providerName,
-            elapsedTime,
-            startTime,
-            endTime,
-            invocation,
-            modelParams,
-            inputs,
-            outputs,
-            context: {
-              ...(this.context ?? {}),
-              ...(stepRunContext ?? {}),
-            },
-          };
-        },
-      ),
+          context: {
+            ...restThisContext,
+            ...restStepRunContext,
+          },
+        };
+      },
+    );
+
+    const submission = coreApi.runPost({
+      id: this.id,
+      slug: this.pipeline.slug,
+      metadata: mergedMetadata,
+      collectionMethod: RunRequestCollectionMethodEnum.Runner,
+      stepRuns: updatedStepRuns,
     });
 
     if (!waitForServer) {
