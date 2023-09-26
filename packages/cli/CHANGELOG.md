@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.9
+
+### Patch Changes
+
+- cde52ef: Add pipeline slug from CLI
+
 ## 0.1.8
 
 ### Patch Changes
