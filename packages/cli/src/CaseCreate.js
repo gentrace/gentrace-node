@@ -51,7 +51,7 @@ function CaseCreate({ options }) {
 
       if (singleResult.success) {
         createTestCase({
-          pipelineSlug: config.activePipelineSlug,
+          pipelineSlug: options.pipeline ?? config.activePipelineSlug,
           ...singleResult.data,
         })
           .then((caseId) => {
@@ -73,7 +73,7 @@ function CaseCreate({ options }) {
 
       if (multipleResult.success) {
         createTestCases({
-          pipelineSlug: config.activePipelineSlug,
+          pipelineSlug: options.pipeline ?? config.activePipelineSlug,
           testCases: multipleResult.data,
         })
           .then((creationCount) => {

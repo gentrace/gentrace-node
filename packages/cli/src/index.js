@@ -29,6 +29,12 @@ yargs(hideBin(process.argv))
             type: "string",
             demandOption: true,
           });
+
+          yargs.option("pipeline", {
+            alias: "pipeline",
+            describe: "Pipeline slug",
+            type: "string",
+          });
         },
         (argv) => launch("cases-create", argv)
       )
@@ -42,10 +48,27 @@ yargs(hideBin(process.argv))
             type: "string",
             demandOption: true,
           });
+
+          yargs.option("pipeline", {
+            alias: "pipeline",
+            describe: "Pipeline slug",
+            type: "string",
+          });
         },
         (argv) => launch("cases-update", argv)
       )
-      .command("get", "Get test cases", {}, () => launch("cases-get"));
+      .command(
+        "get",
+        "Get test cases",
+        (yargs) => {
+          yargs.option("pipeline", {
+            alias: "pipeline",
+            describe: "Pipeline slug",
+            type: "string",
+          });
+        },
+        () => launch("cases-get")
+      );
   })
   .command("config", "Manage configuration", (yargs) => {
     yargs
