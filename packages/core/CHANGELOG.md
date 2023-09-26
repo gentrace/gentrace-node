@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.2
+
+### Patch Changes
+
+- 6e0f7b9: Add run metadata
+
 ## 2.2.1
 
 ### Patch Changes
