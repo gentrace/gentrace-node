@@ -20,7 +20,7 @@ function Entrypoint({ command, options }) {
       return <CaseUpdate options={options} />;
 
     case "cases-get":
-      return <CaseList />;
+      return <CaseList options={options} />;
 
     case "config-set":
       return <ConfigSet options={options} />;

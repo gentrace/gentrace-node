@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { config } from "./utils.js";
 import clipboard from "clipboardy";
 
-function CaseList() {
+function CaseList({ options }) {
   const [cases, setCases] = useState([]);
   const [selectedOption, setSelectedOption] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
   const [clipboardNotification, setClipboardNotification] = useState(false);
 
   useEffect(() => {
-    getTestCases(config.activePipelineSlug)
+    getTestCases(options.pipeline ?? config.activePipelineSlug)
       .then((cases) => {
         setCases(cases);
       })
