@@ -12,10 +12,6 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import { ResolvedStepRunModelParams } from "./resolved-step-run-model-params";
-
 /**
  *
  * @export
@@ -48,10 +44,10 @@ export interface ResolvedStepRun {
   invocation?: string;
   /**
    *
-   * @type {ResolvedStepRunModelParams}
+   * @type {{ [key: string]: any; }}
    * @memberof ResolvedStepRun
    */
-  modelParams?: ResolvedStepRunModelParams;
+  modelParams?: { [key: string]: any };
   /**
    *
    * @type {{ [key: string]: any; }}

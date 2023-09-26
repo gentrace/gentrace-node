@@ -15,7 +15,6 @@ export * from "./pipelines-get200-response";
 export * from "./pipelines-get200-response-pipelines-inner";
 export * from "./pipelines-get200-response-pipelines-inner-all-of";
 export * from "./resolved-step-run";
-export * from "./resolved-step-run-model-params";
 export * from "./run-request";
 export * from "./run-response";
 export * from "./step-run";

@@ -22,7 +22,6 @@ models/pipeline.ts
 models/pipelines-get200-response-pipelines-inner-all-of.ts
 models/pipelines-get200-response-pipelines-inner.ts
 models/pipelines-get200-response.ts
-models/resolved-step-run-model-params.ts
 models/resolved-step-run.ts
 models/run-request.ts
 models/run-response.ts
