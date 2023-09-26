@@ -15,13 +15,15 @@
 /**
  *
  * @export
- * @interface TestResultPost200Response
+ * @interface MetadataValueObject
  */
-export interface TestResultPost200Response {
+export interface MetadataValueObject {
+  [key: string]: any;
+
   /**
    *
    * @type {string}
-   * @memberof TestResultPost200Response
+   * @memberof MetadataValueObject
    */
-  resultId: string;
+  type: string;
 }

@@ -396,9 +396,23 @@ export const runTest = async (
     for (const testCase of testCases) {
       const [, pipelineRun] = await handler(testCase);
 
-      const testRun: TestRun = {
-        caseId: testCase.id,
-        stepRuns: pipelineRun.stepRuns.map((stepRun) => ({
+      let mergedMetadata = {};
+
+      const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
+        let { metadata: thisContextMetadata, ...restThisContext } =
+          pipelineRun.context ?? {};
+
+        let { metadata: stepRunContextMetadata, ...restStepRunContext } =
+          stepRun.context ?? {};
+
+        // Merge metadata
+        mergedMetadata = {
+          ...mergedMetadata,
+          ...thisContextMetadata,
+          ...stepRunContextMetadata,
+        };
+
+        return {
           modelParams: stepRun.modelParams,
           invocation: stepRun.invocation,
           inputs: stepRun.inputs,
@@ -407,8 +421,14 @@ export const runTest = async (
           elapsedTime: stepRun.elapsedTime,
           startTime: stepRun.startTime,
           endTime: stepRun.endTime,
-          context: { ...pipelineRun.context, ...stepRun.context },
-        })),
+          context: { ...restThisContext, ...restStepRunContext },
+        };
+      });
+
+      const testRun: TestRun = {
+        caseId: testCase.id,
+        metadata: mergedMetadata,
+        stepRuns: updatedStepRuns,
       };
 
       if (pipelineRun.getId()) {

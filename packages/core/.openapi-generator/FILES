@@ -18,6 +18,7 @@ models/feedback-request.ts
 models/feedback-response.ts
 models/full-run.ts
 models/index.ts
+models/metadata-value-object.ts
 models/pipeline.ts
 models/pipelines-get200-response-pipelines-inner-all-of.ts
 models/pipelines-get200-response-pipelines-inner.ts

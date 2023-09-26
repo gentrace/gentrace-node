@@ -1,5 +1,5 @@
 import { Configuration } from "../configuration";
-import { Context } from "./context";
+import { Context, PluginContext } from "./context";
 import { globalGentraceConfig } from "./init";
 import { PipelineRun } from "./pipeline-run";
 import { GentracePlugin } from "./plugin";
@@ -93,7 +93,7 @@ export class Pipeline<T extends { [key: string]: GentracePlugin<any, any> }> {
   }
 
   start(
-    context?: Pick<Context, "userId">,
+    context?: PluginContext,
   ): PipelineRun & { [key in keyof T]: ReturnType<T[key]["advanced"]> } {
     const newPipelineRun = new PipelineRun({ pipeline: this, context });
     const argList = Object.entries(this.plugins ?? {});

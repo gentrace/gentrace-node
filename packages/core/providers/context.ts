@@ -1,5 +1,8 @@
+import { MetadataValueObject } from "../models";
+
 type PipelineRunContext = {
   userId?: string;
+  metadata?: { [key: string]: MetadataValueObject };
 };
 
 export type CoreStepRunContext = {
@@ -7,6 +10,7 @@ export type CoreStepRunContext = {
     type: "html";
     key: string;
   };
+  metadata?: { [key: string]: MetadataValueObject };
 };
 
 export type PluginContext = PipelineRunContext;
