@@ -34,12 +34,35 @@ async function createChatCompletion() {
   const chatCompletionResponse = await openai.chat.completions.create({
     messages: [{ role: "user", content: "Hello!" }],
     model: "gpt-3.5-turbo",
+    gentrace: {
+      metadata: {
+        promptOne: {
+          type: "string",
+          value: "Hello!",
+        },
+      },
+    },
     stream: true,
   });
 
   for await (const message of chatCompletionResponse) {
     console.log("Message", message.choices[0]);
   }
+
+  const chatCompletionResponseTwo = await openai.chat.completions.create({
+    messages: [{ role: "user", content: "Hello!" }],
+    model: "gpt-3.5-turbo",
+    gentrace: {
+      metadata: {
+        promptTwo: {
+          type: "string",
+          value: "Another",
+        },
+      },
+    },
+  });
+
+  console.log("Message", chatCompletionResponseTwo.choices[0].message);
 
   const pipelineRunId = await runner.submit();
 

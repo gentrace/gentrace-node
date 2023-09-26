@@ -1,8 +1,12 @@
 import { MetadataValueObject } from "../models";
 
+type Metadata = {
+  [key: string]: MetadataValueObject;
+};
+
 type PipelineRunContext = {
   userId?: string;
-  metadata?: { [key: string]: MetadataValueObject };
+  metadata?: Metadata;
 };
 
 export type CoreStepRunContext = {
@@ -14,5 +18,5 @@ export type CoreStepRunContext = {
 };
 
 export type PluginContext = PipelineRunContext;
-export type PluginStepRunContext = Record<string, never>;
+export type PluginStepRunContext = { metadata?: Metadata };
 export type Context = PipelineRunContext & CoreStepRunContext;
