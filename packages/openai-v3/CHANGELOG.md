@@ -1,5 +1,13 @@
 # @gentrace/openai-v3
 
+## 3.4.1
+
+### Patch Changes
+
+- 7883953: Add test result endpoints
+- Updated dependencies [7883953]
+  - @gentrace/core@2.2.1
+
 ## 3.4.0
 
 ### Minor Changes

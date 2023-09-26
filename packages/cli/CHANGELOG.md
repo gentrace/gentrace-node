@@ -1,5 +1,13 @@
 # @gentrace/cli
 
+## 0.1.8
+
+### Patch Changes
+
+- 7883953: Add test result endpoints
+- Updated dependencies [7883953]
+  - @gentrace/core@2.2.1
+
 ## 0.1.7
 
 ### Patch Changes
