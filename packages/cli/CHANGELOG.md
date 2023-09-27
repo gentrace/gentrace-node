@@ -1,5 +1,11 @@
 # @gentrace/cli
 
+## 0.1.10
+
+### Patch Changes
+
+- b6aa987: Fix pipeline selection
+
 ## 0.1.9
 
 ### Patch Changes
