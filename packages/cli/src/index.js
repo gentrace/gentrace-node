@@ -67,7 +67,7 @@ yargs(hideBin(process.argv))
             type: "string",
           });
         },
-        () => launch("cases-get")
+        (argv) => launch("cases-get", argv)
       );
   })
   .command("config", "Manage configuration", (yargs) => {
