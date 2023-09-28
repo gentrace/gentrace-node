@@ -3,6 +3,7 @@ import { Box, Text, useInput } from "ink";
 import { useEffect, useState } from "react";
 import { config } from "./utils.js";
 import clipboard from "clipboardy";
+import JsonHighlighter from "./JsonHighlighter.js";
 
 function CaseList({ options }) {
   const [cases, setCases] = useState([]);
@@ -64,11 +65,9 @@ function CaseList({ options }) {
         <Text color="red">{errorMessage}</Text>
       </Box>
 
-      {clipboardNotification && (
-        <Box>
-          <Text color="green"> 📋 Copied to clipboard!</Text>
-        </Box>
-      )}
+      {selectedOption && clipboardNotification ? (
+        <JsonHighlighter json={cases[selectedOption]} />
+      ) : null}
     </>
   );
 }
