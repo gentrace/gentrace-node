@@ -218,11 +218,17 @@ export class PipelineRun {
         outputs,
         context: stepRunContext,
       }) => {
-        let { metadata: thisContextMetadata, ...restThisContext } =
-          this.context ?? {};
+        let {
+          metadata: thisContextMetadata,
+          previousRunId: _prPreviousRunId,
+          ...restThisContext
+        } = this.context ?? {};
 
-        let { metadata: stepRunContextMetadata, ...restStepRunContext } =
-          stepRunContext ?? {};
+        let {
+          metadata: stepRunContextMetadata,
+          previousRunId: _srPreviousRunId,
+          ...restStepRunContext
+        } = stepRunContext ?? {};
 
         // Merge metadata
         mergedMetadata = {
@@ -252,6 +258,7 @@ export class PipelineRun {
       id: this.id,
       slug: this.pipeline.slug,
       metadata: mergedMetadata,
+      previousRunId: this.context?.previousRunId,
       collectionMethod: RunRequestCollectionMethodEnum.Runner,
       stepRuns: updatedStepRuns,
     });

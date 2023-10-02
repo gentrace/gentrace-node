@@ -399,11 +399,17 @@ export const runTest = async (
       let mergedMetadata = {};
 
       const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
-        let { metadata: thisContextMetadata, ...restThisContext } =
-          pipelineRun.context ?? {};
+        let {
+          metadata: thisContextMetadata,
+          previousRunId: _prPreviousRunId,
+          ...restThisContext
+        } = pipelineRun.context ?? {};
 
-        let { metadata: stepRunContextMetadata, ...restStepRunContext } =
-          stepRun.context ?? {};
+        let {
+          metadata: stepRunContextMetadata,
+          previousRunId: _srPreviousRunId,
+          ...restStepRunContext
+        } = stepRun.context ?? {};
 
         // Merge metadata
         mergedMetadata = {

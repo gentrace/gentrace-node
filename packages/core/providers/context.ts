@@ -7,6 +7,7 @@ type Metadata = {
 type PipelineRunContext = {
   userId?: string;
   metadata?: Metadata;
+  previousRunId?: string | null;
 };
 
 export type CoreStepRunContext = {
