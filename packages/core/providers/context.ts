@@ -15,9 +15,10 @@ export type CoreStepRunContext = {
     type: "html";
     key: string;
   };
-  metadata?: { [key: string]: MetadataValueObject };
+  metadata?: Metadata;
 };
 
 export type PluginContext = PipelineRunContext;
 export type PluginStepRunContext = { metadata?: Metadata };
+export type ResultContext = { metadata?: Metadata };
 export type Context = PipelineRunContext & CoreStepRunContext;

@@ -2,6 +2,7 @@ import { getTestCases, init, submitTestResult } from "@gentrace/core";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
+  runName: "Another one",
   basePath: "http://localhost:3000/api/v1",
 });
 
@@ -16,6 +17,14 @@ async function testFailure() {
         value: "something",
       },
     ],
+    {
+      metadata: {
+        "test-run": {
+          type: "string",
+          value: "Some string value",
+        },
+      },
+    },
   );
 
   console.log("response", response);

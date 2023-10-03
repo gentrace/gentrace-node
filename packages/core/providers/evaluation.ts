@@ -14,6 +14,7 @@ import {
   TestResultStatusGet200Response,
   UpdateTestCase,
 } from "../models";
+import { ResultContext } from "./context";
 import {
   GENTRACE_BRANCH,
   GENTRACE_COMMIT,
@@ -176,6 +177,7 @@ export const updateTestCase = async (payload: UpdateTestCase) => {
 export const constructSubmissionPayload = (
   pipelineId: string,
   testRuns: TestRun[],
+  context?: ResultContext,
 ) => {
   const body: TestResultPostRequest = {
     pipelineId,
@@ -184,6 +186,10 @@ export const constructSubmissionPayload = (
 
   if (GENTRACE_RUN_NAME) {
     body.name = GENTRACE_RUN_NAME;
+  }
+
+  if (context?.metadata) {
+    body.metadata = context.metadata;
   }
 
   if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
@@ -230,6 +236,7 @@ export const submitTestResult = async (
   pipelineSlug: string,
   testCases: TestCase[],
   outputsList: Record<string, any>[],
+  context?: ResultContext,
 ) => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
@@ -274,6 +281,10 @@ export const submitTestResult = async (
       GENTRACE_COMMIT.length > 0
         ? GENTRACE_COMMIT
         : getProcessEnv("GENTRACE_COMMIT");
+  }
+
+  if (context?.metadata) {
+    body.metadata = context.metadata;
   }
 
   const response = await globalGentraceApi.testResultSimplePost(body);
@@ -373,6 +384,7 @@ export const getTestResults = async (pipelineSlug?: string) => {
 export const runTest = async (
   pipelineSlug: string,
   handler: (testCase: TestCase) => Promise<[any, PipelineRun]>,
+  context?: ResultContext,
 ) => {
   incrementTestCounter();
 
@@ -448,7 +460,11 @@ export const runTest = async (
       throw new Error("Gentrace API key not initialized. Call init() first.");
     }
 
-    const body = constructSubmissionPayload(matchingPipeline.id, testRuns);
+    const body = constructSubmissionPayload(
+      matchingPipeline.id,
+      testRuns,
+      context,
+    );
 
     const response = await globalGentraceApi.testResultPost(body);
     return response.data;
