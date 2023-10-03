@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.3
+
+### Patch Changes
+
+- 61e77d4: Add threading
+- c15dc90: Add test result metadata
+
 ## 2.2.2
 
 ### Patch Changes
