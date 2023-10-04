@@ -18,6 +18,7 @@ import { ResultContext } from "./context";
 import {
   GENTRACE_BRANCH,
   GENTRACE_COMMIT,
+  GENTRACE_RESULT_NAME,
   GENTRACE_RUN_NAME,
   globalGentraceApi,
 } from "./init";
@@ -184,8 +185,13 @@ export const constructSubmissionPayload = (
     testRuns,
   };
 
+  // Will be overwritten if GENTRACE_RESULT_NAME is specified
   if (GENTRACE_RUN_NAME) {
     body.name = GENTRACE_RUN_NAME;
+  }
+
+  if (GENTRACE_RESULT_NAME) {
+    body.name = GENTRACE_RESULT_NAME;
   }
 
   if (context?.metadata) {
@@ -265,8 +271,13 @@ export const submitTestResult = async (
     testRuns: testRuns,
   };
 
+  // Will be overwritten if GENTRACE_RESULT_NAME is specified
   if (GENTRACE_RUN_NAME) {
     body.name = GENTRACE_RUN_NAME;
+  }
+
+  if (GENTRACE_RESULT_NAME) {
+    body.name = GENTRACE_RESULT_NAME;
   }
 
   if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {

@@ -7,8 +7,8 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "^2.1.2",
-    "@gentrace/openai": "^4.0.2",
+    "@gentrace/core": "2.2.3",
+    "@gentrace/openai": "4.1.1",
     "@gentrace/pinecone": "^1.0.0"
   },
   "devDependencies": {
