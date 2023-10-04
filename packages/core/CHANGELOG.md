@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.4
+
+### Patch Changes
+
+- 3441268: Fix naming to GENTRACE_RESULT_NAME
+
 ## 2.2.3
 
 ### Patch Changes
