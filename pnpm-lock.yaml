@@ -103,10 +103,10 @@ importers:
   examples/full:
     dependencies:
       '@gentrace/core':
-        specifier: ^2.1.2
+        specifier: 2.2.3
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: ^4.0.2
+        specifier: 4.1.1
         version: link:../../packages/openai
       '@gentrace/pinecone':
         specifier: ^1.0.0
