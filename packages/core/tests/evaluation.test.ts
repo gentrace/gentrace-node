@@ -780,6 +780,95 @@ describe("Usage of Evaluation functionality", () => {
       expect(payload.commit).toBe("test-commit-init");
     });
 
+    it("should prioritize GENTRACE_RESULT_NAME over GENTRACE_RUN_NAME", async () => {
+      process.env.GENTRACE_RESULT_NAME = "result-name";
+      process.env.GENTRACE_RUN_NAME = "run-name";
+
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+      });
+
+      const payload = constructSubmissionPayload("pipeline-id", []);
+
+      expect(payload.name).toBe("result-name");
+    });
+
+    it("should still read GENTRACE_RUN_NAME", async () => {
+      process.env.GENTRACE_RUN_NAME = "run-name";
+
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+      });
+
+      const payload = constructSubmissionPayload("pipeline-id", []);
+
+      expect(payload.name).toBe("run-name");
+    });
+
+    it("should read GENTRACE_RESULT_NAME", async () => {
+      process.env.GENTRACE_RESULT_NAME = "result-name";
+
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+      });
+
+      const payload = constructSubmissionPayload("pipeline-id", []);
+
+      expect(payload.name).toBe("result-name");
+    });
+
+    it("should read resultName over runNam", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+        runName: "run-name",
+        resultName: "result-name",
+      });
+
+      const payload = constructSubmissionPayload("pipeline-id", []);
+
+      expect(payload.name).toBe("result-name");
+    });
+
+    it("should still read runName", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+        runName: "run-name",
+      });
+
+      const payload = constructSubmissionPayload("pipeline-id", []);
+
+      expect(payload.name).toBe("run-name");
+    });
+
+    it("should read resultName", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api/v1",
+        branch: "test-branch-init",
+        commit: "test-commit-init",
+        resultName: "result-name",
+      });
+
+      const payload = constructSubmissionPayload("pipeline-id", []);
+
+      expect(payload.name).toBe("result-name");
+    });
+
     it("should create a body with a `runner` submission variable", async () => {
       process.env.GENTRACE_BRANCH = "test-branch-env";
       process.env.GENTRACE_COMMIT = "test-commit-env";

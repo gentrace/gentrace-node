@@ -5,7 +5,7 @@ const PIPELINE_SLUG = "testing3";
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   basePath: "http://localhost:3000/api/v1",
-  runName: "Vivek's Run Name",
+  resultName: "Vivek's Result Name",
 });
 
 const pipeline = new Pipeline({
