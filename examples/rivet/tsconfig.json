@@ -1,0 +1,20 @@
+{
+  "extends": "@gentrace/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "lib": ["ES2019", "DOM"],
+    "rootDir": "src",
+    "typeRoots": ["node_modules/@types"],
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    //    {
+    //      "path": "../../packages/rivet-node/tsconfig.json"
+    //    },
+    {
+      "path": "../../packages/core/tsconfig.json"
+    }
+  ]
+}

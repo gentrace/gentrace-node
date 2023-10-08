@@ -1,0 +1,581 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    5BI0Pfuu2naOUKqGUO-yZ:
+      metadata:
+        attachedData:
+          gentracePipeline:
+            archivedAt: null
+            branch: null
+            cases:
+              - archivedAt: null
+                createdAt: 2023-09-17T22:12:15.794Z
+                expected: null
+                expectedOutputs:
+                  value: ""
+                expectedSteps: null
+                id: 99c21b02-7d8f-45cf-88b6-8920ce028280
+                inputs:
+                  messages:
+                    - message: How can I help?
+                      type: assistant
+                    - message: What is the capital of Armenia?
+                      type: user
+                name: TC 1
+                pipelineId: 440c8682-3f58-5b40-981a-59989e134b18
+                updatedAt: 2023-09-18T10:49:45.041Z
+            createdAt: 2023-07-26T12:25:46.544Z
+            displayName: null
+            id: 440c8682-3f58-5b40-981a-59989e134b18
+            labels: []
+            name: null
+            organizationId: 5ee3d429-6e12-4ede-b603-0b20f4b6dcd9
+            slug: testing-pipeline-id
+            updatedAt: 2023-07-26T12:25:46.544Z
+        description: ""
+        id: 5BI0Pfuu2naOUKqGUO-yZ
+        name: "* Initial Chat"
+      nodes:
+        '[-W6COoQKUcQ9w9B3jI03T]:subGraph "Subgraph"':
+          data:
+            graphId: r97vYKQCVceae5VCCKK4J
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Coalesce" TiKgjE9lRKo7jxKHSG5Ts/input1
+          visualData: 2200.4371718810057/1284.2891462371756/300/37
+        '[-v8vfkQzqCrE6X_BYGRI7]:graphInput "Graph Input"':
+          data:
+            dataType: object[]
+            id: messages
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Assemble Prompt" bT5C1n80OJUvt0HWT3s2N/message1
+            - data->"Messages" vo5dYm9w-N3DqWKg6GBB9/input1
+          visualData: 450.33584921685747/584.509433433768/300/42
+        '[3fKJMBoMrWywddgvRuXzX]:if "If"':
+          outgoingConnections:
+            - output->"Subgraph" KTDjmUolLaU2mGXtP3KX1/input
+            - output->"Subgraph" KTDjmUolLaU2mGXtP3KX1/messages
+          visualData: 2047.0150253100212/1654.1185972534486/125/35
+        '[59C-lzmaNDStH3FGrlK-q]:extractRegex "Extract Regex"':
+          data:
+            errorOnFailed: false
+            regex: "APPROPRIATE_SKILL: ([a-zA-Z0-9_]+)"
+            useRegexInput: false
+          outgoingConnections:
+            - output1->"Match" C9hewJjzGnDPz3ekCRq6T/input
+          visualData: 1312.5221695699574/1270.3071938320213/250/31
+        '[C9hewJjzGnDPz3ekCRq6T]:match "Match"':
+          data:
+            caseCount: 3
+            cases:
+              - SIMPLE_REPLY
+              - CALCULATOR
+              - PLAY_GAME_OF_24
+          outgoingConnections:
+            - case1->"If" xOaYW0KIyS32L3yZCXgyz/if
+            - case2->"If" 3fKJMBoMrWywddgvRuXzX/if
+            - case3->"If" srBo0tH6dPQvoSOJZdlZN/if
+          visualData: 1612.8149997157275/1256.3058258619021/250/33
+        '[KTDjmUolLaU2mGXtP3KX1]:subGraph "Subgraph"':
+          data:
+            graphId: cNR0gNaGhFnKosSc7NxRg
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Coalesce" TiKgjE9lRKo7jxKHSG5Ts/input2
+          visualData: 2206.342358846274/1637.9389452966398/300/36
+        '[TiKgjE9lRKo7jxKHSG5Ts]:coalesce "Coalesce"':
+          outgoingConnections:
+            - output->"Graph Output" a3laSCibbrhJ4FVNCl3pD/value
+          visualData: 2635.0363832303638/1241.413797541481/150/38
+        '[a3laSCibbrhJ4FVNCl3pD]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2865.329549900008/1217.757308376549/300/39
+        '[bDQ8wPuk4SzLclg0UerD0]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: How can I help?
+            type: assistant
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" fykcLhOkm_HAYnw-5KIH3/message1
+          visualData: -171.9018868674652/521.7207540964243/250/44
+        '[bT5C1n80OJUvt0HWT3s2N]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" rTcNfKE6RPuc1xmHw1XAC/prompt
+          visualData: 1094.2224529334699/584.8127801065449/250/42
+        '[fykcLhOkm_HAYnw-5KIH3]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Graph Input" -v8vfkQzqCrE6X_BYGRI7/default
+          visualData: 148.0981131325348/623.7207540964243/250/44
+        '[gDu9dzQVvUPtY2sfkkaTh]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: How are you doing?
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" fykcLhOkm_HAYnw-5KIH3/message2
+          visualData: -172.9018868674652/693.7207540964243/250/44
+        '[jWA87wcF_GlS2np55xD5z]:text "Text"':
+          data:
+            text: You are a helpful assistant.
+          outgoingConnections:
+            - output->"Chat" rTcNfKE6RPuc1xmHw1XAC/systemPrompt
+          visualData: 1044.8468567815373/377.294598163788/300/42
+        '[m-mbyszIqKzxgtKg1NrZ6]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              Your task is to choose the most appropriate skill to execute to
+              respond to the user. The skills you can choose from are:
+
+              * CALCULATOR - do an arithmetic computation. This is appropriate if the user gives you an arithmetic formula (eg. "5 * 5 + (2 - 1)").
+
+              * PLAY_GAME_OF_24 - solve a "game of 24" puzzle. This is appropriate if the user gives you several integers.
+
+              * SIMPLE_REPLY - reply to the user, based on the conversation. Only select this skill if no other skills are appropriate.
+
+
+              FIRST, explain your reasoning.
+
+              THEN, respond in the following format:
+
+
+              APPROPRIATE_SKILL: [SKILL]
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" bT5C1n80OJUvt0HWT3s2N/message2
+          visualData: 800.9994867016692/733.8099103553141/250/42
+        '[p9aXKbDTZCpwjxqZQkE5o]:subGraph "Subgraph"':
+          data:
+            graphId: img3RO-RZ3wj9vprc0g7x
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Coalesce" TiKgjE9lRKo7jxKHSG5Ts/input3
+          visualData: 2213.211121093388/1895.8418358669255/300/47
+        '[rTcNfKE6RPuc1xmHw1XAC]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Extract Regex" 59C-lzmaNDStH3FGrlK-q/input
+          visualData: 1434.0736493483123/577.8084754796987/200/42
+        '[srBo0tH6dPQvoSOJZdlZN]:if "If"':
+          outgoingConnections:
+            - output->"Subgraph" p9aXKbDTZCpwjxqZQkE5o/input
+          visualData: 2036.2549616500767/1920.3144962154684/125/45
+        '[vo5dYm9w-N3DqWKg6GBB9]:passthrough "Messages"':
+          outgoingConnections:
+            - output1->"If" 3fKJMBoMrWywddgvRuXzX/value
+            - output1->"If" srBo0tH6dPQvoSOJZdlZN/value
+            - output1->"If" xOaYW0KIyS32L3yZCXgyz/value
+          visualData: 1617.9008842151597/1671.8338365777877/175/32
+        '[xOaYW0KIyS32L3yZCXgyz]:if "If"':
+          outgoingConnections:
+            - output->"Subgraph" -W6COoQKUcQ9w9B3jI03T/messages
+          visualData: 2034.8572003388883/1304.5830896568502/125/34
+    cNR0gNaGhFnKosSc7NxRg:
+      metadata:
+        description: ""
+        id: cNR0gNaGhFnKosSc7NxRg
+        name: Calculator
+      nodes:
+        '[7tExf5-mnSOS-K83RGgTp]:extractRegex "Extract Regex"':
+          data:
+            errorOnFailed: false
+            regex: "COMPUTATION: (.*)"
+            useRegexInput: false
+          outgoingConnections:
+            - output1->"External Call" UXAt4NG3Kg1zBVvU1RBZi/arguments
+          visualData: 1716.0345092383493/540.2575387223877/250/13
+        '[8Ij56L9chrM6V_OCwWsA4]:text "Text"':
+          data:
+            text: You are a helpful calculator.
+          outgoingConnections:
+            - output->"Chat" G7DYuXsaD9G6pT1q0S1bS/systemPrompt
+          visualData: 1292.670334044323/134.05720962899662/300/12
+        '[9XG5P2-Pk7aL-htut6RY5]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2239.088255456765/523.0296890984553/300/15
+        '[CUa1IGD0x5BX8pmjwtBHS]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" G7DYuXsaD9G6pT1q0S1bS/prompt
+          visualData: 1353.067901234568/330.8240740740741/250/4
+        '[G7DYuXsaD9G6pT1q0S1bS]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Extract Regex" 7tExf5-mnSOS-K83RGgTp/input
+          visualData: 1726.253086419753/268.4259259259259/200/3
+        '[GGQ9vgjldv_HQSMoPrWEk]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              What is the arithmetic formula I am asking you to compute? Answer
+              in the following format:
+
+
+              COMPUTATION: [formula, eg. "5 * (2 - 1)"]
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" CUa1IGD0x5BX8pmjwtBHS/message2
+          visualData: 1039.0308641975307/446.65740740740745/250/5
+        '[UXAt4NG3Kg1zBVvU1RBZi]:externalCall "External Call"':
+          data:
+            functionName: calculate
+            useErrorOutput: false
+            useFunctionNameInput: false
+          outgoingConnections:
+            - result->"Graph Output" 9XG5P2-Pk7aL-htut6RY5/value
+          visualData: 2035.1029381506592/519.9697167603723/150/14
+        '[bsYlfUDGifFVdX2YrJCpw]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: messages
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Assemble Prompt" CUa1IGD0x5BX8pmjwtBHS/message1
+          visualData: 1006.895061728395/280.81481481481484/300/6
+    img3RO-RZ3wj9vprc0g7x:
+      metadata:
+        description: ""
+        id: img3RO-RZ3wj9vprc0g7x
+        name: Play 24
+      nodes:
+        '[DDzJnQnNkq5S2CXgrqeTO]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: input
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Assemble Prompt" RK-JSMbiBDXHieuODZ1UQ/message1
+          visualData: 1136.3524398032898/315.6503388790682/300/12
+        '[IxNaO-Ge-QFsjlPWmL0X8]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 2201.499861001212/982.629277966354/300/21
+        '[JSxv1qjjpQst-gerSvo1P]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: 5 5 1 6
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" tMQa3krgP6sGqE5saPRtY/message1
+          visualData: -93.82558174749487/561.3994494207175/250/7
+        '[RK-JSMbiBDXHieuODZ1UQ]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" XcI4a5ehj_O13pOmwXmxQ/prompt
+          visualData: 1505.4893171681276/383.95171130779426/250/10
+        '[XcI4a5ehj_O13pOmwXmxQ]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Text" rFNDdJB9Wd3KFdfVppqOi/numbers
+          visualData: 1795.5100994530835/310.79140519008365/200/14
+        '[hMIBnjUZGOOhd7BjO8Dmg]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: >-
+              I should have provided you some numbers in my previous message.
+
+
+              Output these numbers, separated by commas. For example, "5, 5, 3, 4."
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" RK-JSMbiBDXHieuODZ1UQ/message2
+          visualData: 1179.187250068812/506.137919370722/250/11
+        '[k-5Lxnn3SQtHCa-2Qc8FA]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" IxNaO-Ge-QFsjlPWmL0X8/value
+          visualData: 1940.7606821585725/980.7766285941701/200/20
+        '[rFNDdJB9Wd3KFdfVppqOi]:text "Text"':
+          data:
+            text: >
+              Here are some numbers:
+
+              {{numbers}}
+
+
+              Your task is to make the number 24 using all of these numbers. You can add, subtract, multiply, and divide. Use all the numbers provided exactly once. You can use them in any order. For example, if I gave you "5, 5, 3, 4" a valid answer would be "5 * 5 - (4 - 3)."
+
+
+              NOW, output the answer in the format below:
+
+              ANSWER: 5 * 5 - (4 - 3)
+          outgoingConnections:
+            - output->"Chat" k-5Lxnn3SQtHCa-2Qc8FA/prompt
+          visualData: 1590.9261217085611/942.0781152700539/300/17
+        '[tMQa3krgP6sGqE5saPRtY]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Graph Input" DDzJnQnNkq5S2CXgrqeTO/default
+          visualData: 223.54273088295088/599.3456607134882/250/null
+    pyN7YC62O0rn9UHs-0pel:
+      metadata:
+        attachedData:
+          gentracePipeline:
+            archivedAt: null
+            branch: null
+            createdAt: 2023-07-26T12:17:05.921Z
+            displayName: null
+            id: be9392f2-5997-5e69-a93e-9869d82ea18c
+            labels: []
+            organizationId: 5ee3d429-6e12-4ede-b603-0b20f4b6dcd9
+            slug: test-gentrace-python-pipeline
+            updatedAt: 2023-07-26T12:17:05.921Z
+        description: ""
+        id: pyN7YC62O0rn9UHs-0pel
+        name: Answer Actions/Custom Instructions/Simple Instruction/Custom Instruction
+      nodes:
+        '[8OG6JaxMYixJo2CtGuXAr]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1918/519/309.2919041336013/131
+        '[FRtjRzE0ZGmo3lnyW0WyX]:graphInput "Instruction"':
+          data:
+            dataType: string
+            defaultValue: Turn the repsonse into bullet points.
+            id: instruction
+            text: ""
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" Lf7nH9lc_j-QK5cG2nBzC/instruction
+          visualData: 405.5501780238181/348.8020532094047/330/137
+        '[Lf7nH9lc_j-QK5cG2nBzC]:text "Text"':
+          data:
+            text: "You're an Expert Writer. Given a Requirement and Response, rewrite the
+              Response based on these instructions:\r
+
+              \"{{instruction}}\""
+          outgoingConnections:
+            - output->"Chat" qQPLsogdPcdYUxC4MTKNC/systemPrompt
+          visualData: 952/327/285.76603169428677/126
+        '[qILajGXEKuXx1Xw1P0KKa]:graphInput "Requirement"':
+          data:
+            dataType: string
+            defaultValue: What SSO types do you support?
+            id: requirement
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Prompt" z1NVUmnrOyqMgB12k29lU/requirement
+          visualData: 417.0169704038965/796.7661263138992/330/139
+        '[qQPLsogdPcdYUxC4MTKNC]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0
+            text: ""
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" 8OG6JaxMYixJo2CtGuXAr/value
+          visualData: 1337/495/473.5656858287971/129
+        '[wan2fFZOov7DSqpVc2gMP]:graphInput "Current Response"':
+          data:
+            dataType: string
+            defaultValue: Yes, we support SSO in Google SSO, Microsoft ADFS and Facebook
+            id: currentResponse
+            text: ""
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Prompt" z1NVUmnrOyqMgB12k29lU/currentResponse
+          visualData: 410.4200663492267/574.3958127780271/330/141
+        '[z1NVUmnrOyqMgB12k29lU]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            name: user
+            promptText: "Draft Response: {{currentResponse}}\r
+
+              \r
+
+              Requirement: {{requirement}}\r
+
+              \r
+
+              Updated Response:"
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Chat" qQPLsogdPcdYUxC4MTKNC/prompt
+          visualData: 949.2243952831393/588.2299863381404/280/138
+    r97vYKQCVceae5VCCKK4J:
+      metadata:
+        description: ""
+        id: r97vYKQCVceae5VCCKK4J
+        name: Simple Reply
+      nodes:
+        '[2WgFF9l52waW8JTlmtItb]:text "Text"':
+          data:
+            text: >-
+              You are a helpful assistant.
+
+
+              You have access to the following skills:
+
+              - Calculator. If the user provides you with an arithmetic formula (eg. "5 * (2 - 1)"), you can calculate the result.
+
+              - Play a game of 24. If the user provides you with a few integers, you can try to combine them with simple arithmetic operations to get to a value of 24.
+          outgoingConnections:
+            - output->"Chat" g1OFlelzeONyJvWgLxmiS/systemPrompt
+          visualData: 732/104/300/null
+        '[6Gr81m6XMKM52nSAG-2b5]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 1389.6530238057808/170.04259066944488/300/4
+        '[g1OFlelzeONyJvWgLxmiS]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" 6Gr81m6XMKM52nSAG-2b5/value
+          visualData: 1104.7082155296682/132/200/3
+        '[yjH76st57RvQxmseZ-m_u]:graphInput "Graph Input"':
+          data:
+            dataType: chat-message[]
+            id: messages
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Chat" g1OFlelzeONyJvWgLxmiS/prompt
+          visualData: 735.613558555666/346.6025202108885/300/5
+  metadata:
+    description: ""
+    id: QiMtlIf2TmgkjfxPGu1Cd
+    title: Untitled Project
+  plugins:
+    - id: gentrace
+      name: gentrace
+      type: built-in
