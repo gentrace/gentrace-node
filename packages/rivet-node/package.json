@@ -1,0 +1,49 @@
+{
+  "name": "@gentrace/rivet-node",
+  "version": "1.9.0",
+  "description": "Gentrace Rivet extension",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gentrace/gentrace-node.git"
+  },
+  "keywords": [
+    "gentrace",
+    "rivet"
+  ],
+  "author": "Gentrace",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "run-s clean typescript:compile rollup:compile",
+    "typescript:compile": "tsc -p tsconfig.json",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "rollup:compile": "rollup --config rollup.config.mjs"
+  },
+  "dependencies": {
+    "@gentrace/core": "workspace:^2.2.1"
+  },
+  "peerDependencies": {
+    "@ironclad/rivet-node": "^1.9.0"
+  },
+  "devDependencies": {
+    "@gentrace/tsconfig": "workspace:*",
+    "@ironclad/rivet-node": "^1.9.0",
+    "@rollup/plugin-commonjs": "^24.1.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-typescript": "^11.1.0",
+    "@types/node": "^12.11.5",
+    "@types/uuid": "^9.0.1",
+    "dotenv": "^16.0.3",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.0",
+    "rollup": "^3.21.5",
+    "tslib": "^2.6.2",
+    "typescript": "~5.1.3"
+  }
+}
