@@ -1,5 +1,11 @@
 # @gentrace/rivet
 
+## 1.9.2
+
+### Patch Changes
+
+- 93c164a: Fix dependent versions
+
 ## 1.9.1
 
 ### Patch Changes
