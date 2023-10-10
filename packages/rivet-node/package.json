@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/rivet-node",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "Gentrace Rivet extension",
   "repository": {
     "type": "git",
