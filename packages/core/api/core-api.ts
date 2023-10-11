@@ -80,24 +80,16 @@ export const CoreApiAxiosParamCreator = function (
     /**
      *
      * @summary Upload an image file
-     * @param {string} org ID of the organization
-     * @param {string} name Name of the file being uploaded
-     * @param {File} body
+     * @param {string} [org] (If not using an organization API Key) the ID of the organization
+     * @param {File} [file] The file to upload.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     filesUploadPost: async (
-      org: string,
-      name: string,
-      body: File,
+      org?: string,
+      file?: File,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'org' is not null or undefined
-      assertParamExists("filesUploadPost", "org", org);
-      // verify required parameter 'name' is not null or undefined
-      assertParamExists("filesUploadPost", "name", name);
-      // verify required parameter 'body' is not null or undefined
-      assertParamExists("filesUploadPost", "body", body);
       const localVarPath = `/files/upload`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -113,6 +105,9 @@ export const CoreApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
+      const localVarFormParams = new ((configuration &&
+        configuration.formDataCtor) ||
+        FormData)();
 
       // authentication bearerAuth required
       // http bearer authentication required
@@ -122,11 +117,11 @@ export const CoreApiAxiosParamCreator = function (
         localVarQueryParameter["org"] = org;
       }
 
-      if (name !== undefined) {
-        localVarQueryParameter["name"] = name;
+      if (file !== undefined) {
+        localVarFormParams.append("file", file as any);
       }
 
-      localVarHeaderParameter["Content-Type"] = "image/*";
+      localVarHeaderParameter["Content-Type"] = "multipart/form-data";
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -136,11 +131,7 @@ export const CoreApiAxiosParamCreator = function (
         ...headersFromBaseOptions,
         ...options.headers,
       };
-      localVarRequestOptions.data = serializeDataIfNeeded(
-        body,
-        localVarRequestOptions,
-        configuration,
-      );
+      localVarRequestOptions.data = localVarFormParams;
 
       return {
         url: toPathString(localVarUrlObj),
@@ -704,16 +695,14 @@ export const CoreApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Upload an image file
-     * @param {string} org ID of the organization
-     * @param {string} name Name of the file being uploaded
-     * @param {File} body
+     * @param {string} [org] (If not using an organization API Key) the ID of the organization
+     * @param {File} [file] The file to upload.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async filesUploadPost(
-      org: string,
-      name: string,
-      body: File,
+      org?: string,
+      file?: File,
       options?: AxiosRequestConfig,
     ): Promise<
       (
@@ -723,8 +712,7 @@ export const CoreApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.filesUploadPost(
         org,
-        name,
-        body,
+        file,
         options,
       );
       return createRequestFunction(
@@ -1023,20 +1011,18 @@ export const CoreApiFactory = function (
     /**
      *
      * @summary Upload an image file
-     * @param {string} org ID of the organization
-     * @param {string} name Name of the file being uploaded
-     * @param {File} body
+     * @param {string} [org] (If not using an organization API Key) the ID of the organization
+     * @param {File} [file] The file to upload.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     filesUploadPost(
-      org: string,
-      name: string,
-      body: File,
+      org?: string,
+      file?: File,
       options?: any,
     ): AxiosPromise<FilesUploadPost201Response> {
       return localVarFp
-        .filesUploadPost(org, name, body, options)
+        .filesUploadPost(org, file, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -1203,21 +1189,19 @@ export class CoreApi extends BaseAPI {
   /**
    *
    * @summary Upload an image file
-   * @param {string} org ID of the organization
-   * @param {string} name Name of the file being uploaded
-   * @param {File} body
+   * @param {string} [org] (If not using an organization API Key) the ID of the organization
+   * @param {File} [file] The file to upload.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof CoreApi
    */
   public filesUploadPost(
-    org: string,
-    name: string,
-    body: File,
+    org?: string,
+    file?: File,
     options?: AxiosRequestConfig,
   ) {
     return CoreApiFp(this.configuration)
-      .filesUploadPost(org, name, body, options)
+      .filesUploadPost(org, file, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
