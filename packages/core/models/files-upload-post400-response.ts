@@ -15,13 +15,13 @@
 /**
  *
  * @export
- * @interface TestCasePatch200Response
+ * @interface FilesUploadPost400Response
  */
-export interface TestCasePatch200Response {
+export interface FilesUploadPost400Response {
   /**
-   * ID of the updated test case
+   *
    * @type {string}
-   * @memberof TestCasePatch200Response
+   * @memberof FilesUploadPost400Response
    */
-  caseId?: string;
+  message?: string;
 }

@@ -23,6 +23,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@web-std/file": "^3.0.3",
     "axios": "^1.4.0",
     "mustache": "^4.2.0",
     "uuid": "^9.0.0"

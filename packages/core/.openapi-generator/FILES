@@ -16,6 +16,8 @@ models/expanded-test-run-all-of.ts
 models/expanded-test-run.ts
 models/feedback-request.ts
 models/feedback-response.ts
+models/files-upload-post201-response.ts
+models/files-upload-post400-response.ts
 models/full-run.ts
 models/index.ts
 models/metadata-value-object.ts

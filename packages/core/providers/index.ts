@@ -6,3 +6,4 @@ export * from "./step-run";
 export * from "./context";
 export * from "./plugin";
 export * from "./handler";
+export * from "./files";

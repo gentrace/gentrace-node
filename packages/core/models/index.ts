@@ -9,6 +9,8 @@ export * from "./expanded-test-run";
 export * from "./expanded-test-run-all-of";
 export * from "./feedback-request";
 export * from "./feedback-response";
+export * from "./files-upload-post201-response";
+export * from "./files-upload-post400-response";
 export * from "./full-run";
 export * from "./metadata-value-object";
 export * from "./pipeline";
