@@ -1,19 +1,16 @@
 import {
   CreateMultipleTestCases,
   CreateSingleTestCase,
-  ExpandedTestResult,
-  Pipeline,
   TestCase,
-  TestCasePost200Response,
-  TestCasePost200ResponseOneOf,
-  TestResult,
-  TestResultPostRequest,
-  TestResultPostRequestTestRunsInner,
-  TestResultSimplePostRequest,
-  TestResultSimplePostRequestTestRunsInner,
-  TestResultStatusGet200Response,
   UpdateTestCase,
 } from "../models";
+import { TestCasePost200Response } from "../models/test-case-post200-response";
+import { TestCasePost200ResponseOneOf } from "../models/test-case-post200-response-one-of";
+import { TestResultPostRequest } from "../models/test-result-post-request";
+import { TestResultPostRequestTestRunsInner } from "../models/test-result-post-request-test-runs-inner";
+import { TestResultSimplePostRequest } from "../models/test-result-simple-post-request";
+import { TestResultSimplePostRequestTestRunsInner } from "../models/test-result-simple-post-request-test-runs-inner";
+import { TestResultStatusGet200Response } from "../models/test-result-status-get200-response";
 import { ResultContext } from "./context";
 import {
   GENTRACE_BRANCH,
@@ -61,7 +58,7 @@ export const getTestCases = async (pipelineSlug: string) => {
     pipelineId = matchingPipeline.id;
   }
 
-  const response = await globalGentraceApi.testCaseGet(pipelineId);
+  const response = await globalGentraceApi.v1TestCaseGet(pipelineId);
   const testCases = response.data.testCases ?? [];
   return testCases;
 };
@@ -105,7 +102,7 @@ export const createTestCase = async (payload: CreateSingleTestCase) => {
     pipelineId = matchingPipeline.id;
   }
 
-  const response = await globalGentraceApi.testCasePost(payload);
+  const response = await globalGentraceApi.v1TestCasePost(payload);
   const data = response.data;
 
   if (!isTestCaseSingle(data)) {
@@ -148,7 +145,7 @@ export const createTestCases = async (payload: CreateMultipleTestCases) => {
     pipelineId = matchingPipeline.id;
   }
 
-  const response = await globalGentraceApi.testCasePost(payload);
+  const response = await globalGentraceApi.v1TestCasePost(payload);
   const data = response.data;
 
   if (isTestCaseSingle(data)) {
@@ -169,7 +166,7 @@ export const updateTestCase = async (payload: UpdateTestCase) => {
     throw new Error("Expected a valid test case ID.");
   }
 
-  const response = await globalGentraceApi.testCasePatch(payload);
+  const response = await globalGentraceApi.v1TestCasePatch(payload);
   const data = response.data;
 
   return data.caseId;
@@ -298,7 +295,7 @@ export const submitTestResult = async (
     body.metadata = context.metadata;
   }
 
-  const response = await globalGentraceApi.testResultSimplePost(body);
+  const response = await globalGentraceApi.v1TestResultSimplePost(body);
   return response.data;
 };
 
@@ -324,7 +321,7 @@ export const getPipelines = async (params?: PipelineParams) => {
 
   const parameters: (string | undefined)[] = [label, slug];
 
-  const response = await globalGentraceApi.pipelinesGet(...parameters);
+  const response = await globalGentraceApi.v1PipelinesGet(...parameters);
   return response.data.pipelines;
 };
 
@@ -340,7 +337,7 @@ export const getTestResult = async (resultId: string) => {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  const response = await globalGentraceApi.testResultIdGet(resultId);
+  const response = await globalGentraceApi.v1TestResultIdGet(resultId);
   const testResult = response.data;
   return testResult;
 };
@@ -361,7 +358,7 @@ export const getTestResultStatus = async (
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  const response = await globalGentraceApi.testResultStatusGet(resultId);
+  const response = await globalGentraceApi.v1TestResultStatusGet(resultId);
   const statusInfo = response.data;
   return statusInfo;
 };
@@ -378,7 +375,7 @@ export const getTestResults = async (pipelineSlug?: string) => {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  const response = await globalGentraceApi.testResultGet(pipelineSlug);
+  const response = await globalGentraceApi.v1TestResultGet(pipelineSlug);
 
   const testResults = response.data.testResults;
   return testResults;
@@ -394,7 +391,9 @@ export const getTestResults = async (pipelineSlug?: string) => {
  */
 export const runTest = async (
   pipelineSlug: string,
-  handler: (testCase: TestCase) => Promise<[any, PipelineRun]>,
+  handler: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => Promise<[any, PipelineRun]>,
   context?: ResultContext,
 ) => {
   incrementTestCounter();
@@ -477,7 +476,7 @@ export const runTest = async (
       context,
     );
 
-    const response = await globalGentraceApi.testResultPost(body);
+    const response = await globalGentraceApi.v1TestResultPost(body);
     return response.data;
   } catch (e) {
     throw e;

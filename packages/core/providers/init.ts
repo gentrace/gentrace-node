@@ -59,9 +59,9 @@ export function init(values?: {
   if (basePath) {
     try {
       const url = new URL(basePath);
-      if (url.pathname.startsWith("/api/v1")) {
+      if (url.pathname.startsWith("/api")) {
       } else {
-        throw new Error('Gentrace base path must end in "/api/v1".');
+        throw new Error('Gentrace base path must end in "/api".');
       }
     } catch (err) {
       throw new Error(`Invalid Gentrace base path: ${err.message}`);

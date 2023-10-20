@@ -367,50 +367,48 @@ describe("Usage of Evaluation functionality", () => {
 
       if (
         request.method === "POST" &&
-        request.url.href === "https://gentrace.ai/api/v1/test-result"
+        request.url.href === "https://gentrace.ai/api/test-result"
       ) {
         body = JSON.stringify(createTestResultResponse);
       }
 
       if (
         request.method === "GET" &&
-        request.url.href.includes("https://gentrace.ai/api/v1/test-result")
+        request.url.href.includes("https://gentrace.ai/api/test-result")
       ) {
         body = JSON.stringify(getTestResultsResponse);
       }
 
-      if (
-        request.url.href === "https://gentrace.ai/api/v1/test-result-simple"
-      ) {
+      if (request.url.href === "https://gentrace.ai/api/test-result-simple") {
         body = JSON.stringify(createTestResultResponse);
       }
       if (
         request.method === "GET" &&
-        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+        request.url.href.includes("https://gentrace.ai/api/test-case")
       ) {
         body = JSON.stringify(getTestCasesResponse);
       }
       if (
         request.method === "POST" &&
-        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+        request.url.href.includes("https://gentrace.ai/api/test-case")
       ) {
         body = JSON.stringify(createSingleCaseResponse);
       }
       if (
         request.method === "POST" &&
-        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+        request.url.href.includes("https://gentrace.ai/api/test-case")
       ) {
         body = JSON.stringify(createMultipleCasesResponse);
       }
 
       if (
         request.method === "PATCH" &&
-        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
+        request.url.href.includes("https://gentrace.ai/api/test-case")
       ) {
         body = JSON.stringify(updateTestCaseResponse);
       }
 
-      if (request.url.href.includes("https://gentrace.ai/api/v1/pipelines")) {
+      if (request.url.href.includes("https://gentrace.ai/api/pipelines")) {
         const label = request.url.searchParams.get("label");
         if (label) {
           body = JSON.stringify(getFilteredPipelinesResponse);
@@ -430,14 +428,14 @@ describe("Usage of Evaluation functionality", () => {
     });
 
     server = setupServer(
-      rest.post("https://gentrace.ai/api/v1/test-result", (req, res, ctx) => {
+      rest.post("https://gentrace.ai/api/test-result", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
           ctx.json(createTestResultResponse),
         );
       }),
-      rest.get("https://gentrace.ai/api/v1/test-result", (req, res, ctx) => {
+      rest.get("https://gentrace.ai/api/test-result", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
@@ -445,7 +443,7 @@ describe("Usage of Evaluation functionality", () => {
         );
       }),
       rest.post(
-        "https://gentrace.ai/api/v1/test-result-simple",
+        "https://gentrace.ai/api/test-result-simple",
         (req, res, ctx) => {
           return res(
             ctx.status(200),
@@ -454,44 +452,38 @@ describe("Usage of Evaluation functionality", () => {
           );
         },
       ),
-      rest.get("https://gentrace.ai/api/v1/test-case", (req, res, ctx) => {
+      rest.get("https://gentrace.ai/api/test-case", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
           ctx.json(getTestCasesResponse),
         );
       }),
-      rest.post(
-        "https://gentrace.ai/api/v1/test-case",
-        async (req, res, ctx) => {
-          const payload = await req.json();
+      rest.post("https://gentrace.ai/api/test-case", async (req, res, ctx) => {
+        const payload = await req.json();
 
-          if (payload.testCases) {
-            return res(
-              ctx.status(200),
-              ctx.set("Content-Type", "application/json"),
-              ctx.json(createMultipleCasesResponse),
-            );
-          }
-
+        if (payload.testCases) {
           return res(
             ctx.status(200),
             ctx.set("Content-Type", "application/json"),
-            ctx.json(createSingleCaseResponse),
+            ctx.json(createMultipleCasesResponse),
           );
-        },
-      ),
-      rest.patch(
-        "https://gentrace.ai/api/v1/test-case",
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.set("Content-Type", "application/json"),
-            ctx.json(updateTestCaseResponse),
-          );
-        },
-      ),
-      rest.get("https://gentrace.ai/api/v1/pipelines", (req, res, ctx) => {
+        }
+
+        return res(
+          ctx.status(200),
+          ctx.set("Content-Type", "application/json"),
+          ctx.json(createSingleCaseResponse),
+        );
+      }),
+      rest.patch("https://gentrace.ai/api/test-case", async (req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.set("Content-Type", "application/json"),
+          ctx.json(updateTestCaseResponse),
+        );
+      }),
+      rest.get("https://gentrace.ai/api/pipelines", (req, res, ctx) => {
         const label = req.url.searchParams.get("label");
 
         if (label) {
@@ -529,7 +521,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should create an instance when configuration is valid (gentrace.ai host)", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const testCases = await getTestCases("guess-the-year");
@@ -555,7 +547,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should get all test results", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const results = await getTestResults("guess-the-year");
@@ -570,7 +562,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should create an instance when configuration is valid (gentrace.ai host)", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const testCases = await getTestCases("guess-the-year");
@@ -594,7 +586,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should pass if a UUID is directly passed", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const testCases = await getTestCases("guess-the-year");
@@ -618,7 +610,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should fails when parameters do not match", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const testCases = await getTestCases("guess-the-year");
@@ -637,7 +629,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should give case ID if creating single test case", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const singleCase = await createTestCase({
@@ -653,7 +645,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should give case ID if creating multiple test cases", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const creationCount = await createTestCases({
@@ -678,7 +670,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should give case ID if updating test case", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const caseId = await updateTestCase({
@@ -691,7 +683,7 @@ describe("Usage of Evaluation functionality", () => {
       expect(caseId).toBe("87cca81f-f466-4433-a0d2-695c06d1355a");
     });
 
-    it("should return pipelines when invoking the /api/v1/pipelines API", async () => {
+    it("should return pipelines when invoking the /api/pipelines API", async () => {
       init({
         apiKey: "gentrace-api-key",
       });
@@ -705,10 +697,10 @@ describe("Usage of Evaluation functionality", () => {
       );
     });
 
-    it("should return filtered pipelines when invoking the /api/v1/pipelines API", async () => {
+    it("should return filtered pipelines when invoking the /api/pipelines API", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const filteredPipelines = await getPipelines({
@@ -728,7 +720,7 @@ describe("Usage of Evaluation functionality", () => {
 
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const payload = constructSubmissionPayload("pipeline-id", []);
@@ -740,7 +732,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should properly leave the branch and commit values undefined", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
       });
 
       const payload = constructSubmissionPayload("pipeline-id", []);
@@ -752,7 +744,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should properly define the branch and commit values if defined in init()", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch",
         commit: "test-commit",
       });
@@ -769,7 +761,7 @@ describe("Usage of Evaluation functionality", () => {
 
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
       });
@@ -786,7 +778,7 @@ describe("Usage of Evaluation functionality", () => {
 
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
       });
@@ -801,7 +793,7 @@ describe("Usage of Evaluation functionality", () => {
 
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
       });
@@ -816,7 +808,7 @@ describe("Usage of Evaluation functionality", () => {
 
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
       });
@@ -829,7 +821,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should read resultName over runNam", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
         runName: "run-name",
@@ -844,7 +836,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should still read runName", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
         runName: "run-name",
@@ -858,7 +850,7 @@ describe("Usage of Evaluation functionality", () => {
     it("should read resultName", async () => {
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
         resultName: "result-name",
@@ -875,7 +867,7 @@ describe("Usage of Evaluation functionality", () => {
 
       init({
         apiKey: "gentrace-api-key",
-        basePath: "https://gentrace.ai/api/v1",
+        basePath: "https://gentrace.ai/api",
         branch: "test-branch-init",
         commit: "test-commit-init",
       });

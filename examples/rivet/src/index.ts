@@ -4,7 +4,7 @@ import { env } from "process";
 
 init({
   apiKey: env.GENTRACE_API_KEY ?? "",
-  basePath: "http://localhost:3000/api/v1",
+  basePath: "http://localhost:3000/api",
 });
 
 async function processRivet() {

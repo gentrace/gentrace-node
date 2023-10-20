@@ -254,7 +254,7 @@ export class PipelineRun {
       },
     );
 
-    const submission = coreApi.runPost({
+    const submission = coreApi.v1RunPost({
       id: this.id,
       slug: this.pipeline.slug,
       metadata: mergedMetadata,
