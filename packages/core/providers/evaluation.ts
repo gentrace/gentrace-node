@@ -3,14 +3,14 @@ import {
   CreateSingleTestCase,
   TestCase,
   UpdateTestCase,
+  V1TestCasePost200Response,
+  V1TestCasePost200ResponseOneOf,
+  V1TestResultPostRequest,
+  V1TestResultPostRequestTestRunsInner,
+  V1TestResultSimplePostRequest,
+  V1TestResultSimplePostRequestTestRunsInner,
+  V1TestResultStatusGet200Response,
 } from "../models";
-import { TestCasePost200Response } from "../models/test-case-post200-response";
-import { TestCasePost200ResponseOneOf } from "../models/test-case-post200-response-one-of";
-import { TestResultPostRequest } from "../models/test-result-post-request";
-import { TestResultPostRequestTestRunsInner } from "../models/test-result-post-request-test-runs-inner";
-import { TestResultSimplePostRequest } from "../models/test-result-simple-post-request";
-import { TestResultSimplePostRequestTestRunsInner } from "../models/test-result-simple-post-request-test-runs-inner";
-import { TestResultStatusGet200Response } from "../models/test-result-status-get200-response";
 import { ResultContext } from "./context";
 import {
   GENTRACE_BRANCH,
@@ -26,7 +26,7 @@ import {
   incrementTestCounter,
 } from "./utils";
 
-export type TestRun = TestResultPostRequestTestRunsInner;
+export type TestRun = V1TestResultPostRequestTestRunsInner;
 
 /**
  * Retrieves test cases for a given pipeline ID from the Gentrace API
@@ -64,9 +64,9 @@ export const getTestCases = async (pipelineSlug: string) => {
 };
 
 function isTestCaseSingle(
-  response: TestCasePost200Response,
-): response is TestCasePost200ResponseOneOf {
-  return (response as TestCasePost200ResponseOneOf).caseId !== undefined;
+  response: V1TestCasePost200Response,
+): response is V1TestCasePost200ResponseOneOf {
+  return (response as V1TestCasePost200ResponseOneOf).caseId !== undefined;
 }
 
 /**
@@ -177,7 +177,7 @@ export const constructSubmissionPayload = (
   testRuns: TestRun[],
   context?: ResultContext,
 ) => {
-  const body: TestResultPostRequest = {
+  const body: V1TestResultPostRequest = {
     pipelineId,
     testRuns,
   };
@@ -251,9 +251,9 @@ export const submitTestResult = async (
     );
   }
 
-  const testRuns: TestResultSimplePostRequestTestRunsInner[] = testCases.map(
+  const testRuns: V1TestResultSimplePostRequestTestRunsInner[] = testCases.map(
     (testCase, index) => {
-      const run: TestResultSimplePostRequestTestRunsInner = {
+      const run: V1TestResultSimplePostRequestTestRunsInner = {
         caseId: testCase.id,
         inputs: testCase.inputs,
         outputs: outputsList[index],
@@ -263,7 +263,7 @@ export const submitTestResult = async (
     },
   );
 
-  const body: TestResultSimplePostRequest = {
+  const body: V1TestResultSimplePostRequest = {
     pipelineSlug,
     testRuns: testRuns,
   };
@@ -342,7 +342,7 @@ export const getTestResult = async (resultId: string) => {
   return testResult;
 };
 
-type StatusInfo = TestResultStatusGet200Response;
+type StatusInfo = V1TestResultStatusGet200Response;
 
 /**
  * Retrieves the status of a test result from the Gentrace API.

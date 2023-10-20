@@ -17,17 +17,17 @@ export * from "./configuration";
 export {
   FeedbackRequest,
   FeedbackResponse,
-  PipelinesGet200Response,
+  V1PipelinesGet200Response,
   RunRequest,
   RunResponse,
   TestCase,
-  TestCaseGet200Response,
+  V1TestCaseGet200Response,
   TestResult,
-  TestResultGet200Response,
-  TestResultStatusGet200Response,
-  TestResultPost200Response,
-  TestResultPostRequest,
-  TestResultPostRequestTestRunsInner,
+  V1TestResultGet200Response,
+  V1TestResultStatusGet200Response,
+  V1TestResultPost200Response,
+  V1TestResultPostRequest,
+  V1TestResultPostRequestTestRunsInner,
 } from "./models";
 
 export * from "./providers/index";
