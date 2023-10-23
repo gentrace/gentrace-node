@@ -1,5 +1,5 @@
 import { Configuration as Configuration } from "../configuration";
-import { CoreApi } from "../api";
+import { V1Api } from "../api";
 import { getProcessEnv } from "./utils";
 
 export let GENTRACE_API_KEY:
@@ -21,7 +21,7 @@ export let GENTRACE_RESULT_NAME = "";
 
 export let globalGentraceConfig: Configuration | null = null;
 
-export let globalGentraceApi: CoreApi | null = null;
+export let globalGentraceApi: V1Api | null = null;
 
 export let resetGlobalGentraceApi = () => {
   globalGentraceConfig = null;
@@ -59,9 +59,9 @@ export function init(values?: {
   if (basePath) {
     try {
       const url = new URL(basePath);
-      if (url.pathname.startsWith("/api/v1")) {
+      if (url.pathname.startsWith("/api")) {
       } else {
-        throw new Error('Gentrace base path must end in "/api/v1".');
+        throw new Error('Gentrace base path must end in "/api".');
       }
     } catch (err) {
       throw new Error(`Invalid Gentrace base path: ${err.message}`);
@@ -75,7 +75,7 @@ export function init(values?: {
     basePath: GENTRACE_BASE_PATH,
   });
 
-  globalGentraceApi = new CoreApi(globalGentraceConfig);
+  globalGentraceApi = new V1Api(globalGentraceConfig);
 
   if (branch) {
     GENTRACE_BRANCH = branch;

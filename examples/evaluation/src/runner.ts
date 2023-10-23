@@ -1,10 +1,10 @@
 import { init, Pipeline, runTest } from "@gentrace/core";
 
-const PIPELINE_SLUG = "testing3";
+const PIPELINE_SLUG = "guess-the-year";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
-  basePath: "http://localhost:3000/api/v1",
+  basePath: "http://localhost:3000/api",
   resultName: "Vivek's Result Name",
 });
 
