@@ -367,48 +367,50 @@ describe("Usage of Evaluation functionality", () => {
 
       if (
         request.method === "POST" &&
-        request.url.href === "https://gentrace.ai/api/test-result"
+        request.url.href === "https://gentrace.ai/api/v1/test-result"
       ) {
         body = JSON.stringify(createTestResultResponse);
       }
 
       if (
         request.method === "GET" &&
-        request.url.href.includes("https://gentrace.ai/api/test-result")
+        request.url.href.includes("https://gentrace.ai/api/v1/test-result")
       ) {
         body = JSON.stringify(getTestResultsResponse);
       }
 
-      if (request.url.href === "https://gentrace.ai/api/test-result-simple") {
+      if (
+        request.url.href === "https://gentrace.ai/api/v1/test-result-simple"
+      ) {
         body = JSON.stringify(createTestResultResponse);
       }
       if (
         request.method === "GET" &&
-        request.url.href.includes("https://gentrace.ai/api/test-case")
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
       ) {
         body = JSON.stringify(getTestCasesResponse);
       }
       if (
         request.method === "POST" &&
-        request.url.href.includes("https://gentrace.ai/api/test-case")
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
       ) {
         body = JSON.stringify(createSingleCaseResponse);
       }
       if (
         request.method === "POST" &&
-        request.url.href.includes("https://gentrace.ai/api/test-case")
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
       ) {
         body = JSON.stringify(createMultipleCasesResponse);
       }
 
       if (
         request.method === "PATCH" &&
-        request.url.href.includes("https://gentrace.ai/api/test-case")
+        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
       ) {
         body = JSON.stringify(updateTestCaseResponse);
       }
 
-      if (request.url.href.includes("https://gentrace.ai/api/pipelines")) {
+      if (request.url.href.includes("https://gentrace.ai/api/v1/pipelines")) {
         const label = request.url.searchParams.get("label");
         if (label) {
           body = JSON.stringify(getFilteredPipelinesResponse);
@@ -428,14 +430,14 @@ describe("Usage of Evaluation functionality", () => {
     });
 
     server = setupServer(
-      rest.post("https://gentrace.ai/api/test-result", (req, res, ctx) => {
+      rest.post("https://gentrace.ai/api/v1/test-result", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
           ctx.json(createTestResultResponse),
         );
       }),
-      rest.get("https://gentrace.ai/api/test-result", (req, res, ctx) => {
+      rest.get("https://gentrace.ai/api/v1/test-result", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
@@ -443,7 +445,7 @@ describe("Usage of Evaluation functionality", () => {
         );
       }),
       rest.post(
-        "https://gentrace.ai/api/test-result-simple",
+        "https://gentrace.ai/api/v1/test-result-simple",
         (req, res, ctx) => {
           return res(
             ctx.status(200),
@@ -452,38 +454,44 @@ describe("Usage of Evaluation functionality", () => {
           );
         },
       ),
-      rest.get("https://gentrace.ai/api/test-case", (req, res, ctx) => {
+      rest.get("https://gentrace.ai/api/v1/test-case", (req, res, ctx) => {
         return res(
           ctx.status(200),
           ctx.set("Content-Type", "application/json"),
           ctx.json(getTestCasesResponse),
         );
       }),
-      rest.post("https://gentrace.ai/api/test-case", async (req, res, ctx) => {
-        const payload = await req.json();
+      rest.post(
+        "https://gentrace.ai/api/v1/test-case",
+        async (req, res, ctx) => {
+          const payload = await req.json();
 
-        if (payload.testCases) {
+          if (payload.testCases) {
+            return res(
+              ctx.status(200),
+              ctx.set("Content-Type", "application/json"),
+              ctx.json(createMultipleCasesResponse),
+            );
+          }
+
           return res(
             ctx.status(200),
             ctx.set("Content-Type", "application/json"),
-            ctx.json(createMultipleCasesResponse),
+            ctx.json(createSingleCaseResponse),
           );
-        }
-
-        return res(
-          ctx.status(200),
-          ctx.set("Content-Type", "application/json"),
-          ctx.json(createSingleCaseResponse),
-        );
-      }),
-      rest.patch("https://gentrace.ai/api/test-case", async (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.set("Content-Type", "application/json"),
-          ctx.json(updateTestCaseResponse),
-        );
-      }),
-      rest.get("https://gentrace.ai/api/pipelines", (req, res, ctx) => {
+        },
+      ),
+      rest.patch(
+        "https://gentrace.ai/api/v1/test-case",
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(updateTestCaseResponse),
+          );
+        },
+      ),
+      rest.get("https://gentrace.ai/api/v1/pipelines", (req, res, ctx) => {
         const label = req.url.searchParams.get("label");
 
         if (label) {
