@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { CoreApi } from "../api/core-api";
+import { V1Api } from "../api/v1-api";
 import { Configuration } from "../configuration";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
@@ -200,7 +200,7 @@ export class PipelineRun {
       return data;
     }
 
-    const coreApi = new CoreApi(this.pipeline.config);
+    const api = new V1Api(this.pipeline.config);
 
     this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
 
@@ -254,7 +254,7 @@ export class PipelineRun {
       },
     );
 
-    const submission = coreApi.v1RunPost({
+    const submission = api.v1RunPost({
       id: this.id,
       slug: this.pipeline.slug,
       metadata: mergedMetadata,

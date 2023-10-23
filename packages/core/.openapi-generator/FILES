@@ -1,6 +1,7 @@
 .npmignore
 api.ts
-api/core-api.ts
+api/v1-api.ts
+api/v2-api.ts
 base.ts
 common.ts
 configuration.ts
@@ -30,9 +31,9 @@ models/pipeline.ts
 models/resolved-step-run.ts
 models/run-request.ts
 models/run-response.ts
-models/searchable-string-input-any-of.ts
+models/searchable-string-input-one-of.ts
 models/searchable-string-input.ts
-models/searchable-unix-seconds-input-any-of.ts
+models/searchable-unix-seconds-input-one-of.ts
 models/searchable-unix-seconds-input.ts
 models/step-run-context-render.ts
 models/step-run-context.ts
