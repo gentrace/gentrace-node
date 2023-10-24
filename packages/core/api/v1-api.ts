@@ -14,7 +14,7 @@
 
 import type { Configuration } from "../configuration";
 import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from "axios";
-import globalAxios from "axios";
+import axiosWithOptionalFetch from "../axios-instance";
 // Some imports not used depending on template conditions
 // @ts-ignore
 import {
@@ -712,7 +712,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.v1FilesUploadPost(org, file, options);
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -742,7 +742,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -766,7 +766,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -796,7 +796,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -823,7 +823,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -850,7 +850,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -877,7 +877,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -902,7 +902,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.v1TestResultIdGet(id, options);
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -930,7 +930,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
         );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -958,7 +958,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
         );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -983,7 +983,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.v1TestResultStatusGet(id, options);
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );

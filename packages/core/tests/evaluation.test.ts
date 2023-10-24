@@ -362,7 +362,7 @@ describe("Usage of Evaluation functionality", () => {
   beforeAll(() => {
     interceptor.apply();
 
-    interceptor.on("request", (request) => {
+    interceptor.on("request", async (request) => {
       let body: string = "";
 
       if (
@@ -390,17 +390,17 @@ describe("Usage of Evaluation functionality", () => {
       ) {
         body = JSON.stringify(getTestCasesResponse);
       }
+
       if (
         request.method === "POST" &&
         request.url.href.includes("https://gentrace.ai/api/v1/test-case")
       ) {
-        body = JSON.stringify(createSingleCaseResponse);
-      }
-      if (
-        request.method === "POST" &&
-        request.url.href.includes("https://gentrace.ai/api/v1/test-case")
-      ) {
-        body = JSON.stringify(createMultipleCasesResponse);
+        const requestBody = await request.json();
+        if (requestBody.testCases) {
+          body = JSON.stringify(createMultipleCasesResponse);
+        } else {
+          body = JSON.stringify(createSingleCaseResponse);
+        }
       }
 
       if (
