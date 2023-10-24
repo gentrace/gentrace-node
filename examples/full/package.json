@@ -1,13 +1,13 @@
 {
   "name": "@examples/full",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "2.2.5",
+    "@gentrace/core": "2.2.6",
     "@gentrace/openai": "4.1.1",
     "@gentrace/pinecone": "^1.0.0"
   },
