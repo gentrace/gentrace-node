@@ -5,8 +5,8 @@ import { setupServer, SetupServer } from "msw/node";
 import { DEFAULT_VECTOR } from "../fixtures";
 import { initPlugin, Pinecone } from "../index";
 
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function sleep(seconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 
 describe("test_pinecone_completion_pipeline", () => {
@@ -71,6 +71,17 @@ describe("test_pinecone_completion_pipeline", () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(pineconeFetchResponse),
+        });
+      } else if (
+        request.url.href.startsWith("https://gentrace.ai/api/v1/run")
+      ) {
+        return request.respondWith({
+          status: 200,
+          statusText: "OK",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(gentracePipelineRunResponse),
         });
       }
     });
