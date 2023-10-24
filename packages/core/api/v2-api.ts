@@ -14,7 +14,7 @@
 
 import type { Configuration } from "../configuration";
 import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from "axios";
-import globalAxios from "axios";
+import axiosWithOptionalFetch from "../axios-instance";
 // Some imports not used depending on template conditions
 // @ts-ignore
 import {
@@ -269,7 +269,7 @@ export const V2ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -299,7 +299,7 @@ export const V2ApiFp = function (configuration?: Configuration) {
       );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
@@ -336,7 +336,7 @@ export const V2ApiFp = function (configuration?: Configuration) {
         );
       return createRequestFunction(
         localVarAxiosArgs,
-        globalAxios,
+        axiosWithOptionalFetch,
         BASE_PATH,
         configuration,
       );
