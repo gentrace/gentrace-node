@@ -1,5 +1,12 @@
 # @examples/full
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [59a8477]
+  - @gentrace/core@2.2.6
+
 ## 0.1.2
 
 ### Patch Changes

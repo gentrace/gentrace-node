@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.6
+
+### Patch Changes
+
+- 59a8477: Fix issues with fetch() not being available
+
 ## 2.2.5
 
 ### Patch Changes
