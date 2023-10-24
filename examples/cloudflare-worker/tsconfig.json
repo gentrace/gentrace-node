@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "lib": ["ES2019", "DOM"],
+    "rootDir": "src",
+    "types": ["@cloudflare/workers-types", "node"],
+    "skipLibCheck": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
