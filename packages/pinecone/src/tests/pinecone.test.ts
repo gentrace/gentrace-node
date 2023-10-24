@@ -107,7 +107,7 @@ describe("test_pinecone_completion_pipeline", () => {
   });
 
   afterAll(async () => {
-    await sleep(3);
+    await sleep(1);
     interceptor.dispose();
     server.close();
   });
