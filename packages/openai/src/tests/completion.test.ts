@@ -4,8 +4,8 @@ import { OpenAI } from "../index";
 import { init } from "@gentrace/core";
 import { FetchInterceptor } from "@mswjs/interceptors/lib/interceptors/fetch";
 
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function sleep(seconds: number) {
+  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 
 describe("test_openai_completion_pipeline", () => {
