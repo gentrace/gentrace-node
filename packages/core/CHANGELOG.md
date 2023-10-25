@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.7
+
+### Patch Changes
+
+- 2336d41: Add gentrace flush() operation
+
 ## 2.2.6
 
 ### Patch Changes
