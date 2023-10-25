@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "types": ["jest", "node"],
-    "lib": ["ES2019", "DOM"]
+    "lib": ["ES2020", "DOM"]
   },
   "exclude": ["dist", "node_modules"],
   "include": ["src", "tests"]
