@@ -6,6 +6,7 @@ import { RunResponse } from "../models/run-response";
 import { Context, CoreStepRunContext } from "./context";
 import { StepRun, PartialStepRunType } from "./step-run";
 import { getParamNames, getTestCounter, zip } from "./utils";
+import { globalRequestBuffer } from "./init";
 
 type PRStepRunType = Omit<PartialStepRunType, "context"> & {
   context?: CoreStepRunContext;
@@ -264,6 +265,8 @@ export class PipelineRun {
     });
 
     if (!waitForServer) {
+      globalRequestBuffer[this.id] = submission;
+
       submission
         .catch((e) => {
           this.pipeline.logWarn(e);
@@ -272,6 +275,9 @@ export class PipelineRun {
           this.pipeline.logInfo(
             "Successfully submitted PipelineRun to Gentrace",
           );
+        })
+        .finally(() => {
+          delete globalRequestBuffer[this.id];
         });
 
       const data: RunResponse = {

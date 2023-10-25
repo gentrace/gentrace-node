@@ -23,6 +23,8 @@ export let globalGentraceConfig: Configuration | null = null;
 
 export let globalGentraceApi: V1Api | null = null;
 
+export let globalRequestBuffer: { [pipelineRunId: string]: Promise<any> } = {};
+
 export let resetGlobalGentraceApi = () => {
   globalGentraceConfig = null;
 };
@@ -93,4 +95,11 @@ export function deinit() {
   GENTRACE_COMMIT = "";
   globalGentraceConfig = null;
   globalGentraceApi = null;
+  globalRequestBuffer = {};
+}
+
+export async function flush() {
+  return (await Promise.allSettled(Object.values(globalRequestBuffer))).every(
+    (result) => result.status === "fulfilled",
+  );
 }
