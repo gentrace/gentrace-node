@@ -195,7 +195,7 @@ importers:
         specifier: 2.2.7
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: 4.1.1
+        specifier: 4.1.2
         version: link:../../packages/openai
       '@gentrace/pinecone':
         specifier: ^1.0.0
@@ -3386,11 +3386,12 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
-  /@gentrace/core@2.2.5:
-    resolution: {integrity: sha512-pGDyyVemWTsWoYXxdhqa/0w9Sw2GuLsjfuyN6fO7anuxiQLwp/5+JKOR1DMFCpMYn7Pc2NW8NznUrPmxTWETXQ==}
+  /@gentrace/core@2.2.7:
+    resolution: {integrity: sha512-u38tiCP1NwcuqsFdUQ4H/WNrpGP63eBhXyUBBhZlXsVTp+kZkgtqHTaOOKUe65tsoe3V7fJ2PJV9LCYX6DSxrw==}
     dependencies:
       '@web-std/file': 3.0.3
       axios: 1.5.0
+      form-data: 4.0.0
       mustache: 4.2.0
       uuid: 9.0.0
     transitivePeerDependencies:
@@ -3442,7 +3443,7 @@ packages:
     resolution: {integrity: sha512-2gkSeCKco4kwZvA/reLkQU51FrdEPHqZtiIkGcRGnsvpEiIV3kR6qCeF9miIN3fbsNwvsyLeHojPGta68yUFdQ==}
     dependencies:
       '@dqbd/tiktoken': 1.0.7
-      '@gentrace/core': 2.2.5
+      '@gentrace/core': 2.2.7
       '@huggingface/inference': 2.6.3
       autoevals: 0.0.16
       crypto-js: 4.1.1
