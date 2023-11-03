@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.1.2
+
+### Patch Changes
+
+- dba8bb6: Add moderations
+
 ## 4.1.1
 
 ### Patch Changes
