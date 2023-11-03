@@ -22,20 +22,12 @@ async function createChatCompletion() {
 
   const openai = runner.openai;
 
-  const chatCompletionResponse = await openai.chat.completions.create({
-    messages: [{ role: "user", content: "Hello!" }],
-    model: "gpt-3.5-turbo",
-    stream: true,
+  const moderationResponse = await openai.moderations.create({
+    model: "text-moderation-latest",
+    input: "Testing sample information",
   });
 
-  for await (const message of chatCompletionResponse) {
-    console.log("Message", message.choices[0]);
-  }
-
-  const chatCompletionResponseTwo = await openai.chat.completions.create({
-    messages: [{ role: "user", content: "Hello!" }],
-    model: "gpt-3.5-turbo",
-  });
+  console.log("Moderation response", moderationResponse);
 
   const pipelineRunId = await runner.submit();
 

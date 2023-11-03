@@ -15,6 +15,8 @@ import {
   CompletionCreateParams,
   CreateEmbeddingResponse,
   EmbeddingCreateParams,
+  ModerationCreateParams,
+  ModerationCreateResponse,
 } from "openai/resources";
 import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
 import { Stream } from "openai/streaming";
@@ -164,6 +166,87 @@ export class GentraceEmbeddings extends OpenAI.Embeddings {
         pipelineRunId;
 
       return completion as CreateEmbeddingResponse & { pipelineRunId: string };
+    }
+
+    return completion;
+  }
+}
+
+export class GentraceModerations extends OpenAI.Moderations {
+  private pipelineRun?: PipelineRun;
+  private gentraceConfig: GentraceConfiguration;
+
+  constructor({
+    client,
+    pipelineRun,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super(client);
+    this.pipelineRun = pipelineRun;
+    this.gentraceConfig = gentraceConfig;
+  }
+
+  async createInner(
+    body: ModerationCreateParams & {
+      pipelineSlug?: string;
+      gentrace?: Context;
+    },
+    options?: RequestOptions,
+  ): Promise<ModerationCreateResponse & { pipelineRunId?: string }> {
+    const { pipelineSlug, gentrace, ...newPayload } = body;
+    const { model, ...inputParams } = newPayload;
+
+    let isSelfContainedPullRequest = !this.pipelineRun && pipelineSlug;
+
+    let pipelineRun = this.pipelineRun;
+
+    if (isSelfContainedPullRequest) {
+      const pipeline = new Pipeline({
+        id: pipelineSlug,
+        slug: pipelineSlug,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+        logger: this.gentraceConfig.logger,
+      });
+
+      pipelineRun = new PipelineRun({
+        pipeline,
+      });
+    }
+
+    const startTime = Date.now();
+
+    const completion = (await this.post("/moderations", {
+      body: newPayload,
+      ...options,
+    })) as never as ModerationCreateResponse;
+
+    const endTime = Date.now();
+
+    const elapsedTime = Math.floor(endTime - startTime);
+
+    pipelineRun?.addStepRunNode(
+      new OpenAICreateModerationStepRun(
+        elapsedTime,
+        new Date(startTime).toISOString(),
+        new Date(endTime).toISOString(),
+        { ...inputParams },
+        { model },
+        completion,
+        body?.gentrace ?? {},
+      ),
+    );
+
+    if (isSelfContainedPullRequest) {
+      const { pipelineRunId } = await pipelineRun.submit();
+      (completion as unknown as { pipelineRunId: string }).pipelineRunId =
+        pipelineRunId;
+
+      return completion as ModerationCreateResponse & { pipelineRunId: string };
     }
 
     return completion;
@@ -646,6 +729,34 @@ export class OpenAICreateEmbeddingStepRun extends StepRun {
     super(
       "openai",
       "openai_createEmbedding",
+      elapsedTime,
+      startTime,
+      endTime,
+      inputs,
+      modelParams,
+      response,
+      context,
+    );
+  }
+}
+
+export class OpenAICreateModerationStepRun extends StepRun {
+  public inputs: Omit<ModerationCreateParams, "model">;
+  public modelParams: Omit<ModerationCreateParams, "input" | "user">;
+  public response: ModerationCreateResponse;
+
+  constructor(
+    elapsedTime: number,
+    startTime: string,
+    endTime: string,
+    inputs: Omit<ModerationCreateParams, "model">,
+    modelParams: Omit<ModerationCreateParams, "input" | "user">,
+    response: ModerationCreateResponse,
+    context: Context,
+  ) {
+    super(
+      "openai",
+      "openai_createModeration",
       elapsedTime,
       startTime,
       endTime,
