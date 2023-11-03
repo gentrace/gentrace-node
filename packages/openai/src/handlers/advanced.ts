@@ -10,6 +10,8 @@ import {
   Completion,
   CreateEmbeddingResponse,
   EmbeddingCreateParams,
+  ModerationCreateParams,
+  ModerationCreateResponse,
 } from "openai/resources";
 import { ChatCompletionChunk } from "openai/resources/chat";
 import {
@@ -25,6 +27,7 @@ import {
   GentraceCompletionCreateParamsStreaming,
   GentraceCompletions,
   GentraceEmbeddings,
+  GentraceModerations,
   GentraceStream,
   OpenAIPipelineHandler,
 } from "../openai";
@@ -68,6 +71,13 @@ class AdvancedOpenAI extends OpenAIPipelineHandler {
       client: this,
       ...options,
     });
+
+    // @ts-ignore
+    this.moderations = new AdvancedGentraceModerations({
+      // @ts-ignore
+      client: this,
+      ...options,
+    });
   }
 }
 
@@ -96,6 +106,35 @@ class AdvancedGentraceEmbeddings extends GentraceEmbeddings {
     },
     options?: RequestOptions,
   ): Promise<CreateEmbeddingResponse & { pipelineRunId?: string }> {
+    return super.createInner(body, options);
+  }
+}
+
+class AdvancedGentraceModerations extends GentraceModerations {
+  constructor({
+    client,
+    pipelineRun,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super({
+      client,
+      gentraceConfig,
+      pipelineRun,
+    });
+  }
+
+  // @ts-ignore
+  async create(
+    body: ModerationCreateParams & {
+      pipelineSlug?: string;
+      gentrace?: PluginStepRunContext;
+    },
+    options?: RequestOptions,
+  ): Promise<ModerationCreateResponse & { pipelineRunId?: string }> {
     return super.createInner(body, options);
   }
 }
