@@ -10,7 +10,7 @@ init({
 async function processRivet() {
   console.log("Processing Rivet graph");
 
-  const outputs = await runGraphInFile(
+  const { outputs, pipelineRunId, pipelineRun } = await runGraphInFile(
     env.RIVET_PROJECT_FILE,
     {
       graph: env.RIVET_GRAPH_ID,
@@ -29,6 +29,8 @@ async function processRivet() {
     },
     "testing-pipeline-id",
   );
+
+  console.log("Outputs: ", outputs);
 }
 
 processRivet();

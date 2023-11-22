@@ -8,7 +8,7 @@ import {
   GraphId,
   loadProjectFromFile,
 } from "@ironclad/rivet-node";
-import { Pipeline, StepRun } from "@gentrace/core";
+import { Pipeline, PipelineRun, StepRun } from "@gentrace/core";
 
 export * from "@gentrace/core";
 
@@ -17,9 +17,24 @@ export async function runGraphInFile(
   options: RunGraphOptions,
   pipelineSlug: string,
   waitForGentraceServer?: boolean,
-): Promise<Record<string, DataValue>> {
+): Promise<{
+  outputs: Record<string, DataValue>;
+  pipelineRunId: string;
+  pipelineRun: PipelineRun;
+}> {
   const project = await loadProjectFromFile(path);
-  return runGraph(project, options, pipelineSlug, waitForGentraceServer);
+  const { outputs, pipelineRunId, pipelineRun } = await runGraph(
+    project,
+    options,
+    pipelineSlug,
+    waitForGentraceServer,
+  );
+
+  return {
+    outputs,
+    pipelineRunId,
+    pipelineRun,
+  };
 }
 
 export async function runGraph(
@@ -27,7 +42,11 @@ export async function runGraph(
   options: RunGraphOptions,
   pipelineSlug: string,
   waitForGentraceServer?: boolean,
-): Promise<Record<string, DataValue>> {
+): Promise<{
+  outputs: Record<string, DataValue>;
+  pipelineRunId: string;
+  pipelineRun: PipelineRun;
+}> {
   const processorInfo = createProcessor(project, options);
   const recorder = new ExecutionRecorder();
 
@@ -54,12 +73,16 @@ export async function runGraph(
 
   // If waitForGentraceServer is false, this will asynchronously send information
   // to Gentrace.
-  await runner.submit({
+  const { pipelineRunId } = await runner.submit({
     waitForServer: waitForGentraceServer,
   });
 
   // Pass recorded information
-  return outputs;
+  return {
+    outputs,
+    pipelineRunId,
+    pipelineRun: runner,
+  };
 }
 
 type SimplifiedNode = {
