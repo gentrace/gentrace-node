@@ -47,8 +47,8 @@ npm install @gentrace/pinecone
 
 ## Getting started
 
-Visit our [Node.JS observe guides](https://docs.gentrace.ai/docs/observe-nodejs) to learn how to get started.
+Visit our [Node.JS observe guides](https://gentrace.ai/docs/observe/quickstart-openai) to learn how to get started.
 
 ### API reference
 
-Visit our [API reference](https://docs.gentrace.ai/reference) to construct API requests interactively.
+Visit our [API reference](https://gentrace.ai/docs/api/get-test-results) to construct API requests interactively.
