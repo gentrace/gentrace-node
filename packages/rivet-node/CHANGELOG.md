@@ -1,5 +1,11 @@
 # @gentrace/rivet
 
+## 1.9.3
+
+### Patch Changes
+
+- a0c3b27: FIx issue with node return values
+
 ## 1.9.2
 
 ### Patch Changes

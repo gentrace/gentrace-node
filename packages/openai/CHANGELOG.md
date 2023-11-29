@@ -1,5 +1,12 @@
 # @gentrace/openai
 
+## 4.1.3
+
+### Patch Changes
+
+- 5dc37e0: Add additional pnpm lockfile update
+- 2c5d6a6: Fix issue with this.\_client.post change
+
 ## 4.1.2
 
 ### Patch Changes
