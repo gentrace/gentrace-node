@@ -15,7 +15,7 @@ async function createCompletion() {
     messages: [
       {
         role: "user",
-        contentTemplate: "Hello {{ name }}! Write a 1000 word summary",
+        contentTemplate: "Hello {{ name }}! Write a few sentence summary",
         contentInputs: { name: "Vivek" },
       },
     ],

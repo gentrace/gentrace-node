@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.2.1",
-    "openai": "^4.0.0"
+    "openai": "^4.19.0"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",

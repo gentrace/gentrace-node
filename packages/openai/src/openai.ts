@@ -27,7 +27,7 @@ export type OpenAIPipelineHandlerOptions = {
 };
 
 type ChatCompletionRequestMessageTemplate = Omit<
-  Chat.CreateChatCompletionRequestMessage,
+  Chat.ChatCompletionMessageParam,
   "content"
 > & {
   content?: string;
@@ -38,18 +38,18 @@ type ChatCompletionRequestMessageTemplate = Omit<
 function createRenderedChatMessages(
   messages: ChatCompletionRequestMessageTemplate[],
 ) {
-  let newMessages: Chat.CreateChatCompletionRequestMessage[] = [];
+  let newMessages: Chat.ChatCompletionMessageParam[] = [];
   for (let message of messages) {
     if (message.contentTemplate && message.contentInputs) {
       const { contentTemplate, contentInputs, ...rest } = message;
       newMessages.push({
         ...rest,
         content: Mustache.render(contentTemplate, contentInputs),
-      });
+      } as Chat.ChatCompletionMessageParam);
     } else if (message.content) {
       newMessages.push({
         ...message,
-      } as Chat.CreateChatCompletionRequestMessage);
+      } as Chat.ChatCompletionMessageParam);
     }
   }
 
@@ -139,7 +139,7 @@ export class GentraceEmbeddings extends OpenAI.Embeddings {
 
     const startTime = Date.now();
 
-    const completion = (await this.post("/embeddings", {
+    const completion = (await this._client.post("/embeddings", {
       body: newPayload,
       ...options,
     })) as never as CreateEmbeddingResponse;
@@ -220,7 +220,7 @@ export class GentraceModerations extends OpenAI.Moderations {
 
     const startTime = Date.now();
 
-    const completion = (await this.post("/moderations", {
+    const completion = (await this._client.post("/moderations", {
       body: newPayload,
       ...options,
     })) as never as ModerationCreateResponse;
@@ -341,7 +341,7 @@ export class GentraceChatCompletions extends OpenAI.Chat.Completions {
     );
     const startTime = Date.now();
 
-    const completion = this.post("/chat/completions", {
+    const completion = this._client.post("/chat/completions", {
       body: { messages: renderedMessages, ...baseCompletionOptions },
       ...requestOptions,
       stream: body.stream ?? false,
@@ -517,7 +517,7 @@ export class GentraceCompletions extends OpenAI.Completions {
     };
 
     const startTime = Date.now();
-    const completion = this.post("/completions", {
+    const completion = this._client.post("/completions", {
       body: newCompletionOptions,
       ...requestOptions,
       stream: body.stream ?? false,
