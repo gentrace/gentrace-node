@@ -713,7 +713,7 @@ importers:
         specifier: workspace:^2.2.1
         version: link:../core
       openai:
-        specifier: ^4.17.0
+        specifier: ^4.19.0
         version: 4.20.1
     devDependencies:
       '@gentrace/tsconfig':
