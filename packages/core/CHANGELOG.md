@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.8
+
+### Patch Changes
+
+- f51ee9c: Add test case get
+
 ## 2.2.7
 
 ### Patch Changes
