@@ -534,13 +534,16 @@ describe("Usage of Evaluation functionality", () => {
         );
       }),
 
-      rest.get("https://gentrace.ai/api/v2/test-cases", (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.set("Content-Type", "application/json"),
-          ctx.json(getTestCaseResponse),
-        );
-      }),
+      rest.get(
+        "https://gentrace.ai/api/v2/test-cases/87cca81f-f466-4433-a0d2-695c06d1355a",
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(getTestCaseResponse),
+          );
+        },
+      ),
     );
     server.listen();
   });
