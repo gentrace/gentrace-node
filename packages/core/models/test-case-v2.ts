@@ -41,7 +41,7 @@ export interface TestCaseV2 {
    * @type {number}
    * @memberof TestCaseV2
    */
-  archivedAt: number;
+  archivedAt: number | null;
   /**
    * The expected outputs for the test case
    * @type {object}
