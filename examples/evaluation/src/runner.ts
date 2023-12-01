@@ -43,13 +43,8 @@ async function submitTestRun() {
 
         return [outputs, runner];
       },
-      {
-        metadata: {
-          "test-run": {
-            type: "string",
-            value: "Some string value",
-          },
-        },
+      (testCase) => {
+        return testCase.id === "a2bddcbc-51ac-5831-be0d-5868a7ffa1db";
       },
     );
   } catch (e) {

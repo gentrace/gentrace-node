@@ -46,7 +46,7 @@ importers:
     dependencies:
       '@gentrace/core':
         specifier: ^2.2.5
-        version: link:../../packages/core
+        version: 2.2.8
       '@gentrace/openai':
         specifier: ^4.1.1
         version: link:../../packages/openai
@@ -193,7 +193,7 @@ importers:
     dependencies:
       '@gentrace/core':
         specifier: 2.2.8
-        version: link:../../packages/core
+        version: 2.2.8
       '@gentrace/openai':
         specifier: workspace:^
         version: link:../../packages/openai
@@ -3386,8 +3386,8 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
-  /@gentrace/core@2.2.7:
-    resolution: {integrity: sha512-u38tiCP1NwcuqsFdUQ4H/WNrpGP63eBhXyUBBhZlXsVTp+kZkgtqHTaOOKUe65tsoe3V7fJ2PJV9LCYX6DSxrw==}
+  /@gentrace/core@2.2.8:
+    resolution: {integrity: sha512-i8ianvhmadDOzLOB8BIc31Oh3yVTaIzbLa9SgcxFQuB/632M/J48Vascu2Vz9/bM7TikwTv0z4A28me30EaKoA==}
     dependencies:
       '@web-std/file': 3.0.3
       axios: 1.5.0
@@ -3443,7 +3443,7 @@ packages:
     resolution: {integrity: sha512-2gkSeCKco4kwZvA/reLkQU51FrdEPHqZtiIkGcRGnsvpEiIV3kR6qCeF9miIN3fbsNwvsyLeHojPGta68yUFdQ==}
     dependencies:
       '@dqbd/tiktoken': 1.0.7
-      '@gentrace/core': 2.2.7
+      '@gentrace/core': 2.2.8
       '@huggingface/inference': 2.6.3
       autoevals: 0.0.16
       crypto-js: 4.1.1
