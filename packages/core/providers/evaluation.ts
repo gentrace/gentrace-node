@@ -5,6 +5,7 @@ import {
   UpdateTestCase,
   V1TestCasePost200Response,
   V1TestCasePost200ResponseOneOf,
+  V1TestResultPost200Response,
   V1TestResultPostRequest,
   V1TestResultPostRequestTestRunsInner,
   V1TestResultSimplePostRequest,
@@ -393,21 +394,75 @@ export const getTestResults = async (pipelineSlug?: string) => {
 };
 
 /**
- * Runs a test for a specific pipeline.
- *
- * @param {string} pipelineSlug - The slug of the pipeline.
- * @param {(testCase: TestCase) => Promise<PipelineRun>} handler - The handler function that runs the test case and returns a promise with a PipelineRun.
- * @returns {Promise<TestRun>} - A promise that resolves to the test result.
- * @throws {Error} - Throws an error if the specified pipeline cannot be found.
+ * Runs a test for a given pipeline slug.
+ * @param {string} pipelineSlug: The slug of the pipeline
+ * @param {function} handler: The handler function that will be called for each test case
+ * @param {ResultContext} [context]: An optional context object that will be passed to the Gentrace API
+ * @param {function} [caseFilter]: An optional filter function that will be called for each test case
  */
-export const runTest = async (
+export async function runTest(
   pipelineSlug: string,
   handler: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
   ) => Promise<[any, PipelineRun]>,
   context?: ResultContext,
-) => {
+  caseFilter?: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean,
+): Promise<V1TestResultPost200Response>;
+
+/**
+ * Runs a test for a given pipeline slug.
+ * @param {string} pipelineSlug: The slug of the pipeline
+ * @param {function} handler: The handler function that will be called for each test case
+ * @param {function} [caseFilter]: An optional filter function that will be called for each test case
+ */
+export async function runTest(
+  pipelineSlug: string,
+  handler: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => Promise<[any, PipelineRun]>,
+  caseFilter?: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean,
+): Promise<V1TestResultPost200Response>;
+
+/**
+ * Runs a test for a given pipeline slug.
+ * @param {string} pipelineSlug: The slug of the pipeline
+ * @param {function} handler: The handler function that will be called for each test case
+ * @param {ResultContext | function} [contextOrCaseFilter]: An optional context object that will be passed to the Gentrace API
+ * @param {function} [caseFilterOrUndefined]: An optional filter function that will be called for each test case
+ */
+export async function runTest(
+  pipelineSlug: string,
+  handler: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => Promise<[any, PipelineRun]>,
+  contextOrCaseFilter?:
+    | ResultContext
+    | ((
+        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+      ) => boolean),
+  caseFilterOrUndefined?: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean,
+): Promise<V1TestResultPost200Response> {
   incrementTestCounter();
+
+  let context: ResultContext | undefined;
+  let caseFilter: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean | undefined;
+
+  // Determine the overload being used based on the types of arguments
+  if (typeof contextOrCaseFilter === "function") {
+    caseFilter = contextOrCaseFilter;
+    context = undefined;
+  } else {
+    context = contextOrCaseFilter;
+    caseFilter = caseFilterOrUndefined;
+  }
 
   try {
     const allPipelines = await getPipelines();
@@ -427,6 +482,10 @@ export const runTest = async (
     const testRuns: TestRun[] = [];
 
     for (const testCase of testCases) {
+      if (caseFilter && !caseFilter(testCase)) {
+        continue;
+      }
+
       const [, pipelineRun] = await handler(testCase);
 
       let mergedMetadata = {};
@@ -496,4 +555,4 @@ export const runTest = async (
     // runs into an error or not.
     decrementTestCounter();
   }
-};
+}
