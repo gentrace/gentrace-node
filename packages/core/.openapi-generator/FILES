@@ -23,6 +23,7 @@ models/filterable-metadata-input-value-gte.ts
 models/filterable-metadata-input-value-lt.ts
 models/filterable-metadata-input-value-lte.ts
 models/filterable-metadata-input-value.ts
+models/folder-v2.ts
 models/full-run.ts
 models/index.ts
 models/metadata-value-object.ts
@@ -64,6 +65,7 @@ models/v1-test-result-post200-response.ts
 models/v1-test-result-simple-post-request-test-runs-inner.ts
 models/v1-test-result-simple-post-request.ts
 models/v1-test-result-status-get200-response.ts
+models/v2-folders-get200-response.ts
 models/v2-pipelines-get200-response.ts
 models/v2-pipelines-get200-response1.ts
 models/v2-test-cases-get200-response.ts

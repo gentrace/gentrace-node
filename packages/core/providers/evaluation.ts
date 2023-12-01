@@ -18,6 +18,7 @@ import {
   GENTRACE_RESULT_NAME,
   GENTRACE_RUN_NAME,
   globalGentraceApi,
+  globalGentraceApiV2,
 } from "./init";
 import { PipelineRun } from "./pipeline-run";
 import {
@@ -61,6 +62,16 @@ export const getTestCases = async (pipelineSlug: string) => {
   const response = await globalGentraceApi.v1TestCaseGet(pipelineId);
   const testCases = response.data.testCases ?? [];
   return testCases;
+};
+
+export const getTestCase = async (id: string) => {
+  if (!globalGentraceApiV2) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const response = await globalGentraceApiV2.v2TestCasesIdGet(id);
+  const testCase = response.data;
+  return testCase;
 };
 
 function isTestCaseSingle(
