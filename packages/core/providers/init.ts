@@ -1,5 +1,5 @@
 import { Configuration as Configuration } from "../configuration";
-import { V1Api } from "../api";
+import { V1Api, V2Api } from "../api";
 import { getProcessEnv } from "./utils";
 
 export let GENTRACE_API_KEY:
@@ -22,6 +22,8 @@ export let GENTRACE_RESULT_NAME = "";
 export let globalGentraceConfig: Configuration | null = null;
 
 export let globalGentraceApi: V1Api | null = null;
+
+export let globalGentraceApiV2: V2Api | null = null;
 
 export let globalRequestBuffer: { [pipelineRunId: string]: Promise<any> } = {};
 
@@ -78,6 +80,8 @@ export function init(values?: {
   });
 
   globalGentraceApi = new V1Api(globalGentraceConfig);
+
+  globalGentraceApiV2 = new V2Api(globalGentraceConfig);
 
   if (branch) {
     GENTRACE_BRANCH = branch;

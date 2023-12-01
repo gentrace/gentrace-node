@@ -13,6 +13,7 @@ import {
   runTest,
   submitTestResult,
   updateTestCase,
+  getTestCase,
 } from "../providers";
 import { deinit, init } from "../providers/init";
 import { getTestCounter } from "../providers/utils";
@@ -176,6 +177,26 @@ describe("Usage of Evaluation functionality", () => {
         pipelineId: "12494e89-af19-4326-a12c-54e487337ecc",
       },
     ],
+  };
+
+  let getTestCaseResponse: {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    archivedAt: string | null;
+    expectedOutputs: null | Record<string, any>;
+    inputs: Record<string, any>;
+    name: string;
+    pipelineId: string;
+  } = {
+    id: "87cca81f-f466-4433-a0d2-695c06d1355a",
+    createdAt: "2023-05-25T16:35:31.470Z",
+    updatedAt: "2023-05-25T16:35:31.470Z",
+    archivedAt: null,
+    expectedOutputs: { value: "This is some output" },
+    inputs: { a: 1, b: 2 },
+    name: "Test Case 1",
+    pipelineId: "12494e89-af19-4326-a12c-54e487337ecc",
   };
 
   let createSingleCaseResponse = {
@@ -419,6 +440,10 @@ describe("Usage of Evaluation functionality", () => {
         }
       }
 
+      if (request.url.href.includes("https://gentrace.ai/api/v2/test-cases")) {
+        body = JSON.stringify(getTestCaseResponse);
+      }
+
       request.respondWith({
         status: 200,
         statusText: "OK",
@@ -508,6 +533,17 @@ describe("Usage of Evaluation functionality", () => {
           ctx.json(getFullPipelinesResponse),
         );
       }),
+
+      rest.get(
+        "https://gentrace.ai/api/v2/test-cases/87cca81f-f466-4433-a0d2-695c06d1355a",
+        (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.set("Content-Type", "application/json"),
+            ctx.json(getTestCaseResponse),
+          );
+        },
+      ),
     );
     server.listen();
   });
@@ -632,6 +668,17 @@ describe("Usage of Evaluation functionality", () => {
       expect(submitTestResult("pipeline-id", testCases, [])).rejects.toThrow(
         "The number of test cases must be equal to the number of outputs.",
       );
+    });
+
+    it("should pull test case correctly", async () => {
+      init({
+        apiKey: "gentrace-api-key",
+        basePath: "https://gentrace.ai/api",
+      });
+
+      const testCase = await getTestCase(getTestCaseResponse.id);
+
+      expect(stringify(testCase)).toBe(stringify(getTestCaseResponse));
     });
 
     it("should give case ID if creating single test case", async () => {

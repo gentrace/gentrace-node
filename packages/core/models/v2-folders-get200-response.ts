@@ -12,9 +12,20 @@
  * Do not edit the class manually.
  */
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { FolderV2 } from "./folder-v2";
+
 /**
- * @type FilterableMetadataInputValueLt
- * The metadata value is less than this value.
+ *
  * @export
+ * @interface V2FoldersGet200Response
  */
-export type FilterableMetadataInputValueLt = number | string;
+export interface V2FoldersGet200Response {
+  /**
+   *
+   * @type {Array<FolderV2>}
+   * @memberof V2FoldersGet200Response
+   */
+  data: Array<FolderV2>;
+}

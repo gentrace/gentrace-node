@@ -15,31 +15,43 @@
 /**
  *
  * @export
- * @interface SearchableUnixSecondsInputOneOf
+ * @interface FolderV2
  */
-export interface SearchableUnixSecondsInputOneOf {
+export interface FolderV2 {
+  /**
+   * The ID of the folder
+   * @type {string}
+   * @memberof FolderV2
+   */
+  id: string;
   /**
    * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
    * @type {number}
-   * @memberof SearchableUnixSecondsInputOneOf
+   * @memberof FolderV2
    */
-  gt?: number;
+  createdAt: number;
   /**
    * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
    * @type {number}
-   * @memberof SearchableUnixSecondsInputOneOf
+   * @memberof FolderV2
    */
-  gte?: number;
+  updatedAt: number;
   /**
-   * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
-   * @type {number}
-   * @memberof SearchableUnixSecondsInputOneOf
+   * The name of the folder
+   * @type {string}
+   * @memberof FolderV2
    */
-  lt?: number;
+  name: string;
   /**
-   * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
-   * @type {number}
-   * @memberof SearchableUnixSecondsInputOneOf
+   * The ID of the organization that owns the folder
+   * @type {string}
+   * @memberof FolderV2
    */
-  lte?: number;
+  organizationId: string;
+  /**
+   * The ID of the parent folder
+   * @type {string}
+   * @memberof FolderV2
+   */
+  parentFolderId: string | null;
 }
