@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.9
+
+### Patch Changes
+
+- e7e5f00: Modify runTest() for case filtering
+
 ## 2.2.8
 
 ### Patch Changes
