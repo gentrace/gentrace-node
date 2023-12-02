@@ -2,6 +2,7 @@ import {
   CreateMultipleTestCases,
   CreateSingleTestCase,
   TestCase,
+  TestCaseV2,
   UpdateTestCase,
   V1TestCasePost200Response,
   V1TestCasePost200ResponseOneOf,
@@ -249,7 +250,7 @@ function isUUID(str: string): boolean {
  */
 export const submitTestResult = async (
   pipelineSlug: string,
-  testCases: TestCase[],
+  testCases: (TestCase | TestCaseV2)[],
   outputsList: Record<string, any>[],
   context?: ResultContext,
 ) => {
