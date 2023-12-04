@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.10
+
+### Patch Changes
+
+- 44b46f5: Fix submit test result typign
+
 ## 2.2.9
 
 ### Patch Changes
