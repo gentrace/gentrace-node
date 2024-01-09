@@ -38,6 +38,10 @@ import {
   RequiredError,
 } from "../base";
 // @ts-ignore
+import { CreateFeedbackV2 } from "../models";
+// @ts-ignore
+import { FeedbackV2 } from "../models";
+// @ts-ignore
 import { FilterableMetadataInputValue } from "../models";
 // @ts-ignore
 import { FolderV2 } from "../models";
@@ -47,6 +51,12 @@ import { SearchableStringInput } from "../models";
 import { SearchableUnixSecondsInput } from "../models";
 // @ts-ignore
 import { TestCaseV2 } from "../models";
+// @ts-ignore
+import { UpdateFeedbackV2 } from "../models";
+// @ts-ignore
+import { V2EvaluationsBulkPost200Response } from "../models";
+// @ts-ignore
+import { V2EvaluationsBulkPostRequest } from "../models";
 // @ts-ignore
 import { V2FoldersGet200Response } from "../models";
 // @ts-ignore
@@ -63,6 +73,233 @@ import { V2TestResultsGet200Response } from "../models";
  */
 export const V2ApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
+    /**
+     *
+     * @summary Bulk create evaluations
+     * @param {V2EvaluationsBulkPostRequest} v2EvaluationsBulkPostRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2EvaluationsBulkPost: async (
+      v2EvaluationsBulkPostRequest: V2EvaluationsBulkPostRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'v2EvaluationsBulkPostRequest' is not null or undefined
+      assertParamExists(
+        "v2EvaluationsBulkPost",
+        "v2EvaluationsBulkPostRequest",
+        v2EvaluationsBulkPostRequest,
+      );
+      const localVarPath = `/v2/evaluations/bulk`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        v2EvaluationsBulkPostRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Get feedback
+     * @param {string} id Feedback ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2FeedbackIdGet: async (
+      id: string,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("v2FeedbackIdGet", "id", id);
+      const localVarPath = `/v2/feedback/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Update feedback
+     * @param {string} id Feedback ID
+     * @param {UpdateFeedbackV2} updateFeedbackV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2FeedbackIdPatch: async (
+      id: string,
+      updateFeedbackV2: UpdateFeedbackV2,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("v2FeedbackIdPatch", "id", id);
+      // verify required parameter 'updateFeedbackV2' is not null or undefined
+      assertParamExists(
+        "v2FeedbackIdPatch",
+        "updateFeedbackV2",
+        updateFeedbackV2,
+      );
+      const localVarPath = `/v2/feedback/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PATCH",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        updateFeedbackV2,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Create feedback
+     * @param {CreateFeedbackV2} createFeedbackV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2FeedbackPost: async (
+      createFeedbackV2: CreateFeedbackV2,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'createFeedbackV2' is not null or undefined
+      assertParamExists("v2FeedbackPost", "createFeedbackV2", createFeedbackV2);
+      const localVarPath = `/v2/feedback`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        createFeedbackV2,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
     /**
      *
      * @summary Get folders
@@ -407,6 +644,110 @@ export const V2ApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
+     * @summary Bulk create evaluations
+     * @param {V2EvaluationsBulkPostRequest} v2EvaluationsBulkPostRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2EvaluationsBulkPost(
+      v2EvaluationsBulkPostRequest: V2EvaluationsBulkPostRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<V2EvaluationsBulkPost200Response>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.v2EvaluationsBulkPost(
+          v2EvaluationsBulkPostRequest,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
+     * @summary Get feedback
+     * @param {string} id Feedback ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2FeedbackIdGet(
+      id: string,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<FeedbackV2>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.v2FeedbackIdGet(
+        id,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
+     * @summary Update feedback
+     * @param {string} id Feedback ID
+     * @param {UpdateFeedbackV2} updateFeedbackV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2FeedbackIdPatch(
+      id: string,
+      updateFeedbackV2: UpdateFeedbackV2,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<FeedbackV2>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.v2FeedbackIdPatch(
+          id,
+          updateFeedbackV2,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
+     * @summary Create feedback
+     * @param {CreateFeedbackV2} createFeedbackV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2FeedbackPost(
+      createFeedbackV2: CreateFeedbackV2,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<FeedbackV2>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.v2FeedbackPost(
+        createFeedbackV2,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
      * @summary Get folders
      * @param {string} [parentFolderId] The parent folder ID to filter folders by. Null filters to root folder. Absent will return all folders.
      * @param {*} [options] Override http request option.
@@ -594,6 +935,65 @@ export const V2ApiFactory = function (
   return {
     /**
      *
+     * @summary Bulk create evaluations
+     * @param {V2EvaluationsBulkPostRequest} v2EvaluationsBulkPostRequest
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2EvaluationsBulkPost(
+      v2EvaluationsBulkPostRequest: V2EvaluationsBulkPostRequest,
+      options?: any,
+    ): AxiosPromise<V2EvaluationsBulkPost200Response> {
+      return localVarFp
+        .v2EvaluationsBulkPost(v2EvaluationsBulkPostRequest, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Get feedback
+     * @param {string} id Feedback ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2FeedbackIdGet(id: string, options?: any): AxiosPromise<FeedbackV2> {
+      return localVarFp
+        .v2FeedbackIdGet(id, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Update feedback
+     * @param {string} id Feedback ID
+     * @param {UpdateFeedbackV2} updateFeedbackV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2FeedbackIdPatch(
+      id: string,
+      updateFeedbackV2: UpdateFeedbackV2,
+      options?: any,
+    ): AxiosPromise<FeedbackV2> {
+      return localVarFp
+        .v2FeedbackIdPatch(id, updateFeedbackV2, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Create feedback
+     * @param {CreateFeedbackV2} createFeedbackV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2FeedbackPost(
+      createFeedbackV2: CreateFeedbackV2,
+      options?: any,
+    ): AxiosPromise<FeedbackV2> {
+      return localVarFp
+        .v2FeedbackPost(createFeedbackV2, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
      * @summary Get folders
      * @param {string} [parentFolderId] The parent folder ID to filter folders by. Null filters to root folder. Absent will return all folders.
      * @param {*} [options] Override http request option.
@@ -704,6 +1104,73 @@ export const V2ApiFactory = function (
  * @extends {BaseAPI}
  */
 export class V2Api extends BaseAPI {
+  /**
+   *
+   * @summary Bulk create evaluations
+   * @param {V2EvaluationsBulkPostRequest} v2EvaluationsBulkPostRequest
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2EvaluationsBulkPost(
+    v2EvaluationsBulkPostRequest: V2EvaluationsBulkPostRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return V2ApiFp(this.configuration)
+      .v2EvaluationsBulkPost(v2EvaluationsBulkPostRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Get feedback
+   * @param {string} id Feedback ID
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2FeedbackIdGet(id: string, options?: AxiosRequestConfig) {
+    return V2ApiFp(this.configuration)
+      .v2FeedbackIdGet(id, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Update feedback
+   * @param {string} id Feedback ID
+   * @param {UpdateFeedbackV2} updateFeedbackV2
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2FeedbackIdPatch(
+    id: string,
+    updateFeedbackV2: UpdateFeedbackV2,
+    options?: AxiosRequestConfig,
+  ) {
+    return V2ApiFp(this.configuration)
+      .v2FeedbackIdPatch(id, updateFeedbackV2, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Create feedback
+   * @param {CreateFeedbackV2} createFeedbackV2
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2FeedbackPost(
+    createFeedbackV2: CreateFeedbackV2,
+    options?: AxiosRequestConfig,
+  ) {
+    return V2ApiFp(this.configuration)
+      .v2FeedbackPost(createFeedbackV2, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
   /**
    *
    * @summary Get folders

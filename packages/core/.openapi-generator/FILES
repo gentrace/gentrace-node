@@ -6,6 +6,8 @@ base.ts
 common.ts
 configuration.ts
 index.ts
+models/create-evaluation-v2.ts
+models/create-feedback-v2.ts
 models/create-multiple-test-cases-test-cases-inner.ts
 models/create-multiple-test-cases.ts
 models/create-single-test-case.ts
@@ -17,6 +19,7 @@ models/expanded-test-run-all-of.ts
 models/expanded-test-run.ts
 models/feedback-request.ts
 models/feedback-response.ts
+models/feedback-v2.ts
 models/filterable-metadata-input-value-equals.ts
 models/filterable-metadata-input-value-gt.ts
 models/filterable-metadata-input-value-gte.ts
@@ -46,6 +49,7 @@ models/test-evaluator.ts
 models/test-result-v2.ts
 models/test-result.ts
 models/test-run.ts
+models/update-feedback-v2.ts
 models/update-test-case.ts
 models/v1-files-upload-post201-response.ts
 models/v1-files-upload-post400-response.ts
@@ -65,6 +69,8 @@ models/v1-test-result-post200-response.ts
 models/v1-test-result-simple-post-request-test-runs-inner.ts
 models/v1-test-result-simple-post-request.ts
 models/v1-test-result-status-get200-response.ts
+models/v2-evaluations-bulk-post-request.ts
+models/v2-evaluations-bulk-post200-response.ts
 models/v2-folders-get200-response.ts
 models/v2-pipelines-get200-response.ts
 models/v2-pipelines-get200-response1.ts
