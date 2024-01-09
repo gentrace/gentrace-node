@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.11
+
+### Patch Changes
+
+- 981c398: Add SDK function for bulk creation
+
 ## 2.2.10
 
 ### Patch Changes
