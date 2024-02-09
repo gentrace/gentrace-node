@@ -3,11 +3,8 @@ import fetchAdapter from "./adapters/fetch";
 
 let axiosWithOptionalFetch: AxiosInstance;
 
-function isFetchDefined(): boolean {
-  return typeof fetch !== "undefined";
-}
-
-if (isFetchDefined()) {
+// detect CF worker environment
+if (typeof process === "undefined") {
   axiosWithOptionalFetch = globalAxios.create({
     // @ts-ignore
     adapter: fetchAdapter,
