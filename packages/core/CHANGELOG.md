@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.12
+
+### Patch Changes
+
+- 530759f: Fix uploadFile in Node 18+ environments.
+
 ## 2.2.11
 
 ### Patch Changes
