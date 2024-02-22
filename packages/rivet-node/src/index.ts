@@ -141,10 +141,13 @@ function convertRecordingToStepRuns(
     [processId: string]: SimplifiedNode;
   };
 
-  const selectedGraph = project.graphs[graphId];
+  const selectedGraph =
+    graphId in project.graphs
+      ? project.graphs[graphId]
+      : Object.values(project.graphs).find((g) => g.metadata?.name === graphId);
 
   if (!selectedGraph) {
-    return [];
+    throw new Error(`Graph with ID ${graphId} not found`);
   }
 
   // Convert to step runs
