@@ -1,5 +1,11 @@
 # @gentrace/rivet
 
+## 1.9.4
+
+### Patch Changes
+
+- 4000beb: Support both explicit graph ID and name
+
 ## 1.9.3
 
 ### Patch Changes
