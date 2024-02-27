@@ -205,6 +205,10 @@ export const constructSubmissionPayload = (
     body.name = GENTRACE_RESULT_NAME;
   }
 
+  if (context?.name) {
+    body.name = context.name;
+  }
+
   if (context?.metadata) {
     body.metadata = context.metadata;
   }
@@ -241,20 +245,21 @@ function isUUID(str: string): boolean {
  * @async
  * @function
  * @param {string} pipelineSlug - The slug of the pipeline
- * @param {TestCase[]} testCases - An array of TestCase objects.
- * @param {string[]} outputs - An array of outputs corresponding to each TestCase.
+ * @param {(TestCase | TestCaseV2)[]} testCases - An array of TestCase objects.
+ * @param {Record<string, any>[]} outputsList - An array of outputs corresponding to each TestCase.
+ * @param {ResultContext} [context] - An optional context object that will be passed to the Gentrace API
  *
  * @throws {Error} Will throw an error if the Gentrace API key is not initialized. Also, will throw an error if the number of test cases
  *  does not match the number of outputs.
  *
- * @returns {Promise<TestRunPost200Response>} The response data from the Gentrace API's testRunPost method.
+ * @returns {Promise<V1TestResultPost200Response>} The response data from the Gentrace API's v1TestResultSimplePost method.
  */
-export const submitTestResult = async (
+export async function submitTestResult(
   pipelineSlug: string,
   testCases: (TestCase | TestCaseV2)[],
   outputsList: Record<string, any>[],
   context?: ResultContext,
-) => {
+): Promise<V1TestResultPost200Response> {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
@@ -291,6 +296,10 @@ export const submitTestResult = async (
     body.name = GENTRACE_RESULT_NAME;
   }
 
+  if (context?.name) {
+    body.name = context.name;
+  }
+
   if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
     body.branch =
       GENTRACE_BRANCH.length > 0
@@ -311,7 +320,7 @@ export const submitTestResult = async (
 
   const response = await globalGentraceApi.v1TestResultSimplePost(body);
   return response.data;
-};
+}
 
 type PipelineParams = {
   label?: string;
