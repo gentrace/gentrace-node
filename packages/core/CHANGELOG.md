@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.13
+
+### Patch Changes
+
+- 3934529: Allow result to specified in runTest() and submitTestResult()
+
 ## 2.2.12
 
 ### Patch Changes
