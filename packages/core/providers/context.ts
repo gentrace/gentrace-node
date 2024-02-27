@@ -20,5 +20,5 @@ export type CoreStepRunContext = {
 
 export type PluginContext = PipelineRunContext;
 export type PluginStepRunContext = { metadata?: Metadata };
-export type ResultContext = { metadata?: Metadata };
+export type ResultContext = { name?: string; metadata?: Metadata };
 export type Context = PipelineRunContext & CoreStepRunContext;
