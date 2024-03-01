@@ -1,4 +1,5 @@
 import { Context } from "./context";
+import acorn from "acorn";
 
 export type GentraceParams = {
   pipelineSlug?: string;
@@ -14,24 +15,73 @@ export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
+function getSingleParamName(param: acorn.Pattern, index: number) {
+  if (param.type === "Identifier") {
+    return param.name;
+  } else if (
+    param.type === "AssignmentPattern" &&
+    param.left.type === "Identifier"
+  ) {
+    return param.left.name;
+  } else {
+    // If the parameter is a destructured object/array, we can't get the name
+    return `param${index}`;
+  }
+}
 
-const ARGUMENT_NAMES = /([^\s,]+)/g;
+function getParamNamesAnonymousFunction<F extends (...args: any[]) => any>(
+  func: F,
+) {
+  let inputs: string[] = [];
+  try {
+    const result = acorn.parse(`(${func.toString()})`, {
+      ecmaVersion: 2020,
+    });
 
-// Source: https://stackoverflow.com/a/9924463/1057411
-export function getParamNames<F extends (...args: any[]) => any>(func: F) {
-  let fnStr = func.toString().replace(STRIP_COMMENTS, "");
-  let result = Array.from(
-    fnStr
-      .slice(fnStr.indexOf("(") + 1, fnStr.indexOf(")"))
-      .match(ARGUMENT_NAMES),
-  );
+    const firstElement = result.body[0];
+    if (!firstElement) {
+      return inputs;
+    }
 
-  if (!result) {
-    result = [];
+    if (firstElement.type === "ExpressionStatement") {
+      const expression = firstElement.expression;
+      if (expression.type === "FunctionExpression") {
+        inputs = expression.params.map(getSingleParamName);
+      }
+    }
+  } catch (e) {
+    // Do nothing
   }
 
-  return result;
+  return inputs;
+}
+
+export function getParamNames<F extends (...args: any[]) => any>(func: F) {
+  let inputs: string[] = [];
+  try {
+    const result = acorn.parse(func.toString(), {
+      ecmaVersion: 2020,
+    });
+
+    const functionNode = result.body[0];
+    if (!functionNode) {
+      return inputs;
+    }
+
+    if (functionNode.type === "FunctionDeclaration") {
+      inputs = functionNode.params.map(getSingleParamName);
+    } else if (functionNode.type === "ExpressionStatement") {
+      const expression = functionNode.expression;
+      if (expression.type === "ArrowFunctionExpression") {
+        inputs = expression.params.map(getSingleParamName);
+      }
+    }
+  } catch (e) {
+    // There's a chance that the passed function is a regular anonymous function (which is un-parseable by acorn)
+    return getParamNamesAnonymousFunction(func);
+  }
+
+  return inputs;
 }
 
 export function zip<S1, S2>(
