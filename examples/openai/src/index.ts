@@ -29,6 +29,26 @@ async function createChatCompletion() {
 
   console.log("Moderation response", moderationResponse);
 
+  const outputs = await runner.measure(
+    async ({ a }, [b, c]) => {
+      console.log("inputs", a, b, c);
+      // Simply return inputs as outputs
+      return {
+        example:
+          "<h1>Example</h1><div>This is an <strong>example</strong></div>",
+      };
+    },
+    [{ a: 5 }, [2, 3]],
+    {
+      context: {
+        render: {
+          type: "html",
+          key: "example",
+        },
+      },
+    },
+  );
+
   const pipelineRunId = await runner.submit();
 
   console.log("Pipeline run id", pipelineRunId);

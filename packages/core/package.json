@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@web-std/file": "^3.0.3",
+    "acorn": "^8.11.3",
     "axios": "^1.4.0",
     "form-data": "^4.0.0",
     "mustache": "^4.2.0",
