@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0
+
+### Minor Changes
+
+- 7291a00: fix: Modify how parameters are inferred by using Acorn.JS parser
+
 ## 2.2.13
 
 ### Patch Changes
