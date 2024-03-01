@@ -30,15 +30,15 @@ async function createChatCompletion() {
   console.log("Moderation response", moderationResponse);
 
   const outputs = await runner.measure(
-    async (inputs) => {
-      console.log("inputs", inputs);
+    async ({ a }, [b, c]) => {
+      console.log("inputs", a, b, c);
       // Simply return inputs as outputs
       return {
         example:
           "<h1>Example</h1><div>This is an <strong>example</strong></div>",
       };
     },
-    [{ a: 5 }],
+    [{ a: 5 }, [2, 3]],
     {
       context: {
         render: {
