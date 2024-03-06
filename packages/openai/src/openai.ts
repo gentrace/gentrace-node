@@ -26,7 +26,11 @@ export type OpenAIPipelineHandlerOptions = {
   gentraceConfig: GentraceConfiguration;
 };
 
-type ChatCompletionRequestMessageTemplate = Omit<
+type DistributiveOmit<T, K extends keyof any> = T extends any
+  ? Omit<T, K>
+  : never;
+
+type ChatCompletionRequestMessageTemplate = DistributiveOmit<
   Chat.ChatCompletionMessageParam,
   "content"
 > & {
@@ -46,7 +50,7 @@ function createRenderedChatMessages(
         ...rest,
         content: Mustache.render(contentTemplate, contentInputs),
       } as Chat.ChatCompletionMessageParam);
-    } else if (message.content) {
+    } else {
       newMessages.push({
         ...message,
       } as Chat.ChatCompletionMessageParam);
