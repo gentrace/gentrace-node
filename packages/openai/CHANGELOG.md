@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.1.4
+
+### Patch Changes
+
+- 96b2572: Fix issue with typing and omitting assistant messages
+
 ## 4.1.3
 
 ### Patch Changes
