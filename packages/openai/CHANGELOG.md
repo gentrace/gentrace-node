@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.1.5
+
+### Patch Changes
+
+- 40a81ac: Fix issue with tool_calls
+
 ## 4.1.4
 
 ### Patch Changes
