@@ -20,6 +20,7 @@ import {
 } from "openai/resources";
 import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
 import { Stream } from "openai/streaming";
+import { isDefined } from "./util";
 
 export type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -772,8 +773,13 @@ export class OpenAICreateModerationStepRun extends StepRun {
   }
 }
 
-function createChatCompletionStreamResponse(streamList: StreamDelta[]) {
+function createChatCompletionStreamResponse(streamList: ChatCompletionChunk[]) {
   let finalResponseString = "";
+  const toolIdToInfoMap: Record<
+    string,
+    ChatCompletionChunk.Choice.Delta.ToolCall
+  > = {};
+
   let model = "";
   let id = "";
   let created = 0;
@@ -784,14 +790,41 @@ function createChatCompletionStreamResponse(streamList: StreamDelta[]) {
 
     if (value.choices && value.choices.length > 0) {
       const firstChoice = value.choices[0];
-      if (firstChoice.text) {
-        finalResponseString += firstChoice.text;
-      } else if (firstChoice.delta && firstChoice.delta.content) {
+
+      if (firstChoice.delta && firstChoice.delta.tool_calls) {
+        for (const toolCall of firstChoice.delta.tool_calls) {
+          if (toolCall.id) {
+            const existingToolInfo = toolIdToInfoMap[toolCall.id];
+            if (!existingToolInfo) {
+              toolIdToInfoMap[toolCall.id] = toolCall;
+            } else if (
+              isDefined(existingToolInfo.function?.arguments) &&
+              isDefined(toolCall.function?.arguments)
+            ) {
+              // Assume that the ID is provided to differentiate between different tool calls.
+              existingToolInfo.function.arguments +=
+                toolCall.function.arguments;
+            }
+          } else {
+            // Associate with the tool call in the map
+            const toolId = Object.keys(toolIdToInfoMap)[0];
+            if (toolId) {
+              const existingToolInfo = toolIdToInfoMap[toolId];
+              if (
+                isDefined(existingToolInfo.function?.arguments) &&
+                isDefined(toolCall.function?.arguments)
+              ) {
+                existingToolInfo.function.arguments +=
+                  toolCall.function.arguments;
+              }
+            }
+          }
+        }
+      }
+
+      if (firstChoice.delta && firstChoice.delta.content) {
         finalResponseString += firstChoice.delta.content;
-      } else if (
-        firstChoice.finish_reason &&
-        firstChoice.finish_reason === "stop"
-      ) {
+      } else if (firstChoice.finish_reason) {
         break;
       }
     }
@@ -807,7 +840,11 @@ function createChatCompletionStreamResponse(streamList: StreamDelta[]) {
       {
         finish_reason: null,
         index: 0,
-        message: { content: finalResponseString, role: "assistant" },
+        message: {
+          content: finalResponseString,
+          role: "assistant",
+          tool_calls: Object.values(toolIdToInfoMap),
+        },
       },
     ],
   };
