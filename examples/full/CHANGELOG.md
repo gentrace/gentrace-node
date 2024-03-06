@@ -1,5 +1,12 @@
 # @examples/full
 
+## 0.1.15
+
+### Patch Changes
+
+- Updated dependencies [40a81ac]
+  - @gentrace/openai@4.1.5
+
 ## 0.1.14
 
 ### Patch Changes

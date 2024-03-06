@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/openai",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "description": "Gentrace OpenAI v4 plugin for Node.JS",
   "repository": {
     "type": "git",
