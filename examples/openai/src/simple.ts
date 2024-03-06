@@ -1,37 +1,62 @@
-import { init } from "@gentrace/core";
-import { OpenAI } from "@gentrace/openai";
+import { init, Pipeline } from "@gentrace/core";
+import { initPlugin } from "@gentrace/openai";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   basePath: "http://localhost:3000/api",
 });
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_KEY,
-});
-
 async function createCompletion() {
-  const response = await openai.chat.completions.create({
+  const plugin = await initPlugin({
+    apiKey: process.env.OPENAI_KEY ?? "",
+  });
+
+  const pipeline = new Pipeline({
+    slug: "testing-vivek-5",
+    plugins: {
+      openai: plugin,
+    },
+  });
+
+  const runner = pipeline.start();
+
+  const completion = await runner.openai.chat.completions.create({
+    stream: true,
+    model: "gpt-4-1106-preview",
     messages: [
       {
         role: "user",
-        contentTemplate: "Hello {{ name }}! Write a few sentence summary",
-        contentInputs: { name: "Vivek" },
+        content: "Convert this sentence to JSON: John is 10 years old.",
       },
     ],
-    model: "gpt-3.5-turbo",
-    pipelineSlug: "testing-pipeline-id",
-    gentrace: {
-      userId: "123",
-    },
-    stream: true,
+    tools: [
+      {
+        type: "function",
+        function: {
+          name: "person",
+          description: "person_info",
+          parameters: {
+            type: "object",
+            properties: {
+              age: {
+                type: "integer",
+                description: "Age",
+              },
+            },
+            required: ["age"],
+          },
+        },
+      },
+    ],
   });
 
-  for await (const message of response) {
-    console.log("Message", message);
+  for await (const chunk of completion) {
+    console.log(JSON.stringify(chunk, null, 2));
   }
 
-  console.log("Data", response);
+  // console.log("choices", JSON.stringify(completion.choices, null, 2));
+
+  await runner.submit();
 }
 
 createCompletion();
