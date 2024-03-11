@@ -12,18 +12,17 @@
  * Do not edit the class manually.
  */
 
-/**
- *
- * @export
- * @interface MetadataValueObject
- */
-export interface MetadataValueObject {
-  [key: string]: any;
+// May contain unused imports in some cases
+// @ts-ignore
+import { StringType } from "./string-type";
+// May contain unused imports in some cases
+// @ts-ignore
+import { UrlType } from "./url-type";
 
-  /**
-   *
-   * @type {string}
-   * @memberof MetadataValueObject
-   */
-  type: string;
-}
+/**
+ * @type MetadataValueObject
+ * @export
+ */
+export type MetadataValueObject =
+  | ({ type: "string" } & StringType)
+  | ({ type: "url" } & UrlType);
