@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.1
+
+### Patch Changes
+
+- 38ba3b7: Add more specific models for metadata
+
 ## 2.3.0
 
 ### Minor Changes
