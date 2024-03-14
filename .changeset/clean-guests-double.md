@@ -1,5 +1,5 @@
 ---
-"@gentrace/core": patch
+"@gentrace/core": minor
 ---
 
 Add runner serialization
