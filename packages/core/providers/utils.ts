@@ -121,3 +121,11 @@ export function getProcessEnv(name: string) {
 
   return process.env[name];
 }
+
+export function safeJsonParse(jsonString: string | null) {
+  try {
+    return JSON.parse(jsonString ?? "");
+  } catch (error) {
+    return null;
+  }
+}

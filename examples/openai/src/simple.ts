@@ -1,4 +1,4 @@
-import { init, Pipeline } from "@gentrace/core";
+import { init, Pipeline, PipelineRun } from "@gentrace/core";
 import { initPlugin } from "@gentrace/openai";
 
 init({
@@ -54,9 +54,12 @@ async function createCompletion() {
     console.log(JSON.stringify(chunk, null, 2));
   }
 
-  // console.log("choices", JSON.stringify(completion.choices, null, 2));
+  const jsonObject = runner.toObject();
 
-  await runner.submit();
+  const response = await PipelineRun.submitFromJson(jsonObject, {
+    waitForServer: true,
+  });
+
+  console.log(response);
 }
-
 createCompletion();
