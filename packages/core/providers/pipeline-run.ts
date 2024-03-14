@@ -165,9 +165,9 @@ export class PipelineRun {
     }, {});
 
     // Our server only accepts outputs as an object.
-    let modifiedOuput = returnValue;
+    let modifiedOutput = returnValue;
     if (typeof returnValue !== "object") {
-      modifiedOuput = { value: returnValue };
+      modifiedOutput = { value: returnValue };
     }
     const endTime = Date.now();
     const elapsedTime = Math.floor(endTime - startTime);
@@ -181,7 +181,7 @@ export class PipelineRun {
         new Date(endTime).toISOString(),
         resolvedInputs,
         stepInfo?.modelParams ?? {},
-        modifiedOuput,
+        modifiedOutput,
         stepInfo?.context ?? {},
       ),
     );
@@ -189,22 +189,7 @@ export class PipelineRun {
     return returnValue;
   }
 
-  public async submit(
-    { waitForServer }: { waitForServer: boolean } = { waitForServer: false },
-  ) {
-    const testCounter = getTestCounter();
-
-    if (testCounter > 0) {
-      const data: RunResponse = {
-        pipelineRunId: this.id,
-      };
-      return data;
-    }
-
-    const api = new V1Api(this.pipeline.config);
-
-    this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
-
+  public toObject() {
     let mergedMetadata = {};
 
     const updatedStepRuns = this.stepRuns.map(
@@ -255,14 +240,39 @@ export class PipelineRun {
       },
     );
 
-    const submission = api.v1RunPost({
+    return {
       id: this.id,
       slug: this.pipeline.slug,
       metadata: mergedMetadata,
       previousRunId: this.context?.previousRunId,
       collectionMethod: RunRequestCollectionMethodEnum.Runner,
       stepRuns: updatedStepRuns,
-    });
+    };
+  }
+
+  public toJson() {
+    return JSON.stringify(this.toObject(), null, 2);
+  }
+
+  public async submit(
+    { waitForServer }: { waitForServer: boolean } = { waitForServer: false },
+  ) {
+    const testCounter = getTestCounter();
+
+    if (testCounter > 0) {
+      const data: RunResponse = {
+        pipelineRunId: this.id,
+      };
+      return data;
+    }
+
+    const api = new V1Api(this.pipeline.config);
+
+    this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
+
+    const pipelineRunObject = this.toObject();
+
+    const submission = api.v1RunPost(pipelineRunObject);
 
     if (!waitForServer) {
       globalRequestBuffer[this.id] = submission;
