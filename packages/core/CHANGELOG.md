@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.0
+
+### Minor Changes
+
+- 24cb0aa: Add runner serialization
+
 ## 2.3.1
 
 ### Patch Changes
