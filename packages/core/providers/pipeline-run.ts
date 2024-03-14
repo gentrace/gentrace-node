@@ -5,8 +5,8 @@ import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
 import { Context, CoreStepRunContext } from "./context";
 import { StepRun, PartialStepRunType } from "./step-run";
-import { getParamNames, getTestCounter, zip } from "./utils";
-import { globalRequestBuffer } from "./init";
+import { getParamNames, getTestCounter, safeJsonParse, zip } from "./utils";
+import { globalGentraceConfig, globalRequestBuffer } from "./init";
 
 type PRStepRunType = Omit<PartialStepRunType, "context"> & {
   context?: CoreStepRunContext;
@@ -18,6 +18,25 @@ interface PipelineLike {
   logInfo: (message: string) => void;
   logWarn: (message: string | Error) => void;
 }
+
+type PipelineRunPayload = {
+  id: string;
+  slug: string;
+  metadata: {};
+  previousRunId: string;
+  collectionMethod: "runner";
+  stepRuns: {
+    providerName: string;
+    elapsedTime: number;
+    startTime: string;
+    endTime: string;
+    invocation: string;
+    modelParams: any;
+    inputs: any;
+    outputs: any;
+    context: {};
+  }[];
+};
 
 export class PipelineRun {
   private pipeline: PipelineLike;
@@ -189,7 +208,7 @@ export class PipelineRun {
     return returnValue;
   }
 
-  public toObject() {
+  public toObject(): PipelineRunPayload {
     let mergedMetadata = {};
 
     const updatedStepRuns = this.stepRuns.map(
@@ -254,6 +273,70 @@ export class PipelineRun {
     return JSON.stringify(this.toObject(), null, 2);
   }
 
+  public static async submitFromJson(
+    json: string | object,
+    options?: { waitForServer?: boolean; pipeline?: PipelineLike },
+  ) {
+    const pipeline = options?.pipeline;
+    const waitForServer = options?.waitForServer ?? false;
+
+    const api = new V1Api(pipeline ? pipeline.config : globalGentraceConfig);
+
+    const pipelineRunObject = (
+      typeof json === "string" ? safeJsonParse(json) : json
+    ) as PipelineRunPayload | null;
+
+    if (!pipelineRunObject) {
+      if (pipeline) {
+        pipeline.logWarn("Invalid JSON passed to submitFromJson");
+      }
+      return {};
+    }
+
+    if (pipeline) {
+      pipeline.logInfo("Submitting PipelineRun to Gentrace");
+    }
+
+    const submission = api.v1RunPost(pipelineRunObject);
+
+    if (!waitForServer) {
+      globalRequestBuffer[pipelineRunObject.id] = submission;
+
+      submission
+        .catch((e) => {
+          if (pipeline) {
+            pipeline.logWarn(e);
+          }
+        })
+        .then(() => {
+          if (pipeline) {
+            pipeline.logInfo("Successfully submitted PipelineRun to Gentrace");
+          }
+        })
+        .finally(() => {
+          delete globalRequestBuffer[pipelineRunObject.id];
+        });
+
+      const data: RunResponse = {
+        pipelineRunId: pipelineRunObject.id,
+      };
+      return data;
+    }
+
+    try {
+      const pipelinePostResponse = await submission;
+      if (pipeline) {
+        pipeline.logInfo("Successfully submitted PipelineRun to Gentrace");
+      }
+      return pipelinePostResponse.data;
+    } catch (e) {
+      if (pipeline) {
+        pipeline.logWarn(e);
+      }
+      throw e;
+    }
+  }
+
   public async submit(
     { waitForServer }: { waitForServer: boolean } = { waitForServer: false },
   ) {
@@ -266,43 +349,13 @@ export class PipelineRun {
       return data;
     }
 
-    const api = new V1Api(this.pipeline.config);
-
-    this.pipeline.logInfo("Submitting PipelineRun to Gentrace");
-
     const pipelineRunObject = this.toObject();
 
-    const submission = api.v1RunPost(pipelineRunObject);
+    const response = await PipelineRun.submitFromJson(pipelineRunObject, {
+      waitForServer,
+      pipeline: this.pipeline,
+    });
 
-    if (!waitForServer) {
-      globalRequestBuffer[this.id] = submission;
-
-      submission
-        .catch((e) => {
-          this.pipeline.logWarn(e);
-        })
-        .then(() => {
-          this.pipeline.logInfo(
-            "Successfully submitted PipelineRun to Gentrace",
-          );
-        })
-        .finally(() => {
-          delete globalRequestBuffer[this.id];
-        });
-
-      const data: RunResponse = {
-        pipelineRunId: this.id,
-      };
-      return data;
-    }
-
-    try {
-      const pipelinePostResponse = await submission;
-      this.pipeline.logInfo("Successfully submitted PipelineRun to Gentrace");
-      return pipelinePostResponse.data;
-    } catch (e) {
-      this.pipeline.logWarn(e);
-      throw e;
-    }
+    return response;
   }
 }
