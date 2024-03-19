@@ -18,7 +18,9 @@ async function createCompletion() {
     },
   });
 
-  const runner = pipeline.start();
+  const runner = pipeline.start({
+    userId: "user-id",
+  });
 
   const completion = await runner.openai.chat.completions.create({
     stream: true,
@@ -29,6 +31,14 @@ async function createCompletion() {
         content: "Convert this sentence to JSON: John is 10 years old.",
       },
     ],
+    gentrace: {
+      metadata: {
+        "prompt-version vivek %LIKE%": {
+          type: "string",
+          value: "1.0.0",
+        },
+      },
+    },
     tools: [
       {
         type: "function",
@@ -54,12 +64,6 @@ async function createCompletion() {
     console.log(JSON.stringify(chunk, null, 2));
   }
 
-  const jsonObject = runner.toObject();
-
-  const response = await PipelineRun.submitFromJson(jsonObject, {
-    waitForServer: true,
-  });
-
-  console.log(response);
+  await runner.submit();
 }
 createCompletion();
