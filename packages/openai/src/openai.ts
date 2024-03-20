@@ -11,6 +11,7 @@ import OpenAI, { ClientOptions } from "openai";
 import { APIPromise, RequestOptions } from "openai/core";
 import {
   Chat,
+  ChatCompletionTool,
   Completion,
   CompletionCreateParams,
   CreateEmbeddingResponse,
@@ -363,7 +364,7 @@ export class GentraceChatCompletions extends OpenAI.Chat.Completions {
     const elapsedTime = Math.floor(endTime - startTime);
 
     // user parameter is an input, not a model parameter
-    const { user, ...modelParams } = baseCompletionOptions;
+    const { user, tools, ...modelParams } = baseCompletionOptions;
 
     if (body.stream) {
       finalData = new GentraceStream(
@@ -375,6 +376,7 @@ export class GentraceChatCompletions extends OpenAI.Chat.Completions {
           "",
           {
             messages: renderedMessages,
+            tools,
             user,
             contentInputs: contentInputsArray,
           },
@@ -649,6 +651,7 @@ export class OpenAICreateChatCompletionStepRun extends StepRun {
     endTime: string,
     inputs: {
       messages?: Array<Chat.CreateChatCompletionRequestMessage>;
+      tools?: Array<ChatCompletionTool>;
       user?: string;
       contentInputs?: Record<string, string>[];
     },
