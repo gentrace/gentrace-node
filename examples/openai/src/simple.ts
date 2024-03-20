@@ -21,37 +21,18 @@ async function createCompletion() {
   const runner = pipeline.start();
 
   const completion = await runner.openai.chat.completions.create({
-    stream: true,
-    model: "gpt-4-1106-preview",
+    model: "gpt-4-turbo-preview",
     messages: [
       {
         role: "user",
         content: "Convert this sentence to JSON: John is 10 years old.",
       },
     ],
-    tools: [
-      {
-        type: "function",
-        function: {
-          name: "person",
-          description: "person_info",
-          parameters: {
-            type: "object",
-            properties: {
-              age: {
-                type: "integer",
-                description: "Age",
-              },
-            },
-            required: ["age"],
-          },
-        },
-      },
-    ],
+    stream: true,
   });
 
-  for await (const chunk of completion) {
-    console.log(JSON.stringify(chunk, null, 2));
+  for await (const message of completion) {
+    console.log(message);
   }
 
   const jsonObject = runner.toObject();
