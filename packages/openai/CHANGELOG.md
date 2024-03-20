@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.1.6
+
+### Patch Changes
+
+- ca26df6: Fix OpenAI streaming cost stats
+
 ## 4.1.5
 
 ### Patch Changes
