@@ -10,7 +10,7 @@
   "dependencies": {
     "@gentrace/core": "workspace:^2.1.2",
     "@gentrace/rivet-node": "workspace:^1.9.1",
-    "@ironclad/rivet-node": "1.9.1"
+    "@ironclad/rivet-node": "1.15.0"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
