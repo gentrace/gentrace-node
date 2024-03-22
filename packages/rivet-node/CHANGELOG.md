@@ -1,5 +1,11 @@
 # @gentrace/rivet
 
+## 1.9.5
+
+### Patch Changes
+
+- 6775688: Relax peer dep restriction
+
 ## 1.9.4
 
 ### Patch Changes
