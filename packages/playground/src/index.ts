@@ -9,7 +9,7 @@ interface customObject {
 }
 
 interface interactionObject {
-  interactionName: string;
+  name: string;
   inputFields: object;
   outputFields: object;
   interaction: any;
@@ -114,13 +114,13 @@ export class GentraceSession {
   }
 
   public registerInteraction(
-    interactionName: string,
+    name: string,
     inputFields: object,
     outputFields: object,
     interaction: any,
   ) {
     const interactionObject = {
-      interactionName: interactionName,
+      name: name,
       inputFields: inputFields,
       outputFields: outputFields,
       interaction: interaction,
