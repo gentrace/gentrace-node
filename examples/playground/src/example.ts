@@ -33,9 +33,40 @@ class User {
 }
 
 // Demo example
+const gentrace = new GentraceSession();
 
-async function summarizeTaskForViewer(task: Task, viewer: User): string {
-  return "summarizeTaskforViewer output";
+async function summarizeTaskForViewer(
+  task: Task,
+  viewer: User,
+): Promise<object> {
+  console.log("summarizeTaskForViewer task: " + task);
+  console.log("summarizeTaskForViewer user: " + viewer);
+
+  let new_args, id; // outputs to getStepInfo function
+
+  // first step
+
+  ({ new_args, id } = gentrace.getStepInfo("Summarization step 1", {
+    prompt: { type: "textField", default: "You are a helpful assistant...." },
+    temperature: { type: "slider", min: 0, max: 1, default: 0.5 },
+  }));
+
+  console.log("summarizeTaskForViewer new_args (1): " + new_args);
+  console.log("summarizeTaskForViewer id (1): " + id);
+
+  // second step
+
+  ({ new_args, id } = gentrace.getStepInfo("Summarization step 2", {
+    prompt: { type: "textField", default: "You are a helpful assistant...." },
+    temperature: { type: "slider", min: 0, max: 1, default: 0.5 },
+  }));
+
+  console.log("summarizeTaskForViewer new_args (2): " + new_args);
+  console.log("summarizeTaskForViewer id (2): " + id);
+
+  return {
+    answer: "summarizeTaskForViewer output",
+  };
 }
 
 async function demoExample() {
@@ -47,8 +78,6 @@ async function demoExample() {
     userBob,
   );
 
-  const gentrace = new GentraceSession();
-
   gentrace.registerCustomType("User");
   gentrace.registerCustomObject("User", "Alice", userAlice);
   gentrace.registerCustomObject("User", "Bob", userBob);
@@ -58,8 +87,8 @@ async function demoExample() {
   gentrace.registerInteraction(
     "Summarize Task for Viewer",
     {
-      task: "task",
-      viewer: "user",
+      task: "defaultTask",
+      viewer: "defaultViewer",
     },
     { summary: "string" },
     (inputs: { task: Task; viewer: User }) =>
