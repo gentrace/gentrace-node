@@ -263,7 +263,7 @@ export class GentraceSession {
 
         if (stepInputs.overrides.prompt) {
           newInputArgs.prompt = stepInputs.overrides.prompt;
-          newStepInputs.prompt.value = stepInputs.prompt.provider;
+          newStepInputs.prompt.value = stepInputs.overrides.prompt;
         }
       }
     }

@@ -16,7 +16,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_KEY ?? "",
 });
 
-async function summarizeTextOpenAI(
+async function summarizeTextOpenAI_Step1(
   model: string,
   text: string,
 ): Promise<string> {
@@ -28,6 +28,33 @@ async function summarizeTextOpenAI(
           role: "system", // content suggested in OpenAI docs
           content:
             "You are a highly skilled AI trained in language comprehension and summarization. I would like you to read the following text and summarize it into a concise abstract paragraph. Aim to retain the most important points, providing a coherent and readable summary that could help a person understand the main points of the discussion without needing to read the entire text. Please avoid unnecessary details or tangential points.",
+        },
+        {
+          role: "user",
+          content: text,
+        },
+      ],
+      temperature: 0.1,
+    });
+
+    return completion.choices[0].message.content || "";
+  } catch (error) {
+    console.error("Error:", error);
+  }
+  return "";
+}
+
+async function summarizeTextOpenAI_Step2(
+  model: string,
+  text: string,
+): Promise<string> {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: model, // gpt-3.5-turbo, gpt-4, etc.
+      messages: [
+        {
+          role: "system",
+          content: "You are able to summarize text into one sentence.",
         },
         {
           role: "user",
@@ -110,26 +137,39 @@ async function summarizeTaskForViewer(
   console.log("summarizeTaskForViewer newArgs (1): " + JSON.stringify(newArgs));
   console.log("summarizeTaskForViewer id (1): " + id);
 
-  const summary = await summarizeTextOpenAI(
+  const outputStep1 = await summarizeTextOpenAI_Step1(
     getModelName(newArgs.provider),
     newArgs.prompt,
   );
 
-  console.log(summary);
+  console.log("outputStep1: " + outputStep1);
 
   // second step
-  /*
-  ({ newArgs, id } = gentrace.getStepInfo("Summarization step 2", {
-    prompt: { type: "textField", default: "You are a helpful assistant...." },
-    temperature: { type: "slider", min: 0, max: 1, default: 0.5 },
-  }));
 
-  console.log("summarizeTaskForViewer new_args (2): " + JSON.stringify(newArgs));
+  defaultArgs = {
+    provider: {
+      type: "model",
+      default: "openai/gpt-3.5-turbo",
+    },
+    prompt: {
+      type: "text",
+      default: outputStep1,
+    },
+  };
+
+  ({ newArgs, id } = gentrace.getStepInfo("Summarization step 2", defaultArgs));
+
+  const outputStep2 = await summarizeTextOpenAI_Step2(
+    getModelName(newArgs.provider),
+    newArgs.prompt,
+  );
+
+  console.log("summarizeTaskForViewer newArg (2): " + JSON.stringify(newArgs));
   console.log("summarizeTaskForViewer id (2): " + id);
-*/
+  console.log("outputStep2: " + outputStep2);
 
   return {
-    summary: summary,
+    summary: outputStep2,
   };
 }
 
