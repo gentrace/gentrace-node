@@ -7,8 +7,6 @@ init({
   basePath: "http://localhost:3000/api",
 });
 
-// console.log("process.env.GENTRACE_API_KEY:   " + process.env.GENTRACE_API_KEY);
-
 // Demo example using OpenAI to summarize text
 
 const gentrace = new GentraceSession();
@@ -112,9 +110,6 @@ async function summarizeTaskForViewer(
   task: Task,
   viewer: User,
 ): Promise<object> {
-  console.log("summarizeTaskForViewer task: " + task);
-  console.log("summarizeTaskForViewer user: " + viewer);
-
   let newArgs, id, defaultArgs;
 
   // first step
@@ -134,15 +129,12 @@ async function summarizeTaskForViewer(
   ({ newArgs, id } = gentrace.getStepInfo("Summarization step 1", defaultArgs));
   // newArgs format: { provider: "openai/gpt-4", prompt: "...."}
 
-  console.log("summarizeTaskForViewer newArgs (1): " + JSON.stringify(newArgs));
-  console.log("summarizeTaskForViewer id (1): " + id);
-
   const outputStep1 = await summarizeTextOpenAI_Step1(
     getModelName(newArgs.provider),
     newArgs.prompt,
   );
 
-  console.log("outputStep1: " + outputStep1);
+  // console.log("outputStep1: " + outputStep1);
 
   // second step
 
@@ -164,9 +156,7 @@ async function summarizeTaskForViewer(
     newArgs.prompt,
   );
 
-  console.log("summarizeTaskForViewer newArg (2): " + JSON.stringify(newArgs));
-  console.log("summarizeTaskForViewer id (2): " + id);
-  console.log("outputStep2: " + outputStep2);
+  // console.log("outputStep2: " + outputStep2);
 
   return {
     summary: outputStep2,

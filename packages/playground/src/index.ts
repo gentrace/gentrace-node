@@ -7,20 +7,20 @@ export { init } from "@gentrace/core"; // for accessing the Gentrace API key
 import { AsyncLocalStorage } from "async_hooks";
 const asyncLocalStorage = new AsyncLocalStorage();
 
-interface customObject {
+interface CustomObject {
   typeName: string;
   objectName: string;
   object: object;
 }
 
-interface interactionObject {
+interface InteractionObject {
   name: string;
   inputFields: object;
   outputFields: object;
   interaction: any;
 }
 
-interface stepInputObject {
+interface StepInputObject {
   provider: {
     type: string;
     default: string;
@@ -35,17 +35,15 @@ interface stepInputObject {
 
 export class GentraceSession {
   registeredCustomTypes: string[] = [];
-  registeredCustomObjects: customObject[] = [];
-  registeredInteractionObjects: interactionObject[] = [];
+  registeredCustomObjects: CustomObject[] = [];
+  registeredInteractionObjects: InteractionObject[] = [];
 
-  //WEBSOCKET_URL = "ws://localhost:8080";
   WEBSOCKET_URL = "ws://localhost:3001";
 
   // format customObjects for sending to WebSocket server
-  private formatSetupTypes(customObjects: customObject[]): object {
+  private formatSetupTypes(customObjects: CustomObject[]): object {
     // create a Map to group customObjects by its typeName
     const groupedByMap = customObjects.reduce((acc, item) => {
-      // check if the typeName already exists in the accumulator
       if (!acc.has(item.typeName)) {
         acc.set(item.typeName, []); // initialize the group as needed
       }
@@ -82,8 +80,6 @@ export class GentraceSession {
   // and listen for messages from the server to run an interaction
 
   public start(): void {
-    console.log("GENTRACE_API_KEY: " + getGentraceApiKey());
-
     const setupEvent = {
       id: uuidv4(),
       init: "pg-sdk",
@@ -188,7 +184,6 @@ export class GentraceSession {
 
   public registerCustomType(typeName: string) {
     this.registeredCustomTypes.push(typeName);
-    //console.log("registeredCustomTypes: " + this.registeredCustomTypes);
     return { output: typeName };
   }
 
@@ -203,11 +198,6 @@ export class GentraceSession {
       object: object,
     };
     this.registeredCustomObjects.push(customObject);
-    /*
-    console.log(
-      "registeredCustomObjects: " + JSON.stringify(this.registeredCustomObjects)
-    );
-    */
   }
 
   public registerInteraction(
@@ -223,27 +213,17 @@ export class GentraceSession {
       interaction: interaction,
     };
     this.registeredInteractionObjects.push(interactionObject);
-    /*
-    console.log(
-      "registeredCustomObjects: " + JSON.stringify(this.registeredCustomObjects)
-    );
-    */
   }
 
   public getStepInfo(
     stepName: string,
-    defaultStepInputs: stepInputObject,
+    defaultStepInputs: StepInputObject,
   ): object {
-    console.log("getStepInfo called");
-
     const store = asyncLocalStorage.getStore() as any;
 
     // getting stored parameters for usage in this function
     const id = store.get("id");
     const stepOverrides = store.get("stepOverrides");
-
-    console.log("id: " + id);
-    console.log("stepOverrides: " + JSON.stringify(stepOverrides));
 
     // use a matching stepOverride (or fall back to the defaultStepInputs parameters)
 
