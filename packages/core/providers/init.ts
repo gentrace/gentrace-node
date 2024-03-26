@@ -8,6 +8,10 @@ export let GENTRACE_API_KEY:
   | ((name: string) => string)
   | ((name: string) => Promise<string>) = "";
 
+export function getGentraceApiKey() {
+  return GENTRACE_API_KEY;
+}
+
 export let GENTRACE_BASE_PATH = "";
 
 export let GENTRACE_BRANCH = "";
