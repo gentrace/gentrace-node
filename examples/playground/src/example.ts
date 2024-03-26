@@ -11,13 +11,13 @@ console.log("process.env.GENTRACE_API_KEY:   " + process.env.GENTRACE_API_KEY);
 // Task and User objects for demo example
 
 class Task {
-  task_name: string;
-  task_description: string;
+  taskName: string;
+  taskDescription: string;
   assignee: User;
 
-  constructor(task_name: string, task_description: string, assignee: User) {
-    this.task_name = task_name;
-    this.task_description = task_description;
+  constructor(taskName: string, taskDescription: string, assignee: User) {
+    this.taskName = taskName;
+    this.taskDescription = taskDescription;
     this.assignee = assignee;
   }
 }
@@ -42,28 +42,37 @@ async function summarizeTaskForViewer(
   console.log("summarizeTaskForViewer task: " + task);
   console.log("summarizeTaskForViewer user: " + viewer);
 
-  let new_args, id; // outputs to getStepInfo function
+  let newArgs, id; // outputs to getStepInfo function
 
   // first step
 
-  ({ new_args, id } = gentrace.getStepInfo("Summarization step 1", {
-    prompt: { type: "textField", default: "You are a helpful assistant...." },
-    temperature: { type: "slider", min: 0, max: 1, default: 0.5 },
+  ({ newArgs, id } = gentrace.getStepInfo("Summarization step 1", {
+    provider: {
+      type: "model",
+      default: "openai/gpt-3.5-turbo",
+    },
+    prompt: {
+      type: "text",
+      default:
+        "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way - in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.",
+    },
   }));
 
-  console.log("summarizeTaskForViewer new_args (1): " + new_args);
+  console.log(
+    "summarizeTaskForViewer new_args (1): " + JSON.stringify(newArgs),
+  );
   console.log("summarizeTaskForViewer id (1): " + id);
 
   // second step
-
-  ({ new_args, id } = gentrace.getStepInfo("Summarization step 2", {
+  /*
+  ({ newArgs, id } = gentrace.getStepInfo("Summarization step 2", {
     prompt: { type: "textField", default: "You are a helpful assistant...." },
     temperature: { type: "slider", min: 0, max: 1, default: 0.5 },
   }));
 
-  console.log("summarizeTaskForViewer new_args (2): " + new_args);
+  console.log("summarizeTaskForViewer new_args (2): " + JSON.stringify(newArgs));
   console.log("summarizeTaskForViewer id (2): " + id);
-
+*/
   return {
     answer: "summarizeTaskForViewer output",
   };
@@ -87,8 +96,8 @@ async function demoExample() {
   gentrace.registerInteraction(
     "Summarize Task for Viewer",
     {
-      task: "defaultTask",
-      viewer: "defaultViewer",
+      task: "Task",
+      viewer: "User",
     },
     { summary: "string" },
     (inputs: { task: Task; viewer: User }) =>

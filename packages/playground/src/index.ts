@@ -1,5 +1,6 @@
 import { getGentraceApiKey } from "@gentrace/core";
-import WebSocket from "ws";
+import { WebSocket } from "ws";
+import { v4 as uuidv4 } from "uuid";
 
 export { init } from "@gentrace/core"; // for accessing the Gentrace API key
 
@@ -24,8 +25,8 @@ export class GentraceSession {
   registeredCustomObjects: customObject[] = [];
   registeredInteractionObjects: interactionObject[] = [];
 
-  WEBSOCKET_URL = "ws://localhost:8080";
-  //WEBSOCKET_URL = "ws://localhost:3001"
+  //WEBSOCKET_URL = "ws://localhost:8080";
+  WEBSOCKET_URL = "ws://localhost:3001";
 
   // format customObjects for sending to WebSocket server
   private formatSetupTypes(customObjects: customObject[]): object {
@@ -71,65 +72,96 @@ export class GentraceSession {
     console.log("GENTRACE_API_KEY: " + getGentraceApiKey());
 
     const setupEvent = {
-      eventType: "setup",
-      interactions: this.registeredInteractionObjects,
-      types: this.formatSetupTypes(this.registeredCustomObjects),
+      id: uuidv4(),
+      init: "pg-sdk",
+      data: {
+        type: "setup",
+        apiKey: getGentraceApiKey(),
+        interactions: this.registeredInteractionObjects,
+        types: this.formatSetupTypes(this.registeredCustomObjects),
+      },
     };
 
-    const wsConnection = new WebSocket(this.WEBSOCKET_URL);
+    const ws = new WebSocket(this.WEBSOCKET_URL);
 
-    wsConnection.onopen = () => {
+    ws.addEventListener("open", () => {
       console.log("Connected to the WebSocket server at " + this.WEBSOCKET_URL);
+      console.log("-> Sending event of type " + setupEvent.data.type);
+      console.log(setupEvent);
 
-      // Send the first messages to the WebSocket server
+      ws.send(JSON.stringify(setupEvent));
+    });
 
-      wsConnection.send("Hello, WebSocket server!");
-      wsConnection.send("Sending message of eventType " + setupEvent.eventType);
+    ws.addEventListener("message", async (event) => {
+      const message = event.data.toString();
+      console.log("<-", message);
 
-      wsConnection.send(JSON.stringify(setupEvent));
-    };
+      if (this.isJson(message)) {
+        const received = JSON.parse(message);
+        const receivedEventType = received.data.type;
 
-    wsConnection.onerror = (error: any) => {
-      console.error(`WebSocket error: ${error}`);
-    };
+        console.log("Received event type: " + receivedEventType);
 
-    wsConnection.onmessage = (e: any) => {
-      console.log(`WebSocket Server says: ${e.data}`);
-
-      if (this.isJson(e.data)) {
-        const received = JSON.parse(e.data);
-        console.log("Received event type: " + received.eventType);
-
-        if (received.eventType == "setupResponse") {
+        if (receivedEventType == "setupResponse") {
           // receive event to display playground URL
-          console.log("start: playground URL to be displayed");
-        } else if (received.eventType == "run") {
-          for (const interationObject of this.registeredInteractionObjects) {
-            if (received.interaction == interationObject.name) {
-              // run the interaction function and store the related run info
-              asyncLocalStorage.run(new Map(), () => {
-                const store = asyncLocalStorage.getStore() as any;
-                store.set("id", received.id);
-                store.set("stepOverrides", received.stepOverrides);
+          console.log("Received Playground URL: " + received.data.url);
+        } else if (receivedEventType == "run") {
+          for (const interactionObject of this.registeredInteractionObjects) {
+            if (received.data.interaction == interactionObject.name) {
+              console.log("Running interaction: " + interactionObject.name);
 
-                let output;
-                if (received.inputs) {
+              // run the interaction function and store the related run info
+              asyncLocalStorage.run(new Map(), async () => {
+                const store = asyncLocalStorage.getStore() as any;
+
+                store.set("id", received.data.id); // interaction run ID
+                store.set("stepOverrides", received.data.stepOverrides);
+
+                let runOutput;
+                if (received.data.inputs) {
                   // use inputs in the received message
-                  output = interationObject.interaction(received.inputs);
+                  runOutput = await interactionObject.interaction(
+                    received.data.inputs,
+                  );
                 } else {
                   // use defaults in the interaction object
-                  output = interationObject.interaction(
-                    interationObject.inputFields,
+                  runOutput = await interactionObject.interaction(
+                    interactionObject.inputFields,
                   );
                 }
 
-                // TODO: SDK needs to send runResponse
+                /*
+                const runResponseEvent = {
+                  id: uuidv4(),
+                  for: received.from,
+                  data: {
+                    type: "runResponse",
+                    id: received.id,
+                    outputs: runOutput,
+                    steps: store.get("stepUsed"),
+                  }
+                };
+
+                console.log("ready to send runResponseEvent: ");
+                console.log(runResponseEvent);
+                console.log("-> Sending event of type "+runResponseEvent.data.type);
+
+                ws.send(JSON.stringify(runResponseEvent));
+*/
               });
             }
           }
         }
       }
-    };
+    });
+
+    ws.addEventListener("error", (e) => {
+      console.error("error", e);
+    });
+
+    ws.addEventListener("close", () => {
+      console.error("close");
+    });
   }
 
   public registerCustomType(typeName: string) {
@@ -176,19 +208,37 @@ export class GentraceSession {
     */
   }
 
-  public getStepInfo(stepName: string, stepInputs: object): object {
+  public getStepInfo(stepName: string, defaultStepInput: object): object {
     console.log("getStepInfo called");
 
     const store = asyncLocalStorage.getStore() as any;
 
-    console.log("id: " + store.get("id"));
-    console.log("stepOverrides: " + JSON.stringify(store.get("stepOverrides")));
+    const id = store.get("id");
+    const stepOverrides = store.get("stepOverrides");
 
-    // todo: use the stepOverrides (or use the default stepInputs parameter)
+    console.log("id: " + id);
+    console.log("defaultStepInput: " + JSON.stringify(defaultStepInput));
+    console.log("stepOverrides: " + JSON.stringify(stepOverrides));
+
+    // use a matching stepOverride (or fall back to the defaultStepInput)
+
+    let newInputArgs = null;
+    for (const stepInput of stepOverrides) {
+      if (stepInput.name == stepName) {
+        newInputArgs = stepInput.overrides;
+      }
+    }
+    if (!newInputArgs) {
+      newInputArgs = defaultStepInput;
+    }
+    //console.log("newInputArgs: " + JSON.stringify(newInputArgs));
+
+    // store the step inputs used back in asyncLocalStorage
+    store.set("stepUsed", JSON.stringify(newInputArgs));
 
     return {
-      new_args: "new_args_value",
-      id: "id_value",
+      newArgs: newInputArgs,
+      id: id,
     };
   }
 }
