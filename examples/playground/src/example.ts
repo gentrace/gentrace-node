@@ -105,22 +105,15 @@ async function summarizeTaskForViewer(
   };
 
   ({ newArgs, id } = gentrace.getStepInfo("Summarization step 1", defaultArgs));
-  /*
-
-  newArgs = {
-    provider: "openai/gpt-4",
-    prompt: "...."
-  }
-
-  */
+  // newArgs format: { provider: "openai/gpt-4", prompt: "...."}
 
   console.log("summarizeTaskForViewer newArgs (1): " + JSON.stringify(newArgs));
   console.log("summarizeTaskForViewer id (1): " + id);
 
-  const model = getModelName(newArgs.provider.default);
-  const text = newArgs.prompt.default;
-
-  const summary = await summarizeTextOpenAI(model, text);
+  const summary = await summarizeTextOpenAI(
+    getModelName(newArgs.provider),
+    newArgs.prompt,
+  );
 
   console.log(summary);
 

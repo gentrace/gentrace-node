@@ -24,10 +24,12 @@ interface stepInputObject {
   provider: {
     type: string;
     default: string;
+    value: string;
   };
   prompt: {
     type: string;
     default: string;
+    value: string;
   };
 }
 
@@ -230,39 +232,48 @@ export class GentraceSession {
 
   public getStepInfo(
     stepName: string,
-    defaultStepInput: stepInputObject,
+    defaultStepInputs: stepInputObject,
   ): object {
     console.log("getStepInfo called");
 
     const store = asyncLocalStorage.getStore() as any;
 
+    // getting stored parameters for usage in this function
     const id = store.get("id");
     const stepOverrides = store.get("stepOverrides");
 
     console.log("id: " + id);
-    console.log("defaultStepInput: " + JSON.stringify(defaultStepInput));
     console.log("stepOverrides: " + JSON.stringify(stepOverrides));
 
-    // use a matching stepOverride (or fall back to the defaultStepInput parameters)
+    // use a matching stepOverride (or fall back to the defaultStepInputs parameters)
 
-    let newInputArgs: stepInputObject = defaultStepInput;
-    for (const stepInput of stepOverrides) {
-      if (stepInput.name == stepName) {
-        if (stepInput.overrides.provider) {
-          newInputArgs.provider.default = stepInput.overrides.provider;
+    let newInputArgs = {
+      provider: defaultStepInputs.provider.default,
+      prompt: defaultStepInputs.prompt.default,
+    }; // initialize to the defaults
+
+    let newStepInputs = defaultStepInputs; // to be sent as a future RunResponse
+
+    for (const stepInputs of stepOverrides) {
+      if (stepInputs.name == stepName) {
+        if (stepInputs.overrides.provider) {
+          newInputArgs.provider = stepInputs.overrides.provider;
+          newStepInputs.provider.value = stepInputs.overrides.provider;
         }
 
-        if (stepInput.overrides.prompt) {
-          newInputArgs.prompt.default = stepInput.overrides.prompt;
+        if (stepInputs.overrides.prompt) {
+          newInputArgs.prompt = stepInputs.overrides.prompt;
+          newStepInputs.prompt.value = stepInputs.prompt.provider;
         }
       }
     }
 
+    //console.log("stepInputs: " + JSON.stringify(newStepInputs));
     //console.log("newInputArgs: " + JSON.stringify(newInputArgs));
 
-    // store the step inputs used back in asyncLocalStorage
+    // storing parameters for a future RunResponse to the WebSocket server
     store.set("stepName", stepName);
-    store.set("stepInputs", newInputArgs);
+    store.set("stepInputs", newStepInputs);
 
     return {
       newArgs: newInputArgs,
