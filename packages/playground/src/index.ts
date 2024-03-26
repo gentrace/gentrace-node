@@ -7,20 +7,20 @@ export { init } from "@gentrace/core"; // for accessing the Gentrace API key
 import { AsyncLocalStorage } from "async_hooks";
 const asyncLocalStorage = new AsyncLocalStorage();
 
-interface CustomObject {
+type CustomObject = {
   typeName: string;
   objectName: string;
   object: object;
-}
+};
 
-interface InteractionObject {
+type InteractionObject = {
   name: string;
   inputFields: object;
   outputFields: object;
   interaction: any;
-}
+};
 
-interface StepInputObject {
+type StepInputObject = {
   provider: {
     type: string;
     default: string;
@@ -31,7 +31,7 @@ interface StepInputObject {
     default: string;
     value: string;
   };
-}
+};
 
 export class GentraceSession {
   registeredCustomTypes: string[] = [];
