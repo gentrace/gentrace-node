@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.1
+
+### Patch Changes
+
+- 6744501: Playground SDK v0.1.0
+
 ## 2.4.0
 
 ### Minor Changes
