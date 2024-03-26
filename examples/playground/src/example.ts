@@ -1,4 +1,5 @@
 import { init, GentraceSession } from "@gentrace/playground";
+import OpenAI from "openai";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
@@ -6,7 +7,55 @@ init({
   basePath: "http://localhost:3000/api",
 });
 
-console.log("process.env.GENTRACE_API_KEY:   " + process.env.GENTRACE_API_KEY);
+// console.log("process.env.GENTRACE_API_KEY:   " + process.env.GENTRACE_API_KEY);
+
+// Demo example using OpenAI to summarize text
+
+const gentrace = new GentraceSession();
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_KEY ?? "",
+});
+
+async function summarizeTextOpenAI(
+  model: string,
+  text: string,
+): Promise<string> {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: model, // gpt-3.5-turbo, gpt-4, etc.
+      messages: [
+        {
+          role: "system", // content suggested in OpenAI docs
+          content:
+            "You are a highly skilled AI trained in language comprehension and summarization. I would like you to read the following text and summarize it into a concise abstract paragraph. Aim to retain the most important points, providing a coherent and readable summary that could help a person understand the main points of the discussion without needing to read the entire text. Please avoid unnecessary details or tangential points.",
+        },
+        {
+          role: "user",
+          content: text,
+        },
+      ],
+      temperature: 0.1,
+    });
+
+    return completion.choices[0].message.content || "";
+  } catch (error) {
+    console.error("Error:", error);
+  }
+  return "";
+}
+
+// utility function to get the substring after a / (slash)
+function getModelName(input: string): string {
+  if (input.length > 0) {
+    const index = input.indexOf("/");
+
+    if (index === -1) {
+      return input;
+    }
+    return input.substring(index + 1);
+  }
+  return null;
+}
 
 // Task and User objects for demo example
 
@@ -32,9 +81,6 @@ class User {
   }
 }
 
-// Demo example
-const gentrace = new GentraceSession();
-
 async function summarizeTaskForViewer(
   task: Task,
   viewer: User,
@@ -42,11 +88,11 @@ async function summarizeTaskForViewer(
   console.log("summarizeTaskForViewer task: " + task);
   console.log("summarizeTaskForViewer user: " + viewer);
 
-  let newArgs, id; // outputs to getStepInfo function
+  let newArgs, id, defaultArgs;
 
   // first step
 
-  ({ newArgs, id } = gentrace.getStepInfo("Summarization step 1", {
+  defaultArgs = {
     provider: {
       type: "model",
       default: "openai/gpt-3.5-turbo",
@@ -56,12 +102,27 @@ async function summarizeTaskForViewer(
       default:
         "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way - in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.",
     },
-  }));
+  };
 
-  console.log(
-    "summarizeTaskForViewer new_args (1): " + JSON.stringify(newArgs),
-  );
+  ({ newArgs, id } = gentrace.getStepInfo("Summarization step 1", defaultArgs));
+  /*
+
+  newArgs = {
+    provider: "openai/gpt-4",
+    prompt: "...."
+  }
+
+  */
+
+  console.log("summarizeTaskForViewer newArgs (1): " + JSON.stringify(newArgs));
   console.log("summarizeTaskForViewer id (1): " + id);
+
+  const model = getModelName(newArgs.provider.default);
+  const text = newArgs.prompt.default;
+
+  const summary = await summarizeTextOpenAI(model, text);
+
+  console.log(summary);
 
   // second step
   /*
@@ -73,8 +134,9 @@ async function summarizeTaskForViewer(
   console.log("summarizeTaskForViewer new_args (2): " + JSON.stringify(newArgs));
   console.log("summarizeTaskForViewer id (2): " + id);
 */
+
   return {
-    answer: "summarizeTaskForViewer output",
+    summary: summary,
   };
 }
 

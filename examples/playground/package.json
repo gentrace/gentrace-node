@@ -8,7 +8,8 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/playground": "workspace:^0.1.0"
+    "@gentrace/playground": "workspace:^0.1.0",
+    "openai": "^4.29.2"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",

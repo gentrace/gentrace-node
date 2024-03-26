@@ -20,6 +20,17 @@ interface interactionObject {
   interaction: any;
 }
 
+interface stepInputObject {
+  provider: {
+    type: string;
+    default: string;
+  };
+  prompt: {
+    type: string;
+    default: string;
+  };
+}
+
 export class GentraceSession {
   registeredCustomTypes: string[] = [];
   registeredCustomObjects: customObject[] = [];
@@ -130,24 +141,33 @@ export class GentraceSession {
                   );
                 }
 
-                /*
+                // collect data stored within getStepInfo function
+                const stepsArray = [
+                  {
+                    name: store.get("stepName"),
+                    inputs: store.get("stepInputs"),
+                  },
+                ];
+
+                // create a new runResponse event
                 const runResponseEvent = {
                   id: uuidv4(),
                   for: received.from,
                   data: {
                     type: "runResponse",
-                    id: received.id,
+                    id: store.get("id"), // this is the ID for the run
                     outputs: runOutput,
-                    steps: store.get("stepUsed"),
-                  }
+                    steps: stepsArray,
+                  },
                 };
 
-                console.log("ready to send runResponseEvent: ");
+                console.log(
+                  "-> Sending event of type " + runResponseEvent.data.type,
+                );
                 console.log(runResponseEvent);
-                console.log("-> Sending event of type "+runResponseEvent.data.type);
+                console.log(JSON.stringify(runResponseEvent));
 
                 ws.send(JSON.stringify(runResponseEvent));
-*/
               });
             }
           }
@@ -208,7 +228,10 @@ export class GentraceSession {
     */
   }
 
-  public getStepInfo(stepName: string, defaultStepInput: object): object {
+  public getStepInfo(
+    stepName: string,
+    defaultStepInput: stepInputObject,
+  ): object {
     console.log("getStepInfo called");
 
     const store = asyncLocalStorage.getStore() as any;
@@ -220,21 +243,26 @@ export class GentraceSession {
     console.log("defaultStepInput: " + JSON.stringify(defaultStepInput));
     console.log("stepOverrides: " + JSON.stringify(stepOverrides));
 
-    // use a matching stepOverride (or fall back to the defaultStepInput)
+    // use a matching stepOverride (or fall back to the defaultStepInput parameters)
 
-    let newInputArgs = null;
+    let newInputArgs: stepInputObject = defaultStepInput;
     for (const stepInput of stepOverrides) {
       if (stepInput.name == stepName) {
-        newInputArgs = stepInput.overrides;
+        if (stepInput.overrides.provider) {
+          newInputArgs.provider.default = stepInput.overrides.provider;
+        }
+
+        if (stepInput.overrides.prompt) {
+          newInputArgs.prompt.default = stepInput.overrides.prompt;
+        }
       }
     }
-    if (!newInputArgs) {
-      newInputArgs = defaultStepInput;
-    }
+
     //console.log("newInputArgs: " + JSON.stringify(newInputArgs));
 
     // store the step inputs used back in asyncLocalStorage
-    store.set("stepUsed", JSON.stringify(newInputArgs));
+    store.set("stepName", stepName);
+    store.set("stepInputs", newInputArgs);
 
     return {
       newArgs: newInputArgs,
