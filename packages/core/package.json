@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/core",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "Core Gentrace Node.JS library",
   "repository": {
     "type": "git",

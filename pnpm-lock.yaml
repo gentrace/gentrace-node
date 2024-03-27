@@ -192,7 +192,7 @@ importers:
   examples/full:
     dependencies:
       '@gentrace/core':
-        specifier: 2.4.1
+        specifier: 2.4.2
         version: link:../../packages/core
       '@gentrace/openai':
         specifier: workspace:^
@@ -500,7 +500,7 @@ importers:
   examples/playground:
     dependencies:
       '@gentrace/playground':
-        specifier: workspace:^0.2.0
+        specifier: workspace:^0.2.1
         version: link:../../packages/playground
       openai:
         specifier: ^4.29.2
@@ -1006,7 +1006,7 @@ importers:
   packages/playground:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.4.1
+        specifier: workspace:^2.4.2
         version: link:../core
       uuid:
         specifier: ^9.0.0
