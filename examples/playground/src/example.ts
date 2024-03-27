@@ -4,7 +4,8 @@ import OpenAI from "openai";
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   runName: "Example run for Playground SDK",
-  basePath: "http://localhost:3000/api",
+  // basePath: "http://localhost:3000/api",
+  basePath: "https://staging.gentrace.ai/api",
 });
 
 // Demo example using OpenAI to summarize text

@@ -14,6 +14,10 @@ export function getGentraceApiKey() {
 
 export let GENTRACE_BASE_PATH = "";
 
+export function getGentraceBasePath() {
+  return GENTRACE_BASE_PATH;
+}
+
 export let GENTRACE_BRANCH = "";
 
 export let GENTRACE_COMMIT = "";
