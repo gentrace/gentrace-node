@@ -1,4 +1,4 @@
-import { getGentraceApiKey } from "@gentrace/core";
+import { getGentraceApiKey, getGentraceBasePath } from "@gentrace/core";
 import { WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
 
@@ -38,7 +38,34 @@ export class GentraceSession {
   registeredCustomObjects: CustomObject[] = [];
   registeredInteractionObjects: InteractionObject[] = [];
 
-  WEBSOCKET_URL = "ws://localhost:3001";
+  // get a WebSocket URL based on the Gentrace base path
+
+  private getWebSocketUrl(): string {
+    let webSocketUrl;
+    //  basePath example: "https://staging.gentrace.ai/api",
+
+    const basePath = getGentraceBasePath();
+
+    if (basePath.startsWith("http://localhost")) {
+      webSocketUrl = "ws://localhost:3001";
+    } else {
+      // extract the domain from the base path
+      try {
+        const parsedUrl = new URL(basePath);
+        if ((parsedUrl.protocol = "https:")) {
+          webSocketUrl = "wss://";
+        } else {
+          webSocketUrl = "ws://";
+        }
+        webSocketUrl = webSocketUrl + parsedUrl.hostname + "/ws";
+      } catch (error) {
+        console.error("Invalid URL:", error);
+        return "";
+      }
+    }
+
+    return webSocketUrl;
+  }
 
   // format customObjects for sending to WebSocket server
   private formatSetupTypes(customObjects: CustomObject[]): object {
@@ -91,10 +118,11 @@ export class GentraceSession {
       },
     };
 
-    const ws = new WebSocket(this.WEBSOCKET_URL);
+    const wsUrl = this.getWebSocketUrl();
+    const ws = new WebSocket(wsUrl);
 
     ws.addEventListener("open", () => {
-      console.log("Connected to the WebSocket server at " + this.WEBSOCKET_URL);
+      console.log("Connected to the WebSocket server at " + wsUrl);
       console.log("-> Sending event of type " + setupEvent.data.type);
       console.log(setupEvent);
 
@@ -139,14 +167,6 @@ export class GentraceSession {
                   );
                 }
 
-                // collect data stored within getStepInfo function
-                const stepsArray = [
-                  {
-                    name: store.get("stepName"),
-                    inputs: store.get("stepInputs"),
-                  },
-                ];
-
                 // create a new runResponse event
                 const runResponseEvent = {
                   id: uuidv4(),
@@ -155,7 +175,7 @@ export class GentraceSession {
                     type: "runResponse",
                     id: store.get("id"), // this is the ID for the run
                     outputs: runOutput,
-                    steps: stepsArray,
+                    steps: store.get("stepsArray"), // this is set in the getStepInfo function
                   },
                 };
 
@@ -251,9 +271,28 @@ export class GentraceSession {
     //console.log("stepInputs: " + JSON.stringify(newStepInputs));
     //console.log("newInputArgs: " + JSON.stringify(newInputArgs));
 
-    // storing parameters for a future RunResponse to the WebSocket server
-    store.set("stepName", stepName);
-    store.set("stepInputs", newStepInputs);
+    // storing steps for a future RunResponse to the WebSocket server
+    if (store.get("stepsArray") == undefined) {
+      // store the first step
+      store.set("stepsArray", [
+        {
+          name: stepName,
+          inputs: newStepInputs,
+        },
+      ]);
+    } else {
+      // these are subsequent steps
+      // set prompt as output from the previous step (which is in the default)
+      /*
+      newStepInputs.prompt.default = defaultStepInputs.prompt.default;
+      newStepInputs.prompt.value = defaultStepInputs.prompt.default;
+
+      store.get("stepsArray").push({
+        name: stepName,
+        inputs: newStepInputs,
+      });
+      */
+    }
 
     return {
       newArgs: newInputArgs,
