@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.2.2
+
+### Patch Changes
+
+- 589bb22: send ping to keep server connection open for longer
+
 ## 0.2.1
 
 ### Patch Changes
