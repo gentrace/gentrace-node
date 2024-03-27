@@ -127,6 +127,12 @@ export class GentraceSession {
       console.log(setupEvent);
 
       ws.send(JSON.stringify(setupEvent));
+
+      // send ping to keep server connection open for longer
+      setInterval(() => {
+        console.log("-> ping");
+        ws.send(JSON.stringify({ id: uuidv4(), ping: true }));
+      }, 10000);
     });
 
     ws.addEventListener("message", async (event) => {
