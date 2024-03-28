@@ -143,7 +143,9 @@ export class GentraceSession {
         const received = JSON.parse(message);
         const receivedEventType = received.data.type;
 
-        console.log("Received event type: " + receivedEventType);
+        if (receivedEventType) {
+          console.log("Received event type: " + receivedEventType);
+        }
 
         if (receivedEventType == "setupResponse") {
           // receive event to display playground URL
@@ -244,6 +246,7 @@ export class GentraceSession {
   public getStepInfo(
     stepName: string,
     defaultStepInputs: StepInputObject,
+    interpolationVariables?: Record<string, any>,
   ): object {
     const store = asyncLocalStorage.getStore() as any;
 
@@ -284,6 +287,7 @@ export class GentraceSession {
         {
           name: stepName,
           inputs: newStepInputs,
+          interpolation: interpolationVariables,
         },
       ]);
     } else {
