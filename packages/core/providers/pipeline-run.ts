@@ -34,9 +34,9 @@ type SelectStepRun = Pick<
   "inputs" | "outputs" | "modelParams" | "context"
 >;
 
-type StepRunWhitelistDescriptor = {
-  [k in keyof SelectStepRun]: boolean | string[];
-};
+type StepRunWhitelistDescriptor = Partial<{
+  [k in keyof SelectStepRun]: boolean | string[] | string;
+}>;
 
 export class PipelineRun {
   private pipeline: PipelineLike;
@@ -273,7 +273,7 @@ export class PipelineRun {
     return JSON.stringify(this.toObject(), null, 2);
   }
 
-  public static async submitFromJson(
+  public static getRedactedRunFromJson(
     json: string | object,
     options?: {
       waitForServer?: boolean;
@@ -283,21 +283,15 @@ export class PipelineRun {
         | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]);
     },
   ) {
-    const pipeline = options?.pipeline;
-    const waitForServer = options?.waitForServer ?? false;
     const selectFields = options?.selectFields;
-
-    const api = new V1Api(pipeline ? pipeline.config : globalGentraceConfig);
+    const pipeline = options?.pipeline;
 
     const pipelineRunObject = (
       typeof json === "string" ? safeJsonParse(json) : json
     ) as PipelineRunPayload | null;
 
     if (!pipelineRunObject) {
-      if (pipeline) {
-        pipeline.logWarn("Invalid JSON passed to submitFromJson");
-      }
-      return {};
+      return null;
     }
 
     function isSingleStepRunWhitelist(
@@ -308,7 +302,7 @@ export class PipelineRun {
       return typeof value !== "function";
     }
 
-    if (pipeline && selectFields) {
+    if (selectFields) {
       const stepRuns = pipelineRunObject.stepRuns;
       let selectedFields: StepRunWhitelistDescriptor[];
 
@@ -387,6 +381,37 @@ export class PipelineRun {
 
     if (pipeline) {
       pipeline.logInfo("Submitting PipelineRun to Gentrace");
+    }
+
+    return pipelineRunObject;
+  }
+
+  public static async submitFromJson(
+    json: string | object,
+    options?: {
+      waitForServer?: boolean;
+      pipeline?: PipelineLike;
+      selectFields?:
+        | StepRunWhitelistDescriptor
+        | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]);
+    },
+  ) {
+    const pipeline = options?.pipeline;
+    const waitForServer = options?.waitForServer ?? false;
+
+    const api = new V1Api(pipeline ? pipeline.config : globalGentraceConfig);
+
+    const pipelineRunObject = PipelineRun.getRedactedRunFromJson(json, {
+      waitForServer: false,
+      pipeline,
+      selectFields: options?.selectFields,
+    });
+
+    if (!pipelineRunObject) {
+      if (pipeline) {
+        pipeline.logWarn("Invalid JSON passed to submitFromJson");
+      }
+      return {};
     }
 
     const submission = api.v1RunPost(pipelineRunObject);
