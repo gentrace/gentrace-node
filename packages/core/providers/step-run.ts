@@ -1,7 +1,7 @@
 import { Context } from "./context";
 
 export class StepRun {
-  public provider: string;
+  public providerName: string;
   public invocation: string;
 
   public elapsedTime: number;
@@ -14,7 +14,7 @@ export class StepRun {
   public context: Context;
 
   constructor(
-    provider: string,
+    providerName: string,
     invocation: string,
     elapsedTime: number,
     startTime: string,
@@ -24,7 +24,7 @@ export class StepRun {
     outputs: any,
     context: Context,
   ) {
-    this.provider = provider;
+    this.providerName = providerName;
     this.invocation = invocation;
     this.elapsedTime = elapsedTime;
     this.startTime = startTime;
