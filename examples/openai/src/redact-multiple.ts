@@ -20,9 +20,13 @@ async function createCompletion() {
 
   const runner = pipeline.start();
 
-  const completion = await runner.openai.chat.completions.create({
+  await runner.openai.chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [
+      {
+        role: "user",
+        content: "Convert this sentence to JSON: John is 10 years old.",
+      },
       {
         role: "user",
         content: "Convert this sentence to JSON: John is 10 years old.",
@@ -30,7 +34,7 @@ async function createCompletion() {
     ],
   });
 
-  const completionTwo = await runner.openai.chat.completions.create({
+  await runner.openai.chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [
       {
@@ -46,7 +50,7 @@ async function createCompletion() {
     waitForServer: true,
     selectFields: (steps) => {
       return steps.map((step, index) => ({
-        inputs: index === 0,
+        inputs: index === 0 ? ["messages[0].role"] : false,
         outputs: index === 1,
         modelParams: false,
       }));
