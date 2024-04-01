@@ -7,14 +7,14 @@ init({
 
 async function createMultiple() {
   const creationCount = await createTestCases({
-    pipelineSlug: "testing-pipeline-id",
-    testCases: [
-      {
+    pipelineSlug: "testing",
+    testCases: Array.from({ length: 1000 }).map(() => {
+      return {
         name: `TC ${Math.random()}`,
         inputs: { a: 1, b: 2 },
         expectedOutputs: { c: 3 },
-      },
-    ],
+      };
+    }),
   });
 
   console.log("Creation count", creationCount);
