@@ -414,6 +414,8 @@ export class PipelineRun {
       return {};
     }
 
+    console.log("got here");
+
     const submission = api.v1RunPost(pipelineRunObject);
 
     if (!waitForServer) {
@@ -455,7 +457,15 @@ export class PipelineRun {
   }
 
   public async submit(
-    { waitForServer }: { waitForServer: boolean } = { waitForServer: false },
+    {
+      waitForServer,
+      selectFields,
+    }: {
+      waitForServer: boolean;
+      selectFields?:
+        | StepRunWhitelistDescriptor
+        | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]);
+    } = { waitForServer: false },
   ) {
     const testCounter = getTestCounter();
 
@@ -471,6 +481,7 @@ export class PipelineRun {
     const response = await PipelineRun.submitFromJson(pipelineRunObject, {
       waitForServer,
       pipeline: this.pipeline,
+      selectFields,
     });
 
     return response;
