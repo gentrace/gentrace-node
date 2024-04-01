@@ -50,7 +50,15 @@ async function createCompletion() {
     waitForServer: true,
     selectFields: (steps) => {
       return steps.map((step, index) => ({
-        inputs: index === 0 ? ["messages[0].role"] : false,
+        // inputs: true,
+        // inputs: index === 0 ? ["messages[0].role", "messages[0].content"] : false,
+        inputs:
+          index === 0
+            ? [
+                ["messages", "0", "role"],
+                ["messages", "0", "content"],
+              ]
+            : false,
         outputs: index === 1,
         modelParams: false,
       }));
