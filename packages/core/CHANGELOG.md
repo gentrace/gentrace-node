@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.3
+
+### Patch Changes
+
+- d870178: Fix Acorn usage issue
+
 ## 2.4.2
 
 ### Patch Changes
