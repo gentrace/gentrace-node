@@ -414,8 +414,6 @@ export class PipelineRun {
       return {};
     }
 
-    console.log("got here");
-
     const submission = api.v1RunPost(pipelineRunObject);
 
     if (!waitForServer) {
