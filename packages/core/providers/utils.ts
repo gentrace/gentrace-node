@@ -1,5 +1,5 @@
 import { Context } from "./context";
-import acorn from "acorn";
+import { Pattern, parse } from "acorn";
 
 export type GentraceParams = {
   pipelineSlug?: string;
@@ -15,7 +15,7 @@ export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function getSingleParamName(param: acorn.Pattern, index: number) {
+function getSingleParamName(param: Pattern, index: number) {
   if (param.type === "Identifier") {
     return param.name;
   } else if (
@@ -34,7 +34,7 @@ function getParamNamesAnonymousFunction<F extends (...args: any[]) => any>(
 ) {
   let inputs: string[] = [];
   try {
-    const result = acorn.parse(`(${func.toString()})`, {
+    const result = parse(`(${func.toString()})`, {
       ecmaVersion: 2020,
     });
 
@@ -59,7 +59,7 @@ function getParamNamesAnonymousFunction<F extends (...args: any[]) => any>(
 export function getParamNames<F extends (...args: any[]) => any>(func: F) {
   let inputs: string[] = [];
   try {
-    const result = acorn.parse(func.toString(), {
+    const result = parse(func.toString(), {
       ecmaVersion: 2020,
     });
 
