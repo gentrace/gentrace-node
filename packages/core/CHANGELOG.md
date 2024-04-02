@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.5
+
+### Patch Changes
+
+- ad988ed: Fix typing with selectFields()
+
 ## 2.4.4
 
 ### Patch Changes
