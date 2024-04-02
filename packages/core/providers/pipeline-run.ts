@@ -35,7 +35,11 @@ type SelectStepRun = Pick<
 >;
 
 type StepRunWhitelistDescriptor = Partial<{
-  [k in keyof SelectStepRun]: boolean | string[] | string[][] | string;
+  [k in keyof SelectStepRun]:
+    | boolean
+    | string[]
+    | (string[] | string)[]
+    | string;
 }>;
 
 export class PipelineRun {
@@ -459,7 +463,7 @@ export class PipelineRun {
       waitForServer,
       selectFields,
     }: {
-      waitForServer: boolean;
+      waitForServer?: boolean;
       selectFields?:
         | StepRunWhitelistDescriptor
         | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]);
