@@ -34,8 +34,6 @@ async function createCompletion() {
     ],
   });
 
-  console.log("Done 1");
-
   await runner.openai.chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [
@@ -45,8 +43,6 @@ async function createCompletion() {
       },
     ],
   });
-
-  console.log("Done 2");
 
   const jsonObject = runner.toObject();
 
@@ -61,6 +57,7 @@ async function createCompletion() {
             ? [
                 ["messages", "0", "role"],
                 ["messages", "0", "content"],
+                "messages[0].testing",
               ]
             : false,
         outputs: index === 1,
@@ -68,9 +65,5 @@ async function createCompletion() {
       }));
     },
   });
-
-  console.log("Done 3");
-
-  console.log("Redacted", redactedObject);
 }
 createCompletion();
