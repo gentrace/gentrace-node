@@ -64,6 +64,8 @@ export class PipelineRun {
 
   private id: string = v4();
 
+  private instantiationTime: string = new Date().toISOString();
+
   constructor({
     pipeline,
     context,
@@ -147,15 +149,19 @@ export class PipelineRun {
         ),
       );
     } else {
-      const elapsedTime = 0;
-      const startAndEndTime = new Date().toISOString();
+      const endTime = new Date().toISOString();
+
+      const elapsedTime =
+        new Date(endTime).getTime() -
+        new Date(this.instantiationTime).getTime();
+
       this.stepRuns.push(
         new StepRun(
           step.providerName ?? "undeclared",
           step.invocation ?? "undeclared",
           elapsedTime,
-          startAndEndTime,
-          startAndEndTime,
+          this.instantiationTime,
+          endTime,
           step.inputs,
           step.modelParams ?? {},
           step.outputs,
