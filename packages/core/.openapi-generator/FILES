@@ -35,6 +35,8 @@ models/pipeline.ts
 models/resolved-step-run.ts
 models/run-request.ts
 models/run-response.ts
+models/run-v2-step-runs-inner.ts
+models/run-v2.ts
 models/searchable-string-input-one-of.ts
 models/searchable-string-input.ts
 models/searchable-unix-seconds-input-one-of.ts

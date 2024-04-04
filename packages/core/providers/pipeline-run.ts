@@ -6,7 +6,11 @@ import { RunResponse } from "../models/run-response";
 import { Context, CoreStepRunContext } from "./context";
 import { StepRun, PartialStepRunType } from "./step-run";
 import { getParamNames, getTestCounter, safeJsonParse, zip } from "./utils";
-import { globalGentraceConfig, globalRequestBuffer } from "./init";
+import {
+  globalGentraceConfig,
+  globalRequestBuffer,
+  globalGentraceApiV2,
+} from "./init";
 import _ from "lodash";
 
 type PRStepRunType = Omit<PartialStepRunType, "context"> & {
@@ -41,6 +45,16 @@ type StepRunWhitelistDescriptor = Partial<{
     | (string[] | string)[]
     | string;
 }>;
+
+export const getRun = async (id: string) => {
+  if (!globalGentraceApiV2) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  const response = await globalGentraceApiV2.v2RunsIdGet(id);
+  const run = response.data;
+  return run;
+};
 
 export class PipelineRun {
   private pipeline: PipelineLike;

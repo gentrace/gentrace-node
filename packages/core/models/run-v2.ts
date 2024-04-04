@@ -12,16 +12,26 @@
  * Do not edit the class manually.
  */
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { RunV2StepRunsInner } from "./run-v2-step-runs-inner";
+
 /**
  *
  * @export
- * @interface V2EvaluationsBulkPost200Response
+ * @interface RunV2
  */
-export interface V2EvaluationsBulkPost200Response {
+export interface RunV2 {
+  /**
+   * The ID of the run
+   * @type {string}
+   * @memberof RunV2
+   */
+  id: string;
   /**
    *
-   * @type {number}
-   * @memberof V2EvaluationsBulkPost200Response
+   * @type {Array<RunV2StepRunsInner>}
+   * @memberof RunV2
    */
-  count: number;
+  stepRuns: Array<RunV2StepRunsInner>;
 }
