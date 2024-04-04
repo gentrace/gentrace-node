@@ -1,6 +1,6 @@
 {
-  "name": "@examples/playground",
-  "version": "0.2.1",
+  "name": "@examples/core",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
