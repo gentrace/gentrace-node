@@ -26,6 +26,8 @@ export * from "./pipeline-v2";
 export * from "./resolved-step-run";
 export * from "./run-request";
 export * from "./run-response";
+export * from "./run-v2";
+export * from "./run-v2-step-runs-inner";
 export * from "./searchable-string-input";
 export * from "./searchable-string-input-one-of";
 export * from "./searchable-unix-seconds-input";
