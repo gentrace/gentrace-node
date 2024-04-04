@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.7
+
+### Patch Changes
+
+- b5f953a: Allow checkpoint() to work against PipelineRun instantiation time
+
 ## 2.4.6
 
 ### Patch Changes
