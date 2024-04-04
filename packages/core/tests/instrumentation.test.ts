@@ -153,7 +153,7 @@ describe("test_openai_completion_pipeline", () => {
     expect(first.elapsedTime).toEqual(0);
 
     expect(first.invocation).toEqual("undeclared");
-    expect(first.provider).toEqual("undeclared");
+    expect(first.providerName).toEqual("undeclared");
   });
 
   it("should have all params specified with measure()", async () => {
@@ -217,7 +217,7 @@ describe("test_openai_completion_pipeline", () => {
     expect(stringify(first.modelParams)).toBe(stringify({ b: 5 }));
 
     expect(first.invocation).toEqual("customAddition");
-    expect(first.provider).toEqual("undeclared");
+    expect(first.providerName).toEqual("undeclared");
   });
 
   it("should have steps with proper time spacing", async () => {

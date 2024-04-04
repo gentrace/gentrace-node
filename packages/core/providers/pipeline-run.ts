@@ -11,6 +11,7 @@ import {
   globalRequestBuffer,
   globalGentraceApiV2,
 } from "./init";
+import _ from "lodash";
 
 type PRStepRunType = Omit<PartialStepRunType, "context"> & {
   context?: CoreStepRunContext;
@@ -29,18 +30,21 @@ type PipelineRunPayload = {
   metadata: {};
   previousRunId: string;
   collectionMethod: "runner";
-  stepRuns: {
-    providerName: string;
-    elapsedTime: number;
-    startTime: string;
-    endTime: string;
-    invocation: string;
-    modelParams: any;
-    inputs: any;
-    outputs: any;
-    context: {};
-  }[];
+  stepRuns: StepRun[];
 };
+
+type SelectStepRun = Pick<
+  StepRun,
+  "inputs" | "outputs" | "modelParams" | "context"
+>;
+
+type StepRunWhitelistDescriptor = Partial<{
+  [k in keyof SelectStepRun]:
+    | boolean
+    | string[]
+    | (string[] | string)[]
+    | string;
+}>;
 
 export const getRun = async (id: string) => {
   if (!globalGentraceApiV2) {
@@ -131,7 +135,7 @@ export class PipelineRun {
       const endTimeNew = new Date().toISOString();
       this.stepRuns.push(
         new StepRun(
-          step.provider ?? "undeclared",
+          step.providerName ?? "undeclared",
           step.invocation ?? "undeclared",
           elapsedTime,
           stepStartTime,
@@ -147,7 +151,7 @@ export class PipelineRun {
       const startAndEndTime = new Date().toISOString();
       this.stepRuns.push(
         new StepRun(
-          step.provider ?? "undeclared",
+          step.providerName ?? "undeclared",
           step.invocation ?? "undeclared",
           elapsedTime,
           startAndEndTime,
@@ -207,7 +211,7 @@ export class PipelineRun {
 
     this.stepRuns.push(
       new StepRun(
-        stepInfo?.provider ?? "undeclared",
+        stepInfo?.providerName ?? "undeclared",
         stepInfo?.invocation ?? "undeclared",
         elapsedTime,
         new Date(startTime).toISOString(),
@@ -227,7 +231,7 @@ export class PipelineRun {
 
     const updatedStepRuns = this.stepRuns.map(
       ({
-        provider: providerName,
+        providerName: providerName,
         elapsedTime,
         startTime,
         endTime,
@@ -287,28 +291,145 @@ export class PipelineRun {
     return JSON.stringify(this.toObject(), null, 2);
   }
 
-  public static async submitFromJson(
+  public static getRedactedRunFromJson(
     json: string | object,
-    options?: { waitForServer?: boolean; pipeline?: PipelineLike },
+    options?: {
+      waitForServer?: boolean;
+      pipeline?: PipelineLike;
+      selectFields?:
+        | StepRunWhitelistDescriptor
+        | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]);
+    },
   ) {
+    const selectFields = options?.selectFields;
     const pipeline = options?.pipeline;
-    const waitForServer = options?.waitForServer ?? false;
-
-    const api = new V1Api(pipeline ? pipeline.config : globalGentraceConfig);
 
     const pipelineRunObject = (
       typeof json === "string" ? safeJsonParse(json) : json
     ) as PipelineRunPayload | null;
 
     if (!pipelineRunObject) {
-      if (pipeline) {
-        pipeline.logWarn("Invalid JSON passed to submitFromJson");
+      return null;
+    }
+
+    function isSingleStepRunWhitelist(
+      value:
+        | StepRunWhitelistDescriptor
+        | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]),
+    ): value is StepRunWhitelistDescriptor {
+      return typeof value !== "function";
+    }
+
+    if (selectFields) {
+      const stepRuns = pipelineRunObject.stepRuns;
+      let selectedFields: StepRunWhitelistDescriptor[];
+
+      if (!isSingleStepRunWhitelist(selectFields)) {
+        selectedFields = selectFields(stepRuns);
+
+        if (selectedFields.length !== stepRuns.length && pipeline) {
+          pipeline.logWarn(
+            "The selectFields function did not return the correct number of fields.",
+          );
+        }
+
+        if (selectedFields.length < stepRuns.length && pipeline) {
+          // Fill rest with the last element
+          const last = selectedFields[selectedFields.length - 1];
+          selectedFields = selectedFields.concat(
+            Array.from({ length: stepRuns.length - selectedFields.length }).map(
+              () => last,
+            ),
+          );
+        }
+      } else {
+        selectedFields = Array.from({ length: stepRuns.length }).map(
+          () => selectFields,
+        );
       }
-      return {};
+
+      pipelineRunObject.stepRuns = stepRuns.map((stepRun, index) => {
+        const selectedFieldsForStep = selectedFields[index];
+        const updatedStepRun = { ...stepRun };
+
+        if (selectedFieldsForStep) {
+          for (const [fieldKey, selector] of Object.entries(
+            selectedFieldsForStep,
+          )) {
+            const fieldKeyTyped = fieldKey as keyof StepRun;
+            const stepRunValue = updatedStepRun[fieldKeyTyped];
+            if (!stepRunValue) {
+              continue;
+            }
+
+            const fieldType = typeof stepRunValue;
+            const isSelectorArray = Array.isArray(selector);
+            const isSelectorString = typeof selector === "string";
+            const isSelectorBoolean = typeof selector === "boolean";
+            if (
+              fieldType === "object" &&
+              (isSelectorArray || isSelectorString)
+            ) {
+              const newValue: Record<string, any> = {};
+
+              if (isSelectorString) {
+                const whiteListValue = _.get(stepRunValue, selector);
+                _.set(newValue, selector, whiteListValue);
+              } else if (isSelectorArray) {
+                for (const key of selector) {
+                  const whiteListValue = _.get(stepRunValue, key);
+                  _.set(newValue, key, whiteListValue);
+                }
+              }
+
+              // @ts-ignore
+              updatedStepRun[fieldKeyTyped] = newValue;
+            } else if (fieldType === "object" && isSelectorBoolean) {
+              if (!selector) {
+                // @ts-ignore
+                updatedStepRun[fieldKeyTyped] = {};
+              }
+            }
+          }
+        }
+
+        return updatedStepRun;
+      });
     }
 
     if (pipeline) {
       pipeline.logInfo("Submitting PipelineRun to Gentrace");
+    }
+
+    return pipelineRunObject;
+  }
+
+  public static async submitFromJson(
+    json: string | object,
+    options?: {
+      waitForServer?: boolean;
+      pipeline?: PipelineLike;
+      selectFields?:
+        | StepRunWhitelistDescriptor
+        | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]);
+    },
+  ) {
+    const pipeline = options?.pipeline;
+    const waitForServer = options?.waitForServer ?? false;
+
+    const api = new V1Api(pipeline ? pipeline.config : globalGentraceConfig);
+
+    const pipelineRunObject = PipelineRun.getRedactedRunFromJson(json, {
+      waitForServer: false,
+      pipeline,
+      selectFields: options?.selectFields,
+    });
+
+    if (!pipelineRunObject) {
+      if (pipeline) {
+        pipeline.logWarn("Invalid JSON passed to submitFromJson");
+      }
+      return {};
     }
 
     const submission = api.v1RunPost(pipelineRunObject);
@@ -352,7 +473,15 @@ export class PipelineRun {
   }
 
   public async submit(
-    { waitForServer }: { waitForServer: boolean } = { waitForServer: false },
+    {
+      waitForServer,
+      selectFields,
+    }: {
+      waitForServer?: boolean;
+      selectFields?:
+        | StepRunWhitelistDescriptor
+        | ((steps: StepRun[]) => StepRunWhitelistDescriptor[]);
+    } = { waitForServer: false },
   ) {
     const testCounter = getTestCounter();
 
@@ -368,6 +497,7 @@ export class PipelineRun {
     const response = await PipelineRun.submitFromJson(pipelineRunObject, {
       waitForServer,
       pipeline: this.pipeline,
+      selectFields,
     });
 
     return response;

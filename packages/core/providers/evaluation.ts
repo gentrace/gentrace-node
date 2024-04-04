@@ -526,7 +526,7 @@ export async function runTest(
           invocation: stepRun.invocation,
           inputs: stepRun.inputs,
           outputs: stepRun.outputs,
-          providerName: stepRun.provider,
+          providerName: stepRun.providerName,
           elapsedTime: stepRun.elapsedTime,
           startTime: stepRun.startTime,
           endTime: stepRun.endTime,

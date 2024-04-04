@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.4.5
+
+### Patch Changes
+
+- ad988ed: Fix typing with selectFields()
+
+## 2.4.4
+
+### Patch Changes
+
+- f54c4b0: Add redaction methods such as selectFields()
+
+## 2.4.3
+
+### Patch Changes
+
+- d870178: Fix Acorn usage issue
+
 ## 2.4.2
 
 ### Patch Changes
