@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.6
+
+### Patch Changes
+
+- d82c85b: getRun(runID) for API endpoint /v2/runs/:id
+
 ## 2.4.5
 
 ### Patch Changes
