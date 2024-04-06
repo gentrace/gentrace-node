@@ -15,37 +15,26 @@
 /**
  *
  * @export
- * @interface TestRun
+ * @interface BooleanType
  */
-export interface TestRun {
+export interface BooleanType {
   /**
    *
    * @type {string}
-   * @memberof TestRun
+   * @memberof BooleanType
    */
-  id: string;
+  type: BooleanTypeTypeEnum;
   /**
    *
-   * @type {string}
-   * @memberof TestRun
+   * @type {boolean}
+   * @memberof BooleanType
    */
-  createdAt: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TestRun
-   */
-  updatedAt: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TestRun
-   */
-  caseId: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TestRun
-   */
-  resultId: string;
+  value: boolean;
 }
+
+export const BooleanTypeTypeEnum = {
+  Boolean: "boolean",
+} as const;
+
+export type BooleanTypeTypeEnum =
+  (typeof BooleanTypeTypeEnum)[keyof typeof BooleanTypeTypeEnum];

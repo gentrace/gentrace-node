@@ -6,6 +6,7 @@ base.ts
 common.ts
 configuration.ts
 index.ts
+models/boolean-type.ts
 models/create-evaluation-v2.ts
 models/create-feedback-v2.ts
 models/create-multiple-test-cases-test-cases-inner.ts

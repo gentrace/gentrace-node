@@ -29,18 +29,20 @@ async function createCompletion() {
       },
     ],
     stream: true,
+    gentrace: {
+      metadata: {
+        booleanValueTest: {
+          type: "boolean",
+          value: false,
+        },
+      },
+    },
   });
 
   for await (const message of completion) {
     console.log(message);
   }
 
-  const jsonObject = runner.toObject();
-
-  const response = await PipelineRun.submitFromJson(jsonObject, {
-    waitForServer: true,
-  });
-
-  console.log(response);
+  await runner.submit();
 }
 createCompletion();
