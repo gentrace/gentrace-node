@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.8
+
+### Patch Changes
+
+- fc412d8: Add boolean type
+
 ## 2.4.7
 
 ### Patch Changes
