@@ -20,18 +20,7 @@ type InteractionObject = {
   interaction: any;
 };
 
-type StepInputObject = {
-  provider: {
-    type: string;
-    default: string;
-    value: string;
-  };
-  prompt: {
-    type: string;
-    default: string;
-    value: string;
-  };
-};
+type AIInputObject = Record<string, any>;
 
 export class GentraceSession {
   registeredCustomTypes: string[] = [];
@@ -245,34 +234,33 @@ export class GentraceSession {
 
   public getStepInfo(
     stepName: string,
-    defaultStepInputs: StepInputObject,
+    defaultStepInputs: AIInputObject,
     interpolationVariables?: Record<string, any>,
-  ): object {
+  ): { newArgs: AIInputObject; id: string } {
     const store = asyncLocalStorage.getStore() as any;
 
     // getting stored parameters for usage in this function
     const id = store.get("id");
     const stepOverrides = store.get("stepOverrides");
 
+    console.log("stepOverrides: ");
+    console.log(stepOverrides);
+
     // use a matching stepOverride (or fall back to the defaultStepInputs parameters)
 
-    let newInputArgs = {
-      provider: defaultStepInputs.provider.default,
-      prompt: defaultStepInputs.prompt.default,
-    }; // initialize to the defaults
-
-    let newStepInputs = defaultStepInputs; // to be sent as a future RunResponse
+    let newInputArgs = defaultStepInputs; // initialize to the defaults
+    //let newStepInputs = defaultStepInputs; // to be sent as a future RunResponse
 
     for (const stepInputs of stepOverrides) {
       if (stepInputs.name == stepName) {
         if (stepInputs.overrides.provider) {
-          newInputArgs.provider = stepInputs.overrides.provider;
-          newStepInputs.provider.value = stepInputs.overrides.provider;
+          newInputArgs.model = stepInputs.overrides.provider;
+          //newStepInputs.model.value = stepInputs.overrides.provider;
         }
 
         if (stepInputs.overrides.prompt) {
-          newInputArgs.prompt = stepInputs.overrides.prompt;
-          newStepInputs.prompt.value = stepInputs.overrides.prompt;
+          newInputArgs.messages[0].content = stepInputs.overrides.prompt;
+          //newStepInputs.messages[0].value = stepInputs.overrides.prompt;
         }
       }
     }
@@ -286,20 +274,18 @@ export class GentraceSession {
       store.set("stepsArray", [
         {
           name: stepName,
-          inputs: newStepInputs,
+          inputs: newInputArgs,
           interpolation: interpolationVariables,
         },
       ]);
     } else {
       // these are subsequent steps
-      // set prompt as output from the previous step (which is in the default)
+      // (for now, don't include these for display in the UI)
       /*
-      newStepInputs.prompt.default = defaultStepInputs.prompt.default;
-      newStepInputs.prompt.value = defaultStepInputs.prompt.default;
-
       store.get("stepsArray").push({
         name: stepName,
         inputs: newStepInputs,
+        interpolation: interpolationVariables,
       });
       */
     }

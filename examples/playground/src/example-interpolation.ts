@@ -5,8 +5,8 @@ import * as Mustache from "mustache";
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   runName: "Example run for Playground SDK",
-  //basePath: "http://localhost:3000/api",
-  basePath: "https://staging.gentrace.ai/api",
+  basePath: "http://localhost:3000/api",
+  //basePath: "https://staging.gentrace.ai/api",
 });
 
 // Demo example using OpenAI to summarize text
@@ -16,29 +16,21 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_KEY ?? "",
 });
 
-function messageInterpolation(template: string, inputs: object): string {
+function createInterpolatedMessages(template: object, inputs: object): string {
+  // console.log("createInterpolatedMessages template: "+JSON.stringify(template));
   // fill in template with inputs
-  return Mustache.render(template, inputs);
+  const rendered = Mustache.render(JSON.stringify(template), inputs);
+  return JSON.parse(rendered);
 }
 
 async function summarizeTextOpenAI(
   model: string,
-  text: string,
+  messages: any,
 ): Promise<string> {
   try {
     const completion = await openai.chat.completions.create({
       model: model, // gpt-3.5-turbo, gpt-4, etc.
-      messages: [
-        {
-          role: "system", // content suggested in OpenAI docs
-          content:
-            "Summarize the task you are provided with for a second-grade student. If the assignee and the viewer are the same person, use 'your task' to describe the task.",
-        },
-        {
-          role: "user",
-          content: text,
-        },
-      ],
+      messages: messages,
       temperature: 0.1,
     });
 
@@ -50,7 +42,7 @@ async function summarizeTextOpenAI(
 }
 
 // utility function to get the substring after a / (slash)
-function getModelName(input: string): string {
+/*function getModelName(input: string): string {
   if (input.length > 0) {
     const index = input.indexOf("/");
 
@@ -60,7 +52,7 @@ function getModelName(input: string): string {
     return input.substring(index + 1);
   }
   return null;
-}
+}*/
 
 // Task and User objects for demo example
 
@@ -106,33 +98,36 @@ Viewer Name: {{viewer_name}}`;
     viewer_name: viewer.name,
   };
 
-  let newArgs, id, defaultArgs;
-
-  defaultArgs = {
-    provider: {
-      type: "model",
-      default: "openai/gpt-3.5-turbo",
-    },
-    prompt: {
-      type: "text",
-      default: promptTemplate,
-    },
+  const defaultArgs = {
+    model: "gpt-3.5-turbo",
+    messages: [
+      {
+        role: "system",
+        content:
+          "Summarize the task you are provided with for a second-grade student. If the assignee and the viewer are the same person, use 'your task' to describe the task.",
+      },
+      {
+        role: "user",
+        content: promptTemplate,
+      },
+    ],
+    temperature: 0.1,
   };
 
-  ({ newArgs, id } = gentrace.getStepInfo(
+  const { newArgs, id } = gentrace.getStepInfo(
     "Summarization step",
     defaultArgs,
     inputs,
-  ));
-  // newArgs format: { provider: "openai/gpt-4", prompt: "...."}
+  );
 
   console.log(
-    "messageInterpolation: " + messageInterpolation(newArgs.prompt, inputs),
+    "interpolatedMessage: " +
+      JSON.stringify(createInterpolatedMessages(newArgs.messages, inputs)),
   );
 
   const summary = await summarizeTextOpenAI(
-    getModelName(newArgs.provider),
-    messageInterpolation(newArgs.prompt, inputs),
+    newArgs.model,
+    createInterpolatedMessages(newArgs.messages, inputs),
   );
 
   return {
