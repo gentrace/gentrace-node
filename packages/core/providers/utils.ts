@@ -1,5 +1,20 @@
 import { Context } from "./context";
 import { Pattern, parse } from "acorn";
+import axios from "axios";
+
+// throttle axios response errors to at most every 10 seconds
+let lastLogged = Date.now();
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const now = Date.now();
+    if (now - lastLogged > 10000) {
+      console.error(error);
+      lastLogged = now;
+    }
+    return Promise.reject(error);
+  },
+);
 
 export type GentraceParams = {
   pipelineSlug?: string;
