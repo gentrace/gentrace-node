@@ -2,17 +2,41 @@ import { Context } from "./context";
 import { Pattern, parse } from "acorn";
 import axios from "axios";
 
-// throttle axios response errors to at most every 10 seconds
 let lastLogged = Date.now();
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
     const now = Date.now();
+
+    // throttle axios response errors to at most every 10 seconds
     if (now - lastLogged > 10000) {
       console.error(error);
       lastLogged = now;
     }
-    return Promise.reject(error);
+
+    let friendlyMessage = new Date(now).toUTCString(); // timestamp
+    if (error.config.url) {
+      friendlyMessage += "\nURL: " + error.config.url;
+    }
+
+    if (error.message === "Network Error") {
+      friendlyMessage +=
+        "\nA network error occurred. Please check your connection.";
+    } else if (error.message) {
+      friendlyMessage += "\nError message: " + error.message;
+    }
+
+    if (error.code === "ECONNABORTED") {
+      friendlyMessage += "\nThe request timed out. Please try again later.";
+    } else if (error.code) {
+      friendlyMessage += "\nError code: " + error.code;
+    }
+
+    if (error.status) {
+      friendlyMessage += "\nError status: " + error.status;
+    }
+
+    return Promise.reject(friendlyMessage);
   },
 );
 
