@@ -16,7 +16,7 @@ axios.interceptors.response.use(
 
     let friendlyMessage = new Date(now).toUTCString(); // timestamp
     if (error.config.url) {
-      friendlyMessage += "\nURL: " + error.config.url;
+      friendlyMessage += "\nGentrace URL: " + error.config.url;
     }
 
     if (error.message === "Network Error") {
