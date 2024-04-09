@@ -24,14 +24,29 @@ function createInterpolatedMessages(template: object, inputs: object): string {
 }
 
 async function summarizeTextOpenAI(
-  model: string,
-  messages: any,
+  stepName: string,
+  method: string,
+  args: object,
+  inputs: object,
 ): Promise<string> {
+  if (method !== "openai.chat.completions.create") {
+    throw new Error("Method " + method + " is not supported.");
+  }
+
+  const { newArgs, id } = gentrace.getStepInfo(stepName, method, args, inputs);
+
+  console.log(
+    "interpolatedMessage: " +
+      JSON.stringify(createInterpolatedMessages(newArgs.messages, inputs)),
+  );
+
+  const messages: any = createInterpolatedMessages(newArgs.messages, inputs);
+
   try {
     const completion = await openai.chat.completions.create({
-      model: model, // gpt-3.5-turbo, gpt-4, etc.
+      model: newArgs.model, // gpt-3.5-turbo, gpt-4, etc.
       messages: messages,
-      temperature: 0.1,
+      temperature: newArgs.temperature,
     });
 
     return completion.choices[0].message.content || "";
@@ -40,19 +55,6 @@ async function summarizeTextOpenAI(
   }
   return "";
 }
-
-// utility function to get the substring after a / (slash)
-/*function getModelName(input: string): string {
-  if (input.length > 0) {
-    const index = input.indexOf("/");
-
-    if (index === -1) {
-      return input;
-    }
-    return input.substring(index + 1);
-  }
-  return null;
-}*/
 
 // Task and User objects for demo example
 
@@ -114,25 +116,17 @@ Viewer Name: {{viewer_name}}`;
     temperature: 0.1,
   };
 
-  const { newArgs, id } = gentrace.getStepInfo(
-    "Summarization step",
+  const stepName = "Summarization step";
+  const method = "openai.chat.completions.create";
+
+  const summary = await summarizeTextOpenAI(
+    stepName,
+    method,
     defaultArgs,
     inputs,
   );
 
-  console.log(
-    "interpolatedMessage: " +
-      JSON.stringify(createInterpolatedMessages(newArgs.messages, inputs)),
-  );
-
-  const summary = await summarizeTextOpenAI(
-    newArgs.model,
-    createInterpolatedMessages(newArgs.messages, inputs),
-  );
-
-  return {
-    summary: summary,
-  };
+  return { summary: summary };
 }
 
 async function demoExample() {

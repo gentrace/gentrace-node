@@ -234,6 +234,7 @@ export class GentraceSession {
 
   public getStepInfo(
     stepName: string,
+    stepMethod: string,
     defaultStepInputs: AIInputObject,
     interpolationVariables?: Record<string, any>,
   ): { newArgs: AIInputObject; id: string } {
@@ -274,6 +275,7 @@ export class GentraceSession {
       store.set("stepsArray", [
         {
           name: stepName,
+          method: stepMethod,
           inputs: newInputArgs,
           interpolation: interpolationVariables,
         },
@@ -284,6 +286,7 @@ export class GentraceSession {
       /*
       store.get("stepsArray").push({
         name: stepName,
+        method: stepMethod,
         inputs: newStepInputs,
         interpolation: interpolationVariables,
       });
