@@ -79,7 +79,7 @@ export function init(values?: {
   GENTRACE_RESULT_NAME = resultName || getProcessEnv("GENTRACE_RESULT_NAME");
 
   GENTRACE_SHOW_CONNECTION_ERRORS =
-    showConnectionErrors || getProcessEnv("GENTRACE_SHOW_ERRORS");
+    showConnectionErrors || getProcessEnv("GENTRACE_SHOW_CONNECTION_ERRORS");
 
   setErrorInterceptor(GENTRACE_SHOW_CONNECTION_ERRORS);
 
