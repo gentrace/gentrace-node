@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.9
+
+### Patch Changes
+
+- 3f8a25a: feat(sdk): add showConnectionErrors param to init() w default to show every 10 seconds
+
 ## 2.4.8
 
 ### Patch Changes
