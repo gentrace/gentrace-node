@@ -253,7 +253,7 @@ importers:
   examples/full:
     dependencies:
       '@gentrace/core':
-        specifier: 2.4.8
+        specifier: 2.4.9
         version: link:../../packages/core
       '@gentrace/openai':
         specifier: workspace:^
