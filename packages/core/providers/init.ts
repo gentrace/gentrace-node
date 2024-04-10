@@ -22,7 +22,7 @@ export let GENTRACE_BRANCH = "";
 
 export let GENTRACE_COMMIT = "";
 
-export let GENTRACE_SHOW_ERRORS = "";
+export let GENTRACE_SHOW_CONNECTION_ERRORS = "";
 
 // @deprecated: use GENTRACE_RESULT_NAME instead
 export let GENTRACE_RUN_NAME = "";
@@ -50,14 +50,21 @@ export function init(values?: {
   basePath?: string;
   branch?: string;
   commit?: string;
-  showErrors?: string;
+  showConnectionErrors?: string;
 
   // @deprecated: use resultName instead
   runName?: string;
   resultName?: string;
 }) {
-  const { apiKey, basePath, branch, commit, showErrors, runName, resultName } =
-    values ?? {};
+  const {
+    apiKey,
+    basePath,
+    branch,
+    commit,
+    showConnectionErrors,
+    runName,
+    resultName,
+  } = values ?? {};
 
   if (!apiKey && !getProcessEnv("GENTRACE_API_KEY")) {
     throw new Error(
@@ -71,9 +78,10 @@ export function init(values?: {
 
   GENTRACE_RESULT_NAME = resultName || getProcessEnv("GENTRACE_RESULT_NAME");
 
-  GENTRACE_SHOW_ERRORS = showErrors || getProcessEnv("GENTRACE_SHOW_ERRORS");
+  GENTRACE_SHOW_CONNECTION_ERRORS =
+    showConnectionErrors || getProcessEnv("GENTRACE_SHOW_ERRORS");
 
-  setErrorInterceptor(GENTRACE_SHOW_ERRORS);
+  setErrorInterceptor(GENTRACE_SHOW_CONNECTION_ERRORS);
 
   if (basePath) {
     try {
@@ -112,7 +120,7 @@ export function deinit() {
   GENTRACE_BASE_PATH = "";
   GENTRACE_BRANCH = "";
   GENTRACE_COMMIT = "";
-  GENTRACE_SHOW_ERRORS = "";
+  GENTRACE_SHOW_CONNECTION_ERRORS = "";
   globalGentraceConfig = null;
   globalGentraceApi = null;
   globalRequestBuffer = {};
