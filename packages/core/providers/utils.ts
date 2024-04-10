@@ -138,13 +138,21 @@ export function setErrorInterceptor(showErrorsInput: string) {
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
-      const showErrors = showErrorsInput.toLowerCase();
+      let showErrors = showErrorsInput;
+      if (showErrorsInput) {
+        showErrors = showErrorsInput.toLowerCase();
+      }
 
       if (showErrors === "none") {
         return Promise.reject("");
       }
 
-      // make the error message more user friendly
+      if (showErrors === "all") {
+        return Promise.reject(error);
+      }
+
+      // default path: make the error message more user friendly
+
       const now = Date.now();
       let friendlyMessage = new Date(now).toUTCString(); // timestamp
 
@@ -167,11 +175,7 @@ export function setErrorInterceptor(showErrorsInput: string) {
         friendlyMessage += "\nError status: " + error.status;
       }
 
-      if (showErrors === "all") {
-        return Promise.reject(friendlyMessage);
-      }
-
-      // default path: show errors at most every 10 seconds
+      // show errors at most every 10 seconds
       // (errors that occur in between are throttled)
 
       if (errorSent === false || now - lastErrorCheckpoint > 10000) {
