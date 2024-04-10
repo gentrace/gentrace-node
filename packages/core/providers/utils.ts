@@ -179,7 +179,6 @@ export function setErrorInterceptor(showErrorsInput: string) {
       // (errors that occur in between are throttled)
 
       if (errorSent === false || now - lastErrorCheckpoint > 10000) {
-        console.error(error);
         errorSent = true;
         lastErrorCheckpoint = now;
 
