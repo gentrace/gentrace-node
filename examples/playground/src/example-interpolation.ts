@@ -84,8 +84,6 @@ async function summarizeTaskForViewer(
   task: Task,
   viewer: User,
 ): Promise<object> {
-  // first step
-
   const promptTemplate = `Task Name: {{task_name}}
 Task Description: {{task_description}}
 Assignee Name: {{assignee_name}}
@@ -143,7 +141,7 @@ async function demoExample() {
   gentrace.registerCustomObject("User", "Alice", userAlice);
   gentrace.registerCustomObject("User", "Bob", userBob);
   gentrace.registerCustomType("Task");
-  gentrace.registerCustomObject("Task", taskForBob.taskName, userBob);
+  gentrace.registerCustomObject("Task", taskForBob.taskName, taskForBob);
 
   gentrace.registerInteraction(
     "Summarize Task for Viewer",
@@ -153,7 +151,7 @@ async function demoExample() {
     },
     { summary: "string" },
     (inputs: { task: Task; viewer: User }) =>
-      summarizeTaskForViewer(taskForBob, userAlice),
+      summarizeTaskForViewer(inputs.task, inputs.viewer),
   );
 
   gentrace.start();

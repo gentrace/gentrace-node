@@ -92,6 +92,36 @@ export class GentraceSession {
     return true;
   }
 
+  private mapInputsToObjects(jsonInputs: any, inputFields: any): object {
+    // map inputs to the registered custom objects
+
+    try {
+      //console.log("mapInputsToObjects jsonInputs: ");
+      //console.log(jsonInputs);
+
+      let jsonOutputs = jsonInputs; // clone the structure
+
+      for (const key in jsonInputs) {
+        const value = jsonInputs[key];
+        for (const customObject of this.registeredCustomObjects) {
+          if (
+            customObject.objectName == value &&
+            customObject.typeName == inputFields[key]
+          ) {
+            jsonOutputs[key] = customObject.object;
+          }
+        }
+      }
+      //console.log("mapInputsToObjects jsonOutputs: ");
+      //console.log(jsonOutputs);
+
+      return jsonOutputs;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
   // send registered objects to the WebSocket server to receive a playground URL
   // and listen for messages from the server to run an interaction
 
@@ -151,18 +181,21 @@ export class GentraceSession {
                 store.set("id", received.data.id); // interaction run ID
                 store.set("stepOverrides", received.data.stepOverrides);
 
-                let runOutput;
-                if (received.data.inputs) {
-                  // use inputs in the received message
-                  runOutput = await interactionObject.interaction(
-                    received.data.inputs,
-                  );
-                } else {
-                  // use defaults in the interaction object
-                  runOutput = await interactionObject.interaction(
-                    interactionObject.inputFields,
-                  );
-                }
+                console.log("received.data.id: " + received.data.id);
+
+                /*console.log("received.data.inputs before mapping to Objects: ");
+                console.log(received.data.inputs);*/
+
+                const runInputObjects = this.mapInputsToObjects(
+                  received.data.inputs,
+                  interactionObject.inputFields,
+                );
+
+                /*console.log("received.data.inputs runInputObjects: ");
+                console.log(runInputObjects);*/
+
+                const runOutput =
+                  await interactionObject.interaction(runInputObjects);
 
                 // create a new runResponse event
                 const runResponseEvent = {
