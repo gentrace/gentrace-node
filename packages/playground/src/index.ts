@@ -250,18 +250,18 @@ export class GentraceSession {
     // use a matching stepOverride (or fall back to the defaultStepInputs parameters)
 
     let newInputArgs = defaultStepInputs; // initialize to the defaults
-    //let newStepInputs = defaultStepInputs; // to be sent as a future RunResponse
 
     for (const stepInputs of stepOverrides) {
       if (stepInputs.name == stepName) {
-        if (stepInputs.overrides.provider) {
-          newInputArgs.model = stepInputs.overrides.provider;
-          //newStepInputs.model.value = stepInputs.overrides.provider;
+        const overrides = stepInputs.overrides;
+        if (overrides.model) {
+          newInputArgs.model = overrides.model;
         }
-
-        if (stepInputs.overrides.prompt) {
-          newInputArgs.messages[0].content = stepInputs.overrides.prompt;
-          //newStepInputs.messages[0].value = stepInputs.overrides.prompt;
+        if (overrides.messages) {
+          newInputArgs.messages = overrides.messages;
+        }
+        if (overrides.temperature) {
+          newInputArgs.temperature = overrides.temperature;
         }
       }
     }
@@ -287,7 +287,7 @@ export class GentraceSession {
       store.get("stepsArray").push({
         name: stepName,
         method: stepMethod,
-        inputs: newStepInputs,
+        inputs: newInputArgs,
         interpolation: interpolationVariables,
       });
       */
