@@ -106,7 +106,7 @@ Viewer Name: {{viewer_name}}`;
       {
         role: "system",
         content:
-          "Summarize the task you are provided with for a second-grade student. If the assignee and the viewer are the same person, use 'your task' to describe the task.",
+          "Summarize the task you are provided with for a second-grade student. If the assignee and the viewer are the same person, use 'your task' to describe the task. If the assignee and the viewer are different people, use the assignee's name in the summary.",
       },
       {
         role: "user",
