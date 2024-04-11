@@ -1,5 +1,13 @@
 # @examples/playground
 
+## 0.2.3
+
+### Patch Changes
+
+- 81dee1a: fix: map inputs to previously registered custom objects
+- Updated dependencies [81dee1a]
+  - @gentrace/playground@0.2.4
+
 ## 0.2.2
 
 ### Patch Changes
