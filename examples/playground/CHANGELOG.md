@@ -1,5 +1,13 @@
 # @examples/playground
 
+## 0.2.2
+
+### Patch Changes
+
+- c8417bd: updated version w new data formats
+- Updated dependencies [c8417bd]
+  - @gentrace/playground@0.2.3
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.2.3
+
+### Patch Changes
+
+- c8417bd: updated version w new data formats
+
 ## 0.2.2
 
 ### Patch Changes
