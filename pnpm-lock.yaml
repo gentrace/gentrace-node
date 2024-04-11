@@ -561,7 +561,7 @@ importers:
   examples/playground:
     dependencies:
       '@gentrace/playground':
-        specifier: workspace:^0.2.1
+        specifier: workspace:^0.2.3
         version: link:../../packages/playground
       openai:
         specifier: ^4.29.2
@@ -3751,13 +3751,15 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
-  /@gentrace/core@2.4.2:
-    resolution: {integrity: sha512-6gtaSteNdRG2PPTRM5DIP4CK8JfbVbXZpKegJaTeMpY4khSxCTVa5beuRucODi2rp5eCPTAZwkBSm2rrwzMnqQ==}
+  /@gentrace/core@2.4.9:
+    resolution: {integrity: sha512-BPLdN8zn9ZQbWEkctNdDXo9oiLe+ATMQQiPvsuNPsFpuJMw6c+IWi0BfsQsKoYXs11Bwcoy20sfV25ldMcmhsw==}
     dependencies:
       '@web-std/file': 3.0.3
       acorn: 8.11.3
       axios: 1.5.0
       form-data: 4.0.0
+      jsonpath: 1.1.1
+      lodash: 4.17.21
       mustache: 4.2.0
       uuid: 9.0.0
     transitivePeerDependencies:
@@ -3826,7 +3828,7 @@ packages:
   /@ironclad/rivet-core@1.15.0:
     resolution: {integrity: sha512-spJV1oXnIF3mFNCeUWXVadWYFbr0rYEP0nuhY3oizC1qYtQaBxOhu8+mgI/plJNJ7yjqw44XbWmV7r/0l3T5og==}
     dependencies:
-      '@gentrace/core': 2.4.2
+      '@gentrace/core': 2.4.9
       '@google-cloud/vertexai': 0.1.3
       '@huggingface/inference': 2.6.6
       assemblyai: 4.3.3
@@ -3861,7 +3863,7 @@ packages:
     resolution: {integrity: sha512-2gkSeCKco4kwZvA/reLkQU51FrdEPHqZtiIkGcRGnsvpEiIV3kR6qCeF9miIN3fbsNwvsyLeHojPGta68yUFdQ==}
     dependencies:
       '@dqbd/tiktoken': 1.0.7
-      '@gentrace/core': 2.4.2
+      '@gentrace/core': 2.4.9
       '@huggingface/inference': 2.6.3
       autoevals: 0.0.16
       crypto-js: 4.1.1
@@ -6444,7 +6446,6 @@ packages:
       optionator: 0.8.3
     optionalDependencies:
       source-map: 0.6.1
-    dev: false
 
   /eslint-scope@7.2.2:
     resolution: {integrity: sha512-dOt21O7lTMhDM+X9mB4GX+DZrZtCUJPL/wlcTqxyrx5IvO0IYtILdtrQGQp+8n5S0gwSVmOf9NQrjMOgfQZlIg==}
@@ -6517,7 +6518,6 @@ packages:
     resolution: {integrity: sha512-+JpPZam9w5DuJ3Q67SqsMGtiHKENSMRVoxvArfJZK01/BfLEObtZ6orJa/MtoGNR/rfMgp5837T41PAmTwAv/A==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-    dev: false
 
   /esprima@4.0.1:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
@@ -6541,7 +6541,6 @@ packages:
   /estraverse@4.3.0:
     resolution: {integrity: sha512-39nnKffWz8xN1BU/2c79n9nB9HDzo0niYUqx6xyqUnyoAnQyyWpOTdZEeiCch8BBu515t4wp9ZmgVfVhn9EBpw==}
     engines: {node: '>=4.0'}
-    dev: false
 
   /estraverse@5.3.0:
     resolution: {integrity: sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==}
@@ -8500,7 +8499,6 @@ packages:
       esprima: 1.2.2
       static-eval: 2.0.2
       underscore: 1.12.1
-    dev: false
 
   /jwa@2.0.0:
     resolution: {integrity: sha512-jrZ2Qx916EA+fq9cEAeCROWPTfCwi1IVHqT2tapuqLEVVDKFDENFw1oL+MwrTvH6msKxsd1YTDVw6uKEcsrLEA==}
@@ -8547,7 +8545,6 @@ packages:
     dependencies:
       prelude-ls: 1.1.2
       type-check: 0.3.2
-    dev: false
 
   /levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -9277,7 +9274,6 @@ packages:
       prelude-ls: 1.1.2
       type-check: 0.3.2
       word-wrap: 1.2.5
-    dev: false
 
   /optionator@0.9.3:
     resolution: {integrity: sha512-JjCoypp+jKn1ttEFExxhetCKeJt9zhAgAve5FXHixTvFDW/5aEktX9bufBKLRRMdU7bNtpLfcGu94B3cdEJgjg==}
@@ -9616,7 +9612,6 @@ packages:
   /prelude-ls@1.1.2:
     resolution: {integrity: sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==}
     engines: {node: '>= 0.8.0'}
-    dev: false
 
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -10371,7 +10366,6 @@ packages:
     resolution: {integrity: sha512-N/D219Hcr2bPjLxPiV+TQE++Tsmrady7TqAJugLy7Xk1EumfDWS/f5dtBbkRCGE7wKKXuYockQoj8Rm2/pVKyg==}
     dependencies:
       escodegen: 1.14.3
-    dev: false
 
   /stdin-discarder@0.1.0:
     resolution: {integrity: sha512-xhV7w8S+bUwlPTb4bAOUQhv8/cSS5offJuX8GQGq32ONF0ZtDWKfkdomM3HMRA+LhX6um/FZ0COqlwsjD53LeQ==}
@@ -10905,7 +10899,6 @@ packages:
     engines: {node: '>= 0.8.0'}
     dependencies:
       prelude-ls: 1.1.2
-    dev: false
 
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -11075,7 +11068,6 @@ packages:
 
   /underscore@1.12.1:
     resolution: {integrity: sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==}
-    dev: false
 
   /undici-types@5.25.3:
     resolution: {integrity: sha512-Ga1jfYwRn7+cP9v8auvEXN1rX3sWqlayd4HP7OKk4mZWylEmu3KzXDUGrQUN6Ol7qo1gPvB2e5gX6udnyEPgdA==}
@@ -11340,7 +11332,6 @@ packages:
   /word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /workerd@1.20231016.0:
     resolution: {integrity: sha512-v2GDb5XitSqgub/xm7EWHVAlAK4snxQu3itdMQxXstGtUG9hl79fQbXS/8fNFbmms2R2bAxUwSv47q8k5T5Erw==}
