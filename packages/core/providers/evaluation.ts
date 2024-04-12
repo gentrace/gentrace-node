@@ -2,6 +2,7 @@ import {
   CreateEvaluationV2,
   CreateMultipleTestCases,
   CreateSingleTestCase,
+  EvaluatorV2,
   TestCase,
   TestCaseV2,
   UpdateTestCase,
@@ -31,6 +32,41 @@ import {
 } from "./utils";
 
 export type TestRun = V1TestResultPostRequestTestRunsInner;
+
+/**
+ * Retrieves evaluators for a given pipeline from the Gentrace API
+ * @async
+ * @param {string} pipelineIdentifier - The pipeline slug, pipeline ID, or null (for evaluator templates)
+
+ * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
+ * @returns {Promise<Array<EvaluatorV2>>} A Promise that resolves with an array of evaluators.
+ */
+export const getEvaluators = async (pipelineIdentifier: string) => {
+  if (!globalGentraceApiV2) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  let pipelineId = pipelineIdentifier;
+  let pipelineSlug = pipelineIdentifier;
+
+  if (pipelineIdentifier && isUUID(pipelineIdentifier)) {
+    pipelineSlug = null; // no pipeline slug
+  } else {
+    pipelineId = null;
+  }
+
+  if (!pipelineIdentifier) {
+    pipelineId = "null"; // get template evaluators
+  }
+
+  const response = await globalGentraceApiV2.v2EvaluatorsGet(
+    pipelineId,
+    pipelineSlug,
+  );
+  const evaluators = response.data.data ?? [];
+
+  return evaluators;
+};
 
 /**
  * Retrieves test cases for a given pipeline ID from the Gentrace API
