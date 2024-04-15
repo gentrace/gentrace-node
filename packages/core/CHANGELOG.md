@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.0
+
+### Minor Changes
+
+- 72023e6: getEvaluators function
+
 ## 2.4.9
 
 ### Patch Changes
