@@ -1,5 +1,16 @@
 # @examples/core
 
+## 0.2.0
+
+### Minor Changes
+
+- 72023e6: getEvaluators function
+
+### Patch Changes
+
+- Updated dependencies [72023e6]
+  - @gentrace/core@2.5.0
+
 ## 0.1.1
 
 ### Patch Changes
