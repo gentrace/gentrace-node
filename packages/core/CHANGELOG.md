@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.1
+
+### Patch Changes
+
+- 253dc4f: explicitly accept null value as getEvaluators parameter
+
 ## 2.5.0
 
 ### Minor Changes
