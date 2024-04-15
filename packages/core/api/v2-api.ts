@@ -136,10 +136,10 @@ export const V2ApiAxiosParamCreator = function (configuration?: Configuration) {
       };
     },
     /**
-     *
-     * @summary Get evaluators from a pipeline
-     * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for, OR
-     * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
+     * Get evaluators for a given pipeline
+     * @summary Get evaluators
+     * @param {string} [pipelineId] The ID of the Pipeline to retrieve evaluators for. Use \&quot;null\&quot; to retrieve the organization\&#39;s evaluator templates.
+     * @param {string} [pipelineSlug] Or, the slug of the Pipeline to retrieve evaluators for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -780,10 +780,10 @@ export const V2ApiFp = function (configuration?: Configuration) {
       );
     },
     /**
-     *
-     * @summary Get evaluators from a pipeline
-     * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for, OR
-     * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
+     * Get evaluators for a given pipeline
+     * @summary Get evaluators
+     * @param {string} [pipelineId] The ID of the Pipeline to retrieve evaluators for. Use \&quot;null\&quot; to retrieve the organization\&#39;s evaluator templates.
+     * @param {string} [pipelineSlug] Or, the slug of the Pipeline to retrieve evaluators for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -1112,10 +1112,10 @@ export const V2ApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *
-     * @summary Get evaluators from a pipeline
-     * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for, OR
-     * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
+     * Get evaluators for a given pipeline
+     * @summary Get evaluators
+     * @param {string} [pipelineId] The ID of the Pipeline to retrieve evaluators for. Use \&quot;null\&quot; to retrieve the organization\&#39;s evaluator templates.
+     * @param {string} [pipelineSlug] Or, the slug of the Pipeline to retrieve evaluators for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -1314,10 +1314,10 @@ export class V2Api extends BaseAPI {
   }
 
   /**
-   *
-   * @summary Get evaluators from a pipeline
-   * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for, OR
-   * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
+   * Get evaluators for a given pipeline
+   * @summary Get evaluators
+   * @param {string} [pipelineId] The ID of the Pipeline to retrieve evaluators for. Use \&quot;null\&quot; to retrieve the organization\&#39;s evaluator templates.
+   * @param {string} [pipelineSlug] Or, the slug of the Pipeline to retrieve evaluators for
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof V2Api

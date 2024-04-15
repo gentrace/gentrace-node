@@ -25,6 +25,30 @@ export interface EvaluatorV2 {
    */
   id: string;
   /**
+   * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
+   * @type {number}
+   * @memberof EvaluatorV2
+   */
+  createdAt: number;
+  /**
+   * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
+   * @type {number}
+   * @memberof EvaluatorV2
+   */
+  updatedAt: number;
+  /**
+   * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
+   * @type {number}
+   * @memberof EvaluatorV2
+   */
+  archivedAt?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  icon?: string | null;
+  /**
    * The name of the evaluator
    * @type {string}
    * @memberof EvaluatorV2
@@ -37,17 +61,41 @@ export interface EvaluatorV2 {
    */
   options?: object | null;
   /**
+   * For AI evaluators, the AI model to use
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  aiModel?: string;
+  /**
+   * The ID of the pipeline that the evaluator belongs to
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  pipelineId?: string | null;
+  /**
+   * The ID of the processor associated with the evaluator
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  processorId?: string | null;
+  /**
+   * The ID of the organization that the evaluator belongs to
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  organizationId?: string;
+  /**
+   * For evaluator templates, the description of the template
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  templateDescription?: string;
+  /**
    * For heuristic evaluators, the heuristic function to use
    * @type {string}
    * @memberof EvaluatorV2
    */
   heuristicFn?: string | null;
-  /**
-   * For AI evaluators, the AI model to use
-   * @type {string}
-   * @memberof EvaluatorV2
-   */
-  aiModel?: string | null;
   /**
    * For AI evaluators, the prompt template that should be sent to the AI model
    * @type {string}
@@ -55,9 +103,64 @@ export interface EvaluatorV2 {
    */
   aiPromptFormat?: string | null;
   /**
+   * For AI image evaluators, the paths to the image URLs
+   * @type {Array<string>}
+   * @memberof EvaluatorV2
+   */
+  aiImageUrls?: Array<string>;
+  /**
    * For human evaluators, the instructions for the human to follow
    * @type {string}
    * @memberof EvaluatorV2
    */
   humanPrompt?: string | null;
+  /**
+   * For classification evaluators, the path to the predicted classification
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  classifierValuePath?: string | null;
+  /**
+   * For classification evaluators, the path to the expected classification
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  classifierExpectedValuePath?: string | null;
+  /**
+   * For classification evaluators using multi-class evaluation, the available options to match with
+   * @type {Array<string>}
+   * @memberof EvaluatorV2
+   */
+  multiClassOptions?: Array<string>;
+  /**
+   * The type of evaluator (such as \"AI\", \"HEURISTIC\", \"HUMAN\", \"CLASSIFIER\")
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  who: string;
+  /**
+   * The scoring method used by the evaluator (such as \"ENUM\", \"PERCENTAGE\")
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  valueType: string;
+  /**
+   * The run condition of the evaluator (such as \"TEST_PROD\", \"TEST\", \"PROD\", \"COMPARISON_2\")
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  runCondition: string;
+  /**
+   * Use \"samplingProbability\" instead
+   * @type {boolean}
+   * @memberof EvaluatorV2
+   * @deprecated
+   */
+  prodEvalActive?: boolean;
+  /**
+   * When optionally running on production data, the associated sampling probability of this evaluator (from 0 to 100)
+   * @type {number}
+   * @memberof EvaluatorV2
+   */
+  samplingProbability?: number | null;
 }
