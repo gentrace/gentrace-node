@@ -41,7 +41,7 @@ export type TestRun = V1TestResultPostRequestTestRunsInner;
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
  * @returns {Promise<Array<EvaluatorV2>>} A Promise that resolves with an array of evaluators.
  */
-export const getEvaluators = async (pipelineIdentifier: string) => {
+export const getEvaluators = async (pipelineIdentifier: string | null) => {
   if (!globalGentraceApiV2) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
