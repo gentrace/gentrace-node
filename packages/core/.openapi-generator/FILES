@@ -12,6 +12,7 @@ models/create-feedback-v2.ts
 models/create-multiple-test-cases-test-cases-inner.ts
 models/create-multiple-test-cases.ts
 models/create-single-test-case.ts
+models/evaluator-v2.ts
 models/expanded-pipeline-all-of.ts
 models/expanded-pipeline.ts
 models/expanded-test-result-all-of.ts
@@ -76,6 +77,7 @@ models/v1-test-result-simple-post-request.ts
 models/v1-test-result-status-get200-response.ts
 models/v2-evaluations-bulk-post-request.ts
 models/v2-evaluations-bulk-post200-response.ts
+models/v2-evaluators-get200-response.ts
 models/v2-folders-get200-response.ts
 models/v2-pipelines-get200-response.ts
 models/v2-pipelines-get200-response1.ts

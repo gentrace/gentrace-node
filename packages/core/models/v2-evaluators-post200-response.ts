@@ -14,15 +14,18 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { V1TestCasePost200ResponseOneOf } from "./v1-test-case-post200-response-one-of";
-// May contain unused imports in some cases
-// @ts-ignore
-import { V1TestCasePost200ResponseOneOf1 } from "./v1-test-case-post200-response-one-of1";
+import { EvaluatorV2 } from "./evaluator-v2";
 
 /**
- * @type V1TestCasePost200Response
+ *
  * @export
+ * @interface V2EvaluatorsPost200Response
  */
-export type V1TestCasePost200Response =
-  | V1TestCasePost200ResponseOneOf
-  | V1TestCasePost200ResponseOneOf1;
+export interface V2EvaluatorsPost200Response {
+  /**
+   *
+   * @type {Array<EvaluatorV2>}
+   * @memberof V2EvaluatorsPost200Response
+   */
+  data: Array<EvaluatorV2>;
+}
