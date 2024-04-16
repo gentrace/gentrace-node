@@ -1,8 +1,8 @@
+import { ObjectExpression } from "acorn";
 import {
   CreateEvaluationV2,
   CreateMultipleTestCases,
   CreateSingleTestCase,
-  EvaluatorV2,
   TestCase,
   TestCaseV2,
   UpdateTestCase,
@@ -24,7 +24,9 @@ import {
   globalGentraceApi,
   globalGentraceApiV2,
 } from "./init";
+import { Pipeline } from "./pipeline";
 import { PipelineRun } from "./pipeline-run";
+import { GentracePlugin } from "./plugin";
 import {
   decrementTestCounter,
   getProcessEnv,
@@ -439,6 +441,160 @@ export const getTestResults = async (pipelineSlug?: string) => {
   const testResults = response.data.testResults;
   return testResults;
 };
+
+/**
+ * Retrieves test runners for a given pipeline
+ * @async
+ * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
+ * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
+ * @returns {Promise<Array<PipelineRun, TestCase>>} A Promise that resolves with an array of pipeline runs.
+ */
+export const getTestRunners = async (
+  pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
+) => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  if (!pipeline || !pipeline.id) {
+    throw new Error(`Invalid pipeline found`);
+  }
+
+  // get test cases for the pipeline
+
+  const response = await globalGentraceApi.v1TestCaseGet(pipeline.id);
+  const testCases = response.data.testCases ?? [];
+
+  // create tuples of pipeline run and test case
+
+  type Tuple = [PipelineRun, TestCase];
+
+  const testRunners: Array<Tuple> = [];
+
+  for (const testCase of testCases) {
+    const pipelineRun = pipeline.start();
+    testRunners.push([pipelineRun, testCase]);
+  }
+  return testRunners;
+};
+
+/**
+ * Submits test runners for a given pipeline
+ * @async
+ * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
+ * @param {function} handler: The handler function that will be called for each test case
+ * @param {ResultContext | function} [contextOrCaseFilter]: An optional context object that will be passed to the Gentrace API
+ * @param {function} [caseFilterOrUndefined]: An optional filter function that will be called for each test case
+ */
+export async function submitTestRunners(
+  pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
+  testCases: TestCase[],
+  handler: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => Promise<[any, PipelineRun]>,
+  contextOrCaseFilter?:
+    | ResultContext
+    | ((
+        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+      ) => boolean),
+  caseFilterOrUndefined?: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean,
+): Promise<V1TestResultPost200Response> {
+  incrementTestCounter();
+
+  let context: ResultContext | undefined;
+  let caseFilter: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean | undefined;
+
+  // Determine the overload being used based on the types of arguments
+  if (typeof contextOrCaseFilter === "function") {
+    caseFilter = contextOrCaseFilter;
+    context = undefined;
+  } else {
+    context = contextOrCaseFilter;
+    caseFilter = caseFilterOrUndefined;
+  }
+
+  try {
+    if (!pipeline) {
+      throw new Error(`Invalid pipeline found`);
+    }
+
+    const testRuns: TestRun[] = [];
+
+    for (const testCase of testCases) {
+      if (caseFilter && !caseFilter(testCase)) {
+        continue;
+      }
+
+      const [, pipelineRun] = await handler(testCase);
+
+      let mergedMetadata = {};
+
+      const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
+        let {
+          metadata: thisContextMetadata,
+          previousRunId: _prPreviousRunId,
+          ...restThisContext
+        } = pipelineRun.context ?? {};
+
+        let {
+          metadata: stepRunContextMetadata,
+          previousRunId: _srPreviousRunId,
+          ...restStepRunContext
+        } = stepRun.context ?? {};
+
+        // Merge metadata
+        mergedMetadata = {
+          ...mergedMetadata,
+          ...thisContextMetadata,
+          ...stepRunContextMetadata,
+        };
+
+        return {
+          modelParams: stepRun.modelParams,
+          invocation: stepRun.invocation,
+          inputs: stepRun.inputs,
+          outputs: stepRun.outputs,
+          providerName: stepRun.providerName,
+          elapsedTime: stepRun.elapsedTime,
+          startTime: stepRun.startTime,
+          endTime: stepRun.endTime,
+          context: { ...restThisContext, ...restStepRunContext },
+        };
+      });
+
+      const testRun: TestRun = {
+        caseId: testCase.id,
+        metadata: mergedMetadata,
+        stepRuns: updatedStepRuns,
+      };
+
+      if (pipelineRun.getId()) {
+        testRun.id = pipelineRun.getId();
+      }
+
+      testRuns.push(testRun);
+    }
+
+    if (!globalGentraceApi) {
+      throw new Error("Gentrace API key not initialized. Call init() first.");
+    }
+
+    const body = constructSubmissionPayload(pipeline.id, testRuns, context);
+
+    const response = await globalGentraceApi.v1TestResultPost(body);
+    return response.data;
+  } catch (e) {
+    throw e;
+  } finally {
+    // Imperative that we decrement the test counter regardless of whether the function
+    // runs into an error or not.
+    decrementTestCounter();
+  }
+}
 
 /**
  * Runs a test for a given pipeline slug.
