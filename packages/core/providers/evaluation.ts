@@ -227,11 +227,20 @@ export const constructSubmissionPayload = (
   pipelineId: string,
   testRuns: TestRun[],
   context?: ResultContext,
+  pipelineSlug?: string,
 ) => {
   const body: V1TestResultPostRequest = {
-    pipelineId,
     testRuns,
   };
+
+  // set up identifiers
+  if (pipelineId) {
+    body.pipelineId = pipelineId;
+  }
+
+  if (pipelineSlug) {
+    body.pipelineSlug = pipelineSlug;
+  }
 
   // Will be overwritten if GENTRACE_RESULT_NAME is specified
   if (GENTRACE_RUN_NAME) {
@@ -457,17 +466,15 @@ export const getTestRunners = async (
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  if (!pipeline || !pipeline.id) {
+  if (!pipeline) {
     throw new Error(`Invalid pipeline found`);
   }
 
   // get test cases for the pipeline
-
-  const response = await globalGentraceApi.v1TestCaseGet(pipeline.id);
+  const response = await globalGentraceApi.v1TestCaseGet(null, pipeline.slug);
   const testCases = response.data.testCases ?? [];
 
   // create tuples of pipeline run and test case
-
   const testRunners: Array<PipelineRunTestCaseTuple> = [];
 
   for (const testCase of testCases) {
@@ -497,8 +504,6 @@ export async function submitTestRunners(
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
   ) => boolean,
 ): Promise<V1TestResultPost200Response> {
-  incrementTestCounter();
-
   let context: ResultContext | undefined;
   let caseFilter: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
@@ -514,12 +519,13 @@ export async function submitTestRunners(
   }
 
   try {
-    if (!pipeline || !pipeline.id) {
+    if (!pipeline) {
       throw new Error(`Invalid pipeline found`);
     }
 
     const testRuns: TestRun[] = [];
 
+    // todo: consider creating abstraction w RunTest
     for (const [pipelineRun, testCase] of pipelineRunTestCases) {
       if (caseFilter && !caseFilter(testCase)) {
         continue;
@@ -577,16 +583,17 @@ export async function submitTestRunners(
       throw new Error("Gentrace API key not initialized. Call init() first.");
     }
 
-    const body = constructSubmissionPayload(pipeline.id, testRuns, context);
+    const body = constructSubmissionPayload(
+      null,
+      testRuns,
+      context,
+      pipeline.slug,
+    );
 
     const response = await globalGentraceApi.v1TestResultPost(body);
     return response.data;
   } catch (e) {
     throw e;
-  } finally {
-    // Imperative that we decrement the test counter regardless of whether the function
-    // runs into an error or not.
-    decrementTestCounter();
   }
 }
 

@@ -1,8 +1,10 @@
 import {
   init,
   Pipeline,
+  PipelineRun,
   getTestRunners,
   submitTestRunners,
+  TestCase,
 } from "@gentrace/core";
 import { initPlugin } from "@gentrace/openai";
 
@@ -22,6 +24,7 @@ async function main() {
     apiKey: process.env.OPENAI_KEY,
   });
 
+  // get the existing pipeline by the slug (if already exists)
   const pipeline = new Pipeline({
     slug: PIPELINE_SLUG,
     plugins: {
@@ -30,10 +33,8 @@ async function main() {
   });
 
   // example handler
-  const handler = async (testCase: any) => {
-    const runner = pipeline.start();
-
-    const outputs = await runner.measure(
+  const handler = async (runner: PipelineRun, testCase: TestCase) => {
+    await runner.measure(
       (inputs) => {
         return {
           example: exampleResponse(inputs),
@@ -41,20 +42,13 @@ async function main() {
       },
       [testCase.inputs],
     );
-
-    await runner.submit();
-
-    // passing the runner back is very important
-    return [outputs, runner];
   };
 
   const pipelineRunTestCases = await getTestRunners(pipeline);
-  for (const [pipelineRun, testCase] of pipelineRunTestCases) {
-    // TODO: set up the pipelineRun correctly
-    const [, pipelineRun] = await handler(testCase);
-  }
 
-  // TODO: add some parallelization to this example
+  for (const [pipelineRun, testCase] of pipelineRunTestCases) {
+    await handler(pipelineRun, testCase); // TODO: add some parallelization to this example
+  }
 
   const response = await submitTestRunners(pipeline, pipelineRunTestCases);
   console.log(response);
