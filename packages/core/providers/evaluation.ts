@@ -1,4 +1,3 @@
-import { ObjectExpression } from "acorn";
 import {
   CreateEvaluationV2,
   CreateMultipleTestCases,
@@ -442,16 +441,18 @@ export const getTestResults = async (pipelineSlug?: string) => {
   return testResults;
 };
 
+type PipelineRunTestCaseTuple = [PipelineRun, TestCase];
+
 /**
  * Retrieves test runners for a given pipeline
  * @async
  * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
- * @returns {Promise<Array<PipelineRun, TestCase>>} A Promise that resolves with an array of pipeline runs.
+ * @returns {Promise<Array<PipelineRunTestCaseTuple>>} A Promise that resolves with an array of PipelineRunTestCaseTuple.
  */
 export const getTestRunners = async (
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
-) => {
+): Promise<Array<PipelineRunTestCaseTuple>> => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
@@ -467,9 +468,7 @@ export const getTestRunners = async (
 
   // create tuples of pipeline run and test case
 
-  type Tuple = [PipelineRun, TestCase];
-
-  const testRunners: Array<Tuple> = [];
+  const testRunners: Array<PipelineRunTestCaseTuple> = [];
 
   for (const testCase of testCases) {
     const pipelineRun = pipeline.start();
@@ -482,16 +481,13 @@ export const getTestRunners = async (
  * Submits test runners for a given pipeline
  * @async
  * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
- * @param {function} handler: The handler function that will be called for each test case
+ * @param {Array<PipelineRunTestCaseTuple>} pipelineRunTestCases - an array of PipelineRunTestCaseTuple
  * @param {ResultContext | function} [contextOrCaseFilter]: An optional context object that will be passed to the Gentrace API
  * @param {function} [caseFilterOrUndefined]: An optional filter function that will be called for each test case
  */
 export async function submitTestRunners(
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
-  testCases: TestCase[],
-  handler: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
-  ) => Promise<[any, PipelineRun]>,
+  pipelineRunTestCases: Array<PipelineRunTestCaseTuple>,
   contextOrCaseFilter?:
     | ResultContext
     | ((
@@ -518,18 +514,16 @@ export async function submitTestRunners(
   }
 
   try {
-    if (!pipeline) {
+    if (!pipeline || !pipeline.id) {
       throw new Error(`Invalid pipeline found`);
     }
 
     const testRuns: TestRun[] = [];
 
-    for (const testCase of testCases) {
+    for (const [pipelineRun, testCase] of pipelineRunTestCases) {
       if (caseFilter && !caseFilter(testCase)) {
         continue;
       }
-
-      const [, pipelineRun] = await handler(testCase);
 
       let mergedMetadata = {};
 

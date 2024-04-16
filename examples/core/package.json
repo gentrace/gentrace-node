@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.5.0",
+    "@gentrace/openai": "workspace:v4",
     "openai": "^4.29.2"
   },
   "devDependencies": {
