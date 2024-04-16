@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.2
+
+### Patch Changes
+
+- b57cd45: Add addTestRunners() + submitTestRunners()
+
 ## 2.5.1
 
 ### Patch Changes
