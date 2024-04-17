@@ -26,6 +26,7 @@ export class GentraceSession {
   registeredCustomTypes: string[] = [];
   registeredCustomObjects: CustomObject[] = [];
   registeredInteractionObjects: InteractionObject[] = [];
+  submittedStepOutputMap: Map<string, string> = new Map();
 
   // get a WebSocket URL based on the Gentrace base path
 
@@ -122,6 +123,15 @@ export class GentraceSession {
     }
   }
 
+  private addOutputsToSteps(steps: any): any {
+    for (const step of steps) {
+      if (step.id && this.submittedStepOutputMap.has(step.id)) {
+        step.output = this.submittedStepOutputMap.get(step.id);
+      }
+    }
+    return steps;
+  }
+
   // send registered objects to the WebSocket server to receive a playground URL
   // and listen for messages from the server to run an interaction
 
@@ -198,6 +208,11 @@ export class GentraceSession {
                   await interactionObject.interaction(runInputObjects);
 
                 // create a new runResponse event
+
+                const stepsAndOutputs = this.addOutputsToSteps(
+                  store.get("stepsArray"),
+                );
+
                 const runResponseEvent = {
                   id: uuidv4(),
                   for: received.from,
@@ -205,7 +220,7 @@ export class GentraceSession {
                     type: "runResponse",
                     id: store.get("id"), // this is the ID for the run
                     outputs: runOutput,
-                    steps: store.get("stepsArray"), // this is set in the getStepInfo function
+                    steps: stepsAndOutputs, // combines data from getStepInfo and submitOutput
                   },
                 };
 
@@ -274,7 +289,7 @@ export class GentraceSession {
     const store = asyncLocalStorage.getStore() as any;
 
     // getting stored parameters for usage in this function
-    const id = store.get("id");
+    //const runId = store.get("id");
     const stepOverrides = store.get("stepOverrides");
 
     console.log("stepOverrides: ");
@@ -303,32 +318,27 @@ export class GentraceSession {
     //console.log("newInputArgs: " + JSON.stringify(newInputArgs));
 
     // storing steps for a future RunResponse to the WebSocket server
+
     if (store.get("stepsArray") == undefined) {
-      // store the first step
-      store.set("stepsArray", [
-        {
-          name: stepName,
-          method: stepMethod,
-          inputs: newInputArgs,
-          interpolation: interpolationVariables,
-        },
-      ]);
-    } else {
-      // these are subsequent steps
-      // (for now, don't include these for display in the UI)
-      /*
-      store.get("stepsArray").push({
-        name: stepName,
-        method: stepMethod,
-        inputs: newInputArgs,
-        interpolation: interpolationVariables,
-      });
-      */
+      store.set("stepsArray", []);
     }
+
+    const stepId = uuidv4();
+    store.get("stepsArray").push({
+      id: stepId,
+      name: stepName,
+      method: stepMethod,
+      inputs: newInputArgs,
+      interpolation: interpolationVariables,
+    });
 
     return {
       newArgs: newInputArgs,
-      id: id,
+      id: stepId,
     };
+  }
+
+  public submitOutput(stepId: string, stepOutput: string) {
+    this.submittedStepOutputMap.set(stepId, stepOutput);
   }
 }
