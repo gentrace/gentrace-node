@@ -37,7 +37,17 @@ async function summarizeTextOpenAI(
     inputs = {};
   }
 
-  const { newArgs, id } = gentrace.getStepInfo(stepName, method, args, inputs);
+  const { newArgs, id, cachedOutput } = gentrace.getStepInfo(
+    stepName,
+    method,
+    args,
+    inputs,
+  );
+
+  if (cachedOutput && cachedOutput.length > 0) {
+    console.log("CACHE: using cachedOutput: " + cachedOutput);
+    return cachedOutput;
+  }
 
   console.log(
     "interpolatedMessage: " +

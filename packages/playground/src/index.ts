@@ -1,7 +1,6 @@
 import { getGentraceApiKey, getGentraceBasePath } from "@gentrace/core";
 import { WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
-
 export { init } from "@gentrace/core"; // for accessing the Gentrace API key
 
 import { AsyncLocalStorage } from "async_hooks";
@@ -22,11 +21,17 @@ type InteractionObject = {
 
 type AIInputObject = Record<string, any>;
 
+// step ID to cachedInputString
+const cachedStepInputs: Map<string, string> = new Map();
+
+// cachedInputString to output
+const cachedStepOutputs: Map<string, string> = new Map();
+
 export class GentraceSession {
   registeredCustomTypes: string[] = [];
   registeredCustomObjects: CustomObject[] = [];
   registeredInteractionObjects: InteractionObject[] = [];
-  submittedStepOutputMap: Map<string, string> = new Map();
+  submittedStepOutputs: Map<string, string> = new Map(); // step ID to output string
 
   // get a WebSocket URL based on the Gentrace base path
 
@@ -125,8 +130,8 @@ export class GentraceSession {
 
   private addOutputsToSteps(steps: any): any {
     for (const step of steps) {
-      if (step.id && this.submittedStepOutputMap.has(step.id)) {
-        step.output = this.submittedStepOutputMap.get(step.id);
+      if (step.id && this.submittedStepOutputs.has(step.id)) {
+        step.output = this.submittedStepOutputs.get(step.id);
       }
     }
     return steps;
@@ -280,12 +285,23 @@ export class GentraceSession {
     this.registeredInteractionObjects.push(interactionObject);
   }
 
+  private getCachedInputString(
+    inputArgs: AIInputObject,
+    interpolationVariables?: Record<string, any>,
+  ): string {
+    // combo of inputArgs and interpolationVariables
+    return JSON.stringify({
+      inputs: inputArgs,
+      interpolation: interpolationVariables,
+    });
+  }
+
   public getStepInfo(
     stepName: string,
     stepMethod: string,
     defaultStepInputs: AIInputObject,
     interpolationVariables?: Record<string, any>,
-  ): { newArgs: AIInputObject; id: string } {
+  ): { newArgs: AIInputObject; id: string; cachedOutput?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
     // getting stored parameters for usage in this function
@@ -332,13 +348,39 @@ export class GentraceSession {
       interpolation: interpolationVariables,
     });
 
+    const cachedInputString = this.getCachedInputString(
+      newInputArgs,
+      interpolationVariables,
+    );
+
+    cachedStepInputs.set(stepId, cachedInputString);
+    //console.log("CACHE: setting cachedInputString for stepID "+stepId);
+    //console.log("CACHE: the cachedInputString is "+cachedInputString);
+
+    let cachedOutput: string = null;
+    if (cachedStepOutputs.has(cachedInputString)) {
+      //console.log("CACHE: cachedStepOutputs has inputString "+cachedInputString);
+
+      cachedOutput = cachedStepOutputs.get(cachedInputString);
+    }
+    //console.log("CACHE: cachedOutput is");
+    //console.log(cachedOutput);
+
     return {
       newArgs: newInputArgs,
       id: stepId,
+      cachedOutput: cachedOutput,
     };
   }
 
   public submitOutput(stepId: string, stepOutput: string) {
-    this.submittedStepOutputMap.set(stepId, stepOutput);
+    this.submittedStepOutputs.set(stepId, stepOutput);
+
+    if (cachedStepInputs.has(stepId)) {
+      //console.log("CACHE: submitOutput has cachedInputString for stepID "+stepId);
+      const cachedInputString = cachedStepInputs.get(stepId);
+      //console.log("CACHE: the cachedInputString is "+cachedInputString);
+      cachedStepOutputs.set(cachedInputString, stepOutput);
+    }
   }
 }
