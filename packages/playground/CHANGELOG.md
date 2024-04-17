@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.2.5
+
+### Patch Changes
+
+- 46cd636: add submitOutput function, include info in RunResponse
+
 ## 0.2.4
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @examples/playground
 
+## 0.2.4
+
+### Patch Changes
+
+- 46cd636: add submitOutput function, include info in RunResponse
+- Updated dependencies [46cd636]
+  - @gentrace/playground@0.2.5
+
 ## 0.2.3
 
 ### Patch Changes
