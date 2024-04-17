@@ -33,6 +33,10 @@ async function summarizeTextOpenAI(
     throw new Error("Method " + method + " is not supported.");
   }
 
+  if (!inputs) {
+    inputs = {};
+  }
+
   const { newArgs, id } = gentrace.getStepInfo(stepName, method, args, inputs);
 
   console.log(
@@ -49,7 +53,10 @@ async function summarizeTextOpenAI(
       temperature: newArgs.temperature,
     });
 
-    return completion.choices[0].message.content || "";
+    const output = completion.choices[0].message.content || "";
+    gentrace.submitOutput(id, output);
+
+    return output;
   } catch (error) {
     console.error("Error:", error);
   }
@@ -124,7 +131,31 @@ Viewer Name: {{viewer_name}}`;
     inputs,
   );
 
-  return { summary: summary };
+  // second step...
+
+  const defaultArgsTranslate = {
+    model: "gpt-3.5-turbo",
+    messages: [
+      {
+        role: "system",
+        content: "Please translate this into Portuguese.",
+      },
+      {
+        role: "user",
+        content: summary,
+      },
+    ],
+    temperature: 0.1,
+  };
+
+  const translation = await summarizeTextOpenAI(
+    "Translation step",
+    "openai.chat.completions.create",
+    defaultArgsTranslate,
+    null,
+  );
+
+  return { summary: translation };
 }
 
 async function demoExample() {
