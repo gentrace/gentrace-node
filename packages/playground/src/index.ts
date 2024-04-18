@@ -2,6 +2,7 @@ import { getGentraceApiKey, getGentraceBasePath } from "@gentrace/core";
 import { WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
 import stringify from "json-stable-stringify";
+
 export { init } from "@gentrace/core"; // for accessing the Gentrace API key
 
 import { AsyncLocalStorage } from "async_hooks";

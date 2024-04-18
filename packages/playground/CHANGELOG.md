@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.2.6
+
+### Patch Changes
+
+- 4ffdf76: caching outputs of a step
+
 ## 0.2.5
 
 ### Patch Changes

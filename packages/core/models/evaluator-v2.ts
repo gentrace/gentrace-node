@@ -41,7 +41,7 @@ export interface EvaluatorV2 {
    * @type {number}
    * @memberof EvaluatorV2
    */
-  archivedAt?: number;
+  archivedAt?: number | null;
   /**
    *
    * @type {string}
@@ -56,10 +56,10 @@ export interface EvaluatorV2 {
   name: string;
   /**
    * For evaluators with options scoring, the available options to choose from
-   * @type {object}
+   * @type {Array<any>}
    * @memberof EvaluatorV2
    */
-  options?: object | null;
+  options?: Array<any> | null;
   /**
    * For AI evaluators, the AI model to use
    * @type {string}
