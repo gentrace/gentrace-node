@@ -1,5 +1,13 @@
 # @examples/playground
 
+## 0.2.6
+
+### Patch Changes
+
+- 0bf4cf5: caching outputs of a step
+- Updated dependencies [0bf4cf5]
+  - @gentrace/playground@0.2.7
+
 ## 0.2.5
 
 ### Patch Changes

@@ -564,7 +564,7 @@ importers:
   examples/playground:
     dependencies:
       '@gentrace/playground':
-        specifier: workspace:^0.2.6
+        specifier: workspace:^0.2.7
         version: link:../../packages/playground
       openai:
         specifier: ^4.29.2
