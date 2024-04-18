@@ -104,9 +104,6 @@ export class GentraceSession {
     // map inputs to the registered custom objects
 
     try {
-      //console.log("mapInputsToObjects jsonInputs: ");
-      //console.log(jsonInputs);
-
       let jsonOutputs = jsonInputs; // clone the structure
 
       for (const key in jsonInputs) {
@@ -120,8 +117,6 @@ export class GentraceSession {
           }
         }
       }
-      //console.log("mapInputsToObjects jsonOutputs: ");
-      //console.log(jsonOutputs);
 
       return jsonOutputs;
     } catch (error) {
@@ -200,16 +195,10 @@ export class GentraceSession {
 
                 console.log("received.data.id: " + received.data.id);
 
-                /*console.log("received.data.inputs before mapping to Objects: ");
-                console.log(received.data.inputs);*/
-
                 const runInputObjects = this.mapInputsToObjects(
                   received.data.inputs,
                   interactionObject.inputFields,
                 );
-
-                /*console.log("received.data.inputs runInputObjects: ");
-                console.log(runInputObjects);*/
 
                 const runOutput =
                   await interactionObject.interaction(runInputObjects);
@@ -306,8 +295,6 @@ export class GentraceSession {
   ): { newArgs: AIInputObject; id: string; cachedOutput?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
-    // getting stored parameters for usage in this function
-    //const runId = store.get("id");
     const stepOverrides = store.get("stepOverrides");
 
     console.log("stepOverrides: ");
@@ -315,7 +302,7 @@ export class GentraceSession {
 
     // use a matching stepOverride (or fall back to the defaultStepInputs parameters)
 
-    let newInputArgs = defaultStepInputs; // initialize to the defaults
+    let newInputArgs = defaultStepInputs;
 
     for (const stepInputs of stepOverrides) {
       if (stepInputs.name == stepName) {
@@ -331,9 +318,6 @@ export class GentraceSession {
         }
       }
     }
-
-    //console.log("stepInputs: " + JSON.stringify(newStepInputs));
-    //console.log("newInputArgs: " + JSON.stringify(newInputArgs));
 
     // storing steps for a future RunResponse to the WebSocket server
 
@@ -356,17 +340,11 @@ export class GentraceSession {
     );
 
     cachedStepInputs.set(stepId, cachedInputString);
-    //console.log("CACHE: setting cachedInputString for stepID "+stepId);
-    //console.log("CACHE: the cachedInputString is "+cachedInputString);
 
     let cachedOutput: string = null;
     if (cachedStepOutputs.has(cachedInputString)) {
-      //console.log("CACHE: cachedStepOutputs has inputString "+cachedInputString);
-
       cachedOutput = cachedStepOutputs.get(cachedInputString);
     }
-    //console.log("CACHE: cachedOutput is");
-    //console.log(cachedOutput);
 
     return {
       newArgs: newInputArgs,
@@ -375,13 +353,15 @@ export class GentraceSession {
     };
   }
 
+  private isOutputValid(output: string): boolean {
+    return output.trim().length > 0;
+  }
+
   public submitOutput(stepId: string, stepOutput: string) {
     this.submittedStepOutputs.set(stepId, stepOutput);
 
-    if (cachedStepInputs.has(stepId)) {
-      //console.log("CACHE: submitOutput has cachedInputString for stepID "+stepId);
+    if (cachedStepInputs.has(stepId) && this.isOutputValid(stepOutput)) {
       const cachedInputString = cachedStepInputs.get(stepId);
-      //console.log("CACHE: the cachedInputString is "+cachedInputString);
       cachedStepOutputs.set(cachedInputString, stepOutput);
     }
   }
