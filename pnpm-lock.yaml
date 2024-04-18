@@ -1100,6 +1100,9 @@ importers:
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
         version: 11.1.6(rollup@3.29.4)(tslib@2.6.2)(typescript@5.1.6)
+      '@types/json-stable-stringify':
+        specifier: ^1.0.34
+        version: 1.0.34
       '@types/node':
         specifier: ^20.11.30
         version: 20.11.30
@@ -1112,6 +1115,9 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      json-stable-stringify:
+        specifier: ^1.0.2
+        version: 1.0.2
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
