@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.2.8
+
+### Patch Changes
+
+- 2eb3b33: add isOutputValid private function
+
 ## 0.2.7
 
 ### Patch Changes
