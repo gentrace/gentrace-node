@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.3
+
+### Patch Changes
+
+- ccf00a4: add filtering parameter and support for pipeline ID
+
 ## 2.5.2
 
 ### Patch Changes

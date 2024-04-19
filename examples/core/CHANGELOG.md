@@ -1,5 +1,13 @@
 # @examples/core
 
+## 0.2.1
+
+### Patch Changes
+
+- ccf00a4: add filtering parameter and support for pipeline ID
+- Updated dependencies [ccf00a4]
+  - @gentrace/core@2.5.3
+
 ## 0.2.0
 
 ### Minor Changes
