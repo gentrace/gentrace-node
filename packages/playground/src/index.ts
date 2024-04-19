@@ -18,10 +18,10 @@ type InteractionObject = {
   name: string;
   inputFields: object;
   outputFields: object;
-  interaction: any;
+  interaction: Function;
 };
 
-type AIInputObject = Record<string, any>;
+type AIInputObject = Record<string, object>;
 
 // step ID to cachedInputString
 const cachedStepInputs: Map<string, string> = new Map();
@@ -265,7 +265,7 @@ export class GentraceSession {
     name: string,
     inputFields: object,
     outputFields: object,
-    interaction: any,
+    interaction: Function,
   ) {
     const interactionObject = {
       name: name,
@@ -278,7 +278,7 @@ export class GentraceSession {
 
   private getCachedInputString(
     inputArgs: AIInputObject,
-    interpolationVariables?: Record<string, any>,
+    interpolationVariables?: Record<string, object>,
   ): string {
     // deterministic combo of inputArgs and interpolationVariables
     return stringify({
@@ -291,7 +291,7 @@ export class GentraceSession {
     stepName: string,
     stepMethod: string,
     defaultStepInputs: AIInputObject,
-    interpolationVariables?: Record<string, any>,
+    interpolationVariables?: Record<string, object>,
   ): { newArgs: AIInputObject; id: string; cachedOutput?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
