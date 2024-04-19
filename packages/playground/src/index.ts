@@ -14,14 +14,15 @@ type CustomObject = {
   object: object;
 };
 
-type InteractionObject = {
-  name: string;
-  inputFields: object;
-  outputFields: object;
-  interaction: Function;
-};
-
 type AIInputObject = Record<string, object>;
+type InteractionFunction<Args extends {}> = (args: Args) => void;
+
+type InteractionObject = {
+  name: String;
+  inputFields: Object;
+  outputFields: Object;
+  interaction: InteractionFunction<{ [K in keyof object]: object }>;
+};
 
 // step ID to cachedInputString
 const cachedStepInputs: Map<string, string> = new Map();
@@ -265,7 +266,7 @@ export class GentraceSession {
     name: string,
     inputFields: object,
     outputFields: object,
-    interaction: Function,
+    interaction: InteractionFunction<{ [K in keyof object]: object }>,
   ) {
     const interactionObject = {
       name: name,
