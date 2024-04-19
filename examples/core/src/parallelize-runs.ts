@@ -1,16 +1,33 @@
 import {
   init,
   Pipeline,
-  PipelineRun,
+  PipelineRunTestCaseTuple,
   getTestRunners,
   submitTestRunners,
-  TestCase,
 } from "@gentrace/core";
-import { initPlugin } from "@gentrace/openai";
 
 function exampleResponse(inputs: any) {
   return "This is a generated response from the AI";
 }
+
+// utility function to enable parallelism
+export const enableParallelism = async <T, U>(
+  items: T[],
+  callbackFn: (t: T) => Promise<U>,
+  { parallelThreads = 10 }: { parallelThreads?: number } = {},
+) => {
+  const results = Array<U>(items.length);
+
+  const iterator = items.entries();
+  const doAction = async (iterator: IterableIterator<[number, T]>) => {
+    for (const [index, item] of iterator) {
+      results[index] = await callbackFn(item);
+    }
+  };
+  const workers = Array(parallelThreads).fill(iterator).map(doAction);
+  await Promise.allSettled(workers);
+  return results;
+};
 
 async function main() {
   init({
@@ -20,22 +37,24 @@ async function main() {
 
   const PIPELINE_SLUG = "guess-the-year";
 
-  const openaiPlugin = await initPlugin({
-    apiKey: process.env.OPENAI_KEY,
-  });
-
-  // get the existing pipeline by the slug (if already exists)
-  const pipeline = new Pipeline({
+  // get the existing pipeline (if already exists)
+  const pipelineBySlug = new Pipeline({
     slug: PIPELINE_SLUG,
-    plugins: {
-      openai: openaiPlugin,
-    },
   });
 
-  // example handler
-  const handler = async (runner: PipelineRun, testCase: TestCase) => {
+  // example pipeline by ID
+  const pipelineById = new Pipeline({
+    id: "c10408c7-abde-5c19-b339-e8b1087c9b64",
+  });
+
+  const pipeline = pipelineBySlug;
+
+  const exampleHandler = async ([
+    runner,
+    testCase,
+  ]: PipelineRunTestCaseTuple) => {
     await runner.measure(
-      (inputs) => {
+      (inputs: any) => {
         return {
           example: exampleResponse(inputs),
         };
@@ -46,9 +65,9 @@ async function main() {
 
   const pipelineRunTestCases = await getTestRunners(pipeline);
 
-  for (const [pipelineRun, testCase] of pipelineRunTestCases) {
-    await handler(pipelineRun, testCase); // TODO: add some parallelization to this example
-  }
+  await enableParallelism(pipelineRunTestCases, exampleHandler, {
+    parallelThreads: 5,
+  });
 
   const response = await submitTestRunners(pipeline, pipelineRunTestCases);
   console.log(response);

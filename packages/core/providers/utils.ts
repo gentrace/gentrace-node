@@ -1,4 +1,5 @@
-import { Context } from "./context";
+import { Context, ResultContext } from "./context";
+import { TestCase } from "../models";
 import { Pattern, parse } from "acorn";
 import axios from "axios";
 
@@ -129,6 +130,34 @@ export function safeJsonParse(jsonString: string | null) {
   } catch (error) {
     return null;
   }
+}
+
+export function getContextTestCaseFilter(
+  contextOrCaseFilter?:
+    | ResultContext
+    | ((
+        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+      ) => boolean),
+  caseFilterOrUndefined?: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean,
+): {
+  context: ResultContext | undefined;
+  caseFilter: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean | undefined;
+} {
+  let context, caseFilter;
+  // Determine the overload being used based on the types of arguments
+  if (typeof contextOrCaseFilter === "function") {
+    caseFilter = contextOrCaseFilter;
+    context = undefined;
+  } else {
+    context = contextOrCaseFilter;
+    caseFilter = caseFilterOrUndefined;
+  }
+
+  return { context, caseFilter };
 }
 
 let lastErrorCheckpoint = Date.now(); // used for error throttling

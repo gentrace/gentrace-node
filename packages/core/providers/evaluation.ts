@@ -30,6 +30,7 @@ import {
   decrementTestCounter,
   getProcessEnv,
   incrementTestCounter,
+  getContextTestCaseFilter,
 } from "./utils";
 
 export type TestRun = V1TestResultPostRequestTestRunsInner;
@@ -224,22 +225,18 @@ export const updateTestCase = async (payload: UpdateTestCase) => {
 };
 
 export const constructSubmissionPayload = (
-  pipelineId: string,
+  pipelineIdentifier: string,
   testRuns: TestRun[],
   context?: ResultContext,
-  pipelineSlug?: string,
 ) => {
   const body: V1TestResultPostRequest = {
     testRuns,
   };
 
-  // set up identifiers
-  if (pipelineId) {
-    body.pipelineId = pipelineId;
-  }
-
-  if (pipelineSlug) {
-    body.pipelineSlug = pipelineSlug;
+  if (isUUID(pipelineIdentifier)) {
+    body.pipelineId = pipelineIdentifier;
+  } else {
+    body.pipelineSlug = pipelineIdentifier;
   }
 
   // Will be overwritten if GENTRACE_RESULT_NAME is specified
@@ -450,7 +447,7 @@ export const getTestResults = async (pipelineSlug?: string) => {
   return testResults;
 };
 
-type PipelineRunTestCaseTuple = [PipelineRun, TestCase];
+export type PipelineRunTestCaseTuple = [PipelineRun, TestCase];
 
 /**
  * Retrieves test runners for a given pipeline
@@ -461,6 +458,9 @@ type PipelineRunTestCaseTuple = [PipelineRun, TestCase];
  */
 export const getTestRunners = async (
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
+  caseFilter?: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean,
 ): Promise<Array<PipelineRunTestCaseTuple>> => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
@@ -471,13 +471,21 @@ export const getTestRunners = async (
   }
 
   // get test cases for the pipeline
-  const response = await globalGentraceApi.v1TestCaseGet(null, pipeline.slug);
+  let response;
+  if (pipeline.id) {
+    response = await globalGentraceApi.v1TestCaseGet(pipeline.id);
+  } else {
+    response = await globalGentraceApi.v1TestCaseGet(null, pipeline.slug);
+  }
   const testCases = response.data.testCases ?? [];
 
   // create tuples of pipeline run and test case
   const testRunners: Array<PipelineRunTestCaseTuple> = [];
 
   for (const testCase of testCases) {
+    if (caseFilter && !caseFilter(testCase)) {
+      continue;
+    }
     const pipelineRun = pipeline.start();
     testRunners.push([pipelineRun, testCase]);
   }
@@ -504,19 +512,10 @@ export async function submitTestRunners(
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
   ) => boolean,
 ): Promise<V1TestResultPost200Response> {
-  let context: ResultContext | undefined;
-  let caseFilter: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
-  ) => boolean | undefined;
-
-  // Determine the overload being used based on the types of arguments
-  if (typeof contextOrCaseFilter === "function") {
-    caseFilter = contextOrCaseFilter;
-    context = undefined;
-  } else {
-    context = contextOrCaseFilter;
-    caseFilter = caseFilterOrUndefined;
-  }
+  const { context, caseFilter } = getContextTestCaseFilter(
+    contextOrCaseFilter,
+    caseFilterOrUndefined,
+  );
 
   try {
     if (!pipeline) {
@@ -525,7 +524,6 @@ export async function submitTestRunners(
 
     const testRuns: TestRun[] = [];
 
-    // todo: consider creating abstraction w RunTest
     for (const [pipelineRun, testCase] of pipelineRunTestCases) {
       if (caseFilter && !caseFilter(testCase)) {
         continue;
@@ -584,10 +582,9 @@ export async function submitTestRunners(
     }
 
     const body = constructSubmissionPayload(
-      null,
+      pipeline.id ?? pipeline.slug,
       testRuns,
       context,
-      pipeline.slug,
     );
 
     const response = await globalGentraceApi.v1TestResultPost(body);
@@ -654,19 +651,10 @@ export async function runTest(
 ): Promise<V1TestResultPost200Response> {
   incrementTestCounter();
 
-  let context: ResultContext | undefined;
-  let caseFilter: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
-  ) => boolean | undefined;
-
-  // Determine the overload being used based on the types of arguments
-  if (typeof contextOrCaseFilter === "function") {
-    caseFilter = contextOrCaseFilter;
-    context = undefined;
-  } else {
-    context = contextOrCaseFilter;
-    caseFilter = caseFilterOrUndefined;
-  }
+  const { context, caseFilter } = getContextTestCaseFilter(
+    contextOrCaseFilter,
+    caseFilterOrUndefined,
+  );
 
   try {
     const allPipelines = await getPipelines();
