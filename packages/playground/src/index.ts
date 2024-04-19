@@ -18,9 +18,9 @@ type AIInputObject = Record<string, object>;
 type InteractionFunction<Args extends {}> = (args: Args) => void;
 
 type InteractionObject = {
-  name: String;
-  inputFields: Object;
-  outputFields: Object;
+  name: string;
+  inputFields: object;
+  outputFields: object;
   interaction: InteractionFunction<{ [K in keyof object]: object }>;
 };
 
