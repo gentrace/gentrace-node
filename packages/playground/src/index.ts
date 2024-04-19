@@ -14,14 +14,16 @@ type CustomObject = {
   object: object;
 };
 
-type AIInputObject = Record<string, object>;
-type InteractionFunction<Args extends {}> = (args: Args) => void;
+type TInput = Record<string, object>;
+type TOutput = Record<string, object>;
 
 type InteractionObject = {
   name: string;
-  inputFields: object;
-  outputFields: object;
-  interaction: InteractionFunction<{ [K in keyof object]: object }>;
+  inputFields: TInput;
+  outputFields: TOutput;
+  interaction: (inputs: { [K in keyof TInput]?: any }) => {
+    [K in keyof TOutput]?: any;
+  };
 };
 
 // step ID to cachedInputString
@@ -264,9 +266,11 @@ export class GentraceSession {
 
   public registerInteraction(
     name: string,
-    inputFields: object,
-    outputFields: object,
-    interaction: InteractionFunction<{ [K in keyof object]: object }>,
+    inputFields: TInput,
+    outputFields: TOutput,
+    interaction: (inputs: { [K in keyof TInput]?: any }) => {
+      [K in keyof TOutput]?: any;
+    },
   ) {
     const interactionObject = {
       name: name,
@@ -278,7 +282,7 @@ export class GentraceSession {
   }
 
   private getCachedInputString(
-    inputArgs: AIInputObject,
+    inputArgs: TInput,
     interpolationVariables?: Record<string, object>,
   ): string {
     // deterministic combo of inputArgs and interpolationVariables
@@ -291,9 +295,9 @@ export class GentraceSession {
   public getStepInfo(
     stepName: string,
     stepMethod: string,
-    defaultStepInputs: AIInputObject,
+    defaultStepInputs: TInput,
     interpolationVariables?: Record<string, object>,
-  ): { newArgs: AIInputObject; id: string; cachedOutput?: string } {
+  ): { newArgs: TInput; id: string; cachedOutput?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
     const stepOverrides = store.get("stepOverrides");
