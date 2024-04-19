@@ -458,23 +458,13 @@ export type PipelineRunTestCaseTuple = [PipelineRun, TestCase];
  */
 export const getTestRunners = async (
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
-  contextOrCaseFilter?:
-    | ResultContext
-    | ((
-        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
-      ) => boolean),
-  caseFilterOrUndefined?: (
+  caseFilter?: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
   ) => boolean,
 ): Promise<Array<PipelineRunTestCaseTuple>> => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
-
-  const { context, caseFilter } = getContextTestCaseFilter(
-    contextOrCaseFilter,
-    caseFilterOrUndefined,
-  );
 
   if (!pipeline) {
     throw new Error(`Invalid pipeline found`);
