@@ -1,5 +1,16 @@
 # @examples/playground
 
+## 0.3.0
+
+### Minor Changes
+
+- 3d86904: rename sdk functions/params to be clearer
+
+### Patch Changes
+
+- Updated dependencies [3d86904]
+  - @gentrace/playground@0.3.0
+
 ## 0.2.6
 
 ### Patch Changes

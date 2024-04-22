@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.3.0
+
+### Minor Changes
+
+- 3d86904: rename sdk functions/params to be clearer
+
 ## 0.2.9
 
 ### Patch Changes
