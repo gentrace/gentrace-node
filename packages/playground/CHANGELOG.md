@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.2.9
+
+### Patch Changes
+
+- a56317a: cleanup types
+
 ## 0.2.8
 
 ### Patch Changes
