@@ -33,10 +33,6 @@ async function summarizeTextOpenAI(
     throw new Error("Method " + method + " is not supported.");
   }
 
-  if (!inputs) {
-    inputs = {};
-  }
-
   const { newArgs, id, cachedOutput } = gentrace.getStepInfo(
     stepName,
     method,
@@ -46,6 +42,7 @@ async function summarizeTextOpenAI(
 
   if (cachedOutput && cachedOutput.length > 0) {
     console.log("CACHE: using cachedOutput: " + cachedOutput);
+    gentrace.submitOutput(id, cachedOutput);
     return cachedOutput;
   }
 
@@ -162,7 +159,7 @@ Viewer Name: {{viewer_name}}`;
     "Translation step",
     "openai.chat.completions.create",
     defaultArgsTranslate,
-    null,
+    {},
   );
 
   return { summary: translation };
