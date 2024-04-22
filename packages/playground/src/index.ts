@@ -282,7 +282,7 @@ export class GentraceSession {
   }
 
   private getCachedInputString(
-    inputArgs: TInput,
+    inputArgs: Record<string, object>,
     interpolationVariables?: Record<string, object>,
   ): string {
     // deterministic combo of inputArgs and interpolationVariables
@@ -295,9 +295,9 @@ export class GentraceSession {
   public getStepInfo(
     stepName: string,
     stepMethod: string,
-    defaultStepInputs: TInput,
+    defaultStepInputs: Record<string, object>,
     interpolationVariables?: Record<string, object>,
-  ): { newArgs: TInput; id: string; cachedOutput?: string } {
+  ): { newArgs: Record<string, object>; id: string; cachedOutput?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
     const stepOverrides = store.get("stepOverrides");
