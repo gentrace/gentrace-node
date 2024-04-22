@@ -26,44 +26,45 @@ function createInterpolatedMessages(template: object, inputs: object): string {
 async function summarizeTextOpenAI(
   stepName: string,
   method: string,
-  args: object,
-  inputs: object,
+  args: Record<string, any>,
+  inputs: Record<string, any>,
 ): Promise<string> {
   if (method !== "openai.chat.completions.create") {
     throw new Error("Method " + method + " is not supported.");
   }
 
-  const { newArgs, id, cachedOutput } = gentrace.getStepInfo(
-    stepName,
-    method,
-    args,
-    inputs,
-  );
+  const { overrideArgsTemplate, stepRunId, cachedResponse } =
+    gentrace.getStepRun(stepName, method, args, inputs);
 
-  if (cachedOutput && cachedOutput.length > 0) {
-    console.log("CACHE: using cachedOutput: " + cachedOutput);
-    gentrace.submitOutput(id, cachedOutput);
-    return cachedOutput;
+  if (cachedResponse && cachedResponse.length > 0) {
+    console.log("CACHE: using cachedResponse: " + cachedResponse);
+    gentrace.submitStepRun(stepRunId, cachedResponse);
+    return cachedResponse;
   }
 
   console.log(
     "interpolatedMessage: " +
-      JSON.stringify(createInterpolatedMessages(newArgs.messages, inputs)),
+      JSON.stringify(
+        createInterpolatedMessages(overrideArgsTemplate.messages, inputs),
+      ),
   );
 
-  const messages: any = createInterpolatedMessages(newArgs.messages, inputs);
+  const messages: any = createInterpolatedMessages(
+    overrideArgsTemplate.messages,
+    inputs,
+  );
 
   try {
     const completion = await openai.chat.completions.create({
-      model: newArgs.model, // gpt-3.5-turbo, gpt-4, etc.
+      model: overrideArgsTemplate.model, // gpt-3.5-turbo, gpt-4, etc.
       messages: messages,
-      temperature: newArgs.temperature,
+      temperature: overrideArgsTemplate.temperature,
     });
 
-    const output = completion.choices[0].message.content || "";
-    gentrace.submitOutput(id, output);
+    const response = completion.choices[0].message.content || "";
+    gentrace.submitStepRun(stepRunId, response);
 
-    return output;
+    return response;
   } catch (error) {
     console.error("Error:", error);
   }

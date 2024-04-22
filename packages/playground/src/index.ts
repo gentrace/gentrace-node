@@ -292,12 +292,12 @@ export class GentraceSession {
     });
   }
 
-  public getStepInfo<T extends Record<string, any> = Record<string, any>>(
+  public getStepRun<T extends Record<string, any> = Record<string, any>>(
     stepName: string,
-    stepMethod: string,
-    defaultArgs: T,
-    interpolationVariables?: Record<string, any>,
-  ): { newArgs: T; id: string; cachedOutput?: string } {
+    method: string,
+    argsTemplate: T,
+    templateData?: Record<string, any>,
+  ): { overrideArgsTemplate: T; stepRunId: string; cachedResponse?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
     const stepOverrides = store.get("stepOverrides");
@@ -305,11 +305,11 @@ export class GentraceSession {
     console.log("stepOverrides: ");
     console.log(stepOverrides);
 
-    let newInputArgs = defaultArgs;
+    let newArgsTemplate = argsTemplate;
 
     for (const stepOverride of stepOverrides) {
       if (stepOverride.name == stepName) {
-        Object.assign(newInputArgs, stepOverride.overrides);
+        Object.assign(newArgsTemplate, stepOverride.overrides);
       }
     }
 
@@ -323,14 +323,14 @@ export class GentraceSession {
     store.get("stepsArray").push({
       id: stepId,
       name: stepName,
-      method: stepMethod,
-      inputs: newInputArgs,
-      interpolation: interpolationVariables,
+      method: method,
+      inputs: newArgsTemplate,
+      interpolation: templateData,
     });
 
     const cachedInputString = this.getCachedInputString(
-      newInputArgs,
-      interpolationVariables,
+      newArgsTemplate,
+      templateData,
     );
 
     cachedStepInputs.set(stepId, cachedInputString);
@@ -341,9 +341,9 @@ export class GentraceSession {
     }
 
     return {
-      newArgs: newInputArgs,
-      id: stepId,
-      cachedOutput: cachedOutput,
+      overrideArgsTemplate: newArgsTemplate,
+      stepRunId: stepId,
+      cachedResponse: cachedOutput,
     };
   }
 
@@ -351,12 +351,12 @@ export class GentraceSession {
     return output.trim().length > 0;
   }
 
-  public submitOutput(stepId: string, stepOutput: string) {
-    this.submittedStepOutputs.set(stepId, stepOutput);
+  public submitStepRun(stepRunId: string, response: string) {
+    this.submittedStepOutputs.set(stepRunId, response);
 
-    if (cachedStepInputs.has(stepId) && this.isOutputValid(stepOutput)) {
-      const cachedInputString = cachedStepInputs.get(stepId);
-      cachedStepOutputs.set(cachedInputString, stepOutput);
+    if (cachedStepInputs.has(stepRunId) && this.isOutputValid(response)) {
+      const cachedInputString = cachedStepInputs.get(stepRunId);
+      cachedStepOutputs.set(cachedInputString, response);
     }
   }
 }
