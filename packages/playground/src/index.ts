@@ -14,14 +14,17 @@ type CustomObject = {
   object: object;
 };
 
+type TInput = Record<string, any>;
+type TOutput = Record<string, any>;
+
 type InteractionObject = {
   name: string;
-  inputFields: object;
-  outputFields: object;
-  interaction: any;
+  inputFields: TInput;
+  outputFields: TOutput;
+  interaction: (inputs: { [K in keyof TInput]?: any }) => {
+    [K in keyof TOutput]?: any;
+  };
 };
-
-type AIInputObject = Record<string, any>;
 
 // step ID to cachedInputString
 const cachedStepInputs: Map<string, string> = new Map();
@@ -263,9 +266,11 @@ export class GentraceSession {
 
   public registerInteraction(
     name: string,
-    inputFields: object,
-    outputFields: object,
-    interaction: any,
+    inputFields: TInput,
+    outputFields: TOutput,
+    interaction: (inputs: { [K in keyof TInput]?: any }) => {
+      [K in keyof TOutput]?: any;
+    },
   ) {
     const interactionObject = {
       name: name,
@@ -277,7 +282,7 @@ export class GentraceSession {
   }
 
   private getCachedInputString(
-    inputArgs: AIInputObject,
+    inputArgs: Record<string, any>,
     interpolationVariables?: Record<string, any>,
   ): string {
     // deterministic combo of inputArgs and interpolationVariables
@@ -287,12 +292,12 @@ export class GentraceSession {
     });
   }
 
-  public getStepInfo(
+  public getStepInfo<T extends Record<string, any> = Record<string, any>>(
     stepName: string,
     stepMethod: string,
-    defaultStepInputs: AIInputObject,
+    defaultArgs: T,
     interpolationVariables?: Record<string, any>,
-  ): { newArgs: AIInputObject; id: string; cachedOutput?: string } {
+  ): { newArgs: T; id: string; cachedOutput?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
     const stepOverrides = store.get("stepOverrides");
@@ -300,22 +305,11 @@ export class GentraceSession {
     console.log("stepOverrides: ");
     console.log(stepOverrides);
 
-    // use a matching stepOverride (or fall back to the defaultStepInputs parameters)
+    let newInputArgs = defaultArgs;
 
-    let newInputArgs = defaultStepInputs;
-
-    for (const stepInputs of stepOverrides) {
-      if (stepInputs.name == stepName) {
-        const overrides = stepInputs.overrides;
-        if (overrides.model) {
-          newInputArgs.model = overrides.model;
-        }
-        if (overrides.messages) {
-          newInputArgs.messages = overrides.messages;
-        }
-        if (overrides.temperature) {
-          newInputArgs.temperature = overrides.temperature;
-        }
+    for (const stepOverride of stepOverrides) {
+      if (stepOverride.name == stepName) {
+        Object.assign(newInputArgs, stepOverride.overrides);
       }
     }
 
