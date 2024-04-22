@@ -46,6 +46,7 @@ async function summarizeTextOpenAI(
 
   if (cachedOutput && cachedOutput.length > 0) {
     console.log("CACHE: using cachedOutput: " + cachedOutput);
+    gentrace.submitOutput(id, cachedOutput);
     return cachedOutput;
   }
 
