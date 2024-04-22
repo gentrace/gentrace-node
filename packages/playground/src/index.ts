@@ -14,8 +14,8 @@ type CustomObject = {
   object: object;
 };
 
-type TInput = Record<string, object>;
-type TOutput = Record<string, object>;
+type TInput = Record<string, any>;
+type TOutput = Record<string, any>;
 
 type InteractionObject = {
   name: string;
@@ -282,8 +282,8 @@ export class GentraceSession {
   }
 
   private getCachedInputString(
-    inputArgs: Record<string, object>,
-    interpolationVariables?: Record<string, object>,
+    inputArgs: Record<string, any>,
+    interpolationVariables?: Record<string, any>,
   ): string {
     // deterministic combo of inputArgs and interpolationVariables
     return stringify({
@@ -292,12 +292,12 @@ export class GentraceSession {
     });
   }
 
-  public getStepInfo(
+  public getStepInfo<T extends Record<string, any> = Record<string, any>>(
     stepName: string,
     stepMethod: string,
-    defaultStepInputs: Record<string, object>,
-    interpolationVariables?: Record<string, object>,
-  ): { newArgs: Record<string, object>; id: string; cachedOutput?: string } {
+    defaultArgs: T,
+    interpolationVariables?: Record<string, any>,
+  ): { newArgs: T; id: string; cachedOutput?: string } {
     const store = asyncLocalStorage.getStore() as any;
 
     const stepOverrides = store.get("stepOverrides");
@@ -305,22 +305,11 @@ export class GentraceSession {
     console.log("stepOverrides: ");
     console.log(stepOverrides);
 
-    // use a matching stepOverride (or fall back to the defaultStepInputs parameters)
+    let newInputArgs = defaultArgs;
 
-    let newInputArgs = defaultStepInputs;
-
-    for (const stepInputs of stepOverrides) {
-      if (stepInputs.name == stepName) {
-        const overrides = stepInputs.overrides;
-        if (overrides.model) {
-          newInputArgs.model = overrides.model;
-        }
-        if (overrides.messages) {
-          newInputArgs.messages = overrides.messages;
-        }
-        if (overrides.temperature) {
-          newInputArgs.temperature = overrides.temperature;
-        }
+    for (const stepOverride of stepOverrides) {
+      if (stepOverride.name == stepName) {
+        Object.assign(newInputArgs, stepOverride.overrides);
       }
     }
 

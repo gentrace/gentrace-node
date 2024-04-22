@@ -33,10 +33,6 @@ async function summarizeTextOpenAI(
     throw new Error("Method " + method + " is not supported.");
   }
 
-  if (!inputs) {
-    inputs = {};
-  }
-
   const { newArgs, id, cachedOutput } = gentrace.getStepInfo(
     stepName,
     method,
@@ -162,7 +158,7 @@ Viewer Name: {{viewer_name}}`;
     "Translation step",
     "openai.chat.completions.create",
     defaultArgsTranslate,
-    null,
+    {},
   );
 
   return { summary: translation };
@@ -184,15 +180,16 @@ async function demoExample() {
   gentrace.registerCustomType("Task");
   gentrace.registerCustomObject("Task", taskForBob.taskName, taskForBob);
 
+  const inputFields = { task: "Task", viewer: "User" };
+  const outputFields = { summary: "string" };
+  const interactionFunction = (inputs: { task: Task; viewer: User }) =>
+    summarizeTaskForViewer(inputs.task, inputs.viewer);
+
   gentrace.registerInteraction(
     "Summarize Task for Viewer",
-    {
-      task: "Task",
-      viewer: "User",
-    },
-    { summary: "string" },
-    (inputs: { task: Task; viewer: User }) =>
-      summarizeTaskForViewer(inputs.task, inputs.viewer),
+    inputFields,
+    outputFields,
+    interactionFunction,
   );
 
   gentrace.start();
