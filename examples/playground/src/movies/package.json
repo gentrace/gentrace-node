@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "node": "^18.20.2"
+    "node": "^v20.12.2"
   }
 }
