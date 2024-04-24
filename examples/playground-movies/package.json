@@ -1,15 +1,12 @@
 {
   "name": "@examples/playground-movies",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
   "main": "index.js",
   "scripts": {
     "start": "dotenv tsx"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@gentrace/playground": "^0.3.0",
+    "@gentrace/playground": "^0.3.1",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.1",
     "mustache": "^4.2.0",
