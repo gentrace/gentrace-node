@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- f36f27f: movies example
+
+## 0.1.1
+
+### Patch Changes
+
 - 5066204: movies example
 
 ## 0.1.1
