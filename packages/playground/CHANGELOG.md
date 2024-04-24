@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.3.1
+
+### Patch Changes
+
+- 7ae5125: enable production url for basepath etc.
+
 ## 0.3.0
 
 ### Minor Changes
