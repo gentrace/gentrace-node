@@ -4,16 +4,16 @@ import movieQuery from "./movie-query";
 import { gentrace } from "./helpers";
 
 async function playground() {
-  gentrace.registerCustomType("movie");
+  gentrace.registerCustomType("Movie");
 
   allMovies.forEach((movie) => {
-    gentrace.registerCustomObject("movie", movie.title, movie);
+    gentrace.registerCustomObject("Movie", movie.title, movie);
   });
 
   gentrace.registerInteraction(
     "Movie Query", // interaction name
     {
-      movie: "movie",
+      movie: "Movie",
       question: "string",
       sample_answer: "string",
     }, // input fields
