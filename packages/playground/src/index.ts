@@ -46,6 +46,10 @@ export class GentraceSession {
 
     const basePath = getGentraceBasePath();
 
+    if (!basePath || basePath.length == 0) {
+      return "wss://gentrace.ai/ws"; // TODO: make this less hard-coded and/or more flexible
+    }
+
     if (basePath.startsWith("http://localhost")) {
       webSocketUrl = "ws://localhost:3001";
     } else {
