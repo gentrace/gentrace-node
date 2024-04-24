@@ -1,5 +1,11 @@
 # @examples/playground-movies
 
+## 0.1.1
+
+### Patch Changes
+
+- c36ce7e: movies example
+
 ## 1.0.1
 
 ### Patch Changes
