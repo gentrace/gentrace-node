@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@gentrace/playground": "^0.3.0",
+    "@gentrace/playground": "^0.3.1",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.1",
     "mustache": "^4.2.0",
@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "node": "^v20.12.2"
+    "node": "^20.12.2"
   }
 }
