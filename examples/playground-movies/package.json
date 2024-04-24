@@ -1,6 +1,6 @@
 {
   "name": "@examples/playground-movies",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@gentrace/playground": "^0.3.0",
+    "@gentrace/playground": "^0.3.1",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.1",
     "mustache": "^4.2.0",
