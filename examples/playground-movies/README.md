@@ -10,23 +10,40 @@ To run this example:
 npm --version
 ```
 
-2. Go to the directory for this example.
+2. Install [pnpm](https://pnpm.io/) version 8.7.0
 
-3. In this directory, set up environment variables in a `.env` file. For example, the file could contain:
+```
+npm install -g pnpm@8.7.0
+```
+
+3. Clone the repo, and go to the directory for this example.
+
+```
+git clone https://github.com/gentrace/gentrace-node.git
+cd gentrace-node/examples/playground-movies/
+```
+
+4. In this directory, set up environment variables in a `.env` file. For example, the file could contain:
 
 ```
 GENTRACE_API_KEY=...
 OPENAI_KEY=...   
 ```
 
-4. Install the package.
+5. Install the package.
 
 ```
-npm install
+pnpm install
 ```
 
-5. Run the code file. 
+6. Build the package.
 
 ```
-npm start index.ts
+pnpm -w run build
+```
+
+7. Run the code file. 
+
+```
+pnpm run start index.ts
 ```
