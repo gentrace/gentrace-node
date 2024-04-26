@@ -133,10 +133,17 @@ export class GentraceSession {
   }
 
   private addOutputsToSteps(steps: any): any {
-    for (const step of steps) {
-      if (step.id && this.submittedStepOutputs.has(step.id)) {
-        step.output = this.submittedStepOutputs.get(step.id);
+    if (steps == undefined) {
+      return [];
+    }
+    try {
+      for (const step of steps) {
+        if (step.id && this.submittedStepOutputs.has(step.id)) {
+          step.output = this.submittedStepOutputs.get(step.id);
+        }
       }
+    } catch {
+      return [];
     }
     return steps;
   }
