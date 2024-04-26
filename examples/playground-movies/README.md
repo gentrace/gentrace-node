@@ -10,10 +10,10 @@ To run this example:
 npm --version
 ```
 
-2. Install [pnpm](https://pnpm.io/) version 8.7.0
+2. Install [pnpm](https://pnpm.io/)
 
 ```
-npm install -g pnpm@8.7.0
+npm install -g pnpm
 ```
 
 3. Clone the repo, and go to the directory for this example.
