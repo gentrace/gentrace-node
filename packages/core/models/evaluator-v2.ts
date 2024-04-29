@@ -97,6 +97,12 @@ export interface EvaluatorV2 {
    */
   heuristicFn?: string | null;
   /**
+   * For heuristic evaluators, the coding language of the heuristic function (such as \"JAVASCRIPT\", \"PYTHON\")
+   * @type {string}
+   * @memberof EvaluatorV2
+   */
+  heuristicFnLanguage?: string;
+  /**
    * For AI evaluators, the prompt template that should be sent to the AI model
    * @type {string}
    * @memberof EvaluatorV2
