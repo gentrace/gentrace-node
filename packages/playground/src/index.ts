@@ -2,6 +2,7 @@ import { getGentraceApiKey, getGentraceBasePath } from "@gentrace/core";
 import { WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
 import stringify from "json-stable-stringify";
+import { magenta, white } from "cli-color";
 
 export { init } from "@gentrace/core"; // for accessing the Gentrace API key
 
@@ -31,6 +32,11 @@ const cachedStepInputs: Map<string, string> = new Map();
 
 // cachedInputString to output
 const cachedStepOutputs: Map<string, string> = new Map();
+
+// colors for output
+const playgroundUrlColor = (url: string) => magenta.bold(url);
+const pingColor = (text: string) => white(text);
+const responseColor = (text: string) => white(text);
 
 export class GentraceSession {
   registeredCustomTypes: string[] = [];
@@ -175,14 +181,14 @@ export class GentraceSession {
 
       // send ping to keep server connection open for longer
       setInterval(() => {
-        console.log("-> ping");
+        console.log(pingColor("-> ping"));
         ws.send(JSON.stringify({ id: uuidv4(), ping: true }));
       }, 10000);
     });
 
     ws.addEventListener("message", async (event) => {
       const message = event.data.toString();
-      console.log("<-", message);
+      console.log(responseColor("<-" + message));
 
       if (this.isJson(message)) {
         const received = JSON.parse(message);
@@ -194,7 +200,8 @@ export class GentraceSession {
 
         if (receivedEventType == "setupResponse") {
           // receive event to display playground URL
-          console.log("Received Playground URL: " + received.data.url);
+          console.log("Received Playground URL: ");
+          console.log(playgroundUrlColor(received.data.url));
         } else if (receivedEventType == "run") {
           for (const interactionObject of this.registeredInteractionObjects) {
             if (received.data.interaction == interactionObject.name) {
