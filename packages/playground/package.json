@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^2.4.2",
+    "cli-color": "^2.0.4",
     "json-stable-stringify": "^1.0.2",
     "uuid": "^9.0.0",
     "ws": "^8.16.0"
@@ -36,6 +37,7 @@
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/cli-color": "^2.0.6",
     "@types/json-stable-stringify": "^1.0.34",
     "@types/node": "^20.11.30",
     "@types/uuid": "^9.0.8",
