@@ -31,6 +31,15 @@ jobs:
           node-version: 18
           cache: 'pnpm'
       
+      - name: DEBUG - List files
+        run: ls
+
+      - name: DEBUG - Show package-lock.yaml
+        run: more package-lock.yaml
+
+      - name: DEBUG - Install dependencies
+        run: pnpm install
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
           
