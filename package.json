@@ -35,11 +35,11 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@gentrace/tsconfig": "workspace:*",
     "@manypkg/get-packages": "^2.2.0",
-    "eslint": "^8.48.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^13.2.0",
-    "prettier": "^3.0.3",
-    "tsx": "^3.12.8",
+    "eslint": "^9.1.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "tsx": "^4.8.2",
     "turbo": "latest"
   },
   "packageManager": "pnpm@9.0.6"
