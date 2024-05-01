@@ -21,9 +21,9 @@ jobs:
         uses: actions/checkout@v3
       
       - name: ⎔ Setup pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v3.0.0
         with:
-          version: 8.7.0
+          version: 9.0.6
 
       - name: Setup Node.js 18
         uses: actions/setup-node@v3
@@ -31,17 +31,8 @@ jobs:
           node-version: 18
           cache: 'pnpm'
 
-      - name: DEBUG - List files
-        run: ls
-
-      - name: DEBUG - Show pnpm-lock.yaml
-        run: more pnpm-lock.yaml
-
-      - name: DEBUG - Install dependencies
-        run: pnpm install
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
           
       - name: Build assets
         run: pnpm -w run build
