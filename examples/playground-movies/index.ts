@@ -21,7 +21,7 @@ async function playground() {
       answer: "string",
     }, // output fields
     (inputs: { movie: Movie; question: string }) =>
-      movieQuery(inputs.movie, inputs.question), // interation
+      movieQuery(inputs.movie, inputs.question), // interaction
   );
 
   gentrace.start();
