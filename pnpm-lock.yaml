@@ -256,8 +256,8 @@ importers:
   examples/full:
     dependencies:
       '@gentrace/core':
-        specifier: 2.5.3
-        version: 2.5.3
+        specifier: workspace:^2.5.3
+        version: link:../../packages/core
       '@gentrace/openai':
         specifier: workspace:^
         version: link:../../packages/openai
