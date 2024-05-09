@@ -181,8 +181,11 @@ async function demoExample() {
   gentrace.registerCustomType("Task");
   gentrace.registerCustomObject("Task", taskForBob.taskName, taskForBob);
 
-  const inputFields = { task: "Task", viewer: "User" };
-  const outputFields = { summary: "string" };
+  const inputFields = [
+    { name: "task", type: "Task" },
+    { name: "viewer", type: "User" },
+  ];
+  const outputFields = [{ name: "summary", type: "string" }];
   const interactionFunction = (inputs: { task: Task; viewer: User }) =>
     summarizeTaskForViewer(inputs.task, inputs.viewer);
 

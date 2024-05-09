@@ -15,16 +15,17 @@ type CustomObject = {
   object: object;
 };
 
-type TInput = Record<string, any>;
-type TOutput = Record<string, any>;
+type TInput = { name: string; type: string }[];
+type TOutput = { name: string; type: string }[];
+
+type InteractionInputs = Record<any, any>; // {name: type, name: type, ...} objects as specified in TInput
+type InteractionOutputs = Record<any, any>; // {name: type, name: type, ...} objects as specified in TOutput
 
 type InteractionObject = {
   name: string;
   inputFields: TInput;
   outputFields: TOutput;
-  interaction: (inputs: { [K in keyof TInput]?: any }) => {
-    [K in keyof TOutput]?: any;
-  };
+  interaction: (inputs: InteractionInputs) => InteractionOutputs;
 };
 
 // step ID to cachedInputString
@@ -114,9 +115,12 @@ export class GentraceSession {
   }
 
   private mapInputsToObjects(jsonInputs: any, inputFields: any): object {
-    // map inputs to the registered custom objects
-
     try {
+      const indexedInputFields: Record<string, string> = {}; // helper to verify input type
+      for (const inputField of inputFields) {
+        indexedInputFields[inputField.name] = inputField.type;
+      }
+
       let jsonOutputs = jsonInputs; // clone the structure
 
       for (const key in jsonInputs) {
@@ -124,7 +128,7 @@ export class GentraceSession {
         for (const customObject of this.registeredCustomObjects) {
           if (
             customObject.objectName == value &&
-            customObject.typeName == inputFields[key]
+            customObject.typeName == indexedInputFields[key]
           ) {
             jsonOutputs[key] = customObject.object;
           }
@@ -176,6 +180,7 @@ export class GentraceSession {
       console.log("Connected to the WebSocket server at " + wsUrl);
       console.log("-> Sending event of type " + setupEvent.data.type);
       console.log(setupEvent);
+      console.log(JSON.stringify(setupEvent));
 
       ws.send(JSON.stringify(setupEvent));
 
@@ -245,7 +250,6 @@ export class GentraceSession {
                   "-> Sending event of type " + runResponseEvent.data.type,
                 );
                 console.log(runResponseEvent);
-                console.log(JSON.stringify(runResponseEvent));
 
                 ws.send(JSON.stringify(runResponseEvent));
               });
@@ -286,9 +290,7 @@ export class GentraceSession {
     name: string,
     inputFields: TInput,
     outputFields: TOutput,
-    interaction: (inputs: { [K in keyof TInput]?: any }) => {
-      [K in keyof TOutput]?: any;
-    },
+    interaction: (inputs: InteractionInputs) => InteractionOutputs,
   ) {
     const interactionObject = {
       name: name,
