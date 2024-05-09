@@ -1,5 +1,11 @@
 # @gentrace/playground
 
+## 0.3.2
+
+### Patch Changes
+
+- 770b32b: support ordered input & output fields
+
 ## 0.3.1
 
 ### Patch Changes
