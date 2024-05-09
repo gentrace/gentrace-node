@@ -12,12 +12,14 @@ async function playground() {
 
   gentrace.registerInteraction(
     "Movie Query", // interaction name
-    [
-      { name: "movie", type: "Movie" },
-      { name: "question", type: "string" },
-      { name: "sample_answer", type: "string" },
-    ], // input fields
-    [{ name: "answer", type: "string" }], // output fields
+    {
+      movie: "Movie",
+      question: "string",
+      sample_answer: "string",
+    }, // input fields
+    {
+      answer: "string",
+    }, // output fields
     (inputs: { movie: Movie; question: string }) =>
       movieQuery(inputs.movie, inputs.question), // interaction
   );
