@@ -7,7 +7,7 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "2.5.3",
+    "@gentrace/core": "workspace:^2.5.3",
     "@gentrace/openai": "workspace:^",
     "@gentrace/pinecone": "^1.0.0"
   },
