@@ -564,7 +564,7 @@ importers:
   examples/playground:
     dependencies:
       '@gentrace/playground':
-        specifier: workspace:^0.3.1
+        specifier: workspace:^0.3.2
         version: link:../../packages/playground
       openai:
         specifier: ^4.29.2
@@ -625,8 +625,8 @@ importers:
   examples/playground-movies:
     dependencies:
       '@gentrace/playground':
-        specifier: ^0.3.1
-        version: 0.3.1
+        specifier: workspace:^0.3.2
+        version: link:../../packages/playground
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -2752,9 +2752,6 @@ packages:
 
   '@gentrace/pinecone@1.1.1':
     resolution: {integrity: sha512-0m905X/8cIf0nbjSiD3G6BZuxcNUiXDXYFc16lsX4EPiUeRc+TjLYFAwvk56RStltk/rWrv+8ttPDEBdiFvTAg==}
-
-  '@gentrace/playground@0.3.1':
-    resolution: {integrity: sha512-PiJZKUtFY0exCHHCmwmruAemeGnaWMIxNQhTv1xw0mWJ8zPn8xUJYhnboB9sNpPlP7X/I4sK5tJfqS6otcQrUA==}
 
   '@google-cloud/vertexai@0.1.3':
     resolution: {integrity: sha512-fwVhzdg/Rj/Ox3LqkFwCaAhu+mw78kn/M5txuFMtGZrxGd8vpSMnv9p3uyfc7W1rYnkFHlzToTdTQ3jLbY22bA==}
@@ -8820,17 +8817,6 @@ snapshots:
     transitivePeerDependencies:
       - debug
       - encoding
-
-  '@gentrace/playground@0.3.1':
-    dependencies:
-      '@gentrace/core': 2.5.3
-      json-stable-stringify: 1.0.2
-      uuid: 9.0.0
-      ws: 8.16.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - utf-8-validate
 
   '@google-cloud/vertexai@0.1.3':
     dependencies:
