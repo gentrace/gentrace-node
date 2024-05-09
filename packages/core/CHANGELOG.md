@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.4
+
+### Patch Changes
+
+- afd3cb4: show more informative error message if available
+
 ## 2.5.3
 
 ### Patch Changes

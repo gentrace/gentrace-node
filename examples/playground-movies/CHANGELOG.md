@@ -1,5 +1,13 @@
 # @examples/playground-movies
 
+## 0.1.2
+
+### Patch Changes
+
+- f36f27f: movies example
+- Updated dependencies [770b32b]
+  - @gentrace/playground@0.3.3
+
 ## 0.1.1
 
 ### Patch Changes

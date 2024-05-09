@@ -564,7 +564,7 @@ importers:
   examples/playground:
     dependencies:
       '@gentrace/playground':
-        specifier: workspace:^0.3.2
+        specifier: workspace:^0.3.3
         version: link:../../packages/playground
       openai:
         specifier: ^4.29.2
@@ -625,7 +625,7 @@ importers:
   examples/playground-movies:
     dependencies:
       '@gentrace/playground':
-        specifier: workspace:^0.3.2
+        specifier: workspace:^0.3.3
         version: link:../../packages/playground
       dotenv:
         specifier: ^16.4.5
@@ -1110,7 +1110,7 @@ importers:
   packages/playground:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.4.2
+        specifier: workspace:^2.5.4
         version: link:../core
       cli-color:
         specifier: ^2.0.4

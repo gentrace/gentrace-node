@@ -1,5 +1,13 @@
 # @gentrace/playground
 
+## 0.3.3
+
+### Patch Changes
+
+- 770b32b: support ordered input & output fields
+- Updated dependencies [afd3cb4]
+  - @gentrace/core@2.5.4
+
 ## 0.3.2
 
 ### Patch Changes
