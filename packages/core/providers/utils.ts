@@ -194,6 +194,9 @@ export function setErrorInterceptor(showErrorsInput: string) {
       } else if (error.message) {
         friendlyMessage += "\nError message: " + error.message;
       }
+      if (error.response?.data?.message) {
+        friendlyMessage += "\n🛑 " + error.response.data.message;
+      }
 
       if (error.code === "ECONNABORTED") {
         friendlyMessage += "\nThe request timed out. Please try again later.";
