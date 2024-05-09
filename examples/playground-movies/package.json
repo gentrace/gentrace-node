@@ -7,7 +7,7 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/playground": "^0.3.1",
+    "@gentrace/playground": "^0.3.2",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.1",
     "mustache": "^4.2.0",
