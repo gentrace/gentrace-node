@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.6.0
+
+### Minor Changes
+
+- 6b1434d: Add test result update APIs
+
 ## 2.5.4
 
 ### Patch Changes
