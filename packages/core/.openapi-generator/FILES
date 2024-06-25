@@ -69,9 +69,12 @@ models/v1-test-case-post200-response-one-of.ts
 models/v1-test-case-post200-response-one-of1.ts
 models/v1-test-case-post200-response.ts
 models/v1-test-result-get200-response.ts
+models/v1-test-result-id-post-request-test-runs-inner.ts
+models/v1-test-result-id-post-request.ts
 models/v1-test-result-post-request-test-runs-inner.ts
 models/v1-test-result-post-request.ts
 models/v1-test-result-post200-response.ts
+models/v1-test-result-simple-id-post-request.ts
 models/v1-test-result-simple-post-request-test-runs-inner.ts
 models/v1-test-result-simple-post-request.ts
 models/v1-test-result-status-get200-response.ts

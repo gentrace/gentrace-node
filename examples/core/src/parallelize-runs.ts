@@ -70,6 +70,8 @@ async function main() {
   });
 
   const response = await submitTestRunners(pipeline, pipelineRunTestCases);
+
+  updateTestRunners(pipeline, pipelineRunTestCases);
   console.log(response);
 }
 

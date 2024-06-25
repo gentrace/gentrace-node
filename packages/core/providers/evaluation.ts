@@ -493,6 +493,65 @@ export const getTestRunners = async (
 };
 
 /**
+ * Constructs step runs for a given test case and pipeline run.
+ *
+ * @param {TestCase} testCase - The test case object.
+ * @param {PipelineRun} pipelineRun - The pipeline run object.
+ * @returns {TestRun} The constructed test run object.
+ */
+function constructStepRuns(
+  testCase: TestCase,
+  pipelineRun: PipelineRun,
+): TestRun {
+  let mergedMetadata = {};
+
+  const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
+    let {
+      metadata: thisContextMetadata,
+      previousRunId: _prPreviousRunId,
+      ...restThisContext
+    } = pipelineRun.context ?? {};
+
+    let {
+      metadata: stepRunContextMetadata,
+      previousRunId: _srPreviousRunId,
+      ...restStepRunContext
+    } = stepRun.context ?? {};
+
+    // Merge metadata
+    mergedMetadata = {
+      ...mergedMetadata,
+      ...thisContextMetadata,
+      ...stepRunContextMetadata,
+    };
+
+    return {
+      modelParams: stepRun.modelParams,
+      invocation: stepRun.invocation,
+      inputs: stepRun.inputs,
+      outputs: stepRun.outputs,
+      providerName: stepRun.providerName,
+      elapsedTime: stepRun.elapsedTime,
+      startTime: stepRun.startTime,
+      endTime: stepRun.endTime,
+      context: { ...restThisContext, ...restStepRunContext },
+    };
+  });
+
+  const testRun: TestRun = {
+    caseId: testCase.id,
+    metadata: mergedMetadata,
+    stepRuns: updatedStepRuns,
+  };
+
+  if (pipelineRun.getId()) {
+    testRun.id = pipelineRun.getId();
+  }
+
+  return testRun;
+}
+
+/**
  * Submits test runners for a given pipeline
  * @async
  * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
@@ -529,51 +588,7 @@ export async function submitTestRunners(
         continue;
       }
 
-      let mergedMetadata = {};
-
-      const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
-        let {
-          metadata: thisContextMetadata,
-          previousRunId: _prPreviousRunId,
-          ...restThisContext
-        } = pipelineRun.context ?? {};
-
-        let {
-          metadata: stepRunContextMetadata,
-          previousRunId: _srPreviousRunId,
-          ...restStepRunContext
-        } = stepRun.context ?? {};
-
-        // Merge metadata
-        mergedMetadata = {
-          ...mergedMetadata,
-          ...thisContextMetadata,
-          ...stepRunContextMetadata,
-        };
-
-        return {
-          modelParams: stepRun.modelParams,
-          invocation: stepRun.invocation,
-          inputs: stepRun.inputs,
-          outputs: stepRun.outputs,
-          providerName: stepRun.providerName,
-          elapsedTime: stepRun.elapsedTime,
-          startTime: stepRun.startTime,
-          endTime: stepRun.endTime,
-          context: { ...restThisContext, ...restStepRunContext },
-        };
-      });
-
-      const testRun: TestRun = {
-        caseId: testCase.id,
-        metadata: mergedMetadata,
-        stepRuns: updatedStepRuns,
-      };
-
-      if (pipelineRun.getId()) {
-        testRun.id = pipelineRun.getId();
-      }
-
+      const testRun = constructStepRuns(testCase, pipelineRun);
       testRuns.push(testRun);
     }
 
@@ -680,51 +695,7 @@ export async function runTest(
 
       const [, pipelineRun] = await handler(testCase);
 
-      let mergedMetadata = {};
-
-      const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
-        let {
-          metadata: thisContextMetadata,
-          previousRunId: _prPreviousRunId,
-          ...restThisContext
-        } = pipelineRun.context ?? {};
-
-        let {
-          metadata: stepRunContextMetadata,
-          previousRunId: _srPreviousRunId,
-          ...restStepRunContext
-        } = stepRun.context ?? {};
-
-        // Merge metadata
-        mergedMetadata = {
-          ...mergedMetadata,
-          ...thisContextMetadata,
-          ...stepRunContextMetadata,
-        };
-
-        return {
-          modelParams: stepRun.modelParams,
-          invocation: stepRun.invocation,
-          inputs: stepRun.inputs,
-          outputs: stepRun.outputs,
-          providerName: stepRun.providerName,
-          elapsedTime: stepRun.elapsedTime,
-          startTime: stepRun.startTime,
-          endTime: stepRun.endTime,
-          context: { ...restThisContext, ...restStepRunContext },
-        };
-      });
-
-      const testRun: TestRun = {
-        caseId: testCase.id,
-        metadata: mergedMetadata,
-        stepRuns: updatedStepRuns,
-      };
-
-      if (pipelineRun.getId()) {
-        testRun.id = pipelineRun.getId();
-      }
-
+      const testRun = constructStepRuns(testCase, pipelineRun);
       testRuns.push(testRun);
     }
 
