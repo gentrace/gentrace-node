@@ -14,18 +14,18 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TestCaseV2 } from "./test-case-v2";
+import { V1TestResultIdPostRequestTestRunsInner } from "./v1-test-result-id-post-request-test-runs-inner";
 
 /**
  *
  * @export
- * @interface V2TestCasesGet200Response
+ * @interface V1TestResultIdPostRequest
  */
-export interface V2TestCasesGet200Response {
+export interface V1TestResultIdPostRequest {
   /**
    *
-   * @type {Array<TestCaseV2>}
-   * @memberof V2TestCasesGet200Response
+   * @type {Array<V1TestResultIdPostRequestTestRunsInner>}
+   * @memberof V1TestResultIdPostRequest
    */
-  data: Array<TestCaseV2>;
+  testRuns?: Array<V1TestResultIdPostRequestTestRunsInner>;
 }

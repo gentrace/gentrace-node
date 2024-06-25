@@ -7,7 +7,7 @@
     "typeRoots": ["node_modules/@types"],
     "skipLibCheck": true
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "../evaluation/src/parallelize-runs.ts"],
   "exclude": ["node_modules", "dist"],
   "references": [
     {

@@ -17,30 +17,36 @@
 import { MetadataValueObject } from "./metadata-value-object";
 // May contain unused imports in some cases
 // @ts-ignore
-import { StepRunContextRender } from "./step-run-context-render";
+import { StepRun } from "./step-run";
 
 /**
  *
  * @export
- * @interface StepRunContext
+ * @interface V1TestResultIdPostRequestTestRunsInner
  */
-export interface StepRunContext {
+export interface V1TestResultIdPostRequestTestRunsInner {
   /**
-   *
+   * The ID of the test run
    * @type {string}
-   * @memberof StepRunContext
+   * @memberof V1TestResultIdPostRequestTestRunsInner
    */
-  userId?: string;
+  id?: string | null;
   /**
-   *
-   * @type {StepRunContextRender}
-   * @memberof StepRunContext
+   * The ID of the test case
+   * @type {string}
+   * @memberof V1TestResultIdPostRequestTestRunsInner
    */
-  render?: StepRunContextRender;
+  caseId: string;
   /**
    *
    * @type {{ [key: string]: MetadataValueObject; }}
-   * @memberof StepRunContext
+   * @memberof V1TestResultIdPostRequestTestRunsInner
    */
   metadata?: { [key: string]: MetadataValueObject } | null;
+  /**
+   *
+   * @type {Array<StepRun>}
+   * @memberof V1TestResultIdPostRequestTestRunsInner
+   */
+  stepRuns: Array<StepRun>;
 }

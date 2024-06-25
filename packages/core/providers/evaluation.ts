@@ -224,7 +224,51 @@ export const updateTestCase = async (payload: UpdateTestCase) => {
   return data.caseId;
 };
 
-export const constructSubmissionPayload = (
+export const constructSubmissionPayloadSimple = (
+  pipelineSlug: string,
+  testRuns: V1TestResultSimplePostRequestTestRunsInner[],
+  context?: ResultContext,
+) => {
+  const body: V1TestResultSimplePostRequest = {
+    pipelineSlug,
+    testRuns,
+  };
+
+  // Will be overwritten if GENTRACE_RESULT_NAME is specified
+  if (GENTRACE_RUN_NAME) {
+    body.name = GENTRACE_RUN_NAME;
+  }
+
+  if (GENTRACE_RESULT_NAME) {
+    body.name = GENTRACE_RESULT_NAME;
+  }
+
+  if (context?.name) {
+    body.name = context.name;
+  }
+
+  if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
+    body.branch =
+      GENTRACE_BRANCH.length > 0
+        ? GENTRACE_BRANCH
+        : getProcessEnv("GENTRACE_BRANCH");
+  }
+
+  if (GENTRACE_COMMIT || getProcessEnv("GENTRACE_COMMIT")) {
+    body.commit =
+      GENTRACE_COMMIT.length > 0
+        ? GENTRACE_COMMIT
+        : getProcessEnv("GENTRACE_COMMIT");
+  }
+
+  if (context?.metadata) {
+    body.metadata = context.metadata;
+  }
+
+  return body;
+};
+
+export const constructSubmissionPayloadAdvanced = (
   pipelineIdentifier: string,
   testRuns: TestRun[],
   context?: ResultContext,
@@ -325,43 +369,52 @@ export async function submitTestResult(
     },
   );
 
-  const body: V1TestResultSimplePostRequest = {
+  const body = constructSubmissionPayloadSimple(
     pipelineSlug,
-    testRuns: testRuns,
-  };
-
-  // Will be overwritten if GENTRACE_RESULT_NAME is specified
-  if (GENTRACE_RUN_NAME) {
-    body.name = GENTRACE_RUN_NAME;
-  }
-
-  if (GENTRACE_RESULT_NAME) {
-    body.name = GENTRACE_RESULT_NAME;
-  }
-
-  if (context?.name) {
-    body.name = context.name;
-  }
-
-  if (GENTRACE_BRANCH || getProcessEnv("GENTRACE_BRANCH")) {
-    body.branch =
-      GENTRACE_BRANCH.length > 0
-        ? GENTRACE_BRANCH
-        : getProcessEnv("GENTRACE_BRANCH");
-  }
-
-  if (GENTRACE_COMMIT || getProcessEnv("GENTRACE_COMMIT")) {
-    body.commit =
-      GENTRACE_COMMIT.length > 0
-        ? GENTRACE_COMMIT
-        : getProcessEnv("GENTRACE_COMMIT");
-  }
-
-  if (context?.metadata) {
-    body.metadata = context.metadata;
-  }
+    testRuns,
+    context,
+  );
 
   const response = await globalGentraceApi.v1TestResultSimplePost(body);
+  return response.data;
+}
+
+/**
+ * Updates a test result with the additional provided test cases and outputs.
+ *
+ * @async
+ * @param {string} resultId - The ID of the test result to update.
+ * @param {(TestCase | TestCaseV2)[]} testCases - An array of TestCase objects.
+ * @param {Record<string, any>[]} outputsList - An array of outputs corresponding to each TestCase.
+ * @returns {Promise<V1TestResultPost200Response>} A promise that resolves with the response data from the Gentrace API.
+ * @throws {Error} Will throw an error if the number of test cases does not match the number of outputs.
+ */
+export async function updateTestResult(
+  resultId: string,
+  testCases: (TestCase | TestCaseV2)[],
+  outputsList: Record<string, any>[],
+) {
+  if (testCases.length !== outputsList.length) {
+    throw new Error(
+      "The number of test cases must be equal to the number of outputs.",
+    );
+  }
+
+  const testRuns: V1TestResultSimplePostRequestTestRunsInner[] = testCases.map(
+    (testCase, index) => {
+      const run: V1TestResultSimplePostRequestTestRunsInner = {
+        caseId: testCase.id,
+        inputs: testCase.inputs,
+        outputs: outputsList[index],
+      };
+
+      return run;
+    },
+  );
+
+  const response = await globalGentraceApi.v1TestResultSimpleIdPost(resultId, {
+    testRuns,
+  });
   return response.data;
 }
 
@@ -493,6 +546,65 @@ export const getTestRunners = async (
 };
 
 /**
+ * Constructs step runs for a given test case and pipeline run.
+ *
+ * @param {TestCase} testCase - The test case object.
+ * @param {PipelineRun} pipelineRun - The pipeline run object.
+ * @returns {TestRun} The constructed test run object.
+ */
+function constructStepRuns(
+  testCase: TestCase,
+  pipelineRun: PipelineRun,
+): TestRun {
+  let mergedMetadata = {};
+
+  const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
+    let {
+      metadata: thisContextMetadata,
+      previousRunId: _prPreviousRunId,
+      ...restThisContext
+    } = pipelineRun.context ?? {};
+
+    let {
+      metadata: stepRunContextMetadata,
+      previousRunId: _srPreviousRunId,
+      ...restStepRunContext
+    } = stepRun.context ?? {};
+
+    // Merge metadata
+    mergedMetadata = {
+      ...mergedMetadata,
+      ...thisContextMetadata,
+      ...stepRunContextMetadata,
+    };
+
+    return {
+      modelParams: stepRun.modelParams,
+      invocation: stepRun.invocation,
+      inputs: stepRun.inputs,
+      outputs: stepRun.outputs,
+      providerName: stepRun.providerName,
+      elapsedTime: stepRun.elapsedTime,
+      startTime: stepRun.startTime,
+      endTime: stepRun.endTime,
+      context: { ...restThisContext, ...restStepRunContext },
+    };
+  });
+
+  const testRun: TestRun = {
+    caseId: testCase.id,
+    metadata: mergedMetadata,
+    stepRuns: updatedStepRuns,
+  };
+
+  if (pipelineRun.getId()) {
+    testRun.id = pipelineRun.getId();
+  }
+
+  return testRun;
+}
+
+/**
  * Submits test runners for a given pipeline
  * @async
  * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
@@ -529,51 +641,7 @@ export async function submitTestRunners(
         continue;
       }
 
-      let mergedMetadata = {};
-
-      const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
-        let {
-          metadata: thisContextMetadata,
-          previousRunId: _prPreviousRunId,
-          ...restThisContext
-        } = pipelineRun.context ?? {};
-
-        let {
-          metadata: stepRunContextMetadata,
-          previousRunId: _srPreviousRunId,
-          ...restStepRunContext
-        } = stepRun.context ?? {};
-
-        // Merge metadata
-        mergedMetadata = {
-          ...mergedMetadata,
-          ...thisContextMetadata,
-          ...stepRunContextMetadata,
-        };
-
-        return {
-          modelParams: stepRun.modelParams,
-          invocation: stepRun.invocation,
-          inputs: stepRun.inputs,
-          outputs: stepRun.outputs,
-          providerName: stepRun.providerName,
-          elapsedTime: stepRun.elapsedTime,
-          startTime: stepRun.startTime,
-          endTime: stepRun.endTime,
-          context: { ...restThisContext, ...restStepRunContext },
-        };
-      });
-
-      const testRun: TestRun = {
-        caseId: testCase.id,
-        metadata: mergedMetadata,
-        stepRuns: updatedStepRuns,
-      };
-
-      if (pipelineRun.getId()) {
-        testRun.id = pipelineRun.getId();
-      }
-
+      const testRun = constructStepRuns(testCase, pipelineRun);
       testRuns.push(testRun);
     }
 
@@ -581,7 +649,7 @@ export async function submitTestRunners(
       throw new Error("Gentrace API key not initialized. Call init() first.");
     }
 
-    const body = constructSubmissionPayload(
+    const body = constructSubmissionPayloadAdvanced(
       pipeline.id ?? pipeline.slug,
       testRuns,
       context,
@@ -592,6 +660,32 @@ export async function submitTestRunners(
   } catch (e) {
     throw e;
   }
+}
+
+/**
+ * Updates a test result with the provided runners.
+ *
+ * @async
+ * @param {string} resultId - The ID of the test result to update.
+ * @param {Array<PipelineRunTestCaseTuple>} runners - Additional test runs to add to the existing test result.
+ * @returns {Promise<any>} A Promise that resolves with the response data from the Gentrace API.
+ * @throws {Error} Throws an error if the update operation fails.
+ */
+export async function updateTestResultWithRunners(
+  resultId: string,
+  runners: Array<PipelineRunTestCaseTuple>,
+) {
+  const testRuns: TestRun[] = [];
+
+  for (const [pipelineRun, testCase] of runners) {
+    const testRun = constructStepRuns(testCase, pipelineRun);
+    testRuns.push(testRun);
+  }
+
+  const response = await globalGentraceApi.v1TestResultIdPost(resultId, {
+    testRuns,
+  });
+  return response.data;
 }
 
 /**
@@ -680,51 +774,7 @@ export async function runTest(
 
       const [, pipelineRun] = await handler(testCase);
 
-      let mergedMetadata = {};
-
-      const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
-        let {
-          metadata: thisContextMetadata,
-          previousRunId: _prPreviousRunId,
-          ...restThisContext
-        } = pipelineRun.context ?? {};
-
-        let {
-          metadata: stepRunContextMetadata,
-          previousRunId: _srPreviousRunId,
-          ...restStepRunContext
-        } = stepRun.context ?? {};
-
-        // Merge metadata
-        mergedMetadata = {
-          ...mergedMetadata,
-          ...thisContextMetadata,
-          ...stepRunContextMetadata,
-        };
-
-        return {
-          modelParams: stepRun.modelParams,
-          invocation: stepRun.invocation,
-          inputs: stepRun.inputs,
-          outputs: stepRun.outputs,
-          providerName: stepRun.providerName,
-          elapsedTime: stepRun.elapsedTime,
-          startTime: stepRun.startTime,
-          endTime: stepRun.endTime,
-          context: { ...restThisContext, ...restStepRunContext },
-        };
-      });
-
-      const testRun: TestRun = {
-        caseId: testCase.id,
-        metadata: mergedMetadata,
-        stepRuns: updatedStepRuns,
-      };
-
-      if (pipelineRun.getId()) {
-        testRun.id = pipelineRun.getId();
-      }
-
+      const testRun = constructStepRuns(testCase, pipelineRun);
       testRuns.push(testRun);
     }
 
@@ -732,7 +782,7 @@ export async function runTest(
       throw new Error("Gentrace API key not initialized. Call init() first.");
     }
 
-    const body = constructSubmissionPayload(
+    const body = constructSubmissionPayloadAdvanced(
       matchingPipeline.id,
       testRuns,
       context,

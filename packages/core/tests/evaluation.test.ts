@@ -4,7 +4,7 @@ import { rest } from "msw";
 import { SetupServer, setupServer } from "msw/node";
 import {
   Pipeline,
-  constructSubmissionPayload,
+  constructSubmissionPayloadAdvanced,
   createTestCase,
   createTestCases,
   getPipelines,
@@ -778,7 +778,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.branch).toBe("test-branch");
       expect(payload.commit).toBe("test-commit");
@@ -790,7 +790,7 @@ describe("Usage of Evaluation functionality", () => {
         basePath: "https://gentrace.ai/api",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.branch).toBeUndefined();
       expect(payload.commit).toBeUndefined();
@@ -804,7 +804,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.branch).toBe("test-branch");
       expect(payload.commit).toBe("test-commit");
@@ -821,7 +821,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit-init",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.branch).toBe("test-branch-init");
       expect(payload.commit).toBe("test-commit-init");
@@ -838,7 +838,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit-init",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.name).toBe("result-name");
     });
@@ -853,7 +853,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit-init",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.name).toBe("run-name");
     });
@@ -868,7 +868,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit-init",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.name).toBe("result-name");
     });
@@ -883,7 +883,7 @@ describe("Usage of Evaluation functionality", () => {
         resultName: "result-name",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.name).toBe("result-name");
     });
@@ -897,7 +897,7 @@ describe("Usage of Evaluation functionality", () => {
         runName: "run-name",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.name).toBe("run-name");
     });
@@ -911,7 +911,7 @@ describe("Usage of Evaluation functionality", () => {
         resultName: "result-name",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.name).toBe("result-name");
     });
@@ -927,7 +927,7 @@ describe("Usage of Evaluation functionality", () => {
         commit: "test-commit-init",
       });
 
-      const payload = constructSubmissionPayload("pipeline-id", []);
+      const payload = constructSubmissionPayloadAdvanced("pipeline-id", []);
 
       expect(payload.collectionMethod).toBe("runner");
     });
