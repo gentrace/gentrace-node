@@ -4,6 +4,7 @@ import {
   PipelineRunTestCaseTuple,
   getTestRunners,
   submitTestRunners,
+  updateTestResultWithRunners,
 } from "@gentrace/core";
 
 function exampleResponse(inputs: any) {
@@ -69,10 +70,15 @@ async function main() {
     parallelThreads: 5,
   });
 
-  const response = await submitTestRunners(pipeline, pipelineRunTestCases);
+  const response = await submitTestRunners(pipeline, [pipelineRunTestCases[0]]);
 
-  updateTestRunners(pipeline, pipelineRunTestCases);
-  console.log(response);
+  const updateResponse = await updateTestResultWithRunners(
+    response.resultId,
+    pipelineRunTestCases.slice(2),
+  );
+
+  console.log("response", response);
+  console.log("update response", updateResponse);
 }
 
 main();

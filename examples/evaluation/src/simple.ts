@@ -1,8 +1,14 @@
-import { getTestCases, init, submitTestResult } from "@gentrace/core";
+import {
+  getTestCases,
+  init,
+  submitTestResult,
+  updateTestResult,
+} from "@gentrace/core";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   runName: "Another one",
+  basePath: "http://localhost:3000/api",
 });
 
 const PIPELINE_SLUG = "guess-the-year";
@@ -28,7 +34,19 @@ async function testFailure() {
     },
   );
 
+  const updateResponse = await updateTestResult(
+    response.resultId,
+    [cases[1]],
+    [
+      {
+        value: "something",
+      },
+    ],
+  );
+
   console.log("response", response);
+
+  console.log("update response", updateResponse);
 }
 
 testFailure();
