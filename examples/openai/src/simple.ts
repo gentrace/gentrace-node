@@ -1,4 +1,4 @@
-import { init, Pipeline, PipelineRun } from "@gentrace/core";
+import { init, Pipeline } from "@gentrace/core";
 import { initPlugin } from "@gentrace/openai";
 
 init({
