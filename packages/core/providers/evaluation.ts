@@ -500,7 +500,7 @@ export const getTestResults = async (pipelineSlug?: string) => {
   return testResults;
 };
 
-export type PipelineRunTestCaseTuple = [PipelineRun, TestCase];
+export type PipelineRunTestCaseTuple = [PipelineRun, TestCase | TestCaseV2];
 
 /**
  * Retrieves test runners for a given pipeline
@@ -553,7 +553,7 @@ export const getTestRunners = async (
  * @returns {TestRun} The constructed test run object.
  */
 function constructStepRuns(
-  testCase: TestCase,
+  testCase: TestCase | TestCaseV2,
   pipelineRun: PipelineRun,
 ): TestRun {
   let mergedMetadata = {};
