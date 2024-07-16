@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.6.1
+
+### Patch Changes
+
+- b487e37: Fix typing for submitTestRunners() and updateTestResultWithRunners()
+
 ## 2.6.0
 
 ### Minor Changes
