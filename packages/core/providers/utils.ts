@@ -3,7 +3,7 @@ import { Pattern, parse } from "acorn";
 import axios from "axios";
 import { TestCase, TestCaseV2 } from "../models";
 import { PipelineRun } from "./pipeline-run";
-import { TestRun } from "./evaluation";
+import { TestRun } from "./test-result";
 
 export type GentraceParams = {
   pipelineSlug?: string;

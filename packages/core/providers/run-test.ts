@@ -2,11 +2,6 @@ import { TestCase, V1TestResultPost200Response } from "../models";
 import { ResultContext } from "./context";
 import { PipelineRun } from "./pipeline-run";
 import {
-  TestRun,
-  constructSubmissionPayloadAdvanced,
-  getPipelines,
-} from "./evaluation";
-import {
   constructStepRuns,
   decrementTestCounter,
   getContextTestCaseFilter,
@@ -14,6 +9,8 @@ import {
 } from "./utils";
 import { globalGentraceApi } from "./init";
 import { getTestCases } from "./test-case";
+import { constructSubmissionPayloadAdvanced, TestRun } from "./test-result";
+import { getPipelines } from "./pipeline-methods";
 
 async function runTestCore(
   pipelineSlug: string,

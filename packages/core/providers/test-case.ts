@@ -6,8 +6,8 @@ import {
   V1TestCasePost200Response,
   V1TestCasePost200ResponseOneOf,
 } from "../models";
-import { getPipelines } from "./evaluation";
 import { globalGentraceApi, globalGentraceApiV2 } from "./init";
+import { getPipelines } from "./pipeline-methods";
 
 function isTestCaseSingle(
   response: V1TestCasePost200Response,
