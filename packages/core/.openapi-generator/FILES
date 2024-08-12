@@ -7,11 +7,12 @@ common.ts
 configuration.ts
 index.ts
 models/boolean-type.ts
+models/create-dataset-v2.ts
 models/create-evaluation-v2.ts
 models/create-feedback-v2.ts
-models/create-multiple-test-cases-test-cases-inner.ts
 models/create-multiple-test-cases.ts
 models/create-single-test-case.ts
+models/dataset-v2.ts
 models/evaluator-v2.ts
 models/expanded-pipeline-all-of.ts
 models/expanded-pipeline.ts
@@ -54,6 +55,7 @@ models/test-evaluator.ts
 models/test-result-v2.ts
 models/test-result.ts
 models/test-run.ts
+models/update-dataset-v2.ts
 models/update-feedback-v2.ts
 models/update-test-case.ts
 models/url-type.ts
@@ -78,6 +80,7 @@ models/v1-test-result-simple-id-post-request.ts
 models/v1-test-result-simple-post-request-test-runs-inner.ts
 models/v1-test-result-simple-post-request.ts
 models/v1-test-result-status-get200-response.ts
+models/v2-datasets-get200-response.ts
 models/v2-evaluations-bulk-post-request.ts
 models/v2-evaluations-bulk-post200-response.ts
 models/v2-evaluators-get200-response.ts
@@ -85,4 +88,5 @@ models/v2-folders-get200-response.ts
 models/v2-pipelines-get200-response.ts
 models/v2-pipelines-get200-response1.ts
 models/v2-test-cases-get200-response.ts
+models/v2-test-cases-id-delete200-response.ts
 models/v2-test-results-get200-response.ts

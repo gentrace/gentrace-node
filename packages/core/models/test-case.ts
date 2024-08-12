@@ -34,8 +34,15 @@ export interface TestCase {
    * The date and time when the test case was archived, can be null if the test case has not been archived
    * @type {string}
    * @memberof TestCase
+   * @deprecated
    */
-  archivedAt?: string | null;
+  archivedAt: string | null;
+  /**
+   * The date and time when the test case was deleted, can be null if the test case has not been deleted
+   * @type {string}
+   * @memberof TestCase
+   */
+  deletedAt: string | null;
   /**
    * The date and time when the test case was last updated
    * @type {string}
@@ -66,4 +73,10 @@ export interface TestCase {
    * @memberof TestCase
    */
   pipelineId: string;
+  /**
+   * The ID of the dataset that the test case belongs to
+   * @type {string}
+   * @memberof TestCase
+   */
+  datasetId: string;
 }

@@ -14,15 +14,18 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { CreateMultipleTestCases } from "./create-multiple-test-cases";
-// May contain unused imports in some cases
-// @ts-ignore
-import { CreateSingleTestCase } from "./create-single-test-case";
+import { DatasetV2 } from "./dataset-v2";
 
 /**
- * @type V1TestCasePostRequest
+ *
  * @export
+ * @interface V2DatasetsGet200Response
  */
-export type V1TestCasePostRequest =
-  | CreateMultipleTestCases
-  | CreateSingleTestCase;
+export interface V2DatasetsGet200Response {
+  /**
+   *
+   * @type {Array<DatasetV2>}
+   * @memberof V2DatasetsGet200Response
+   */
+  data?: Array<DatasetV2>;
+}

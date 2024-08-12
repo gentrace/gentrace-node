@@ -38,7 +38,11 @@ import {
   RequiredError,
 } from "../base";
 // @ts-ignore
+import { CreateDatasetV2 } from "../models";
+// @ts-ignore
 import { CreateFeedbackV2 } from "../models";
+// @ts-ignore
+import { DatasetV2 } from "../models";
 // @ts-ignore
 import { FeedbackV2 } from "../models";
 // @ts-ignore
@@ -54,7 +58,11 @@ import { SearchableUnixSecondsInput } from "../models";
 // @ts-ignore
 import { TestCaseV2 } from "../models";
 // @ts-ignore
+import { UpdateDatasetV2 } from "../models";
+// @ts-ignore
 import { UpdateFeedbackV2 } from "../models";
+// @ts-ignore
+import { V2DatasetsGet200Response } from "../models";
 // @ts-ignore
 import { V2EvaluationsBulkPost200Response } from "../models";
 // @ts-ignore
@@ -70,6 +78,8 @@ import { V2PipelinesGet200Response1 } from "../models";
 // @ts-ignore
 import { V2TestCasesGet200Response } from "../models";
 // @ts-ignore
+import { V2TestCasesIdDelete200Response } from "../models";
+// @ts-ignore
 import { V2TestResultsGet200Response } from "../models";
 /**
  * V2Api - axios parameter creator
@@ -77,6 +87,232 @@ import { V2TestResultsGet200Response } from "../models";
  */
 export const V2ApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
+    /**
+     *
+     * @summary List datasets
+     * @param {string} [pipelineSlug] The slug of the pipeline to filter datasets by
+     * @param {string} [pipelineId] The ID of the pipeline to filter datasets by
+     * @param {boolean} [archived] Filter datasets by archived status
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsGet: async (
+      pipelineSlug?: string,
+      pipelineId?: string,
+      archived?: boolean,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/v2/datasets`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (pipelineSlug !== undefined) {
+        localVarQueryParameter["pipelineSlug"] = pipelineSlug;
+      }
+
+      if (pipelineId !== undefined) {
+        localVarQueryParameter["pipelineId"] = pipelineId;
+      }
+
+      if (archived !== undefined) {
+        localVarQueryParameter["archived"] = archived;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Get a single dataset
+     * @param {string} id The ID of the dataset to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsIdGet: async (
+      id: string,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("v2DatasetsIdGet", "id", id);
+      const localVarPath = `/v2/datasets/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Update a dataset
+     * @param {string} id The ID of the dataset to update
+     * @param {UpdateDatasetV2} updateDatasetV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsIdPost: async (
+      id: string,
+      updateDatasetV2: UpdateDatasetV2,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("v2DatasetsIdPost", "id", id);
+      // verify required parameter 'updateDatasetV2' is not null or undefined
+      assertParamExists("v2DatasetsIdPost", "updateDatasetV2", updateDatasetV2);
+      const localVarPath = `/v2/datasets/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        updateDatasetV2,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Create a new dataset
+     * @param {CreateDatasetV2} createDatasetV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsPost: async (
+      createDatasetV2: CreateDatasetV2,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'createDatasetV2' is not null or undefined
+      assertParamExists("v2DatasetsPost", "createDatasetV2", createDatasetV2);
+      const localVarPath = `/v2/datasets`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        createDatasetV2,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
     /**
      *
      * @summary Bulk create evaluations
@@ -570,14 +806,16 @@ export const V2ApiAxiosParamCreator = function (configuration?: Configuration) {
       };
     },
     /**
-     *
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
      * @summary Get test cases
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v2TestCasesGet: async (
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options: AxiosRequestConfig = {},
@@ -602,6 +840,10 @@ export const V2ApiAxiosParamCreator = function (configuration?: Configuration) {
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      if (datasetId !== undefined) {
+        localVarQueryParameter["datasetId"] = datasetId;
+      }
+
       if (pipelineId !== undefined) {
         localVarQueryParameter["pipelineId"] = pipelineId;
       }
@@ -609,6 +851,56 @@ export const V2ApiAxiosParamCreator = function (configuration?: Configuration) {
       if (pipelineSlug !== undefined) {
         localVarQueryParameter["pipelineSlug"] = pipelineSlug;
       }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     *
+     * @summary Delete a test case
+     * @param {string} id The ID of the test case to delete
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2TestCasesIdDelete: async (
+      id: string,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("v2TestCasesIdDelete", "id", id);
+      const localVarPath = `/v2/test-cases/{id}`.replace(
+        `{${"id"}}`,
+        encodeURIComponent(String(id)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "DELETE",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -751,6 +1043,115 @@ export const V2ApiAxiosParamCreator = function (configuration?: Configuration) {
 export const V2ApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = V2ApiAxiosParamCreator(configuration);
   return {
+    /**
+     *
+     * @summary List datasets
+     * @param {string} [pipelineSlug] The slug of the pipeline to filter datasets by
+     * @param {string} [pipelineId] The ID of the pipeline to filter datasets by
+     * @param {boolean} [archived] Filter datasets by archived status
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2DatasetsGet(
+      pipelineSlug?: string,
+      pipelineId?: string,
+      archived?: boolean,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<V2DatasetsGet200Response>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.v2DatasetsGet(
+        pipelineSlug,
+        pipelineId,
+        archived,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
+     * @summary Get a single dataset
+     * @param {string} id The ID of the dataset to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2DatasetsIdGet(
+      id: string,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<DatasetV2>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.v2DatasetsIdGet(
+        id,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
+     * @summary Update a dataset
+     * @param {string} id The ID of the dataset to update
+     * @param {UpdateDatasetV2} updateDatasetV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2DatasetsIdPost(
+      id: string,
+      updateDatasetV2: UpdateDatasetV2,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<DatasetV2>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.v2DatasetsIdPost(
+          id,
+          updateDatasetV2,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
+     * @summary Create a new dataset
+     * @param {CreateDatasetV2} createDatasetV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2DatasetsPost(
+      createDatasetV2: CreateDatasetV2,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<DatasetV2>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.v2DatasetsPost(
+        createDatasetV2,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
     /**
      *
      * @summary Bulk create evaluations
@@ -994,14 +1395,16 @@ export const V2ApiFp = function (configuration?: Configuration) {
       );
     },
     /**
-     *
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
      * @summary Get test cases
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async v2TestCasesGet(
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options?: AxiosRequestConfig,
@@ -1012,10 +1415,36 @@ export const V2ApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<V2TestCasesGet200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.v2TestCasesGet(
+        datasetId,
         pipelineId,
         pipelineSlug,
         options,
       );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        axiosWithOptionalFetch,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     *
+     * @summary Delete a test case
+     * @param {string} id The ID of the test case to delete
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async v2TestCasesIdDelete(
+      id: string,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<V2TestCasesIdDelete200Response>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.v2TestCasesIdDelete(id, options);
       return createRequestFunction(
         localVarAxiosArgs,
         axiosWithOptionalFetch,
@@ -1096,6 +1525,69 @@ export const V2ApiFactory = function (
 ) {
   const localVarFp = V2ApiFp(configuration);
   return {
+    /**
+     *
+     * @summary List datasets
+     * @param {string} [pipelineSlug] The slug of the pipeline to filter datasets by
+     * @param {string} [pipelineId] The ID of the pipeline to filter datasets by
+     * @param {boolean} [archived] Filter datasets by archived status
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsGet(
+      pipelineSlug?: string,
+      pipelineId?: string,
+      archived?: boolean,
+      options?: any,
+    ): AxiosPromise<V2DatasetsGet200Response> {
+      return localVarFp
+        .v2DatasetsGet(pipelineSlug, pipelineId, archived, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Get a single dataset
+     * @param {string} id The ID of the dataset to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsIdGet(id: string, options?: any): AxiosPromise<DatasetV2> {
+      return localVarFp
+        .v2DatasetsIdGet(id, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Update a dataset
+     * @param {string} id The ID of the dataset to update
+     * @param {UpdateDatasetV2} updateDatasetV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsIdPost(
+      id: string,
+      updateDatasetV2: UpdateDatasetV2,
+      options?: any,
+    ): AxiosPromise<DatasetV2> {
+      return localVarFp
+        .v2DatasetsIdPost(id, updateDatasetV2, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Create a new dataset
+     * @param {CreateDatasetV2} createDatasetV2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2DatasetsPost(
+      createDatasetV2: CreateDatasetV2,
+      options?: any,
+    ): AxiosPromise<DatasetV2> {
+      return localVarFp
+        .v2DatasetsPost(createDatasetV2, options)
+        .then((request) => request(axios, basePath));
+    },
     /**
      *
      * @summary Bulk create evaluations
@@ -1231,20 +1723,37 @@ export const V2ApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
      * @summary Get test cases
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v2TestCasesGet(
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options?: any,
     ): AxiosPromise<V2TestCasesGet200Response> {
       return localVarFp
-        .v2TestCasesGet(pipelineId, pipelineSlug, options)
+        .v2TestCasesGet(datasetId, pipelineId, pipelineSlug, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     *
+     * @summary Delete a test case
+     * @param {string} id The ID of the test case to delete
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    v2TestCasesIdDelete(
+      id: string,
+      options?: any,
+    ): AxiosPromise<V2TestCasesIdDelete200Response> {
+      return localVarFp
+        .v2TestCasesIdDelete(id, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -1296,6 +1805,77 @@ export const V2ApiFactory = function (
  * @extends {BaseAPI}
  */
 export class V2Api extends BaseAPI {
+  /**
+   *
+   * @summary List datasets
+   * @param {string} [pipelineSlug] The slug of the pipeline to filter datasets by
+   * @param {string} [pipelineId] The ID of the pipeline to filter datasets by
+   * @param {boolean} [archived] Filter datasets by archived status
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2DatasetsGet(
+    pipelineSlug?: string,
+    pipelineId?: string,
+    archived?: boolean,
+    options?: AxiosRequestConfig,
+  ) {
+    return V2ApiFp(this.configuration)
+      .v2DatasetsGet(pipelineSlug, pipelineId, archived, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Get a single dataset
+   * @param {string} id The ID of the dataset to retrieve
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2DatasetsIdGet(id: string, options?: AxiosRequestConfig) {
+    return V2ApiFp(this.configuration)
+      .v2DatasetsIdGet(id, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Update a dataset
+   * @param {string} id The ID of the dataset to update
+   * @param {UpdateDatasetV2} updateDatasetV2
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2DatasetsIdPost(
+    id: string,
+    updateDatasetV2: UpdateDatasetV2,
+    options?: AxiosRequestConfig,
+  ) {
+    return V2ApiFp(this.configuration)
+      .v2DatasetsIdPost(id, updateDatasetV2, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Create a new dataset
+   * @param {CreateDatasetV2} createDatasetV2
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2DatasetsPost(
+    createDatasetV2: CreateDatasetV2,
+    options?: AxiosRequestConfig,
+  ) {
+    return V2ApiFp(this.configuration)
+      .v2DatasetsPost(createDatasetV2, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
   /**
    *
    * @summary Bulk create evaluations
@@ -1446,8 +2026,9 @@ export class V2Api extends BaseAPI {
   }
 
   /**
-   *
+   * At least one of datasetId, pipelineId, or pipelineSlug must be provided
    * @summary Get test cases
+   * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
    * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
    * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
    * @param {*} [options] Override http request option.
@@ -1455,12 +2036,27 @@ export class V2Api extends BaseAPI {
    * @memberof V2Api
    */
   public v2TestCasesGet(
+    datasetId?: string,
     pipelineId?: string,
     pipelineSlug?: string,
     options?: AxiosRequestConfig,
   ) {
     return V2ApiFp(this.configuration)
-      .v2TestCasesGet(pipelineId, pipelineSlug, options)
+      .v2TestCasesGet(datasetId, pipelineId, pipelineSlug, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   *
+   * @summary Delete a test case
+   * @param {string} id The ID of the test case to delete
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof V2Api
+   */
+  public v2TestCasesIdDelete(id: string, options?: AxiosRequestConfig) {
+    return V2ApiFp(this.configuration)
+      .v2TestCasesIdDelete(id, options)
       .then((request) => request(this.axios, this.basePath));
   }
 

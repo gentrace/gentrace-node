@@ -38,6 +38,10 @@ import {
   RequiredError,
 } from "../base";
 // @ts-ignore
+import { CreateMultipleTestCases } from "../models";
+// @ts-ignore
+import { CreateSingleTestCase } from "../models";
+// @ts-ignore
 import { ExpandedTestResult } from "../models";
 // @ts-ignore
 import { FeedbackRequest } from "../models";
@@ -308,14 +312,16 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
       };
     },
     /**
-     *
-     * @summary Get test cases for a pipeline
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+     * @summary Get test cases for a pipeline or dataset
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCaseGet: async (
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options: AxiosRequestConfig = {},
@@ -339,6 +345,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
       // authentication bearerAuth required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (datasetId !== undefined) {
+        localVarQueryParameter["datasetId"] = datasetId;
+      }
 
       if (pipelineId !== undefined) {
         localVarQueryParameter["pipelineId"] = pipelineId;
@@ -419,19 +429,21 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
     /**
      *
      * @summary Create a new test case
-     * @param {V1TestCasePostRequest} v1TestCasePostRequest
+     * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCasePost: async (
-      v1TestCasePostRequest: V1TestCasePostRequest,
+      createSingleTestCaseCreateMultipleTestCases:
+        | CreateSingleTestCase
+        | CreateMultipleTestCases,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'v1TestCasePostRequest' is not null or undefined
+      // verify required parameter 'createSingleTestCaseCreateMultipleTestCases' is not null or undefined
       assertParamExists(
         "v1TestCasePost",
-        "v1TestCasePostRequest",
-        v1TestCasePostRequest,
+        "createSingleTestCaseCreateMultipleTestCases",
+        createSingleTestCaseCreateMultipleTestCases,
       );
       const localVarPath = `/v1/test-case`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -464,7 +476,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        v1TestCasePostRequest,
+        createSingleTestCaseCreateMultipleTestCases,
         localVarRequestOptions,
         configuration,
       );
@@ -991,14 +1003,16 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
     },
     /**
-     *
-     * @summary Get test cases for a pipeline
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+     * @summary Get test cases for a pipeline or dataset
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async v1TestCaseGet(
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options?: AxiosRequestConfig,
@@ -1009,6 +1023,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<V1TestCaseGet200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.v1TestCaseGet(
+        datasetId,
         pipelineId,
         pipelineSlug,
         options,
@@ -1050,12 +1065,14 @@ export const V1ApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Create a new test case
-     * @param {V1TestCasePostRequest} v1TestCasePostRequest
+     * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async v1TestCasePost(
-      v1TestCasePostRequest: V1TestCasePostRequest,
+      createSingleTestCaseCreateMultipleTestCases:
+        | CreateSingleTestCase
+        | CreateMultipleTestCases,
       options?: AxiosRequestConfig,
     ): Promise<
       (
@@ -1064,7 +1081,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<V1TestCasePost200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.v1TestCasePost(
-        v1TestCasePostRequest,
+        createSingleTestCaseCreateMultipleTestCases,
         options,
       );
       return createRequestFunction(
@@ -1348,20 +1365,22 @@ export const V1ApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *
-     * @summary Get test cases for a pipeline
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+     * @summary Get test cases for a pipeline or dataset
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCaseGet(
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options?: any,
     ): AxiosPromise<V1TestCaseGet200Response> {
       return localVarFp
-        .v1TestCaseGet(pipelineId, pipelineSlug, options)
+        .v1TestCaseGet(datasetId, pipelineId, pipelineSlug, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -1382,16 +1401,18 @@ export const V1ApiFactory = function (
     /**
      *
      * @summary Create a new test case
-     * @param {V1TestCasePostRequest} v1TestCasePostRequest
+     * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCasePost(
-      v1TestCasePostRequest: V1TestCasePostRequest,
+      createSingleTestCaseCreateMultipleTestCases:
+        | CreateSingleTestCase
+        | CreateMultipleTestCases,
       options?: any,
     ): AxiosPromise<V1TestCasePost200Response> {
       return localVarFp
-        .v1TestCasePost(v1TestCasePostRequest, options)
+        .v1TestCasePost(createSingleTestCaseCreateMultipleTestCases, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -1583,8 +1604,9 @@ export class V1Api extends BaseAPI {
   }
 
   /**
-   *
-   * @summary Get test cases for a pipeline
+   * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+   * @summary Get test cases for a pipeline or dataset
+   * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
    * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
    * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
    * @param {*} [options] Override http request option.
@@ -1592,12 +1614,13 @@ export class V1Api extends BaseAPI {
    * @memberof V1Api
    */
   public v1TestCaseGet(
+    datasetId?: string,
     pipelineId?: string,
     pipelineSlug?: string,
     options?: AxiosRequestConfig,
   ) {
     return V1ApiFp(this.configuration)
-      .v1TestCaseGet(pipelineId, pipelineSlug, options)
+      .v1TestCaseGet(datasetId, pipelineId, pipelineSlug, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -1621,17 +1644,19 @@ export class V1Api extends BaseAPI {
   /**
    *
    * @summary Create a new test case
-   * @param {V1TestCasePostRequest} v1TestCasePostRequest
+   * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof V1Api
    */
   public v1TestCasePost(
-    v1TestCasePostRequest: V1TestCasePostRequest,
+    createSingleTestCaseCreateMultipleTestCases:
+      | CreateSingleTestCase
+      | CreateMultipleTestCases,
     options?: AxiosRequestConfig,
   ) {
     return V1ApiFp(this.configuration)
-      .v1TestCasePost(v1TestCasePostRequest, options)
+      .v1TestCasePost(createSingleTestCaseCreateMultipleTestCases, options)
       .then((request) => request(this.axios, this.basePath));
   }
 

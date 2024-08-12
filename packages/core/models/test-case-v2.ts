@@ -43,6 +43,12 @@ export interface TestCaseV2 {
    */
   archivedAt: number | null;
   /**
+   * Timestamp in seconds since the UNIX epoch. Can be transformed into a Date object.
+   * @type {number}
+   * @memberof TestCaseV2
+   */
+  deletedAt: number | null;
+  /**
    * The expected outputs for the test case
    * @type {object}
    * @memberof TestCaseV2
@@ -66,4 +72,10 @@ export interface TestCaseV2 {
    * @memberof TestCaseV2
    */
   pipelineId: string;
+  /**
+   * The ID of the dataset that the test case belongs to
+   * @type {string}
+   * @memberof TestCaseV2
+   */
+  datasetId: string;
 }

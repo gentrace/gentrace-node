@@ -13,7 +13,15 @@
  */
 
 /**
- * @type CreateSingleTestCase
+ *
  * @export
+ * @interface V2TestCasesIdDelete200Response
  */
-export type CreateSingleTestCase = any;
+export interface V2TestCasesIdDelete200Response {
+  /**
+   *
+   * @type {boolean}
+   * @memberof V2TestCasesIdDelete200Response
+   */
+  success: boolean;
+}

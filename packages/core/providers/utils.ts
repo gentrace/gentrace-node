@@ -131,20 +131,28 @@ export function safeJsonParse(jsonString: string | null) {
     return null;
   }
 }
-
 export function getContextTestCaseFilter(
   contextOrCaseFilter?:
     | ResultContext
     | ((
-        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+        testCase: Omit<
+          TestCase,
+          "createdAt" | "updatedAt" | "archivedAt" | "deletedAt"
+        >,
       ) => boolean),
   caseFilterOrUndefined?: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+    testCase: Omit<
+      TestCase,
+      "createdAt" | "updatedAt" | "archivedAt" | "deletedAt"
+    >,
   ) => boolean,
 ): {
   context: ResultContext | undefined;
   caseFilter: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+    testCase: Omit<
+      TestCase,
+      "createdAt" | "updatedAt" | "archivedAt" | "deletedAt"
+    >,
   ) => boolean | undefined;
 } {
   let context, caseFilter;

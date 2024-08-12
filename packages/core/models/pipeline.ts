@@ -72,4 +72,10 @@ export interface Pipeline {
    * @memberof Pipeline
    */
   branch?: string | null;
+  /**
+   * The ID of the golden dataset associated with the pipeline
+   * @type {string}
+   * @memberof Pipeline
+   */
+  goldenDatasetId: string | null;
 }
