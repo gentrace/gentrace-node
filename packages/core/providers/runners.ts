@@ -14,11 +14,13 @@ import { constructStepRuns, getContextTestCaseFilter } from "./utils";
  * Retrieves test runners for a given pipeline
  * @async
  * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
+ * @param {string} [datasetId] - Optional dataset ID to filter test cases by.
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
  * @returns {Promise<Array<PipelineRunTestCaseTuple>>} A Promise that resolves with an array of PipelineRunTestCaseTuple.
  */
 export const getTestRunners = async (
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
+  datasetId?: string,
   caseFilter?: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
   ) => boolean,
@@ -33,10 +35,24 @@ export const getTestRunners = async (
 
   // get test cases for the pipeline
   let response;
-  if (pipeline.id) {
-    response = await globalGentraceApi.v1TestCaseGet(pipeline.id);
+  if (datasetId) {
+    response = await globalGentraceApi.v1TestCaseGet(
+      datasetId,
+      pipeline.id,
+      undefined,
+    );
+  } else if (pipeline.id) {
+    response = await globalGentraceApi.v1TestCaseGet(
+      undefined,
+      pipeline.id,
+      undefined,
+    );
   } else {
-    response = await globalGentraceApi.v1TestCaseGet(null, pipeline.slug);
+    response = await globalGentraceApi.v1TestCaseGet(
+      undefined,
+      undefined,
+      pipeline.slug,
+    );
   }
   const testCases = response.data.testCases ?? [];
 
