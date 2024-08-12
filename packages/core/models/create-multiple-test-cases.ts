@@ -12,8 +12,32 @@
  * Do not edit the class manually.
  */
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { CreateMultipleTestCasesTestCasesInner } from "./create-multiple-test-cases-test-cases-inner";
+
 /**
- * @type CreateMultipleTestCases
+ *
  * @export
+ * @interface CreateMultipleTestCases
  */
-export type CreateMultipleTestCases = any;
+export interface CreateMultipleTestCases {
+  /**
+   * Slug for the pipeline
+   * @type {string}
+   * @memberof CreateMultipleTestCases
+   */
+  pipelineSlug?: string;
+  /**
+   * ID of the dataset
+   * @type {string}
+   * @memberof CreateMultipleTestCases
+   */
+  datasetId?: string;
+  /**
+   *
+   * @type {Array<CreateMultipleTestCasesTestCasesInner>}
+   * @memberof CreateMultipleTestCases
+   */
+  testCases: Array<CreateMultipleTestCasesTestCasesInner>;
+}

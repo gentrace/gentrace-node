@@ -13,7 +13,39 @@
  */
 
 /**
- * @type CreateSingleTestCase
+ *
  * @export
+ * @interface CreateSingleTestCase
  */
-export type CreateSingleTestCase = any;
+export interface CreateSingleTestCase {
+  /**
+   * Slug for the pipeline
+   * @type {string}
+   * @memberof CreateSingleTestCase
+   */
+  pipelineSlug?: string;
+  /**
+   * ID of the dataset
+   * @type {string}
+   * @memberof CreateSingleTestCase
+   */
+  datasetId?: string;
+  /**
+   * The name of the test case
+   * @type {string}
+   * @memberof CreateSingleTestCase
+   */
+  name: string;
+  /**
+   * The input data for the test case as a JSON object
+   * @type {{ [key: string]: any; }}
+   * @memberof CreateSingleTestCase
+   */
+  inputs: { [key: string]: any };
+  /**
+   * The expected outputs for the test case as a JSON object
+   * @type {object}
+   * @memberof CreateSingleTestCase
+   */
+  expectedOutputs?: object | null;
+}

@@ -38,10 +38,6 @@ import {
   RequiredError,
 } from "../base";
 // @ts-ignore
-import { CreateMultipleTestCases } from "../models";
-// @ts-ignore
-import { CreateSingleTestCase } from "../models";
-// @ts-ignore
 import { ExpandedTestResult } from "../models";
 // @ts-ignore
 import { FeedbackRequest } from "../models";
@@ -429,21 +425,19 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
     /**
      *
      * @summary Create a new test case
-     * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
+     * @param {V1TestCasePostRequest} v1TestCasePostRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCasePost: async (
-      createSingleTestCaseCreateMultipleTestCases:
-        | CreateSingleTestCase
-        | CreateMultipleTestCases,
+      v1TestCasePostRequest: V1TestCasePostRequest,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'createSingleTestCaseCreateMultipleTestCases' is not null or undefined
+      // verify required parameter 'v1TestCasePostRequest' is not null or undefined
       assertParamExists(
         "v1TestCasePost",
-        "createSingleTestCaseCreateMultipleTestCases",
-        createSingleTestCaseCreateMultipleTestCases,
+        "v1TestCasePostRequest",
+        v1TestCasePostRequest,
       );
       const localVarPath = `/v1/test-case`;
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -476,7 +470,7 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
         ...options.headers,
       };
       localVarRequestOptions.data = serializeDataIfNeeded(
-        createSingleTestCaseCreateMultipleTestCases,
+        v1TestCasePostRequest,
         localVarRequestOptions,
         configuration,
       );
@@ -1065,14 +1059,12 @@ export const V1ApiFp = function (configuration?: Configuration) {
     /**
      *
      * @summary Create a new test case
-     * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
+     * @param {V1TestCasePostRequest} v1TestCasePostRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async v1TestCasePost(
-      createSingleTestCaseCreateMultipleTestCases:
-        | CreateSingleTestCase
-        | CreateMultipleTestCases,
+      v1TestCasePostRequest: V1TestCasePostRequest,
       options?: AxiosRequestConfig,
     ): Promise<
       (
@@ -1081,7 +1073,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<V1TestCasePost200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.v1TestCasePost(
-        createSingleTestCaseCreateMultipleTestCases,
+        v1TestCasePostRequest,
         options,
       );
       return createRequestFunction(
@@ -1401,18 +1393,16 @@ export const V1ApiFactory = function (
     /**
      *
      * @summary Create a new test case
-     * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
+     * @param {V1TestCasePostRequest} v1TestCasePostRequest
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCasePost(
-      createSingleTestCaseCreateMultipleTestCases:
-        | CreateSingleTestCase
-        | CreateMultipleTestCases,
+      v1TestCasePostRequest: V1TestCasePostRequest,
       options?: any,
     ): AxiosPromise<V1TestCasePost200Response> {
       return localVarFp
-        .v1TestCasePost(createSingleTestCaseCreateMultipleTestCases, options)
+        .v1TestCasePost(v1TestCasePostRequest, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -1644,19 +1634,17 @@ export class V1Api extends BaseAPI {
   /**
    *
    * @summary Create a new test case
-   * @param {CreateSingleTestCase | CreateMultipleTestCases} createSingleTestCaseCreateMultipleTestCases
+   * @param {V1TestCasePostRequest} v1TestCasePostRequest
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof V1Api
    */
   public v1TestCasePost(
-    createSingleTestCaseCreateMultipleTestCases:
-      | CreateSingleTestCase
-      | CreateMultipleTestCases,
+    v1TestCasePostRequest: V1TestCasePostRequest,
     options?: AxiosRequestConfig,
   ) {
     return V1ApiFp(this.configuration)
-      .v1TestCasePost(createSingleTestCaseCreateMultipleTestCases, options)
+      .v1TestCasePost(v1TestCasePostRequest, options)
       .then((request) => request(this.axios, this.basePath));
   }
 

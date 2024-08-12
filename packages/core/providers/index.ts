@@ -1,5 +1,6 @@
 export * from "./init";
 export * from "./evaluation";
+export * from "./test-case";
 export * from "./dataset";
 export * from "./pipeline";
 export * from "./pipeline-run";
@@ -8,3 +9,4 @@ export * from "./context";
 export * from "./plugin";
 export * from "./handler";
 export * from "./files";
+export * from "./run-test";

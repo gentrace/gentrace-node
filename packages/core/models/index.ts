@@ -3,6 +3,7 @@ export * from "./create-dataset-v2";
 export * from "./create-evaluation-v2";
 export * from "./create-feedback-v2";
 export * from "./create-multiple-test-cases";
+export * from "./create-multiple-test-cases-test-cases-inner";
 export * from "./create-single-test-case";
 export * from "./dataset-v2";
 export * from "./evaluator-v2";

@@ -17,6 +17,9 @@
 import { CreateMultipleTestCases } from "./create-multiple-test-cases";
 // May contain unused imports in some cases
 // @ts-ignore
+import { CreateMultipleTestCasesTestCasesInner } from "./create-multiple-test-cases-test-cases-inner";
+// May contain unused imports in some cases
+// @ts-ignore
 import { CreateSingleTestCase } from "./create-single-test-case";
 
 /**

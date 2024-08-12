@@ -10,6 +10,7 @@ models/boolean-type.ts
 models/create-dataset-v2.ts
 models/create-evaluation-v2.ts
 models/create-feedback-v2.ts
+models/create-multiple-test-cases-test-cases-inner.ts
 models/create-multiple-test-cases.ts
 models/create-single-test-case.ts
 models/dataset-v2.ts
