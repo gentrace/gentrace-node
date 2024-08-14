@@ -6,7 +6,7 @@ init({
 });
 
 async function full() {
-  const testCase = await getTestCase("550e8400-e29b-41d4-a716-446655440000");
+  const testCase = await getTestCase("691c39f7-6b08-488d-9e8f-60e078aab726");
 
   console.log("test case", testCase);
 }

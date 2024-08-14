@@ -38,7 +38,7 @@ export const getTestRunners = async (
   if (datasetId) {
     response = await globalGentraceApi.v1TestCaseGet(
       datasetId,
-      pipeline.id,
+      undefined,
       undefined,
     );
   } else if (pipeline.id) {
