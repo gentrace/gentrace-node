@@ -22,54 +22,70 @@ function isUUID(str: string): boolean {
 }
 
 /**
- * Retrieves test cases for a given pipeline or dataset from the Gentrace API.
+ * Retrieves test cases for a given pipeline from the Gentrace API.
  * @async
- * @param {Object} [params] - Optional parameters to filter the test cases.
- * @param {string} [params.pipelineSlug] - The slug of the pipeline to filter test cases by.
- * @param {string} [params.pipelineId] - The ID of the pipeline to filter test cases by.
- * @param {string} [params.datasetId] - The ID of the dataset to filter test cases by.
+ * @param {string} pipelineSlug - The slug of the pipeline to filter test cases by.
  * @returns {Promise<Array<TestCase>>} - A promise that resolves to an array of test cases.
- * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
- * @remarks Only one of pipelineSlug, pipelineId, or datasetId needs to be specified.
- *          If only pipelineSlug or pipelineId is specified, the golden dataset for that pipeline will be used.
+ * @throws {Error} - Throws an error if the Gentrace API key is not initialized or if the pipeline is not found.
+ * @remarks The golden dataset for the specified pipeline will be used.
  */
-export const getTestCases = async (params?: {
-  pipelineSlug?: string;
-  pipelineId?: string;
-  datasetId?: string;
-}): Promise<TestCase[]> => {
+export const getTestCases = async (
+  pipelineSlug: string,
+): Promise<TestCase[]> => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
-  if (!params?.pipelineSlug && !params?.pipelineId && !params?.datasetId) {
-    throw new Error(
-      "Either pipelineSlug, pipelineId, or datasetId must be defined.",
-    );
+  if (!pipelineSlug) {
+    throw new Error("pipelineSlug must be defined.");
   }
 
-  let pipelineId = params.pipelineId;
+  let pipelineId: string;
 
-  if (params.pipelineSlug && !isUUID(params.pipelineSlug)) {
+  if (!isUUID(pipelineSlug)) {
     const allPipelines = await getPipelines();
     const matchingPipeline = allPipelines.find(
-      (pipeline) => pipeline.slug === params.pipelineSlug,
+      (pipeline) => pipeline.slug === pipelineSlug,
     );
 
     if (!matchingPipeline) {
       throw new Error(
-        `Could not find the specified pipeline (${params.pipelineSlug})`,
+        `Could not find the specified pipeline (${pipelineSlug})`,
       );
     }
 
     pipelineId = matchingPipeline.id;
+  } else {
+    pipelineId = pipelineSlug;
   }
 
   const response = await globalGentraceApi.v1TestCaseGet(
-    params.datasetId,
+    undefined,
     pipelineId,
-    params.pipelineSlug,
+    pipelineSlug,
   );
+  return response.data.testCases ?? [];
+};
+
+/**
+ * Retrieves test cases for a specific dataset from the Gentrace API.
+ * @async
+ * @param {string} datasetId - The ID of the dataset to retrieve test cases for.
+ * @returns {Promise<Array<TestCase>>} - A promise that resolves to an array of test cases.
+ * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
+ */
+export const getTestCasesForDataset = async (
+  datasetId: string,
+): Promise<TestCase[]> => {
+  if (!globalGentraceApi) {
+    throw new Error("Gentrace API key not initialized. Call init() first.");
+  }
+
+  if (!datasetId) {
+    throw new Error("datasetId must be defined.");
+  }
+
+  const response = await globalGentraceApi.v1TestCaseGet(datasetId);
   return response.data.testCases ?? [];
 };
 

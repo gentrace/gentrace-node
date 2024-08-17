@@ -60,10 +60,4 @@ export interface DatasetV2 {
    * @memberof DatasetV2
    */
   pipelineId: string;
-  /**
-   *
-   * @type {boolean}
-   * @memberof DatasetV2
-   */
-  isGolden?: boolean;
 }
