@@ -6,9 +6,7 @@ init({
 });
 
 async function full() {
-  const testCases = await getTestCases({
-    pipelineId: "dfa76a77-5f9e-5e2d-bfd0-f5158585bc32",
-  });
+  const testCases = await getTestCases("dfa76a77-5f9e-5e2d-bfd0-f5158585bc32");
 
   console.log("test cases", testCases);
 

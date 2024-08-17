@@ -8,7 +8,7 @@ import {
   incrementTestCounter,
 } from "./utils";
 import { globalGentraceApi } from "./init";
-import { getTestCases } from "./test-case";
+import { getTestCases, getTestCasesForDataset } from "./test-case";
 import { constructSubmissionPayloadAdvanced, TestRun } from "./test-result";
 import { getPipelines } from "./pipeline-methods";
 
@@ -37,11 +37,7 @@ async function runTestCore(
       );
     }
 
-    const testCases = await getTestCases({
-      pipelineId: matchingPipeline.id,
-      datasetId: datasetId,
-    });
-
+    const testCases = await getTestCasesForDataset(datasetId);
     const testRuns: TestRun[] = [];
 
     for (const testCase of testCases) {
