@@ -35,5 +35,5 @@ export interface CreateMultipleTestCasesTestCasesInner {
    * @type {object}
    * @memberof CreateMultipleTestCasesTestCasesInner
    */
-  expectedOutputs: object;
+  expectedOutputs?: object;
 }

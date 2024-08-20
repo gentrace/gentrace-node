@@ -29,9 +29,15 @@ export interface CreateMultipleTestCases {
    */
   pipelineSlug?: string;
   /**
+   * ID of the dataset
+   * @type {string}
+   * @memberof CreateMultipleTestCases
+   */
+  datasetId?: string;
+  /**
    *
    * @type {Array<CreateMultipleTestCasesTestCasesInner>}
    * @memberof CreateMultipleTestCases
    */
-  testCases?: Array<CreateMultipleTestCasesTestCasesInner>;
+  testCases: Array<CreateMultipleTestCasesTestCasesInner>;
 }

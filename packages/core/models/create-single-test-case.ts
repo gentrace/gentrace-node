@@ -25,17 +25,23 @@ export interface CreateSingleTestCase {
    */
   pipelineSlug?: string;
   /**
+   * ID of the dataset
+   * @type {string}
+   * @memberof CreateSingleTestCase
+   */
+  datasetId?: string;
+  /**
    * The name of the test case
    * @type {string}
    * @memberof CreateSingleTestCase
    */
-  name?: string;
+  name: string;
   /**
    * The input data for the test case as a JSON object
    * @type {{ [key: string]: any; }}
    * @memberof CreateSingleTestCase
    */
-  inputs?: { [key: string]: any };
+  inputs: { [key: string]: any };
   /**
    * The expected outputs for the test case as a JSON object
    * @type {object}

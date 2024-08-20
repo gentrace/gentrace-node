@@ -84,4 +84,10 @@ export interface PipelineV2 {
    * @memberof PipelineV2
    */
   privateUserEmail: string | null;
+  /**
+   * The ID of the golden dataset associated with the pipeline
+   * @type {string}
+   * @memberof PipelineV2
+   */
+  goldenDatasetId: string | null;
 }

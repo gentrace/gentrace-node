@@ -308,14 +308,16 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
       };
     },
     /**
-     *
-     * @summary Get test cases for a pipeline
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+     * @summary Get test cases for a pipeline or dataset
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCaseGet: async (
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options: AxiosRequestConfig = {},
@@ -339,6 +341,10 @@ export const V1ApiAxiosParamCreator = function (configuration?: Configuration) {
       // authentication bearerAuth required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (datasetId !== undefined) {
+        localVarQueryParameter["datasetId"] = datasetId;
+      }
 
       if (pipelineId !== undefined) {
         localVarQueryParameter["pipelineId"] = pipelineId;
@@ -991,14 +997,16 @@ export const V1ApiFp = function (configuration?: Configuration) {
       );
     },
     /**
-     *
-     * @summary Get test cases for a pipeline
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+     * @summary Get test cases for a pipeline or dataset
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async v1TestCaseGet(
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options?: AxiosRequestConfig,
@@ -1009,6 +1017,7 @@ export const V1ApiFp = function (configuration?: Configuration) {
       ) => AxiosPromise<V1TestCaseGet200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.v1TestCaseGet(
+        datasetId,
         pipelineId,
         pipelineSlug,
         options,
@@ -1348,20 +1357,22 @@ export const V1ApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     *
-     * @summary Get test cases for a pipeline
+     * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+     * @summary Get test cases for a pipeline or dataset
+     * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
      * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
      * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     v1TestCaseGet(
+      datasetId?: string,
       pipelineId?: string,
       pipelineSlug?: string,
       options?: any,
     ): AxiosPromise<V1TestCaseGet200Response> {
       return localVarFp
-        .v1TestCaseGet(pipelineId, pipelineSlug, options)
+        .v1TestCaseGet(datasetId, pipelineId, pipelineSlug, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -1583,8 +1594,9 @@ export class V1Api extends BaseAPI {
   }
 
   /**
-   *
-   * @summary Get test cases for a pipeline
+   * At least one of datasetId, pipelineId, or pipelineSlug must be provided
+   * @summary Get test cases for a pipeline or dataset
+   * @param {string} [datasetId] The ID of the Dataset to retrieve test cases for
    * @param {string} [pipelineId] The ID of the Pipeline to retrieve test cases for
    * @param {string} [pipelineSlug] The slug of the Pipeline to retrieve test cases for
    * @param {*} [options] Override http request option.
@@ -1592,12 +1604,13 @@ export class V1Api extends BaseAPI {
    * @memberof V1Api
    */
   public v1TestCaseGet(
+    datasetId?: string,
     pipelineId?: string,
     pipelineSlug?: string,
     options?: AxiosRequestConfig,
   ) {
     return V1ApiFp(this.configuration)
-      .v1TestCaseGet(pipelineId, pipelineSlug, options)
+      .v1TestCaseGet(datasetId, pipelineId, pipelineSlug, options)
       .then((request) => request(this.axios, this.basePath));
   }
 

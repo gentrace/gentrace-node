@@ -64,7 +64,10 @@ async function main() {
     );
   };
 
-  const pipelineRunTestCases = await getTestRunners(pipeline);
+  const pipelineRunTestCases = await getTestRunners(
+    pipeline,
+    "70a96925-db53-5c59-82b4-f42e988950a9",
+  );
 
   await enableParallelism(pipelineRunTestCases, exampleHandler, {
     parallelThreads: 5,

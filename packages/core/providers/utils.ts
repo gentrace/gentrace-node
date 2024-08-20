@@ -1,7 +1,9 @@
 import { Context, ResultContext } from "./context";
-import { TestCase } from "../models";
 import { Pattern, parse } from "acorn";
 import axios from "axios";
+import { TestCase, TestCaseV2 } from "../models";
+import { PipelineRun } from "./pipeline-run";
+import { TestRun } from "./test-result";
 
 export type GentraceParams = {
   pipelineSlug?: string;
@@ -131,20 +133,28 @@ export function safeJsonParse(jsonString: string | null) {
     return null;
   }
 }
-
 export function getContextTestCaseFilter(
   contextOrCaseFilter?:
     | ResultContext
     | ((
-        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+        testCase: Omit<
+          TestCase,
+          "createdAt" | "updatedAt" | "archivedAt" | "deletedAt"
+        >,
       ) => boolean),
   caseFilterOrUndefined?: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+    testCase: Omit<
+      TestCase,
+      "createdAt" | "updatedAt" | "archivedAt" | "deletedAt"
+    >,
   ) => boolean,
 ): {
   context: ResultContext | undefined;
   caseFilter: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+    testCase: Omit<
+      TestCase,
+      "createdAt" | "updatedAt" | "archivedAt" | "deletedAt"
+    >,
   ) => boolean | undefined;
 } {
   let context, caseFilter;
@@ -220,4 +230,63 @@ export function setErrorInterceptor(showErrorsInput: string) {
       }
     },
   );
+}
+
+/**
+ * Constructs step runs for a given test case and pipeline run.
+ *
+ * @param {TestCase | TestCaseV2} testCase - The test case object.
+ * @param {PipelineRun} pipelineRun - The pipeline run object.
+ * @returns {TestRun} The constructed test run object.
+ */
+export function constructStepRuns(
+  testCase: TestCase | TestCaseV2,
+  pipelineRun: PipelineRun,
+): TestRun {
+  let mergedMetadata = {};
+
+  const updatedStepRuns = pipelineRun.stepRuns.map((stepRun) => {
+    let {
+      metadata: thisContextMetadata,
+      previousRunId: _prPreviousRunId,
+      ...restThisContext
+    } = pipelineRun.context ?? {};
+
+    let {
+      metadata: stepRunContextMetadata,
+      previousRunId: _srPreviousRunId,
+      ...restStepRunContext
+    } = stepRun.context ?? {};
+
+    // Merge metadata
+    mergedMetadata = {
+      ...mergedMetadata,
+      ...thisContextMetadata,
+      ...stepRunContextMetadata,
+    };
+
+    return {
+      modelParams: stepRun.modelParams,
+      invocation: stepRun.invocation,
+      inputs: stepRun.inputs,
+      outputs: stepRun.outputs,
+      providerName: stepRun.providerName,
+      elapsedTime: stepRun.elapsedTime,
+      startTime: stepRun.startTime,
+      endTime: stepRun.endTime,
+      context: { ...restThisContext, ...restStepRunContext },
+    };
+  });
+
+  const testRun: TestRun = {
+    caseId: testCase.id,
+    metadata: mergedMetadata,
+    stepRuns: updatedStepRuns,
+  };
+
+  if (pipelineRun.getId()) {
+    testRun.id = pipelineRun.getId();
+  }
+
+  return testRun;
 }
