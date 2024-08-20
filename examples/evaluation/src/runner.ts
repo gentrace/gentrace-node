@@ -1,6 +1,6 @@
 import { init, Pipeline, runTest } from "@gentrace/core";
 
-const PIPELINE_SLUG = "guess-the-year";
+const PIPELINE_SLUG = "copilot";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",

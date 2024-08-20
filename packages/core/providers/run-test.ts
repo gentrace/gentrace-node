@@ -94,13 +94,15 @@ export async function runTest(
 }
 
 /**
- * Runs a test for a given dataset ID.
+ * Runs a test for a given pipeline slug and dataset ID.
+ * @param {string} pipelineSlug: The slug of the pipeline
  * @param {string} datasetId: The ID of the dataset
  * @param {function} handler: The handler function that will be called for each test case
  * @param {ResultContext} [context]: An optional context object that will be passed to the Gentrace API
  * @param {function} [caseFilter]: An optional filter function that will be called for each test case
  */
 export async function runTestWithDataset(
+  pipelineSlug: string,
   datasetId: string,
   handler: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
@@ -112,12 +114,14 @@ export async function runTestWithDataset(
 ): Promise<V1TestResultPost200Response>;
 
 /**
- * Runs a test for a given dataset ID.
+ * Runs a test for a given pipeline slug and dataset ID.
+ * @param {string} pipelineSlug: The slug of the pipeline
  * @param {string} datasetId: The ID of the dataset
  * @param {function} handler: The handler function that will be called for each test case
  * @param {function} [caseFilter]: An optional filter function that will be called for each test case
  */
 export async function runTestWithDataset(
+  pipelineSlug: string,
   datasetId: string,
   handler: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
@@ -128,13 +132,15 @@ export async function runTestWithDataset(
 ): Promise<V1TestResultPost200Response>;
 
 /**
- * Runs a test for a given dataset ID.
+ * Runs a test for a given pipeline slug and dataset ID.
+ * @param {string} pipelineSlug: The slug of the pipeline
  * @param {string} datasetId: The ID of the dataset
  * @param {function} handler: The handler function that will be called for each test case
  * @param {ResultContext | function} [contextOrCaseFilter]: An optional context object that will be passed to the Gentrace API
  * @param {function} [caseFilterOrUndefined]: An optional filter function that will be called for each test case
  */
 export async function runTestWithDataset(
+  pipelineSlug: string,
   datasetId: string,
   handler: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
@@ -153,6 +159,5 @@ export async function runTestWithDataset(
     caseFilterOrUndefined,
   );
 
-  // Note: pipelineSlug is no longer passed here
-  return runTestCore(undefined, handler, context, caseFilter, datasetId);
+  return runTestCore(pipelineSlug, handler, context, caseFilter, datasetId);
 }
