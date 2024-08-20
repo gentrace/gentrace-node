@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.7.0
+
+### Minor Changes
+
+- 44a5d71: Add dataset support
+
 ## 2.6.1
 
 ### Patch Changes
