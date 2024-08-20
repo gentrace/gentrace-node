@@ -36,8 +36,10 @@ async function runTestCore(
         `Could not find the specified pipeline (${pipelineSlug})`,
       );
     }
+    const testCases = datasetId
+      ? await getTestCasesForDataset(datasetId)
+      : await getTestCases(pipelineSlug);
 
-    const testCases = await getTestCasesForDataset(datasetId);
     const testRuns: TestRun[] = [];
 
     for (const testCase of testCases) {
