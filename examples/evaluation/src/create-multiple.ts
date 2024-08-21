@@ -7,7 +7,7 @@ init({
 
 async function createMultiple() {
   const creationCount = await createTestCases({
-    pipelineSlug: "testing-pipeline-id",
+    pipelineSlug: "guess-the-year",
     testCases: [
       {
         name: `TC ${Math.random()}`,

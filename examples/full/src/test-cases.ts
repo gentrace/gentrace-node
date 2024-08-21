@@ -2,11 +2,10 @@ import { getTestCases, init } from "@gentrace/core";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
-  basePath: "http://localhost:3000/api",
 });
 
 async function full() {
-  const testCases = await getTestCases("dfa76a77-5f9e-5e2d-bfd0-f5158585bc32");
+  const testCases = await getTestCases("monkies");
 
   console.log("test cases", testCases);
 

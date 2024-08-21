@@ -7,10 +7,10 @@ init({
 
 async function createSingle() {
   const caseId = await createTestCase({
-    pipelineSlug: "testing-pipeline-id",
+    pipelineSlug: "guess-the-year",
     name: `TC ${Math.random()}`,
     inputs: { a: 1, b: 2 },
-    expectedOutputs: { c: 3 },
+    expectedOutputs: [{ c: 3 }],
   });
 
   console.log("Case ID", caseId);
