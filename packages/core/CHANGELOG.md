@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.7.1
+
+### Patch Changes
+
+- 7a774c3: Add more diagnostics in error message
+
 ## 2.7.0
 
 ### Minor Changes
