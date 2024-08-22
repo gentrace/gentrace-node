@@ -195,7 +195,7 @@ export function setErrorInterceptor(showErrorsInput: string) {
       const now = Date.now();
       let friendlyMessage = new Date(now).toUTCString(); // timestamp
 
-      if (error.config.url) {
+      if (error.config?.url) {
         friendlyMessage += "\nGentrace URL: " + error.config.url;
       }
       if (error.message === "Network Error") {

@@ -9,7 +9,8 @@ import { CreateDatasetV2, UpdateDatasetV2 } from "@gentrace/core/models";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
-  basePath: "http://localhost:3000/api",
+  // basePath: "http://localhost:3000/api",
+  basePath: "https://staging.gentrace.ai/api",
 });
 
 async function demonstrateDatasetOperations() {
