@@ -24,9 +24,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "axios": "~0.26.1",
     "@gentrace/core": "workspace:^2.2.1",
-    "openai": "^3.0.0"
+    "axios": "~0.26.1",
+    "openai": "^4.56.0"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
