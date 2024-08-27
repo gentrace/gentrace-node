@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/openai",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "description": "Gentrace OpenAI v4 plugin for Node.JS",
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.2.1"
+    "@gentrace/core": "workspace:^2.8.0"
   },
   "peerDependencies": {
     "openai": "^4.56.0"
