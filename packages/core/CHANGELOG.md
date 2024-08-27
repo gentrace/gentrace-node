@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.8.1
+
+### Patch Changes
+
+- 42fba9c: Fix lockfile
+- 75c4bc9: Fix package versioning
+
 ## 2.8.0
 
 ### Minor Changes
