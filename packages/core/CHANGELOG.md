@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.7.2
+
+### Patch Changes
+
+- ed7da35: eFix error.config?.url
+
 ## 2.7.1
 
 ### Patch Changes
