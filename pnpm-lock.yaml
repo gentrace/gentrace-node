@@ -256,10 +256,10 @@ importers:
   examples/full:
     dependencies:
       '@gentrace/core':
-        specifier: ^2.7.0
+        specifier: workspace:^2.1.2
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: 4.1.6
+        specifier: workspace:^4.0.2
         version: link:../../packages/openai
     devDependencies:
       '@gentrace/tsconfig':
@@ -881,7 +881,7 @@ importers:
   packages/openai:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^2.2.1
+        specifier: workspace:^2.8.0
         version: link:../core
     devDependencies:
       '@gentrace/tsconfig':
