@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.8.0
+
+### Minor Changes
+
+- 6cd9aef: feat: Add unstructured outputs
+
 ## 2.7.2
 
 ### Patch Changes

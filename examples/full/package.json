@@ -1,14 +1,14 @@
 {
   "name": "@examples/full",
-  "version": "0.1.31",
+  "version": "0.1.32",
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "^2.7.0",
-    "@gentrace/openai": "4.1.6"
+    "@gentrace/core": "workspace:^2.1.2",
+    "@gentrace/openai": "workspace:^4.0.2"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",

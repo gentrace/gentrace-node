@@ -1,5 +1,13 @@
 # @gentrace/openai
 
+## 4.1.7
+
+### Patch Changes
+
+- 9f82716: Add structured outputs
+- Updated dependencies [6cd9aef]
+  - @gentrace/core@2.8.0
+
 ## 4.1.6
 
 ### Patch Changes
