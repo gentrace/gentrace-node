@@ -1,12 +1,12 @@
-// @ts-ignore: the typings from @types/mustache are incorrect
-import Mustache from "mustache";
 import {
-  Configuration as GentraceConfiguration,
   Context,
+  Configuration as GentraceConfiguration,
   Pipeline,
   PipelineRun,
   StepRun,
 } from "@gentrace/core";
+// @ts-ignore: the typings from @types/mustache are incorrect
+import Mustache from "mustache";
 import OpenAI, { ClientOptions } from "openai";
 import { APIPromise, RequestOptions } from "openai/core";
 import {
@@ -19,9 +19,18 @@ import {
   ModerationCreateParams,
   ModerationCreateResponse,
 } from "openai/resources";
+import {
+  ChatCompletionParseParams,
+  ParsedChatCompletion,
+} from "openai/resources/beta/chat/completions";
 import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
 import { Stream } from "openai/streaming";
 import { isDefined } from "./util";
+import {
+  ExtractParsedContentFromParams,
+  parseChatCompletion,
+  validateInputTools,
+} from "openai/lib/parser";
 
 export type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -604,6 +613,130 @@ export class GentraceCompletions extends OpenAI.Completions {
       | (GentraceStream<Completion> & {
           pipelineRunId?: string;
         });
+  }
+}
+
+export interface GentraceChatCompletionParseParams<
+  Params extends ChatCompletionParseParams,
+> {
+  messages: Array<ChatCompletionRequestMessageTemplate>;
+  pipelineSlug?: string;
+  gentrace?: Context;
+}
+
+export class GentraceBetaChatCompletions extends OpenAI.Beta.Chat.Completions {
+  private pipelineRun?: PipelineRun;
+  private gentraceConfig: GentraceConfiguration;
+
+  constructor({
+    client,
+    pipelineRun,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super(client);
+    this.pipelineRun = pipelineRun;
+    this.gentraceConfig = gentraceConfig;
+  }
+
+  async parseInner<
+    Params extends ChatCompletionParseParams,
+    ParsedT = ExtractParsedContentFromParams<Params>,
+  >(
+    body: GentraceChatCompletionCreateParams,
+    options?: RequestOptions,
+  ): Promise<ParsedChatCompletion<ParsedT>> {
+    const { pipelineSlug } = body;
+
+    let isSelfContainedPipelineRun = !this.pipelineRun && !!pipelineSlug;
+
+    let pipelineRun = this.pipelineRun;
+
+    if (isSelfContainedPipelineRun) {
+      const pipeline = new Pipeline({
+        id: pipelineSlug,
+        slug: pipelineSlug,
+        apiKey: this.gentraceConfig.apiKey,
+        basePath: this.gentraceConfig.basePath,
+        logger: this.gentraceConfig.logger,
+      });
+
+      pipelineRun = new PipelineRun({
+        pipeline,
+      });
+    }
+
+    const {
+      messages,
+      pipelineSlug: _pipelineSlug,
+      gentrace,
+      ...baseCompletionOptions
+    } = body;
+
+    const renderedMessages = createRenderedChatMessages(messages);
+
+    const contentTemplatesArray = messages.map<string | null>((message) => {
+      return message.contentTemplate ?? null;
+    });
+
+    const contentInputsArray = messages.map<Record<string, string> | null>(
+      (message) => {
+        return message.contentInputs ?? null;
+      },
+    );
+
+    const startTime = Date.now();
+
+    validateInputTools(body.tools);
+
+    // TODO: this is not sufficient for structuredt outputs. There's additional parsing that needs to happen.
+    const completion = this._client.post("/chat/completions", {
+      body: { messages: renderedMessages, ...baseCompletionOptions },
+      ...options,
+    }) as APIPromise<ChatCompletion>;
+
+    const rawData = await completion;
+
+    // @ts-ignore
+    const data = parseChatCompletion(rawData, body);
+
+    const endTime = Date.now();
+
+    const elapsedTime = Math.floor(endTime - startTime);
+
+    // user parameter is an input, not a model parameter
+    const { user, tools, ...modelParams } = baseCompletionOptions;
+
+    pipelineRun?.addStepRunNode(
+      new OpenAICreateChatCompletionStepRun(
+        elapsedTime,
+        new Date(startTime).toISOString(),
+        new Date(endTime).toISOString(),
+        {
+          messages: renderedMessages,
+          user,
+          contentInputs: contentInputsArray,
+        },
+        { ...modelParams, contentTemplates: contentTemplatesArray },
+        data,
+        body?.gentrace ?? {},
+      ),
+    );
+
+    if (isSelfContainedPipelineRun) {
+      const submitInfo = await pipelineRun.submit();
+      const pipelineRunId = submitInfo.pipelineRunId;
+
+      return {
+        ...data,
+        pipelineRunId,
+      } as ParsedChatCompletion<ParsedT> & { pipelineRunId: string };
+    }
+
+    return data as ParsedChatCompletion<ParsedT>;
   }
 }
 

@@ -7,6 +7,10 @@ import {
   SimpleHandler,
 } from "@gentrace/core";
 import OpenAI from "openai";
+import {
+  ChatCompletionParseParams,
+  ParsedChatCompletion,
+} from "openai/resources/beta/chat/completions";
 import { RequestOptions } from "openai/core";
 import {
   Completion,
@@ -17,6 +21,7 @@ import {
 } from "openai/resources";
 import { ChatCompletionChunk } from "openai/resources/chat";
 import {
+  GentraceBetaChatCompletions,
   GentraceChatCompletion,
   GentraceChatCompletionCreateParams,
   GentraceChatCompletionCreateParamsNonStreaming,
@@ -33,11 +38,15 @@ import {
   GentraceStream,
   OpenAIPipelineHandler,
 } from "../openai";
+import { ExtractParsedContentFromParams } from "openai/lib/parser";
 
 class SimpleOpenAI
   extends OpenAIPipelineHandler
   implements SimpleHandler<GentraceClientOptions>
 {
+  // @ts-ignore
+  beta: SimpleGentraceBeta;
+
   // @ts-ignore
   completions: SimpleGentraceCompletions;
 
@@ -93,6 +102,14 @@ class SimpleOpenAI
 
     // @ts-ignore
     this.chat = new SimpleGentraceChat({
+      // @ts-ignore
+      client: this,
+      ...options,
+      gentraceConfig,
+    });
+
+    // @ts-ignore
+    this.beta = new SimpleGentraceBeta({
       // @ts-ignore
       client: this,
       ...options,
@@ -231,6 +248,85 @@ export class SimpleGentraceCompletions extends GentraceCompletions {
       })
   > {
     return super.createInner(body, requestOptions);
+  }
+}
+
+export class SimpleGentraceBeta extends OpenAI.Beta {
+  // @ts-ignore
+  public chat: SimpleGentraceBetaChat;
+
+  constructor({
+    client,
+    pipelineRun,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super(client);
+
+    // @ts-ignore
+    this.chat = new SimpleGentraceChat({
+      // @ts-ignore
+      client,
+      pipelineRun,
+      gentraceConfig,
+    });
+  }
+}
+
+export class SimpleGentraceBetaChat extends OpenAI.Beta.Chat {
+  // @ts-ignore
+  public completions: SimpleGentraceBetaChatCompletions;
+
+  constructor({
+    client,
+    pipelineRun,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super(client);
+
+    // @ts-ignore
+    this.completions = new SimpleGentraceBetaChatCompletions({
+      // @ts-ignore
+      client,
+      pipelineRun,
+      gentraceConfig,
+    });
+  }
+}
+
+class SimpleGentraceBetaChatCompletions extends GentraceBetaChatCompletions {
+  constructor({
+    client,
+    pipelineRun,
+    gentraceConfig,
+  }: {
+    client: OpenAI;
+    pipelineRun?: PipelineRun;
+    gentraceConfig: GentraceConfiguration;
+  }) {
+    super({
+      client,
+      pipelineRun,
+      gentraceConfig,
+    });
+  }
+
+  // @ts-ignore
+  async parse<
+    Params extends ChatCompletionParseParams,
+    ParsedT = ExtractParsedContentFromParams<Params>,
+  >(
+    body: GentraceChatCompletionCreateParams,
+    options?: RequestOptions,
+  ): Promise<ParsedChatCompletion<ParsedT>> {
+    return super.parseInner(body, options);
   }
 }
 
