@@ -23,13 +23,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.8.0"
-  },
-  "peerDependencies": {
+    "@gentrace/core": "workspace:^2.8.0",
     "openai": "^4.56.0"
   },
   "devDependencies": {
-    "openai": "^4.56.0",
     "@gentrace/tsconfig": "workspace:*",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
