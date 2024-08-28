@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.1.8
+
+### Patch Changes
+
+- 16128e6: Remove peer dep
+
 ## 4.1.7
 
 ### Patch Changes
