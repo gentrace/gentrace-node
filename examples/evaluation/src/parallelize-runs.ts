@@ -4,13 +4,8 @@ import {
   PipelineRunTestCaseTuple,
   getTestRunners,
   submitTestRunners,
-  updateTestResultWithRunners,
 } from "@gentrace/core";
 import { initPlugin } from "@gentrace/openai";
-
-function exampleResponse(inputs: any) {
-  return "This is a generated response from the AI";
-}
 
 // utility function to enable parallelism
 export const enableParallelism = async <T, U>(
@@ -23,7 +18,6 @@ export const enableParallelism = async <T, U>(
   const iterator = items.entries();
   const doAction = async (iterator: IterableIterator<[number, T]>) => {
     for (const [index, item] of iterator) {
-      console.log("item", item);
       results[index] = await callbackFn(item);
     }
   };
@@ -58,7 +52,6 @@ async function main() {
     runner,
     testCase,
   ]: PipelineRunTestCaseTuple) => {
-    console.log("Before this");
     // @ts-ignore
     const completion = await runner.openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -82,8 +75,6 @@ async function main() {
       },
     });
 
-    console.log("completion", completion);
-
     return completion;
   };
 
@@ -93,9 +84,8 @@ async function main() {
     parallelThreads: 5,
   });
 
-  console.log("about to submit", infos);
-
   const response = await submitTestRunners(pipeline, pipelineRunTestCases);
+  console.log("[PARALLEL-RUN] Response from submitTestRunners:", response);
 }
 
 main();

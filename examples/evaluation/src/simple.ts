@@ -13,6 +13,9 @@ async function testFailure() {
 
   const samePayload = {
     value: "This is a short string",
+    object: {
+      nested: "This is a nested string",
+    },
   };
 
   const response = await submitTestResult(
