@@ -7,7 +7,8 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.1.2"
+    "@gentrace/core": "workspace:^2.1.2",
+    "@gentrace/openai": "workspace:^"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
@@ -15,8 +16,8 @@
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-typescript": "^11.1.0",
     "@types/jest": "^29.5.1",
-    "@types/uuid": "^9.0.1",
     "@types/node": "18.15.13",
+    "@types/uuid": "^9.0.1",
     "dotenv": "^16.0.3",
     "dotenv-cli": "^7.3.0",
     "jest": "^29.5.0",
