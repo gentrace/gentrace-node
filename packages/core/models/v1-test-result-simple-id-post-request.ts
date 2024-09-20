@@ -14,7 +14,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { V1TestResultSimplePostRequestTestRunsInner } from "./v1-test-result-simple-post-request-test-runs-inner";
+import { V1TestResultSimpleIdPostRequestTestRunsInner } from "./v1-test-result-simple-id-post-request-test-runs-inner";
 
 /**
  *
@@ -24,8 +24,8 @@ import { V1TestResultSimplePostRequestTestRunsInner } from "./v1-test-result-sim
 export interface V1TestResultSimpleIdPostRequest {
   /**
    *
-   * @type {Array<V1TestResultSimplePostRequestTestRunsInner>}
+   * @type {Array<V1TestResultSimpleIdPostRequestTestRunsInner>}
    * @memberof V1TestResultSimpleIdPostRequest
    */
-  testRuns?: Array<V1TestResultSimplePostRequestTestRunsInner>;
+  testRuns?: Array<V1TestResultSimpleIdPostRequestTestRunsInner>;
 }

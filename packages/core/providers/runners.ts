@@ -69,26 +69,34 @@ export const getTestRunners = async (
   return testRunners;
 };
 
+interface SubmitTestRunnersOptions {
+  contextOrCaseFilter?:
+    | ResultContext
+    | ((
+        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+      ) => boolean);
+  caseFilterOrUndefined?: (
+    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  ) => boolean;
+  triggerRemoteEvals?: boolean;
+}
+
 /**
  * Submits test runners for a given pipeline
  * @async
  * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
  * @param {Array<PipelineRunTestCaseTuple>} pipelineRunTestCases - an array of PipelineRunTestCaseTuple
- * @param {ResultContext | function} [contextOrCaseFilter]: An optional context object that will be passed to the Gentrace API
- * @param {function} [caseFilterOrUndefined]: An optional filter function that will be called for each test case
+ * @param {SubmitTestRunnersOptions} [options] - Optional configuration for submitting test runners
+ * @returns {Promise<V1TestResultPost200Response>} A Promise that resolves with the response from the Gentrace API
  */
 export async function submitTestRunners(
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
   pipelineRunTestCases: Array<PipelineRunTestCaseTuple>,
-  contextOrCaseFilter?:
-    | ResultContext
-    | ((
-        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
-      ) => boolean),
-  caseFilterOrUndefined?: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
-  ) => boolean,
+  options: SubmitTestRunnersOptions = {},
 ): Promise<V1TestResultPost200Response> {
+  const { contextOrCaseFilter, caseFilterOrUndefined, triggerRemoteEvals } =
+    options;
+
   const { context, caseFilter } = getContextTestCaseFilter(
     contextOrCaseFilter,
     caseFilterOrUndefined,
@@ -118,6 +126,12 @@ export async function submitTestRunners(
       pipeline.id ?? pipeline.slug,
       testRuns,
       context,
+      triggerRemoteEvals,
+    );
+
+    console.log(
+      "[SUBMIT_TEST_RUNNERS] Submission payload:",
+      JSON.stringify(body, null, 2),
     );
 
     const response = await globalGentraceApi.v1TestResultPost(body);

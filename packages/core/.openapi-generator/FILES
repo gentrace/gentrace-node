@@ -34,6 +34,9 @@ models/filterable-metadata-input-value.ts
 models/folder-v2.ts
 models/full-run.ts
 models/index.ts
+models/local-evaluation-debug-error.ts
+models/local-evaluation-debug.ts
+models/local-evaluation.ts
 models/metadata-value-object.ts
 models/pipeline-v2.ts
 models/pipeline.ts
@@ -78,6 +81,7 @@ models/v1-test-result-id-post-request.ts
 models/v1-test-result-post-request-test-runs-inner.ts
 models/v1-test-result-post-request.ts
 models/v1-test-result-post200-response.ts
+models/v1-test-result-simple-id-post-request-test-runs-inner.ts
 models/v1-test-result-simple-id-post-request.ts
 models/v1-test-result-simple-post-request-test-runs-inner.ts
 models/v1-test-result-simple-post-request.ts

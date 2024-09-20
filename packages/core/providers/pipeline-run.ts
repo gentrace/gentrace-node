@@ -1,17 +1,18 @@
+import _ from "lodash";
 import { v4 } from "uuid";
 import { V1Api } from "../api/v1-api";
 import { Configuration } from "../configuration";
 import { RunRequestCollectionMethodEnum } from "../models/run-request";
 import { RunResponse } from "../models/run-response";
 import { Context, CoreStepRunContext } from "./context";
-import { StepRun, PartialStepRunType } from "./step-run";
-import { getParamNames, getTestCounter, safeJsonParse, zip } from "./utils";
 import {
+  globalGentraceApiV2,
   globalGentraceConfig,
   globalRequestBuffer,
-  globalGentraceApiV2,
 } from "./init";
-import _ from "lodash";
+import { PartialStepRunType, StepRun } from "./step-run";
+import { getParamNames, getTestCounter, safeJsonParse, zip } from "./utils";
+import { LocalEvaluation } from "../models/local-evaluation";
 
 type PRStepRunType = Omit<PartialStepRunType, "context"> & {
   context?: CoreStepRunContext;
@@ -31,6 +32,7 @@ type PipelineRunPayload = {
   previousRunId: string;
   collectionMethod: "runner";
   stepRuns: StepRun[];
+  evaluations: LocalEvaluation[];
 };
 
 type SelectStepRun = Pick<
@@ -59,6 +61,7 @@ export const getRun = async (id: string) => {
 export class PipelineRun {
   private pipeline: PipelineLike;
   public stepRuns: StepRun[];
+  private evaluations: LocalEvaluation[] = [];
 
   public context?: Context;
 
@@ -232,6 +235,14 @@ export class PipelineRun {
     return returnValue;
   }
 
+  /**
+   * Adds an evaluation to the pipeline run.
+   * @param evaluation The evaluation to add.
+   */
+  addEval(evaluation: LocalEvaluation): void {
+    this.evaluations.push(evaluation);
+  }
+
   public toObject(): PipelineRunPayload {
     let mergedMetadata = {};
 
@@ -290,6 +301,7 @@ export class PipelineRun {
       previousRunId: this.context?.previousRunId,
       collectionMethod: RunRequestCollectionMethodEnum.Runner,
       stepRuns: updatedStepRuns,
+      evaluations: this.evaluations,
     };
   }
 
@@ -507,5 +519,13 @@ export class PipelineRun {
     });
 
     return response;
+  }
+
+  /**
+   * Returns the current evaluations stored in the PipelineRun instance.
+   * @returns {LocalEvaluation[]} An array of LocalEvaluation objects.
+   */
+  getLocalEvaluations(): LocalEvaluation[] {
+    return this.evaluations;
   }
 }

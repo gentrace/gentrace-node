@@ -285,6 +285,7 @@ export function constructStepRuns(
     caseId: testCase.id,
     metadata: mergedMetadata,
     stepRuns: updatedStepRuns,
+    evaluations: pipelineRun.getLocalEvaluations(),
   };
 
   if (pipelineRun.getId()) {
