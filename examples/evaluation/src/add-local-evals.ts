@@ -98,6 +98,19 @@ async function main() {
         logs: [],
       },
     });
+
+    runner.addEval({
+      name: "example-eval-2",
+      value: 0.5,
+      label: "example-label-2",
+      debug: {
+        resolvedPrompt: "example-resolved-prompt-2",
+        response: "example-response-2",
+        finalClassification: "example-final-classification-2",
+        processorLogs: [],
+        logs: [],
+      },
+    });
   }
 
   const response = await submitTestRunners(pipeline, pipelineRunTestCases);
