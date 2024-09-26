@@ -1,5 +1,15 @@
 # @gentrace/pinecone
 
+## 2.0.0
+
+### Major Changes
+
+- 6a40567: feat: Support Pinecone v3 SDK
+
+### Patch Changes
+
+- 7c4f77d: fix: Change to v2 Pinecone
+
 ## 1.1.1
 
 ### Patch Changes
