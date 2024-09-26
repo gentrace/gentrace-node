@@ -100,6 +100,19 @@ async function main() {
     });
 
     runner.addEval({
+      name: "example-eval",
+      value: 1,
+      label: "example-label",
+      debug: {
+        resolvedPrompt: "example-resolved-prompt",
+        response: "example-response",
+        finalClassification: "example-final-classification",
+        processorLogs: [],
+        logs: [],
+      },
+    });
+
+    runner.addEval({
       name: "example-eval-2",
       value: 0.5,
       label: "example-label-2",
