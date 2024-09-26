@@ -9,17 +9,18 @@ init({
 
 const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY ?? "",
-  environment: process.env.PINECONE_ENVIRONMENT ?? "",
 });
 
+const INDEX_NAME = "example-index";
+
 async function upsertPineconeIndex() {
-  const index = await pinecone.Index("openai-trec").namespace("testing");
+  const index = await pinecone.Index(INDEX_NAME);
 
   const upsertResponse = await index.upsert(
     [
       {
         id: String(Math.floor(Math.random() * 10000)),
-        values: DEFAULT_VECTOR,
+        values: [0, 1],
       },
     ],
     {

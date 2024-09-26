@@ -1,6 +1,6 @@
 import {
-  Configuration as GentraceConfiguration,
   Context,
+  Configuration as GentraceConfiguration,
   Pipeline,
   PipelineRun,
   StepRun,
@@ -9,23 +9,16 @@ import {
   DeleteManyOptions,
   DeleteOneOptions,
   FetchOptions,
+  FetchResponse,
   Index,
   Pinecone,
+  PineconeConfiguration,
   PineconeRecord,
   QueryOptions,
+  QueryResponse,
   RecordMetadata,
   UpdateOptions,
-  FetchResponse,
-  QueryRequest,
-  QueryResponse,
-  UpdateRequest,
-  UpsertRequest,
-  PineconeConfiguration,
 } from "@pinecone-database/pinecone";
-import {
-  FetchRequest,
-  UpsertResponse,
-} from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 
 export type GentraceParams = {
   pipelineSlug?: string;
@@ -167,10 +160,17 @@ export class PineconePipelineHandler extends Pinecone {
       });
     }
 
-    const returnValue = await coreLogic(pipelineRun);
+    let returnValue = await coreLogic(pipelineRun);
 
     if (isSelfContainedPipelineRun) {
       const { pipelineRunId } = await pipelineRun.submit();
+
+      // Return value could be void (e.g. in upsert)
+      if (!returnValue) {
+        // @ts-ignore
+        returnValue = {} as T;
+      }
+
       (returnValue as unknown as { pipelineRunId: string }).pipelineRunId =
         pipelineRunId;
 
@@ -492,15 +492,15 @@ export class PineconeFetchStepRun extends StepRun {
 }
 
 export class PineconeQueryStepRun extends StepRun {
-  public inputs: FetchRequest;
-  public response: FetchResponse;
+  public inputs: QueryOptions;
+  public response: QueryResponse;
 
   constructor(
     elapsedTime: number,
     startTime: string,
     endTime: string,
-    inputs: Omit<QueryRequest, "topK" | "filter">,
-    modelParams: Pick<QueryRequest, "topK" | "filter">,
+    inputs: Omit<QueryOptions, "topK" | "filter">,
+    modelParams: Pick<QueryOptions, "topK" | "filter">,
     response: QueryResponse,
     context: Context,
   ) {
@@ -519,14 +519,14 @@ export class PineconeQueryStepRun extends StepRun {
 }
 
 export class PineconeUpdateStepRun extends StepRun {
-  public inputs: FetchRequest;
-  public response: FetchResponse;
+  public inputs: UpdateOptions;
+  public response: object;
 
   constructor(
     elapsedTime: number,
     startTime: string,
     endTime: string,
-    inputs: UpdateRequest,
+    inputs: UpdateOptions,
     response: object,
     context: Context,
   ) {
@@ -545,8 +545,8 @@ export class PineconeUpdateStepRun extends StepRun {
 }
 
 export class PineconeUpsertStepRun extends StepRun {
-  public inputs: UpsertRequest;
-  public response: UpsertResponse;
+  public inputs: { records: PineconeRecord<RecordMetadata>[] };
+  public response: any;
 
   constructor(
     elapsedTime: number,

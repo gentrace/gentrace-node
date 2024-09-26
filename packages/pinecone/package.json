@@ -25,10 +25,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.2.1",
-    "@pinecone-database/pinecone": "^1.0.0"
+    "@gentrace/core": "workspace:^2.2.1"
+  },
+  "peerDependencies": {
+    "@pinecone-database/pinecone": "^3"
   },
   "devDependencies": {
+    "@pinecone-database/pinecone": "^3",
     "@gentrace/tsconfig": "workspace:*",
     "@mswjs/interceptors": "^0.17.9",
     "@rollup/plugin-commonjs": "^24.1.0",
