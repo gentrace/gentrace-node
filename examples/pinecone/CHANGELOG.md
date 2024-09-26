@@ -1,5 +1,14 @@
 # @examples/pinecone
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [3ee6ac6]
+- Updated dependencies [e8e32b4]
+  - @gentrace/core@2.8.2
+  - @gentrace/pinecone@3.0.0
+
 ## 0.1.1
 
 ### Patch Changes

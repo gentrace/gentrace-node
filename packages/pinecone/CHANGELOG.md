@@ -1,5 +1,16 @@
 # @gentrace/pinecone
 
+## 3.0.0
+
+### Major Changes
+
+- e8e32b4: feat!: Bump to v3
+
+### Patch Changes
+
+- Updated dependencies [3ee6ac6]
+  - @gentrace/core@2.8.2
+
 ## 2.0.0
 
 ### Major Changes

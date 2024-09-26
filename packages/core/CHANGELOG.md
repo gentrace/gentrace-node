@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.8.2
+
+### Patch Changes
+
+- 3ee6ac6: feat: Add in getEvaluations() method
+
 ## 2.8.1
 
 ### Patch Changes
