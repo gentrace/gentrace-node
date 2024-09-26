@@ -1,4 +1,4 @@
-import { CreateEvaluationV2 } from "../models";
+import { CreateEvaluationV2, EvaluationV2 } from "../models";
 import { globalGentraceApiV2 } from "./init";
 
 export type CreateEvaluationType = CreateEvaluationV2;
@@ -20,13 +20,16 @@ export async function bulkCreateEvaluations(
 /**
  * Retrieves evaluations for a specific result from the Gentrace API.
  * @async
- * @param {string} resultId - The ID of the result to get evaluations for.
+ * @param {Object} params - The parameters for the function.
+ * @param {string} params.resultId - The ID of the result to get evaluations for.
  * @returns {Promise<Array<EvaluationV2>>} - A promise that resolves to an array of evaluations.
  * @throws {Error} - Throws an error if the Gentrace API key is not initialized.
  */
-export const getEvaluations = async (
-  resultId: string,
-): Promise<EvaluationV2[]> => {
+export const getEvaluations = async ({
+  resultId,
+}: {
+  resultId: string;
+}): Promise<EvaluationV2[]> => {
   if (!globalGentraceApiV2) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
