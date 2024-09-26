@@ -119,7 +119,6 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const pinecone = new Pinecone({
       apiKey: "fake-api-key",
-      environment: "dev",
     });
 
     const index = await pinecone.index("openai-trec");
@@ -140,7 +139,6 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const pinecone = new Pinecone({
       apiKey: "fake-api-key",
-      environment: "dev",
     });
 
     const index = await pinecone.index("openai-trec");
@@ -159,7 +157,6 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const plugin = await initPlugin({
       apiKey: "fake-api-key",
-      environment: "dev",
     });
 
     const pipeline = new Pipeline({
@@ -189,7 +186,6 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const plugin = await initPlugin({
       apiKey: "fake-api-key",
-      environment: "dev",
     });
 
     const pipeline = new Pipeline({
@@ -223,7 +219,6 @@ describe("test_pinecone_completion_pipeline", () => {
 
     const plugin = await initPlugin({
       apiKey: "fake-api-key",
-      environment: "dev",
     });
 
     const pipeline = new Pipeline({

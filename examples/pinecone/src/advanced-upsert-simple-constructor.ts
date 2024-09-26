@@ -1,6 +1,6 @@
 import { init, Pipeline } from "@gentrace/core";
 import { initPlugin, Pinecone } from "@gentrace/pinecone";
-import { DEFAULT_VECTOR } from "./utils";
+import { DEFAULT_VECTOR, SMALL_VECTOR } from "./utils";
 
 async function createChatCompletion() {
   init({
@@ -10,7 +10,6 @@ async function createChatCompletion() {
 
   const pineconeSimple = new Pinecone({
     apiKey: process.env.PINECONE_API_KEY ?? "",
-    environment: process.env.PINECONE_ENVIRONMENT ?? "",
   });
 
   const plugin = await initPlugin(pineconeSimple);
@@ -22,17 +21,19 @@ async function createChatCompletion() {
     },
   });
 
+  const INDEX_NAME = "example-index-2";
+
   const runner = pipeline.start();
 
   const pinecone = await runner.pinecone;
 
-  const index = await pinecone.Index("openai-trec");
+  const index = await pinecone.Index(INDEX_NAME).namespace("test");
 
   try {
     const upsertResponse = await index.upsert([
       {
         id: String(Math.floor(Math.random() * 10000)),
-        values: DEFAULT_VECTOR,
+        values: SMALL_VECTOR,
       },
     ]);
 
@@ -42,7 +43,9 @@ async function createChatCompletion() {
     return;
   }
 
-  await runner.submit();
+  const submitResponse = await runner.submit();
+
+  console.log("submitResponse", submitResponse);
 }
 
 createChatCompletion();
