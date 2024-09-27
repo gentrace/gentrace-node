@@ -23,15 +23,15 @@
     "test": "jest"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.8.0",
+    "@gentrace/core": "^2.8.3",
     "openai": "^4.56.0"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
+    "@mswjs/interceptors": "^0.17.9",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-typescript": "^11.1.0",
-    "@mswjs/interceptors": "^0.17.9",
     "@types/jest": "^29.5.1",
     "@types/node": "^12.11.5",
     "@types/uuid": "^9.0.1",
