@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.8.3
+
+### Patch Changes
+
+- abe1d0a: fix: Export EvaluationType
+
 ## 2.8.2
 
 ### Patch Changes
