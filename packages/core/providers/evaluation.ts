@@ -17,6 +17,8 @@ export async function bulkCreateEvaluations(
   return response.data;
 }
 
+export type EvaluationType = EvaluationV2;
+
 /**
  * Retrieves evaluations for a specific result from the Gentrace API.
  * @async
