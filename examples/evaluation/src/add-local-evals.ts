@@ -80,6 +80,11 @@ async function main() {
 
   const pipelineRunTestCases = await getTestRunners(pipeline);
 
+  console.log(
+    "[ADD-LOCAL-EVALS] Number of test cases:",
+    pipelineRunTestCases.length,
+  );
+
   for (const pipelineRunTestCase of pipelineRunTestCases) {
     const runner = pipelineRunTestCase[0];
     const testCase = pipelineRunTestCase[1];
@@ -101,8 +106,21 @@ async function main() {
 
     runner.addEval({
       name: "example-eval",
-      value: 1,
-      label: "example-label",
+      value: 0.5,
+      label: "example-label-another",
+      debug: {
+        resolvedPrompt: "example-resolved-prompt",
+        response: "example-response",
+        finalClassification: "example-final-classification",
+        processorLogs: [],
+        logs: [],
+      },
+    });
+
+    runner.addEval({
+      name: "example-eval",
+      value: 0.1,
+      label: "example-label-another",
       debug: {
         resolvedPrompt: "example-resolved-prompt",
         response: "example-response",
@@ -114,8 +132,7 @@ async function main() {
 
     runner.addEval({
       name: "example-eval-2",
-      value: 0.5,
-      label: "example-label-2",
+      value: 0.6,
       debug: {
         resolvedPrompt: "example-resolved-prompt-2",
         response: "example-response-2",
