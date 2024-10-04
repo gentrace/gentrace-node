@@ -71,6 +71,7 @@ export const constructSubmissionPayloadAdvanced = (
   pipelineIdentifier: string,
   testRuns: TestRun[],
   context?: ResultContext,
+  triggerRemoteEvals?: boolean,
 ) => {
   const body: V1TestResultPostRequest = {
     testRuns,
@@ -114,6 +115,9 @@ export const constructSubmissionPayloadAdvanced = (
   }
 
   body.collectionMethod = "runner";
+  if (typeof triggerRemoteEvals !== "undefined") {
+    body.triggerRemoteEvals = triggerRemoteEvals;
+  }
 
   return body;
 };

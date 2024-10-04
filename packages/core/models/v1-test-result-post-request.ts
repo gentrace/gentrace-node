@@ -68,6 +68,12 @@ export interface V1TestResultPostRequest {
    */
   metadata?: { [key: string]: MetadataValueObject } | null;
   /**
+   * Optional flag to trigger remote evaluations
+   * @type {boolean}
+   * @memberof V1TestResultPostRequest
+   */
+  triggerRemoteEvals?: boolean;
+  /**
    *
    * @type {Array<V1TestResultPostRequestTestRunsInner>}
    * @memberof V1TestResultPostRequest

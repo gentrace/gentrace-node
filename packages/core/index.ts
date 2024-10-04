@@ -28,6 +28,9 @@ export {
   V1TestResultPost200Response as TestResultPost200Response,
   V1TestResultPostRequest as TestResultPostRequest,
   V1TestResultPostRequestTestRunsInner as TestResultPostRequestTestRunsInner,
+  LocalEvaluation,
+  LocalEvaluationDebug,
+  LocalEvaluationDebugError,
 } from "./models";
 
 export * from "./providers/index";

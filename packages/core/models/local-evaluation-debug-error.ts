@@ -12,6 +12,22 @@
  * Do not edit the class manually.
  */
 
-export * from "./api/v1-api";
-export * from "./api/v2-api";
-export * from "./api/v3-api";
+/**
+ *
+ * @export
+ * @interface LocalEvaluationDebugError
+ */
+export interface LocalEvaluationDebugError {
+  /**
+   * Error message
+   * @type {string}
+   * @memberof LocalEvaluationDebugError
+   */
+  message?: string;
+  /**
+   * Date and time of the error
+   * @type {string}
+   * @memberof LocalEvaluationDebugError
+   */
+  date?: string;
+}

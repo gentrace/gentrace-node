@@ -2,6 +2,7 @@
 api.ts
 api/v1-api.ts
 api/v2-api.ts
+api/v3-api.ts
 base.ts
 common.ts
 configuration.ts
@@ -15,6 +16,7 @@ models/create-multiple-test-cases.ts
 models/create-single-test-case.ts
 models/dataset-v2.ts
 models/evaluation-v2.ts
+models/evaluation-v3.ts
 models/evaluator-v2.ts
 models/expanded-pipeline-all-of.ts
 models/expanded-pipeline.ts
@@ -34,6 +36,9 @@ models/filterable-metadata-input-value.ts
 models/folder-v2.ts
 models/full-run.ts
 models/index.ts
+models/local-evaluation-debug-error.ts
+models/local-evaluation-debug.ts
+models/local-evaluation.ts
 models/metadata-value-object.ts
 models/pipeline-v2.ts
 models/pipeline.ts
@@ -78,6 +83,7 @@ models/v1-test-result-id-post-request.ts
 models/v1-test-result-post-request-test-runs-inner.ts
 models/v1-test-result-post-request.ts
 models/v1-test-result-post200-response.ts
+models/v1-test-result-simple-id-post-request-test-runs-inner.ts
 models/v1-test-result-simple-id-post-request.ts
 models/v1-test-result-simple-post-request-test-runs-inner.ts
 models/v1-test-result-simple-post-request.ts
@@ -93,3 +99,4 @@ models/v2-pipelines-get200-response1.ts
 models/v2-test-cases-get200-response.ts
 models/v2-test-cases-id-delete200-response.ts
 models/v2-test-results-get200-response.ts
+models/v3-evaluations-get200-response.ts

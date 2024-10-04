@@ -1,5 +1,5 @@
 import { Configuration as Configuration } from "../configuration";
-import { V1Api, V2Api } from "../api";
+import { V1Api, V2Api, V3Api } from "../api";
 import { getProcessEnv, setErrorInterceptor } from "./utils";
 
 export let GENTRACE_API_KEY:
@@ -34,6 +34,8 @@ export let globalGentraceConfig: Configuration | null = null;
 export let globalGentraceApi: V1Api | null = null;
 
 export let globalGentraceApiV2: V2Api | null = null;
+
+export let globalGentraceApiV3: V3Api | null = null;
 
 export let globalRequestBuffer: { [pipelineRunId: string]: Promise<any> } = {};
 

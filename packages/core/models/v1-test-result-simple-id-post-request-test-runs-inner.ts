@@ -12,44 +12,34 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import { LocalEvaluation } from "./local-evaluation";
-
 /**
  *
  * @export
- * @interface V1TestResultSimplePostRequestTestRunsInner
+ * @interface V1TestResultSimpleIdPostRequestTestRunsInner
  */
-export interface V1TestResultSimplePostRequestTestRunsInner {
+export interface V1TestResultSimpleIdPostRequestTestRunsInner {
   /**
    * The ID of the test run
    * @type {string}
-   * @memberof V1TestResultSimplePostRequestTestRunsInner
+   * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
    */
   id?: string | null;
   /**
    * The ID of the test case
    * @type {string}
-   * @memberof V1TestResultSimplePostRequestTestRunsInner
+   * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
    */
   caseId: string;
   /**
    * The input data for the test case
    * @type {{ [key: string]: any; }}
-   * @memberof V1TestResultSimplePostRequestTestRunsInner
+   * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
    */
   inputs: { [key: string]: any };
   /**
    * The returned outputs for the test case
    * @type {{ [key: string]: any; }}
-   * @memberof V1TestResultSimplePostRequestTestRunsInner
+   * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
    */
   outputs?: { [key: string]: any };
-  /**
-   * Optional array of local evaluations
-   * @type {Array<LocalEvaluation>}
-   * @memberof V1TestResultSimplePostRequestTestRunsInner
-   */
-  evaluations?: Array<LocalEvaluation>;
 }
