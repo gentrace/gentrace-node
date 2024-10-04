@@ -1,5 +1,12 @@
 # @gentrace/playground
 
+## 0.3.4
+
+### Patch Changes
+
+- Updated dependencies [70ff457]
+  - @gentrace/core@3.0.0
+
 ## 0.3.3
 
 ### Patch Changes

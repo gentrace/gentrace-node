@@ -1,13 +1,13 @@
 {
   "name": "@examples/files",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.1.2",
+    "@gentrace/core": "workspace:^3.0.0",
     "@web-std/file": "^3.0.3"
   },
   "devDependencies": {

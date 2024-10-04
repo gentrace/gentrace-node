@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/evals",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Gentrace Evals plugin for Node.JS",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.8.0",
+    "@gentrace/core": "workspace:^3.0.0",
     "openai": "^4.67.1",
     "zod": "^3.21.4"
   },
