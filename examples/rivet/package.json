@@ -1,6 +1,6 @@
 {
   "name": "@examples/rivet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.1.2",
-    "@gentrace/rivet-node": "workspace:^1.9.1",
+    "@gentrace/core": "workspace:^3.0.0",
+    "@gentrace/rivet-node": "workspace:^1.9.6",
     "@ironclad/rivet-node": "1.15.0"
   },
   "devDependencies": {

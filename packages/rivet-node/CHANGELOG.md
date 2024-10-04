@@ -1,5 +1,12 @@
 # @gentrace/rivet
 
+## 1.9.6
+
+### Patch Changes
+
+- Updated dependencies [70ff457]
+  - @gentrace/core@3.0.0
+
 ## 1.9.5
 
 ### Patch Changes

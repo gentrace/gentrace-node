@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0
+
+### Major Changes
+
+- 70ff457: fix: Alpha release of @gentrace/evals
+
 ## 2.8.3
 
 ### Patch Changes

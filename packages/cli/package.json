@@ -1,6 +1,6 @@
 {
   "name": "@gentrace/cli",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "description": "Gentrace CLI",
   "repository": {
@@ -26,7 +26,7 @@
     "all": "run-s clean build"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^2.2.1",
+    "@gentrace/core": "workspace:^3.0.0",
     "clipboardy": "^3.0.0",
     "dotenv-cli": "^7.3.0",
     "import-jsx": "^5.0.0",

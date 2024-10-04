@@ -1,5 +1,13 @@
 # @examples/core
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [70ff457]
+  - @gentrace/core@3.0.0
+  - @gentrace/openai@4.1.9
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @gentrace/evals
 
+## 0.0.2
+
+### Patch Changes
+
+- 70ff457: fix: Alpha release of @gentrace/evals
+- Updated dependencies [70ff457]
+  - @gentrace/core@3.0.0
+
 ## 0.0.1
 
 ### Patch Changes
