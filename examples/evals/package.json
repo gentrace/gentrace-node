@@ -1,5 +1,5 @@
 {
-  "name": "@examples/evaluation",
+  "name": "@examples/evals",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,9 +7,7 @@
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/evals": "workspace:^0.0.1",
-    "@gentrace/core": "workspace:^2.1.2",
-    "@gentrace/openai": "workspace:^"
+    "@gentrace/evals": "workspace:^0.0.1"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",

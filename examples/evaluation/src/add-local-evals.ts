@@ -90,45 +90,64 @@ async function main() {
     const testCase = pipelineRunTestCase[1];
 
     await exampleHandler([runner, testCase]);
+    if (Math.random() < 0.5) {
+      runner.addEval({
+        name: "example-eval",
+        value: 1,
+        label: "example-label",
+        debug: {
+          resolvedPrompt: "example-resolved-prompt",
+          response: "example-response",
+          finalClassification: "example-final-classification",
+          processorLogs: [],
+          logs: [["testing"]],
+        },
+      });
+    }
 
-    runner.addEval({
-      name: "example-eval",
-      value: 1,
-      label: "example-label",
-      debug: {
-        resolvedPrompt: "example-resolved-prompt",
-        response: "example-response",
-        finalClassification: "example-final-classification",
-        processorLogs: [],
-        logs: [],
-      },
-    });
+    if (Math.random() < 0.5) {
+      runner.addEval({
+        name: "example-eval",
+        value: 0.5,
+        label: "example-label-another",
+        debug: {
+          resolvedPrompt: "example-resolved-prompt",
+          response: "example-response",
+          finalClassification: "example-final-classification",
+          processorLogs: [],
+          logs: [["testing"]],
+        },
+      });
+    }
 
-    runner.addEval({
-      name: "example-eval",
-      value: 0.5,
-      label: "example-label-another",
-      debug: {
-        resolvedPrompt: "example-resolved-prompt",
-        response: "example-response",
-        finalClassification: "example-final-classification",
-        processorLogs: [],
-        logs: [],
-      },
-    });
+    if (Math.random() < 0.5) {
+      runner.addEval({
+        name: "example-eval",
+        value: 0.1,
+        label: "example-label-another",
+        debug: {
+          resolvedPrompt: "example-resolved-prompt",
+          response: "example-response",
+          finalClassification: "example-final-classification",
+          processorLogs: [],
+          logs: [["testing"]],
+        },
+      });
+    }
 
-    runner.addEval({
-      name: "example-eval",
-      value: 0.1,
-      label: "example-label-another",
-      debug: {
-        resolvedPrompt: "example-resolved-prompt",
-        response: "example-response",
-        finalClassification: "example-final-classification",
-        processorLogs: [],
-        logs: [],
-      },
-    });
+    if (Math.random() < 0.5) {
+      runner.addEval({
+        name: "example-eval",
+        value: 0.6,
+        debug: {
+          resolvedPrompt: "example-resolved-prompt-2",
+          response: "example-response-2",
+          finalClassification: "example-final-classification-2",
+          processorLogs: [],
+          logs: [["testing"]],
+        },
+      });
+    }
 
     runner.addEval({
       name: "example-eval-2",
@@ -138,7 +157,31 @@ async function main() {
         response: "example-response-2",
         finalClassification: "example-final-classification-2",
         processorLogs: [],
-        logs: [],
+        logs: [["testing"]],
+      },
+    });
+
+    runner.addEval({
+      name: "example-eval-6",
+      value: 0.6,
+      debug: {
+        resolvedPrompt: "example-resolved-prompt-2",
+        response: "example-response-2",
+        finalClassification: "example-final-classification-2",
+        processorLogs: [],
+        logs: [["testing"]],
+      },
+    });
+
+    runner.addEval({
+      name: "example-eval",
+      value: 0.6,
+      debug: {
+        resolvedPrompt: "example-resolved-prompt-2",
+        response: "example-response-2",
+        finalClassification: "example-final-classification-2",
+        processorLogs: [],
+        logs: [["testing"]],
       },
     });
   }
