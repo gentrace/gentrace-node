@@ -12,5 +12,9 @@ module.exports = {
     ],
     "^.+\\.js$": "babel-jest",
   },
-  testMatch: ["**/tests/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+  testMatch: [
+    "<rootDir>/src/**/*.test.[jt]s?(x)",
+    "<rootDir>/tests/**/*.test.[jt]s?(x)",
+  ],
+  rootDir: ".",
 };
