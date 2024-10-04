@@ -48,7 +48,7 @@ importers:
         specifier: workspace:^2.2.5
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: ^4.1.1
+        specifier: workspace:^4.1.1
         version: link:../../packages/openai
       ai:
         specifier: ^2.2.17
