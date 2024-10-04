@@ -1,5 +1,5 @@
-import { CreateEvaluationV2, EvaluationV2 } from "../models";
-import { globalGentraceApiV2 } from "./init";
+import { CreateEvaluationV2, EvaluationV2, EvaluationV3 } from "../models";
+import { globalGentraceApiV2, globalGentraceApiV3 } from "./init";
 
 export type CreateEvaluationType = CreateEvaluationV2;
 
@@ -31,8 +31,8 @@ export const getEvaluations = async ({
   resultId,
 }: {
   resultId: string;
-}): Promise<EvaluationV2[]> => {
-  if (!globalGentraceApiV2) {
+}): Promise<EvaluationV3[]> => {
+  if (!globalGentraceApiV3) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
 
@@ -40,6 +40,6 @@ export const getEvaluations = async ({
     throw new Error("resultId must be provided.");
   }
 
-  const response = await globalGentraceApiV2.v2EvaluationsGet(resultId);
+  const response = await globalGentraceApiV3.v3EvaluationsGet(resultId);
   return response.data.data ?? [];
 };

@@ -12,6 +12,20 @@
  * Do not edit the class manually.
  */
 
-export * from "./api/v1-api";
-export * from "./api/v2-api";
-export * from "./api/v3-api";
+// May contain unused imports in some cases
+// @ts-ignore
+import { EvaluationV3 } from "./evaluation-v3";
+
+/**
+ *
+ * @export
+ * @interface V3EvaluationsGet200Response
+ */
+export interface V3EvaluationsGet200Response {
+  /**
+   *
+   * @type {Array<EvaluationV3>}
+   * @memberof V3EvaluationsGet200Response
+   */
+  data?: Array<EvaluationV3>;
+}
