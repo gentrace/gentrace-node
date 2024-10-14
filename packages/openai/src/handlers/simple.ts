@@ -267,7 +267,7 @@ export class SimpleGentraceBeta extends OpenAI.Beta {
     super(client);
 
     // @ts-ignore
-    this.chat = new SimpleGentraceChat({
+    this.chat = new SimpleGentraceBetaChat({
       // @ts-ignore
       client,
       pipelineRun,

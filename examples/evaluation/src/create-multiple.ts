@@ -8,13 +8,22 @@ init({
 async function createMultiple() {
   const creationCount = await createTestCases({
     pipelineSlug: "guess-the-year",
-    testCases: [
-      {
-        name: `TC ${Math.random()}`,
-        inputs: { a: 1, b: 2 },
-        expectedOutputs: { c: 3 },
+    testCases: Array.from({ length: 10 }, (_, index) => ({
+      name: `TC ${index + 1}`,
+      inputs: {
+        [["x", "y", "z"][Math.floor(Math.random() * 3)]]: Math.floor(
+          Math.random() * 100,
+        ),
+        [["p", "q", "r"][Math.floor(Math.random() * 3)]]: Math.floor(
+          Math.random() * 100,
+        ),
       },
-    ],
+      expectedOutputs: {
+        [["m", "n", "o"][Math.floor(Math.random() * 3)]]: Math.floor(
+          Math.random() * 100,
+        ),
+      },
+    })),
   });
 
   console.log("Creation count", creationCount);
