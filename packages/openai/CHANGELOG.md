@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.1.10
+
+### Patch Changes
+
+- 4edb815: fix: Fix simple OpenAI parse() usage
+
 ## 4.1.9
 
 ### Patch Changes
