@@ -30,10 +30,9 @@ export const enableParallelism = async <T, U>(
 async function main() {
   init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
-    basePath: "http://localhost:3000/api",
   });
 
-  const PIPELINE_SLUG = "guess-the-year";
+  const PIPELINE_SLUG = "testing-pipeline-id";
 
   const plugin = await initPlugin({
     apiKey: process.env.OPENAI_KEY ?? "",
@@ -53,24 +52,39 @@ async function main() {
     runner,
     testCase,
   ]: PipelineRunTestCaseTuple) => {
+    const input = testCase.inputs as {
+      sender: string;
+      receiver: string;
+      query: string;
+    };
+
     // @ts-ignore
     const completion = await runner.openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
+          role: "system",
+          content:
+            "You are an AI assistant helping to facilitate communication between two people.",
+        },
+        {
           role: "user",
-          content: "Convert this sentence to JSON: John is 10 years old.",
+          content: `Sender: ${input.sender}\nReceiver: ${input.receiver}\nQuery: ${input.query}\n\nPlease provide a polite and helpful response to the query, addressing the receiver.`,
         },
       ],
       gentrace: {
         metadata: {
-          promptOne: {
+          sender: {
             type: "string",
-            value: "Hello!",
+            value: input.sender,
           },
-          promptTwo: {
+          receiver: {
             type: "string",
-            value: "Hello!",
+            value: input.receiver,
+          },
+          query: {
+            type: "string",
+            value: input.query,
           },
         },
       },
@@ -79,7 +93,10 @@ async function main() {
     return completion;
   };
 
-  const pipelineRunTestCases = await getTestRunners(pipeline);
+  const pipelineRunTestCases = await getTestRunners(
+    pipeline,
+    "a4eb18dc-8738-4056-a363-ab57845c5ec9",
+  );
 
   console.log(
     "[ADD-LOCAL-EVALS] Number of test cases:",
@@ -90,16 +107,28 @@ async function main() {
     const runner = pipelineRunTestCase[0];
     const testCase = pipelineRunTestCase[1];
 
-    await exampleHandler([runner, testCase]);
+    const result = await exampleHandler([runner, testCase]);
 
     try {
       const evalResult = await evals.llm.base({
-        name: "Content Quality Evaluation",
-        prompt: `Evaluate the following text for its quality and coherence:
+        name: "Response Quality Evaluation",
+        prompt: `Evaluate the following AI-generated response for its quality, appropriateness, and helpfulness:
 
-"Artificial intelligence (AI) is revolutionizing various industries, from healthcare to finance. Machine learning algorithms can analyze vast amounts of data to identify patterns and make predictions. Natural language processing enables computers to understand and generate human-like text. As AI continues to advance, it raises important ethical considerations and discussions about its impact on society and the workforce."
+Input:
+Sender: ${(testCase.inputs as any).sender}
+Receiver: ${(testCase.inputs as any).receiver}
+Query: ${(testCase.inputs as any).query}
 
-Please provide a score and reasoning for your evaluation. Consider factors such as clarity, coherence, and informativeness. Rate the text as one of the following: Poor, Fair, Good, or Excellent.`,
+AI Response:
+${result.choices[0].message.content}
+
+Please provide a score and reasoning for your evaluation. Consider factors such as:
+1. Politeness and appropriate addressing of the receiver
+2. Relevance to the query
+3. Clarity and coherence of the response
+4. Helpfulness of the information provided
+
+Rate the response as one of the following: Poor, Fair, Good, or Excellent.`,
         scoreAs: {
           Poor: 0,
           Fair: 0.33,
@@ -109,12 +138,40 @@ Please provide a score and reasoning for your evaluation. Consider factors such 
       });
 
       runner.addEval(evalResult);
+
+      const responseContent = result.choices[0]?.message?.content || "";
+      const wordCount = responseContent.split(/\s+/).length;
+
+      // Bell curve scoring function to evaluate if the response has an appropriate length
+      // Penalizes responses that are too short or too long, with the ideal length around 50 words
+      const calculateScore = (count: number) => {
+        const mean = 100;
+        const stdDev = 20;
+        const maxScore = 1;
+
+        const zScore = Math.abs(count - mean) / stdDev;
+        return Math.max(0, maxScore * Math.exp(-0.5 * Math.pow(zScore, 2)));
+      };
+
+      console.log("[WORD-COUNT] Word count and length score:", {
+        wordCount,
+        lengthScore: calculateScore(wordCount),
+      });
+
+      const lengthScore = calculateScore(wordCount);
+
+      runner.addEval({
+        name: "response-length-score",
+        value: lengthScore,
+      });
     } catch (error) {
       console.error("Error running evaluation:", error);
     }
   }
 
-  const response = await submitTestRunners(pipeline, pipelineRunTestCases);
+  const response = await submitTestRunners(pipeline, pipelineRunTestCases, {
+    triggerRemoteEvals: true,
+  });
   console.log("[PARALLEL-RUN] Response from submitTestRunners:", response);
 }
 
