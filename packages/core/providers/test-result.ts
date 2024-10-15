@@ -17,11 +17,13 @@ import {
   globalGentraceApi,
 } from "./init";
 import { PipelineRun } from "./pipeline-run";
-import { getProcessEnv } from "./utils";
+import { getProcessEnv, LocalTestData } from "./utils";
 
 export type TestRun = V1TestResultPostRequestTestRunsInner;
 
-export type PipelineRunTestCaseTuple = [PipelineRun, TestCase | TestCaseV2];
+export type PipelineRunTestCaseTuple<
+  T extends TestCase | TestCaseV2 | LocalTestData,
+> = [PipelineRun, T];
 
 export const constructSubmissionPayloadSimple = (
   pipelineSlug: string,
