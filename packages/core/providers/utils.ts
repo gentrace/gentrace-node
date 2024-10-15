@@ -15,6 +15,11 @@ export type OptionalPipelineInfo = {
   pipelineSlug?: string;
 };
 
+export type LocalTestData = {
+  name: string;
+  inputs: Record<string, any>;
+};
+
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -238,12 +243,12 @@ export function setErrorInterceptor(showErrorsInput: string) {
 /**
  * Constructs step runs for a given test case and pipeline run.
  *
- * @param {TestCase | TestCaseV2} testCase - The test case object.
+ * @param {TestCase | TestCaseV2 | LocalTestData} testCase - The test case object.
  * @param {PipelineRun} pipelineRun - The pipeline run object.
  * @returns {TestRun} The constructed test run object.
  */
 export function constructStepRuns(
-  testCase: TestCase | TestCaseV2,
+  testCase: TestCase | TestCaseV2 | LocalTestData,
   pipelineRun: PipelineRun,
 ): TestRun {
   let mergedMetadata = {};
@@ -282,15 +287,33 @@ export function constructStepRuns(
   });
 
   const testRun: TestRun = {
-    caseId: testCase.id,
+    caseId: isTestCaseOrTestCaseV2(testCase) ? testCase.id : undefined,
     metadata: mergedMetadata,
     stepRuns: updatedStepRuns,
     evaluations: pipelineRun.getLocalEvaluations(),
   };
+
+  if (!isTestCaseOrTestCaseV2(testCase)) {
+    testRun.name = testCase.name;
+    testRun.inputs = testCase.inputs;
+  }
 
   if (pipelineRun.getId()) {
     testRun.id = pipelineRun.getId();
   }
 
   return testRun;
+}
+
+/**
+ * Type guard to check if the test case is either TestCase or TestCaseV2
+ * @param testCase - The test case to check
+ * @returns True if the test case is TestCase or TestCaseV2, false if it's LocalTestData
+ */
+export function isTestCaseOrTestCaseV2(
+  testCase: TestCase | TestCaseV2 | LocalTestData,
+): testCase is TestCase | TestCaseV2 {
+  return (
+    "id" in testCase && "pipelineId" in testCase && "datasetId" in testCase
+  );
 }

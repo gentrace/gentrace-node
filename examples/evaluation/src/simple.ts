@@ -3,7 +3,7 @@ import { getTestCases, init, submitTestResult } from "@gentrace/core";
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
   runName: "Another one",
-  basePath: "http://localhost:3000/api",
+  basePath: "https://staging.gentrace.ai/api",
 });
 
 const PIPELINE_SLUG = "guess-the-year";

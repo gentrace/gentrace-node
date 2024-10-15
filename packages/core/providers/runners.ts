@@ -1,14 +1,21 @@
-import { TestCase, V1TestResultPost200Response } from "../models";
+import { TestCase, TestCaseV2, V1TestResultPost200Response } from "../models";
 import { ResultContext } from "./context";
 import { globalGentraceApi } from "./init";
 import { Pipeline } from "./pipeline";
 import { GentracePlugin } from "./plugin";
 import {
   constructSubmissionPayloadAdvanced,
+  PipelineRunDataTuple,
+  PipelineRunLocalDataTuple,
   PipelineRunTestCaseTuple,
   TestRun,
 } from "./test-result";
-import { constructStepRuns, getContextTestCaseFilter } from "./utils";
+import {
+  constructStepRuns,
+  getContextTestCaseFilter,
+  LocalTestData,
+  isTestCaseOrTestCaseV2,
+} from "./utils";
 
 /**
  * Retrieves test runners for a given pipeline
@@ -91,7 +98,9 @@ interface SubmitTestRunnersOptions {
  */
 export async function submitTestRunners(
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
-  pipelineRunTestCases: Array<PipelineRunTestCaseTuple>,
+  pipelineRunTestCases: Array<
+    PipelineRunDataTuple<TestCase | TestCaseV2 | LocalTestData>
+  >,
   options: SubmitTestRunnersOptions = {},
 ): Promise<V1TestResultPost200Response> {
   const { contextOrCaseFilter, caseFilterOrUndefined, triggerRemoteEvals } =
@@ -110,7 +119,11 @@ export async function submitTestRunners(
     const testRuns: TestRun[] = [];
 
     for (const [pipelineRun, testCase] of pipelineRunTestCases) {
-      if (caseFilter && !caseFilter(testCase)) {
+      if (
+        isTestCaseOrTestCaseV2(testCase) &&
+        caseFilter &&
+        !caseFilter(testCase)
+      ) {
         continue;
       }
 
@@ -152,7 +165,7 @@ export async function submitTestRunners(
  */
 export async function updateTestResultWithRunners(
   resultId: string,
-  runners: Array<PipelineRunTestCaseTuple>,
+  runners: PipelineRunDataTuple<TestCase | TestCaseV2 | LocalTestData>[],
 ) {
   const testRuns: TestRun[] = [];
 
@@ -165,4 +178,32 @@ export async function updateTestResultWithRunners(
     testRuns,
   });
   return response.data;
+}
+
+/**
+ * Creates test runners for a given pipeline using locally provided test data
+ * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
+ * @param {LocalTestData[]} localData - Array of local test data objects
+ * @returns {Array<PipelineRunLocalDataTuple>} An array of PipelineRunTestCaseTuple
+ */
+export function createTestRunners(
+  pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
+  localData: LocalTestData[],
+): Array<PipelineRunLocalDataTuple> {
+  if (!pipeline) {
+    throw new Error(`Invalid pipeline found`);
+  }
+
+  const testRunners: Array<PipelineRunLocalDataTuple> = [];
+
+  for (const data of localData) {
+    const pipelineRun = pipeline.start();
+    const testCase = {
+      name: data.name,
+      inputs: data.inputs,
+    };
+    testRunners.push([pipelineRun, testCase]);
+  }
+
+  return testRunners;
 }

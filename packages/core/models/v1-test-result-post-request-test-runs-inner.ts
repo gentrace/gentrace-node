@@ -39,7 +39,19 @@ export interface V1TestResultPostRequestTestRunsInner {
    * @type {string}
    * @memberof V1TestResultPostRequestTestRunsInner
    */
-  caseId: string;
+  caseId?: string;
+  /**
+   * The name of the test run
+   * @type {string}
+   * @memberof V1TestResultPostRequestTestRunsInner
+   */
+  name?: string;
+  /**
+   * The input data for the test run
+   * @type {{ [key: string]: any; }}
+   * @memberof V1TestResultPostRequestTestRunsInner
+   */
+  inputs?: { [key: string]: any };
   /**
    *
    * @type {{ [key: string]: MetadataValueObject; }}
