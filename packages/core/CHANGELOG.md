@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- 8141056: feat: Add local test data with createTestRunners()
+
 ## 3.0.0
 
 ### Major Changes
