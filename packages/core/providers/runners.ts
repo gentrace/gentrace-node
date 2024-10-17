@@ -77,13 +77,12 @@ export const getTestRunners = async (
 };
 
 interface SubmitTestRunnersOptions {
-  contextOrCaseFilter?:
-    | ResultContext
-    | ((
-        testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
-      ) => boolean);
-  caseFilterOrUndefined?: (
-    testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
+  context?: ResultContext;
+  caseFilter?: (
+    testCase: Omit<
+      TestCase | TestCaseV2,
+      "createdAt" | "updatedAt" | "archivedAt"
+    >,
   ) => boolean;
   triggerRemoteEvals?: boolean;
 }
@@ -103,13 +102,7 @@ export async function submitTestRunners(
   >,
   options: SubmitTestRunnersOptions = {},
 ): Promise<V1TestResultPost200Response> {
-  const { contextOrCaseFilter, caseFilterOrUndefined, triggerRemoteEvals } =
-    options;
-
-  const { context, caseFilter } = getContextTestCaseFilter(
-    contextOrCaseFilter,
-    caseFilterOrUndefined,
-  );
+  const { context, caseFilter, triggerRemoteEvals } = options;
 
   try {
     if (!pipeline) {

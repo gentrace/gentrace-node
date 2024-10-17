@@ -29,7 +29,6 @@ export const enableParallelism = async <T, U>(
 async function main() {
   init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
-    basePath: "http://localhost:3000/api",
   });
 
   const PIPELINE_SLUG = "guess-the-year";
@@ -186,7 +185,11 @@ async function main() {
     });
   }
 
-  const response = await submitTestRunners(pipeline, pipelineRunTestCases);
+  const response = await submitTestRunners(pipeline, pipelineRunTestCases, {
+    contextOrCaseFilter: {
+      name: "example-context",
+    },
+  });
   console.log("[PARALLEL-RUN] Response from submitTestRunners:", response);
 }
 
