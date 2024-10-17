@@ -74,33 +74,33 @@ async function main() {
       },
     });
 
-    // // Add evaluations
-    // if (Math.random() < 0.5) {
-    //   runner.addEval({
-    //     name: "example-eval",
-    //     value: 1,
-    //     label: "example-label",
-    //     debug: {
-    //       resolvedPrompt: "example-resolved-prompt",
-    //       response: "example-response",
-    //       finalClassification: "example-final-classification",
-    //       processorLogs: [],
-    //       logs: [["testing"]],
-    //     },
-    //   });
-    // }
+    // Add evaluations
+    if (Math.random() < 0.5) {
+      runner.addEval({
+        name: "example-eval",
+        value: 1,
+        label: "example-label",
+        debug: {
+          resolvedPrompt: "example-resolved-prompt",
+          response: "example-response",
+          finalClassification: "example-final-classification",
+          processorLogs: [],
+          logs: [["testing"]],
+        },
+      });
+    }
 
-    // runner.addEval({
-    //   name: "example-eval-2",
-    //   value: 0.6,
-    //   debug: {
-    //     resolvedPrompt: "example-resolved-prompt-2",
-    //     response: "example-response-2",
-    //     finalClassification: "example-final-classification-2",
-    //     processorLogs: [],
-    //     logs: [["testing"]],
-    //   },
-    // });
+    runner.addEval({
+      name: "example-eval-2",
+      value: 0.6,
+      debug: {
+        resolvedPrompt: "example-resolved-prompt-2",
+        response: "example-response-2",
+        finalClassification: "example-final-classification-2",
+        processorLogs: [],
+        logs: [["testing"]],
+      },
+    });
 
     // Add more evaluations as needed
   }
