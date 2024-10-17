@@ -186,7 +186,7 @@ async function main() {
   }
 
   const response = await submitTestRunners(pipeline, pipelineRunTestCases, {
-    contextOrCaseFilter: {
+    context: {
       name: "example-context",
     },
   });
