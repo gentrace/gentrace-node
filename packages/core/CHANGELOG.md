@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.1
+
+### Patch Changes
+
+- 82fd41d: fix: Fix bug with caseFilter/context key renaming
+
 ## 3.1.0
 
 ### Minor Changes
