@@ -29,13 +29,7 @@ const packages = getPackages(process.cwd());
 
 packages.then((packages) => {
   for (const p of packages.packages) {
-    if (p.packageJson.name === "@gentrace/openai-v3") {
-      writePriorVersionPackageJson(
-        `${p.dir}/package.json`,
-        false,
-        "@gentrace/openai",
-      );
-    } else if (p.packageJson.name === "@gentrace/pinecone-v0") {
+    if (p.packageJson.name === "@gentrace/pinecone-v0") {
       writePriorVersionPackageJson(
         `${p.dir}/package.json`,
         false,
