@@ -22,11 +22,13 @@
     "rollup:compile": "rollup --config rollup.config.mjs",
     "test": "jest"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@gentrace/core": "workspace:^3.0.0",
     "openai": "^4.56.0"
   },
   "devDependencies": {
+    "@gentrace/core": "workspace:^3.0.0",
+    "openai": "^4.56.0",
     "@gentrace/tsconfig": "workspace:*",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
