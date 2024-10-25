@@ -194,9 +194,6 @@ importers:
 
   examples/evaluation:
     dependencies:
-      '@gentrace/core':
-        specifier: workspace:^3.0.0
-        version: link:../../packages/core
       '@gentrace/evals':
         specifier: workspace:^0.0.2
         version: link:../../packages/evals
