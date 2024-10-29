@@ -1,5 +1,11 @@
 # @gentrace/pinecone
 
+## 0.3.0
+
+### Minor Changes
+
+- 3ce29fc: Breaking change by switching to peer dependencies
+
 ## 0.2.2
 
 ### Patch Changes
