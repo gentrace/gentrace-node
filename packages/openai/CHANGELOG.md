@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.2.0
+
+### Minor Changes
+
+- 3ce29fc: Breaking change by switching to peer dependencies
+
 ## 4.1.10
 
 ### Patch Changes

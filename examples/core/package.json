@@ -1,6 +1,6 @@
 {
   "name": "@examples/core",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@gentrace/core": "workspace:^3.0.0",
-    "@gentrace/openai": "workspace:4.1.10",
+    "@gentrace/openai": "workspace:4.2.0",
     "openai": "^4.29.2"
   },
   "devDependencies": {
