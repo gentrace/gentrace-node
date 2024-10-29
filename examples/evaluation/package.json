@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@gentrace/evals": "workspace:^0.0.2",
-    "@gentrace/core": "workspace:^3.0.0",
     "@gentrace/openai": "workspace:^",
     "csv-stringify": "^6.5.1",
     "node-html-parser": "^6.1.13",

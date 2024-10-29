@@ -24,13 +24,12 @@
     "rollup:compile": "rollup --config rollup.config.mjs",
     "test": "jest"
   },
-  "dependencies": {
-    "@gentrace/core": "workspace:^3.0.0"
-  },
   "peerDependencies": {
+    "@gentrace/core": "workspace:^3.0.0",
     "@pinecone-database/pinecone": "^3"
   },
   "devDependencies": {
+    "@gentrace/core": "workspace:^3.0.0",
     "@pinecone-database/pinecone": "^3",
     "@gentrace/tsconfig": "workspace:*",
     "@mswjs/interceptors": "^0.17.9",
