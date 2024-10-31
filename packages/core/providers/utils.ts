@@ -3,7 +3,7 @@ import { Pattern, parse } from "acorn";
 import axios from "axios";
 import { TestCase, TestCaseV2 } from "../models";
 import { PipelineRun } from "./pipeline-run";
-import { TestRun } from "./test-result";
+import { TestCaseForSubmission, TestRun } from "./test-result";
 
 export type GentraceParams = {
   pipelineSlug?: string;
@@ -249,7 +249,11 @@ export function setErrorInterceptor(showErrorsInput: string) {
  * @returns {TestRun} The constructed test run object.
  */
 export function constructStepRuns(
-  testCase: TestCase | TestCaseV2 | LocalTestData,
+  testCase: {
+    id?: string | undefined;
+    name?: string | undefined;
+    inputs?: Record<string, any> | undefined;
+  },
   pipelineRun: PipelineRun,
 ): TestRun {
   let mergedMetadata = {};
@@ -284,18 +288,23 @@ export function constructStepRuns(
       startTime: stepRun.startTime,
       endTime: stepRun.endTime,
       context: { ...restThisContext, ...restStepRunContext },
+      error: stepRun.error,
     };
   });
 
   const testRun: TestRun = {
-    caseId: isTestCaseOrTestCaseV2(testCase) ? testCase.id : undefined,
+    caseId: testCase.id ?? undefined,
     metadata: mergedMetadata,
     stepRuns: updatedStepRuns,
     evaluations: pipelineRun.getLocalEvaluations(),
+    error: pipelineRun.getError(),
   };
 
-  if (!isTestCaseOrTestCaseV2(testCase)) {
+  if (testCase.name) {
     testRun.name = testCase.name;
+  }
+
+  if (testCase.inputs) {
     testRun.inputs = testCase.inputs;
     testRun.expectedOutputs = testCase.expectedOutputs;
   }
@@ -313,7 +322,7 @@ export function constructStepRuns(
  * @returns True if the test case is TestCase or TestCaseV2, false if it's LocalTestData
  */
 export function isTestCaseOrTestCaseV2(
-  testCase: TestCase | TestCaseV2 | LocalTestData,
+  testCase: TestCaseForSubmission,
 ): testCase is TestCase | TestCaseV2 {
   return (
     "id" in testCase && "pipelineId" in testCase && "datasetId" in testCase

@@ -20,16 +20,12 @@ import { PipelineRun } from "./pipeline-run";
 import { getProcessEnv, LocalTestData } from "./utils";
 
 export type TestRun = V1TestResultPostRequestTestRunsInner;
-
-export type PipelineRunDataTuple<
-  T extends TestCase | TestCaseV2 | LocalTestData,
-> = [PipelineRun, T];
-
-export type PipelineRunTestCaseTuple = PipelineRunDataTuple<
-  TestCase | TestCaseV2
->;
-
-export type PipelineRunLocalDataTuple = PipelineRunDataTuple<LocalTestData>;
+export type TestCaseForSubmission = {
+  id?: string;
+  name?: string;
+  inputs?: Record<string, any>;
+};
+export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
 
 export const constructSubmissionPayloadSimple = (
   pipelineSlug: string,
