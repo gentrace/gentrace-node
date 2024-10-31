@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.2
+
+### Patch Changes
+
+- 1d1e783: chore: Add expectedOutputs to test run
+
 ## 3.1.1
 
 ### Patch Changes
