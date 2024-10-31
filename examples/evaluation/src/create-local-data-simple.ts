@@ -24,11 +24,23 @@ async function main() {
       inputs: {
         prompt: "Convert this sentence to JSON: John is 10 years old.",
       },
+      expectedOutputs: {
+        output: {
+          name: "John",
+          age: 10,
+        },
+      },
     },
     {
       name: "Test Case 2",
       inputs: {
         prompt: "Convert this sentence to JSON: Alice is 25 years old.",
+      },
+      expectedOutputs: {
+        output: {
+          name: "Alice",
+          age: 25,
+        },
       },
     },
     // TODO: Add more test cases as needed

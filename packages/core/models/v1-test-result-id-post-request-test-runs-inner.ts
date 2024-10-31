@@ -32,19 +32,19 @@ export interface V1TestResultIdPostRequestTestRunsInner {
    */
   id?: string | null;
   /**
-   * The ID of the test case
+   * The ID of the test case. Mutually exclusive with \'name\' and \'inputs\'.
    * @type {string}
    * @memberof V1TestResultIdPostRequestTestRunsInner
    */
   caseId?: string;
   /**
-   * The name of the test run
+   * The name of the test run. Used with \'inputs\' and mutually exclusive with \'caseId\'.
    * @type {string}
    * @memberof V1TestResultIdPostRequestTestRunsInner
    */
   name?: string;
   /**
-   * The input data for the test run
+   * The input data for the test run. Used with \'name\' and mutually exclusive with \'caseId\'.
    * @type {{ [key: string]: any; }}
    * @memberof V1TestResultIdPostRequestTestRunsInner
    */

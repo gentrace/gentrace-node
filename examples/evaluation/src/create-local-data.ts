@@ -10,6 +10,12 @@ import { initPlugin } from "@gentrace/openai";
 async function main() {
   init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
+    basePath: "http://localhost:3000/api",
+  });
+
+  console.log("✅ [CREATE-LOCAL] API key configuration:", {
+    gentraceApiKey: process.env.GENTRACE_API_KEY,
+    openaiKey: process.env.OPENAI_KEY,
   });
 
   const PIPELINE_SLUG = "guess-the-year";

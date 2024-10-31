@@ -194,6 +194,7 @@ export function createTestRunners(
     const testCase = {
       name: data.name,
       inputs: data.inputs,
+      expectedOutputs: data.expectedOutputs,
     };
     testRunners.push([pipelineRun, testCase]);
   }

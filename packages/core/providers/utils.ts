@@ -18,6 +18,7 @@ export type OptionalPipelineInfo = {
 export type LocalTestData = {
   name: string;
   inputs: Record<string, any>;
+  expectedOutputs?: Record<string, any>;
 };
 
 export function sleep(ms: number) {
@@ -294,8 +295,14 @@ export function constructStepRuns(
   };
 
   if (!isTestCaseOrTestCaseV2(testCase)) {
+    console.log("❤️ [CONSTRUCT-STEP] Setting local test case details:", {
+      name: testCase.name,
+      inputs: testCase.inputs,
+      expectedOutputs: testCase.expectedOutputs,
+    });
     testRun.name = testCase.name;
     testRun.inputs = testCase.inputs;
+    testRun.expectedOutputs = testCase.expectedOutputs;
   }
 
   if (pipelineRun.getId()) {
