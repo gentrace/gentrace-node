@@ -1,0 +1,609 @@
+import {
+  GENTRACE_API_KEY,
+  GENTRACE_ENVIRONMENT_NAME,
+  getGentraceBasePath,
+} from "./init";
+import { Pipeline } from "./pipeline";
+import { updateTestResultWithRunners } from "./runners";
+import type { ZodType } from "zod";
+import WebSocket from "ws";
+
+type InteractionFn<T = any> = (...args: [T, ...any[]]) => any;
+
+type InteractionDefinition<
+  T extends any = any,
+  Fn extends InteractionFn<T> = InteractionFn<T>,
+> = {
+  name: string;
+  fn: Fn;
+  inputType?: undefined | ZodType<T>;
+};
+
+const interactions: Record<string, InteractionDefinition> = {};
+
+export function defineInteraction<
+  T = any,
+  Fn extends InteractionFn<T> = InteractionFn<T>,
+>(interaction: InteractionDefinition<T, Fn>): Fn {
+  interactions[interaction.name] = interaction;
+  Object.values(listeners).forEach((listener) =>
+    listener({
+      type: "register-interaction",
+      interaction,
+    }),
+  );
+  return interaction.fn;
+}
+
+type AnyFn = (...args: any[]) => any;
+type TestSuiteDefinition = {
+  name: string;
+  fn: AnyFn;
+};
+
+const testSuites: Record<string, TestSuiteDefinition> = {};
+export function defineTestSuite<Fn extends AnyFn>(testSuite: {
+  name: string;
+  fn: Fn;
+}): Fn {
+  testSuites[testSuite.name] = testSuite;
+  Object.values(listeners).forEach((listener) =>
+    listener({
+      type: "register-test-suite",
+      testSuite,
+    }),
+  );
+  return testSuite.fn;
+}
+
+const getWSBasePath = () => {
+  const apiBasePath = getGentraceBasePath();
+  if (apiBasePath === "") {
+    return "wss://gentrace.ai/ws";
+  }
+  if (apiBasePath.includes("localhost")) {
+    return "ws://localhost:3001";
+  }
+  return (
+    apiBasePath.slice(
+      apiBasePath.indexOf("/") + 1,
+      apiBasePath.lastIndexOf("/"),
+    ) + "/ws"
+  );
+};
+
+type Listener = (
+  event:
+    | { type: "register-test-suite"; testSuite: TestSuiteDefinition }
+    | { type: "register-interaction"; interaction: InteractionDefinition },
+) => void;
+const listeners: Record<string, Listener> = {};
+
+type InboundMessageTestInteractionInputs = {
+  type: "run-interaction-input-validation";
+  id: string;
+  interactionName: string;
+  data: { id: string; inputs: any }[];
+};
+
+type InboundMessageRunTestInteraction = {
+  type: "run-test-interaction";
+  pipelineId: string;
+  parallelism?: number | undefined;
+  testJobId: string;
+  interactionName: string;
+  data: { id: string; inputs: any }[];
+};
+
+type InboundMessageRunTestSuite = {
+  type: "run-test-suite";
+  pipelineId: string;
+  parallelism?: number | undefined;
+  testJobId: string;
+  testSuiteName: string;
+};
+
+type InboundMessage =
+  | InboundMessageTestInteractionInputs
+  | InboundMessageRunTestInteraction
+  | InboundMessageRunTestSuite;
+
+type OutboundMessageHeartbeat = {
+  type: "heartbeat";
+};
+
+type OutboundMessageRegisterInteraction = {
+  type: "register-interaction";
+  interaction: {
+    name: string;
+    hasValidation: boolean;
+  };
+};
+
+type OutboundMessageRegisterTestSuite = {
+  type: "register-test-suite";
+  testSuite: {
+    name: string;
+  };
+};
+
+type OutboundMessageFinishTestJob = {
+  type: "test-job-finished";
+  testJobId: string;
+  pipelineId: string;
+};
+
+type OutboundMessageTestInteractionInputValidationResults = {
+  type: "run-interaction-input-validation-results";
+  id: string;
+  interactionName: string;
+  data: { id: string; status: "success" | "failure"; error?: string }[];
+};
+
+type OutboundMessageDataSubmitted = {
+  type: "data-submitted";
+  testJobId: string;
+  pipelineId: string;
+};
+
+type OutboundMessage =
+  | OutboundMessageHeartbeat
+  | OutboundMessageRegisterInteraction
+  | OutboundMessageRegisterTestSuite
+  | OutboundMessageTestInteractionInputValidationResults
+  | OutboundMessageFinishTestJob
+  | OutboundMessageDataSubmitted;
+
+const makeUuid = () => {
+  // Generate 16 random bytes
+  const bytes: number[] = new Array(16);
+  for (let i = 0; i < 16; i++) {
+    bytes[i] = Math.floor(Math.random() * 256);
+  }
+
+  // Set the version number to 4 (UUID version 4)
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+
+  // Set the variant to 10xxxxxx (RFC 4122 variant)
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  // Convert bytes to hex and format as UUID
+  const hexBytes = bytes.map((byte) => ("0" + byte.toString(16)).slice(-2));
+
+  return [
+    hexBytes.slice(0, 4).join(""),
+    hexBytes.slice(4, 6).join(""),
+    hexBytes.slice(6, 8).join(""),
+    hexBytes.slice(8, 10).join(""),
+    hexBytes.slice(10, 16).join(""),
+  ].join("-");
+};
+
+const validate = async (
+  interaction: InteractionDefinition,
+  { id, inputs }: { id: string; inputs: any },
+): Promise<
+  | { status: "success"; id: string }
+  | { status: "failure"; error: string; id: string }
+> => {
+  if (!interaction.inputType) {
+    return {
+      status: "failure",
+      error: "No input validator found",
+      id,
+    };
+  }
+  try {
+    await interaction.inputType.parseAsync(inputs);
+    return { status: "success", id };
+  } catch (e) {
+    return {
+      status: "failure",
+      error: e?.message ?? "Validation failed",
+      id,
+    };
+  }
+};
+
+function makeParallelRunner(parallelism?: undefined | number) {
+  const results: Promise<any>[] = [];
+  const queue: {
+    fn: AnyFn;
+    resolve: (value: any) => void;
+    reject: (error: Error) => void;
+  }[] = [];
+  let numRunning = 0;
+
+  function processQueue() {
+    while ((!parallelism || numRunning < parallelism) && queue.length > 0) {
+      const { fn, resolve, reject } = queue.shift()!;
+      numRunning++;
+      fn()
+        .then(resolve)
+        .catch(reject)
+        .finally(() => {
+          numRunning--;
+          processQueue();
+        });
+    }
+  }
+
+  return {
+    results,
+    run: async (fn: AnyFn) => {
+      results.push(
+        new Promise((res, rej) => {
+          queue.push({ fn, resolve: res, reject: rej });
+        }),
+      );
+      processQueue();
+    },
+  };
+}
+
+async function runWebSocket(
+  environmentName: string | undefined,
+  resolve: () => void,
+  reject: (error: Error) => void,
+) {
+  const wsBasePath = getWSBasePath();
+  let env = environmentName ?? GENTRACE_ENVIRONMENT_NAME;
+  if (!env) {
+    try {
+      const os = await import("os");
+      env = os.hostname();
+    } catch (error) {
+      reject(new Error("Gentrace environment name is not set"));
+      return;
+    }
+  }
+
+  const messageQueue: any[] = [];
+
+  let pluginId: string | undefined;
+  let isClosed = false;
+  const id = makeUuid();
+  let intervals: NodeJS.Timeout[] = [];
+  let ws = new WebSocket(wsBasePath);
+
+  const sendMessage = (message: OutboundMessage) => {
+    if (!pluginId) {
+      messageQueue.push(message);
+      return;
+    }
+    if (isClosed) {
+      return;
+    }
+    console.log("WebSocket sending message:", message);
+    ws.send(
+      JSON.stringify({
+        id: makeUuid(),
+        for: pluginId,
+        data: message,
+      }),
+    );
+  };
+
+  const setup = () => {
+    messageQueue.forEach(sendMessage);
+    intervals.push(
+      setInterval(() => {
+        console.log("sending heartbeat");
+        sendMessage({
+          type: "heartbeat",
+        });
+      }, 30 * 1000),
+    );
+  };
+
+  const cleanup = () => {
+    isClosed = true;
+    delete listeners[id];
+    intervals.forEach(clearInterval);
+    intervals = [];
+  };
+
+  ws.onopen = () => {
+    if (isClosed) {
+      return;
+    }
+    console.log("WebSocket connection opened, sending setup message");
+    ws.send(
+      JSON.stringify({
+        id: makeUuid(),
+        init: "test-job-runner",
+        data: {
+          type: "setup",
+          environmentName: env,
+          apiKey: GENTRACE_API_KEY,
+        },
+      }),
+    );
+
+    // WSS layer, not plugin layer
+    intervals.push(
+      setInterval(() => {
+        if (isClosed) {
+          return;
+        }
+        console.log("sending ping");
+        ws.send(
+          JSON.stringify({
+            id: makeUuid(),
+            ping: true,
+          }),
+        );
+      }, 30 * 1000),
+    );
+  };
+
+  const handleRunInteractionInputValidation = async (
+    message: InboundMessageTestInteractionInputs,
+  ) => {
+    const { id, interactionName, data: testCases } = message;
+    const interaction = interactions[interactionName];
+    if (!interaction) {
+      sendMessage({
+        type: "run-interaction-input-validation-results",
+        id,
+        interactionName,
+        data: testCases.map((tc) => ({
+          id: tc.id,
+          status: "failure",
+          error: `Interaction ${interactionName} not found`,
+        })),
+      });
+      return;
+    }
+    const validationResults = await Promise.all(
+      testCases.map((testCase) => validate(interaction, testCase)),
+    );
+    sendMessage({
+      type: "run-interaction-input-validation-results",
+      id,
+      interactionName,
+      data: validationResults,
+    });
+  };
+
+  const runTestCaseThroughInteraction = async (
+    pipelineId: string,
+    testJobId: string,
+    interactionName: string,
+    testCase: { id: string; inputs: any },
+  ) => {
+    const pipeline = new Pipeline<{}>({
+      id: pipelineId,
+    });
+    const interaction = interactions[interactionName];
+
+    if (!interaction) {
+      // TODO: submit error to gentrace
+      return;
+    }
+    const runner = pipeline.start();
+    try {
+      try {
+        await runner.measure(interaction.fn, [testCase.inputs]);
+      } catch (e) {
+        runner.setError(e.toString());
+      }
+      // DS TODO: remove this
+      // await new Promise((resolve) =>
+      //   setTimeout(resolve, 1000 * 15 * Math.random()),
+      // );
+      await updateTestResultWithRunners(testJobId, [
+        [runner, { id: testCase.id }],
+      ]);
+      sendMessage({
+        type: "data-submitted",
+        testJobId,
+        pipelineId,
+      });
+    } catch (e) {
+      // TODO: submit error to gentrace
+      console.error(e);
+      throw e;
+    }
+  };
+
+  const handleRunTestInteraction = async (
+    message: InboundMessageRunTestInteraction,
+  ) => {
+    const {
+      testJobId,
+      pipelineId,
+      interactionName,
+      parallelism,
+      data: testCases,
+    } = message;
+    const interaction = interactions[interactionName];
+    if (!interaction) {
+      return;
+    }
+    const parallelRunner = makeParallelRunner(parallelism);
+    for (const testCase of testCases) {
+      parallelRunner.run(() =>
+        runTestCaseThroughInteraction(
+          pipelineId,
+          testJobId,
+          interactionName,
+          testCase,
+        ),
+      );
+    }
+    await Promise.all(parallelRunner.results);
+    sendMessage({
+      type: "test-job-finished",
+      testJobId,
+      pipelineId,
+    });
+  };
+
+  const handleRunTestSuite = async (message: InboundMessageRunTestSuite) => {
+    const { testSuiteName, testJobId, pipelineId } = message;
+    const testSuite = testSuites[testSuiteName];
+    if (!testSuite) {
+      return;
+    }
+    await testSuite.fn();
+    sendMessage({
+      type: "test-job-finished",
+      testJobId,
+      pipelineId,
+    });
+  };
+
+  ws.onmessage = async (event) => {
+    if (isClosed) {
+      return;
+    }
+    console.log("WebSocket message received:", event.data);
+
+    const messageWrapper = JSON.parse(
+      typeof event.data === "string" ? event.data : event.data.toString(),
+    );
+    if (messageWrapper?.data?.pluginId) {
+      pluginId = messageWrapper.data.pluginId;
+      setup();
+      return;
+    }
+
+    if (messageWrapper?.error) {
+      console.error("WebSocket error:", messageWrapper.error);
+      reject(new Error(JSON.stringify(messageWrapper.error, null, 2)));
+      return;
+    }
+
+    try {
+      const message = messageWrapper.data as InboundMessage;
+      switch (message.type) {
+        case "run-interaction-input-validation":
+          await handleRunInteractionInputValidation(message);
+          break;
+        case "run-test-interaction":
+          await handleRunTestInteraction(message);
+          break;
+        case "run-test-suite":
+          await handleRunTestSuite(message);
+          break;
+      }
+    } catch (e) {
+      console.error("Error in WebSocket message handler:", e);
+      reject(e);
+    }
+  };
+
+  ws.onclose = () => {
+    if (isClosed) {
+      return;
+    }
+    cleanup();
+    console.log("WebSocket connection closed");
+    reject(new Error("WebSocket connection closed"));
+  };
+
+  ws.onerror = (error) => {
+    console.error("Gentrace websocket error:", error);
+  };
+
+  // wait for close signal from process
+  process.on("SIGINT", () => {
+    if (isClosed) {
+      return;
+    }
+    console.log("Received SIGINT, closing WebSocket connection");
+    cleanup();
+    ws.close();
+    resolve();
+  });
+
+  process.on("SIGTERM", () => {
+    if (isClosed) {
+      return;
+    }
+    console.log("Received SIGTERM, closing WebSocket connection");
+    cleanup();
+    ws.close();
+    resolve();
+  });
+
+  const onInteraction = (interaction: InteractionDefinition) => {
+    sendMessage({
+      type: "register-interaction",
+      interaction: {
+        name: interaction.name,
+        hasValidation: !!interaction.inputType,
+      },
+    });
+  };
+
+  const onTestSuite = (testSuite: TestSuiteDefinition) => {
+    sendMessage({
+      type: "register-test-suite",
+      testSuite: {
+        name: testSuite.name,
+      },
+    });
+  };
+
+  Object.values(interactions).forEach(onInteraction);
+  Object.values(testSuites).forEach(onTestSuite);
+
+  listeners[id] = (event) => {
+    switch (event.type) {
+      case "register-interaction":
+        onInteraction(event.interaction);
+        break;
+      case "register-test-suite":
+        onTestSuite(event.testSuite);
+        break;
+    }
+  };
+}
+
+async function listenInner({
+  environmentName,
+  retries = 0,
+}: {
+  environmentName?: string | undefined;
+  retries?: number;
+}): Promise<void> {
+  if (!GENTRACE_API_KEY) {
+    throw new Error("Gentrace API key is not set");
+  }
+  let isClosingProcess = false;
+  process.on("SIGINT", () => {
+    isClosingProcess = true;
+  });
+
+  process.on("SIGTERM", () => {
+    isClosingProcess = true;
+  });
+
+  try {
+    const closePromise = new Promise<void>((resolve, reject) =>
+      runWebSocket(environmentName, resolve, reject),
+    );
+    await closePromise;
+  } catch (e) {
+    console.error("Error in WebSocket connection:", e);
+    if (isClosingProcess) {
+      return;
+    }
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.min(Math.pow(2, retries) * 250, 10 * 1000)),
+    );
+    if (isClosingProcess) {
+      return;
+    }
+    return await listenInner({ environmentName, retries: retries + 1 });
+  }
+}
+
+export function listen(values?: {
+  environmentName?: string | undefined;
+}): Promise<void> {
+  const { environmentName } = values ?? {};
+  return listenInner({ environmentName, retries: 0 });
+}
