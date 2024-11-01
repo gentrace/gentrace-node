@@ -806,6 +806,7 @@ export class OpenAICreateChatCompletionStepRun extends StepRun {
       modelParams,
       response,
       context,
+      undefined,
     );
   }
 }
@@ -849,6 +850,7 @@ export class OpenAICreateCompletionStepRun extends StepRun {
       modelParams,
       response,
       context,
+      undefined,
     );
   }
 }
@@ -877,6 +879,7 @@ export class OpenAICreateEmbeddingStepRun extends StepRun {
       modelParams,
       response,
       context,
+      undefined,
     );
   }
 }
@@ -905,6 +908,7 @@ export class OpenAICreateModerationStepRun extends StepRun {
       modelParams,
       response,
       context,
+      undefined,
     );
   }
 }

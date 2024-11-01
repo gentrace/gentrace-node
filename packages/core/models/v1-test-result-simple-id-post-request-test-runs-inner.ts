@@ -42,4 +42,10 @@ export interface V1TestResultSimpleIdPostRequestTestRunsInner {
    * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
    */
   outputs?: { [key: string]: any };
+  /**
+   *
+   * @type {string}
+   * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
+   */
+  error?: string | null;
 }

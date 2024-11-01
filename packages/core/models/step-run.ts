@@ -76,4 +76,10 @@ export interface StepRun {
    * @memberof StepRun
    */
   endTime: string;
+  /**
+   *
+   * @type {string}
+   * @memberof StepRun
+   */
+  error?: string | null;
 }

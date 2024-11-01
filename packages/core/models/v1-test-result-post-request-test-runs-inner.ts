@@ -35,23 +35,29 @@ export interface V1TestResultPostRequestTestRunsInner {
    */
   id?: string | null;
   /**
-   * The ID of the test case
+   * The ID of the test case. Mutually exclusive with \'name\' and \'inputs\'.
    * @type {string}
    * @memberof V1TestResultPostRequestTestRunsInner
    */
   caseId?: string;
   /**
-   * The name of the test run
+   * Used for supplying local data. The name of the test run. Used with \'inputs\' and mutually exclusive with \'caseId\'.
    * @type {string}
    * @memberof V1TestResultPostRequestTestRunsInner
    */
   name?: string;
   /**
-   * The input data for the test run
+   * Used for supplying local data. The input data for the test run. Used with \'name\' and mutually exclusive with \'caseId\'.
    * @type {{ [key: string]: any; }}
    * @memberof V1TestResultPostRequestTestRunsInner
    */
   inputs?: { [key: string]: any };
+  /**
+   * Used for supplying local data. The expected outputs for the test run. Used with \'name\' and mutually exclusive with \'caseId\'. Optional, since not all evaluators require expected outputs.
+   * @type {{ [key: string]: any; }}
+   * @memberof V1TestResultPostRequestTestRunsInner
+   */
+  expectedOutputs?: { [key: string]: any };
   /**
    *
    * @type {{ [key: string]: MetadataValueObject; }}
@@ -70,4 +76,10 @@ export interface V1TestResultPostRequestTestRunsInner {
    * @memberof V1TestResultPostRequestTestRunsInner
    */
   evaluations?: Array<LocalEvaluation>;
+  /**
+   *
+   * @type {string}
+   * @memberof V1TestResultPostRequestTestRunsInner
+   */
+  error?: string | null;
 }

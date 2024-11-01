@@ -487,6 +487,7 @@ export class PineconeFetchStepRun extends StepRun {
       {},
       response,
       context ?? {},
+      undefined,
     );
   }
 }
@@ -514,6 +515,7 @@ export class PineconeQueryStepRun extends StepRun {
       modelParams,
       response,
       context ?? {},
+      undefined,
     );
   }
 }
@@ -540,6 +542,7 @@ export class PineconeUpdateStepRun extends StepRun {
       {},
       response,
       context ?? {},
+      undefined,
     );
   }
 }
@@ -565,6 +568,7 @@ export class PineconeUpsertStepRun extends StepRun {
       {},
       {},
       context ?? {},
+      undefined,
     );
   }
 }
@@ -590,6 +594,7 @@ export class PineconeDeleteOneStepRun extends StepRun {
       {},
       {},
       context ?? {},
+      undefined,
     );
   }
 }
@@ -615,6 +620,7 @@ export class PineconeDeleteManyStepRun extends StepRun {
       {},
       {},
       context ?? {},
+      undefined,
     );
   }
 }
@@ -638,6 +644,7 @@ export class PineconeDeleteAllStepRun extends StepRun {
       {},
       {},
       context ?? {},
+      undefined,
     );
   }
 }

@@ -33,6 +33,7 @@ type PipelineRunPayload = {
   collectionMethod: "runner";
   stepRuns: StepRun[];
   evaluations: LocalEvaluation[];
+  error?: string;
 };
 
 type SelectStepRun = Pick<
@@ -62,6 +63,7 @@ export class PipelineRun {
   private pipeline: PipelineLike;
   public stepRuns: StepRun[];
   private evaluations: LocalEvaluation[] = [];
+  private error?: string | undefined;
 
   public context?: Context;
 
@@ -91,6 +93,14 @@ export class PipelineRun {
 
   getContext() {
     return this.context;
+  }
+
+  getError() {
+    return this.error;
+  }
+
+  setError(error: string | undefined) {
+    this.error = error;
   }
 
   updateContext(updatedContext: Partial<Context>) {
@@ -149,6 +159,7 @@ export class PipelineRun {
           step.modelParams ?? {},
           step.outputs,
           step.context ?? {},
+          step.error,
         ),
       );
     } else {
@@ -169,6 +180,7 @@ export class PipelineRun {
           step.modelParams ?? {},
           step.outputs,
           step.context ?? {},
+          step.error,
         ),
       );
     }
@@ -199,9 +211,7 @@ export class PipelineRun {
     stepInfo?: Omit<PRStepRunType, "inputs" | "outputs">,
   ): Promise<ReturnType<F>> {
     const startTime = Date.now();
-    const returnValue = await func(...inputs);
     const paramNames = getParamNames(func);
-
     const resolvedInputs = zip(paramNames, inputs).reduce<{
       [key: string]: any;
     }>((acc, current) => {
@@ -210,29 +220,57 @@ export class PipelineRun {
       return acc;
     }, {});
 
-    // Our server only accepts outputs as an object.
-    let modifiedOutput = returnValue;
-    if (typeof returnValue !== "object") {
-      modifiedOutput = { value: returnValue };
+    try {
+      const returnValue = await func(...inputs);
+
+      // Our server only accepts outputs as an object.
+      let modifiedOutput = returnValue;
+      if (typeof returnValue !== "object") {
+        modifiedOutput = { value: returnValue };
+      }
+      const endTime = Date.now();
+      const elapsedTime = Math.floor(endTime - startTime);
+
+      this.stepRuns.push(
+        new StepRun(
+          stepInfo?.providerName ?? "undeclared",
+          stepInfo?.invocation ?? "undeclared",
+          elapsedTime,
+          new Date(startTime).toISOString(),
+          new Date(endTime).toISOString(),
+          resolvedInputs,
+          stepInfo?.modelParams ?? {},
+          modifiedOutput,
+          stepInfo?.context ?? {},
+          stepInfo?.error,
+        ),
+      );
+
+      return returnValue;
+    } catch (e) {
+      try {
+        const endTime = Date.now();
+        const elapsedTime = Math.floor(endTime - startTime);
+        const errorString = e.toString();
+
+        this.stepRuns.push(
+          new StepRun(
+            stepInfo?.providerName ?? "undeclared",
+            stepInfo?.invocation ?? "undeclared",
+            elapsedTime,
+            new Date(startTime).toISOString(),
+            new Date(endTime).toISOString(),
+            resolvedInputs,
+            stepInfo?.modelParams ?? {},
+            {},
+            stepInfo?.context ?? {},
+            errorString,
+          ),
+        );
+      } finally {
+        throw e;
+      }
     }
-    const endTime = Date.now();
-    const elapsedTime = Math.floor(endTime - startTime);
-
-    this.stepRuns.push(
-      new StepRun(
-        stepInfo?.providerName ?? "undeclared",
-        stepInfo?.invocation ?? "undeclared",
-        elapsedTime,
-        new Date(startTime).toISOString(),
-        new Date(endTime).toISOString(),
-        resolvedInputs,
-        stepInfo?.modelParams ?? {},
-        modifiedOutput,
-        stepInfo?.context ?? {},
-      ),
-    );
-
-    return returnValue;
   }
 
   /**
@@ -257,6 +295,7 @@ export class PipelineRun {
         inputs,
         outputs,
         context: stepRunContext,
+        error,
       }) => {
         let {
           metadata: thisContextMetadata,
@@ -290,6 +329,7 @@ export class PipelineRun {
             ...restThisContext,
             ...restStepRunContext,
           },
+          error,
         };
       },
     );
@@ -302,6 +342,7 @@ export class PipelineRun {
       collectionMethod: RunRequestCollectionMethodEnum.Runner,
       stepRuns: updatedStepRuns,
       evaluations: this.evaluations,
+      error: this.error,
     };
   }
 

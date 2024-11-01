@@ -52,4 +52,10 @@ export interface V1TestResultSimplePostRequestTestRunsInner {
    * @memberof V1TestResultSimplePostRequestTestRunsInner
    */
   evaluations?: Array<LocalEvaluation>;
+  /**
+   *
+   * @type {string}
+   * @memberof V1TestResultSimplePostRequestTestRunsInner
+   */
+  error?: string | null;
 }
