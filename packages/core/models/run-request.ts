@@ -61,6 +61,12 @@ export interface RunRequest {
    * @memberof RunRequest
    */
   stepRuns: Array<StepRun>;
+  /**
+   *
+   * @type {string}
+   * @memberof RunRequest
+   */
+  error?: string | null;
 }
 
 export const RunRequestCollectionMethodEnum = {

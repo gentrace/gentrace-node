@@ -61,4 +61,10 @@ export interface V1TestResultIdPostRequestTestRunsInner {
    * @memberof V1TestResultIdPostRequestTestRunsInner
    */
   stepRuns: Array<StepRun>;
+  /**
+   *
+   * @type {string}
+   * @memberof V1TestResultIdPostRequestTestRunsInner
+   */
+  error?: string | null;
 }

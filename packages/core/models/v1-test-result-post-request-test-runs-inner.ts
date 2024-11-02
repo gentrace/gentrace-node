@@ -76,4 +76,10 @@ export interface V1TestResultPostRequestTestRunsInner {
    * @memberof V1TestResultPostRequestTestRunsInner
    */
   evaluations?: Array<LocalEvaluation>;
+  /**
+   *
+   * @type {string}
+   * @memberof V1TestResultPostRequestTestRunsInner
+   */
+  error?: string | null;
 }

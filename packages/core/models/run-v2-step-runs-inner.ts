@@ -100,4 +100,10 @@ export interface RunV2StepRunsInner {
    * @memberof RunV2StepRunsInner
    */
   metadata?: { [key: string]: MetadataValueObject } | null;
+  /**
+   *
+   * @type {string}
+   * @memberof RunV2StepRunsInner
+   */
+  error?: string | null;
 }

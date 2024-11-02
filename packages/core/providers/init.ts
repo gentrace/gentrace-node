@@ -93,7 +93,9 @@ export function init(values?: {
         throw new Error('Gentrace base path must end in "/api".');
       }
     } catch (err) {
-      throw new Error(`Invalid Gentrace base path: ${err.message}`);
+      throw new Error(
+        `Invalid Gentrace base path (${basePath}): ${err.message}`,
+      );
     }
 
     GENTRACE_BASE_PATH = basePath;

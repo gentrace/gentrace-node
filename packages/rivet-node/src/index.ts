@@ -249,6 +249,7 @@ function convertRecordingToStepRuns(
             gentraceOpenAIModelParams,
             gentraceOpenAIOutputs,
             {},
+            undefined,
           ),
         );
 
@@ -267,6 +268,7 @@ function convertRecordingToStepRuns(
         pair.modelParams,
         pair.outputs,
         {},
+        undefined,
       ),
     );
   }

@@ -100,4 +100,10 @@ export interface FullRun {
    * @memberof FullRun
    */
   metadata?: { [key: string]: MetadataValueObject } | null;
+  /**
+   *
+   * @type {string}
+   * @memberof FullRun
+   */
+  error?: string | null;
 }

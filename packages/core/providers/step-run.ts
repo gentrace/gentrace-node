@@ -12,6 +12,7 @@ export class StepRun {
   public modelParams: any;
   public outputs: any;
   public context: Context;
+  public error: string | undefined;
 
   constructor(
     providerName: string,
@@ -23,6 +24,7 @@ export class StepRun {
     modelParams: any,
     outputs: any,
     context: Context,
+    error: string | undefined,
   ) {
     this.providerName = providerName;
     this.invocation = invocation;
@@ -34,6 +36,7 @@ export class StepRun {
     this.modelParams = modelParams;
     this.outputs = outputs;
     this.context = context;
+    this.error = error;
   }
 }
 

@@ -55,4 +55,10 @@ export interface ExpandedTestRunAllOf {
    * @memberof ExpandedTestRunAllOf
    */
   evaluations?: Array<TestEvaluation>;
+  /**
+   * Error message if the test run failed
+   * @type {string}
+   * @memberof ExpandedTestRunAllOf
+   */
+  error?: string | null;
 }
