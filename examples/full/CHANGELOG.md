@@ -1,5 +1,17 @@
 # @examples/full
 
+## 0.2.0
+
+### Minor Changes
+
+- 4159312: Adds run/step error support
+
+### Patch Changes
+
+- Updated dependencies [4159312]
+  - @gentrace/core@3.2.0
+  - @gentrace/openai@5.0.0
+
 ## 0.1.33
 
 ### Patch Changes

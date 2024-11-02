@@ -1,5 +1,13 @@
 # @gentrace/rivet
 
+## 1.9.7
+
+### Patch Changes
+
+- 4159312: Adds run/step error support
+- Updated dependencies [4159312]
+  - @gentrace/core@3.2.0
+
 ## 1.9.6
 
 ### Patch Changes
