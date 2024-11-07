@@ -7,6 +7,8 @@ import { Pipeline } from "./pipeline";
 import { updateTestResultWithRunners } from "./runners";
 import type { ZodType } from "zod";
 import WebSocket from "ws";
+import { AsyncLocalStorage } from "async_hooks";
+import * as Mustache from "mustache";
 
 type InteractionFn<T = any> = (...args: [T, ...any[]]) => any;
 
@@ -16,6 +18,7 @@ type InteractionDefinition<
 > = {
   name: string;
   fn: Fn;
+  parameters?: undefined | { name: string }[];
   inputType?: undefined | ZodType<T>;
 };
 
@@ -93,6 +96,7 @@ type InboundMessageRunTestInteraction = {
   testJobId: string;
   interactionName: string;
   data: { id: string; inputs: any }[];
+  overrides: Record<string, any>;
 };
 
 type InboundMessageRunTestSuite = {
@@ -117,6 +121,7 @@ type OutboundMessageRegisterInteraction = {
   interaction: {
     name: string;
     hasValidation: boolean;
+    parameters: Parameter[];
   };
 };
 
@@ -205,6 +210,92 @@ const validate = async (
   }
 };
 
+const overridesAsyncLocalStorage = new AsyncLocalStorage<Record<string, any>>();
+const makeGetValue = <T>(name: string, defaultValue: T): (() => T) => {
+  return () => {
+    const overrides = overridesAsyncLocalStorage.getStore();
+    console.log("get value", name, overrides);
+    return overrides?.[name] ?? defaultValue;
+  };
+};
+
+const parameters: Record<string, Parameter> = {};
+
+type Parameter =
+  | {
+      type: "numeric";
+      name: string;
+      defaultValue: number;
+    }
+  | {
+      type: "string";
+      name: string;
+      defaultValue: string;
+    }
+  | {
+      type: "template";
+      name: string;
+      defaultValue: string;
+    };
+
+export const numericParameter = ({
+  name,
+  defaultValue,
+}: {
+  name: string;
+  defaultValue: number;
+}) => {
+  parameters[name] = {
+    name,
+    type: "numeric",
+    defaultValue,
+  };
+  return {
+    name,
+    getValue: makeGetValue(name, defaultValue),
+  };
+};
+
+export const stringParameter = ({
+  name,
+  defaultValue,
+}: {
+  name: string;
+  defaultValue: string;
+}) => {
+  parameters[name] = {
+    name,
+    type: "string",
+    defaultValue,
+  };
+  return {
+    name,
+    getValue: makeGetValue(name, defaultValue),
+  };
+};
+
+export const templateParameter = ({
+  name,
+  defaultValue,
+}: {
+  name: string;
+  defaultValue: string;
+}) => {
+  parameters[name] = {
+    name,
+    type: "template",
+    defaultValue,
+  };
+  return {
+    name,
+    render: (values: Record<string, any>) => {
+      const overrides = overridesAsyncLocalStorage.getStore();
+      const template = overrides?.[name] ?? defaultValue;
+      return Mustache.render(template, values);
+    },
+  };
+};
+
 function makeParallelRunner(parallelism?: undefined | number) {
   const results: Promise<any>[] = [];
   const queue: {
@@ -274,7 +365,7 @@ async function runWebSocket(
     if (isClosed) {
       return;
     }
-    console.log("WebSocket sending message:", message);
+    console.log("WebSocket sending message:", JSON.stringify(message, null, 2));
     ws.send(
       JSON.stringify({
         id: makeUuid(),
@@ -416,27 +507,41 @@ async function runWebSocket(
       interactionName,
       parallelism,
       data: testCases,
+      overrides,
     } = message;
     const interaction = interactions[interactionName];
     if (!interaction) {
       return;
     }
-    const parallelRunner = makeParallelRunner(parallelism);
-    for (const testCase of testCases) {
-      parallelRunner.run(() =>
-        runTestCaseThroughInteraction(
-          pipelineId,
-          testJobId,
-          interactionName,
-          testCase,
-        ),
+    overridesAsyncLocalStorage.run(overrides, async () => {
+      const overrides = overridesAsyncLocalStorage.getStore();
+      console.log("overrides", overrides);
+      const parallelRunner = makeParallelRunner(parallelism);
+      for (const testCase of testCases) {
+        parallelRunner.run(() =>
+          runTestCaseThroughInteraction(
+            pipelineId,
+            testJobId,
+            interactionName,
+            testCase,
+          ),
+        );
+      }
+      const results = await Promise.allSettled(parallelRunner.results);
+      const erroredResults = results.filter<PromiseRejectedResult>(
+        (r): r is PromiseRejectedResult => r.status === "rejected",
       );
-    }
-    await Promise.all(parallelRunner.results);
-    sendMessage({
-      type: "test-job-finished",
-      testJobId,
-      pipelineId,
+      if (erroredResults.length > 0) {
+        console.error(
+          "Errors in test job:",
+          erroredResults.map((r) => r.reason),
+        );
+      }
+      sendMessage({
+        type: "test-job-finished",
+        testJobId,
+        pipelineId,
+      });
     });
   };
 
@@ -534,6 +639,10 @@ async function runWebSocket(
       interaction: {
         name: interaction.name,
         hasValidation: !!interaction.inputType,
+        parameters:
+          interaction.parameters
+            ?.map(({ name }) => parameters[name])
+            .filter((v) => !!v) ?? [],
       },
     });
   };

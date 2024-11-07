@@ -306,7 +306,7 @@ export function constructStepRuns(
 
   if (testCase.inputs) {
     testRun.inputs = testCase.inputs;
-    testRun.expectedOutputs = testCase.expectedOutputs;
+    // testRun.expectedOutputs = testCase.expectedOutputs;
   }
 
   if (pipelineRun.getId()) {
