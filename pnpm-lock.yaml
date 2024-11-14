@@ -13,7 +13,7 @@ importers:
         version: 2.26.2
       '@commitlint/cli':
         specifier: ^19.3.0
-        version: 19.4.1(@types/node@20.16.3)(typescript@5.1.6)
+        version: 19.4.1(@types/node@20.16.3)(typescript@5.5.4)
       '@commitlint/config-conventional':
         specifier: ^19.2.2
         version: 19.4.1
@@ -25,7 +25,7 @@ importers:
         version: 2.2.0
       eslint:
         specifier: ^9.1.1
-        version: 9.9.1
+        version: 9.9.1(jiti@1.21.6)
       husky:
         specifier: ^9.0.11
         version: 9.1.5
@@ -45,14 +45,14 @@ importers:
   examples/cloudflare-worker:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: workspace:^4.1.9
+        specifier: workspace:^5.0.0
         version: link:../../packages/openai
       ai:
         specifier: ^2.2.17
-        version: 2.2.17(react@18.2.0)(solid-js@1.8.3)(svelte@4.2.2)(vue@3.3.6)
+        version: 2.2.17(react@18.2.0)(solid-js@1.8.3)(svelte@4.2.2)(vue@3.3.6(typescript@5.1.6))
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20230419.0
@@ -73,14 +73,14 @@ importers:
   examples/core:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: workspace:4.2.0
+        specifier: workspace:5.0.0
         version: link:../../packages/openai
       openai:
         specifier: ^4.29.2
-        version: 4.57.0(zod@3.22.2)
+        version: 4.57.0(encoding@0.1.13)(zod@3.23.8)
     devDependencies:
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -111,10 +111,10 @@ importers:
         version: 7.4.2
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -169,10 +169,10 @@ importers:
         version: 7.4.2
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -211,7 +211,7 @@ importers:
         version: 6.1.13
       openai:
         specifier: ^4.67.1
-        version: 4.67.1(zod@3.23.8)
+        version: 4.67.1(encoding@0.1.13)(zod@3.23.8)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -245,10 +245,10 @@ importers:
         version: 7.3.0
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -306,10 +306,10 @@ importers:
         version: 7.3.0
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -332,10 +332,10 @@ importers:
   examples/full:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: workspace:^4.1.9
+        specifier: workspace:^5.0.0
         version: link:../../packages/openai
     devDependencies:
       '@gentrace/tsconfig':
@@ -367,10 +367,10 @@ importers:
         version: 7.3.0
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -393,14 +393,14 @@ importers:
   examples/openai:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../../packages/core
       '@gentrace/openai':
-        specifier: workspace:^4.1.9
+        specifier: workspace:^5.0.0
         version: link:../../packages/openai
       openai:
         specifier: ^4.56.0
-        version: 4.57.0(zod@3.22.2)
+        version: 4.57.0(encoding@0.1.13)(zod@3.22.2)
       zod:
         specifier: ^3.22.2
         version: 3.22.2
@@ -434,10 +434,10 @@ importers:
         version: 7.3.0
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -460,10 +460,10 @@ importers:
   examples/pinecone:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../../packages/core
       '@gentrace/pinecone':
-        specifier: workspace:^3.0.1
+        specifier: workspace:^4.0.0
         version: link:../../packages/pinecone
       '@pinecone-database/pinecone':
         specifier: ^3
@@ -498,10 +498,10 @@ importers:
         version: 7.3.0
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -524,10 +524,10 @@ importers:
   examples/pinecone-v0:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../../packages/core
       '@gentrace/pinecone-v0':
-        specifier: workspace:^0.3.0
+        specifier: workspace:^1.0.0
         version: link:../../packages/pinecone-v0
     devDependencies:
       '@gentrace/tsconfig':
@@ -559,10 +559,10 @@ importers:
         version: 7.3.0
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -589,7 +589,7 @@ importers:
         version: link:../../packages/playground
       openai:
         specifier: ^4.29.2
-        version: 4.57.0(zod@3.22.2)
+        version: 4.57.0(encoding@0.1.13)(zod@3.23.8)
     devDependencies:
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -620,10 +620,10 @@ importers:
         version: 7.4.2
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -659,7 +659,7 @@ importers:
         version: 4.2.0
       openai:
         specifier: ^4.29.2
-        version: 4.57.0(zod@3.22.2)
+        version: 4.57.0(encoding@0.1.13)(zod@3.23.8)
       tsx:
         specifier: ^4.7.1
         version: 4.19.0
@@ -684,7 +684,7 @@ importers:
         version: link:../../packages/rivet-node
       '@ironclad/rivet-node':
         specifier: 1.15.0
-        version: 1.15.0
+        version: 1.15.0(encoding@0.1.13)(zod@3.23.8)
     devDependencies:
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -715,10 +715,10 @@ importers:
         version: 7.3.0
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@18.15.13)
+        version: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -757,10 +757,10 @@ importers:
         version: 4.4.1(react@18.2.0)
       ink-link:
         specifier: ^3.0.0
-        version: 3.0.0(ink@4.4.1)
+        version: 3.0.0(ink@4.4.1(react@18.2.0))
       ink-text-input:
         specifier: ^5.0.1
-        version: 5.0.1(ink@4.4.1)(react@18.2.0)
+        version: 5.0.1(ink@4.4.1(react@18.2.0))(react@18.2.0)
       ora:
         specifier: ^7.0.1
         version: 7.0.1
@@ -864,13 +864,13 @@ importers:
         version: 16.3.1
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1)
+        version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       json-stable-stringify:
         specifier: ^1.0.2
         version: 1.0.2
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -885,7 +885,7 @@ importers:
         version: 3.4.0
       ts-jest:
         specifier: ^29.1.0
-        version: 29.1.1(@babel/core@7.22.20)(jest@29.6.4)(typescript@5.1.6)
+        version: 29.1.1(@babel/core@7.22.20)(@jest/types@29.6.3)(babel-jest@29.6.4(@babel/core@7.22.20))(jest@29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6)))(typescript@5.1.6)
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@12.20.55)(typescript@5.1.6)
@@ -903,7 +903,7 @@ importers:
         version: link:../core
       openai:
         specifier: ^4.67.1
-        version: 4.67.1(zod@3.22.2)
+        version: 4.67.1(encoding@0.1.13)(zod@3.22.2)
       zod:
         specifier: ^3.21.4
         version: 3.22.2
@@ -931,7 +931,7 @@ importers:
         version: 16.4.5
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@12.20.55)
+        version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -951,7 +951,7 @@ importers:
   packages/openai:
     devDependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../core
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -982,16 +982,16 @@ importers:
         version: 16.3.1
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@12.20.55)
+        version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
       openai:
         specifier: ^4.56.0
-        version: 4.57.0(zod@3.22.2)
+        version: 4.57.0(encoding@0.1.13)(zod@3.23.8)
       rimraf:
         specifier: ^5.0.0
         version: 5.0.1
@@ -1008,7 +1008,7 @@ importers:
   packages/pinecone:
     devDependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../core
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -1042,10 +1042,10 @@ importers:
         version: 16.3.1
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@12.20.55)
+        version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -1065,7 +1065,7 @@ importers:
   packages/pinecone-v0:
     devDependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../core
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -1075,7 +1075,7 @@ importers:
         version: 0.17.9
       '@pinecone-database/pinecone':
         specifier: ^0.1.6
-        version: 0.1.6
+        version: 0.1.6(encoding@0.1.13)
       '@rollup/plugin-commonjs':
         specifier: ^24.1.0
         version: 24.1.0(rollup@3.28.1)
@@ -1099,10 +1099,10 @@ importers:
         version: 16.3.1
       jest:
         specifier: ^29.5.0
-        version: 29.6.4(@types/node@12.20.55)
+        version: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       msw:
         specifier: ^1.2.5
-        version: 1.2.5(typescript@5.1.6)
+        version: 1.2.5(encoding@0.1.13)(typescript@5.1.6)
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -1186,7 +1186,7 @@ importers:
   packages/rivet-node:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.2.0
         version: link:../core
     devDependencies:
       '@gentrace/tsconfig':
@@ -1194,7 +1194,7 @@ importers:
         version: link:../tsconfig
       '@ironclad/rivet-node':
         specifier: ^1.17.0
-        version: 1.19.1
+        version: 1.19.1(encoding@0.1.13)(zod@3.23.8)
       '@rollup/plugin-commonjs':
         specifier: ^25.0.7
         version: 25.0.8(rollup@4.21.2)
@@ -7642,11 +7642,11 @@ snapshots:
 
   '@cloudflare/workers-types@4.20231016.0': {}
 
-  '@commitlint/cli@19.4.1(@types/node@20.16.3)(typescript@5.1.6)':
+  '@commitlint/cli@19.4.1(@types/node@20.16.3)(typescript@5.5.4)':
     dependencies:
       '@commitlint/format': 19.3.0
       '@commitlint/lint': 19.4.1
-      '@commitlint/load': 19.4.0(@types/node@20.16.3)(typescript@5.1.6)
+      '@commitlint/load': 19.4.0(@types/node@20.16.3)(typescript@5.5.4)
       '@commitlint/read': 19.4.0
       '@commitlint/types': 19.0.3
       execa: 8.0.1
@@ -7693,15 +7693,15 @@ snapshots:
       '@commitlint/rules': 19.4.1
       '@commitlint/types': 19.0.3
 
-  '@commitlint/load@19.4.0(@types/node@20.16.3)(typescript@5.1.6)':
+  '@commitlint/load@19.4.0(@types/node@20.16.3)(typescript@5.5.4)':
     dependencies:
       '@commitlint/config-validator': 19.0.3
       '@commitlint/execute-rule': 19.0.0
       '@commitlint/resolve-extends': 19.1.0
       '@commitlint/types': 19.0.3
       chalk: 5.3.0
-      cosmiconfig: 9.0.0(typescript@5.1.6)
-      cosmiconfig-typescript-loader: 5.0.0(@types/node@20.16.3)(cosmiconfig@9.0.0)(typescript@5.1.6)
+      cosmiconfig: 9.0.0(typescript@5.5.4)
+      cosmiconfig-typescript-loader: 5.0.0(@types/node@20.16.3)(cosmiconfig@9.0.0(typescript@5.5.4))(typescript@5.5.4)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
@@ -8052,9 +8052,9 @@ snapshots:
   '@esbuild/win32-x64@0.23.1':
     optional: true
 
-  '@eslint-community/eslint-utils@4.4.0(eslint@9.9.1)':
+  '@eslint-community/eslint-utils@4.4.0(eslint@9.9.1(jiti@1.21.6))':
     dependencies:
-      eslint: 9.9.1
+      eslint: 9.9.1(jiti@1.21.6)
       eslint-visitor-keys: 3.4.3
 
   '@eslint-community/regexpp@4.11.0': {}
@@ -8100,9 +8100,9 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@google-cloud/vertexai@0.1.3':
+  '@google-cloud/vertexai@0.1.3(encoding@0.1.13)':
     dependencies:
-      google-auth-library: 9.7.0
+      google-auth-library: 9.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -8113,13 +8113,13 @@ snapshots:
 
   '@humanwhocodes/retry@0.3.0': {}
 
-  '@ironclad/rivet-core@1.15.0':
+  '@ironclad/rivet-core@1.15.0(encoding@0.1.13)(zod@3.23.8)':
     dependencies:
       '@gentrace/core': 2.8.2
-      '@google-cloud/vertexai': 0.1.3
+      '@google-cloud/vertexai': 0.1.3(encoding@0.1.13)
       '@huggingface/inference': 2.6.6
       assemblyai: 4.3.3
-      autoevals: 0.0.26
+      autoevals: 0.0.26(encoding@0.1.13)(zod@3.23.8)
       crypto-js: 4.2.0
       emittery: 1.0.1
       emittery-0-13: emittery@0.13.1
@@ -8128,7 +8128,7 @@ snapshots:
       lodash-es: 4.17.21
       minimatch: 9.0.5
       nanoid: 3.3.6
-      openai: 4.67.1(zod@3.22.2)
+      openai: 4.67.1(encoding@0.1.13)(zod@3.23.8)
       p-queue: 7.4.1
       p-queue-6: p-queue@6.6.2
       p-retry: 6.2.0
@@ -8146,13 +8146,13 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@ironclad/rivet-core@1.19.1':
+  '@ironclad/rivet-core@1.19.1(encoding@0.1.13)(zod@3.23.8)':
     dependencies:
       '@gentrace/core': 2.8.2
-      '@google-cloud/vertexai': 0.1.3
+      '@google-cloud/vertexai': 0.1.3(encoding@0.1.13)
       '@huggingface/inference': 2.6.6
       assemblyai: 4.7.0
-      autoevals: 0.0.26
+      autoevals: 0.0.26(encoding@0.1.13)(zod@3.23.8)
       crypto-js: 4.2.0
       emittery: 1.0.1
       emittery-0-13: emittery@0.13.1
@@ -8161,7 +8161,7 @@ snapshots:
       lodash-es: 4.17.21
       minimatch: 9.0.5
       nanoid: 3.3.6
-      openai: 4.67.1(zod@3.22.2)
+      openai: 4.67.1(encoding@0.1.13)(zod@3.23.8)
       p-queue: 7.4.1
       p-queue-6: p-queue@6.6.2
       p-retry: 6.2.0
@@ -8179,9 +8179,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@ironclad/rivet-node@1.15.0':
+  '@ironclad/rivet-node@1.15.0(encoding@0.1.13)(zod@3.23.8)':
     dependencies:
-      '@ironclad/rivet-core': 1.15.0
+      '@ironclad/rivet-core': 1.15.0(encoding@0.1.13)(zod@3.23.8)
       emittery: 1.0.1
       emittery-0-13: emittery@0.13.1
       lodash: 4.17.21
@@ -8199,9 +8199,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@ironclad/rivet-node@1.19.1':
+  '@ironclad/rivet-node@1.19.1(encoding@0.1.13)(zod@3.23.8)':
     dependencies:
-      '@ironclad/rivet-core': 1.19.1
+      '@ironclad/rivet-core': 1.19.1(encoding@0.1.13)(zod@3.23.8)
       emittery: 1.0.1
       emittery-0-13: emittery@0.13.1
       lodash: 4.17.21
@@ -8247,7 +8247,7 @@ snapshots:
       jest-util: 29.6.3
       slash: 3.0.0
 
-  '@jest/core@29.6.4(ts-node@10.9.1)':
+  '@jest/core@29.6.4(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))':
     dependencies:
       '@jest/console': 29.6.4
       '@jest/reporters': 29.6.4
@@ -8261,7 +8261,42 @@ snapshots:
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.6.3
-      jest-config: 29.6.4(@types/node@20.16.3)(ts-node@10.9.1)
+      jest-config: 29.6.4(@types/node@20.16.3)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
+      jest-haste-map: 29.6.4
+      jest-message-util: 29.6.3
+      jest-regex-util: 29.6.3
+      jest-resolve: 29.6.4
+      jest-resolve-dependencies: 29.6.4
+      jest-runner: 29.6.4
+      jest-runtime: 29.6.4
+      jest-snapshot: 29.6.4
+      jest-util: 29.6.3
+      jest-validate: 29.6.3
+      jest-watcher: 29.6.4
+      micromatch: 4.0.8
+      pretty-format: 29.6.3
+      slash: 3.0.0
+      strip-ansi: 6.0.1
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - supports-color
+      - ts-node
+
+  '@jest/core@29.6.4(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))':
+    dependencies:
+      '@jest/console': 29.6.4
+      '@jest/reporters': 29.6.4
+      '@jest/test-result': 29.6.4
+      '@jest/transform': 29.6.4
+      '@jest/types': 29.6.3
+      '@types/node': 20.16.3
+      ansi-escapes: 4.3.2
+      chalk: 4.1.2
+      ci-info: 3.8.0
+      exit: 0.1.2
+      graceful-fs: 4.2.11
+      jest-changed-files: 29.6.3
+      jest-config: 29.6.4(@types/node@20.16.3)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       jest-haste-map: 29.6.4
       jest-message-util: 29.6.3
       jest-regex-util: 29.6.3
@@ -8491,9 +8526,9 @@ snapshots:
 
   '@open-draft/until@1.0.3': {}
 
-  '@pinecone-database/pinecone@0.1.6':
+  '@pinecone-database/pinecone@0.1.6(encoding@0.1.13)':
     dependencies:
-      cross-fetch: 3.1.8
+      cross-fetch: 3.1.8(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
 
@@ -8512,6 +8547,7 @@ snapshots:
       glob: 8.1.0
       is-reference: 1.2.1
       magic-string: 0.27.0
+    optionalDependencies:
       rollup: 3.28.1
 
   '@rollup/plugin-commonjs@24.1.0(rollup@3.29.4)':
@@ -8522,6 +8558,7 @@ snapshots:
       glob: 8.1.0
       is-reference: 1.2.1
       magic-string: 0.27.0
+    optionalDependencies:
       rollup: 3.29.4
 
   '@rollup/plugin-commonjs@25.0.8(rollup@4.21.2)':
@@ -8532,52 +8569,60 @@ snapshots:
       glob: 8.1.0
       is-reference: 1.2.1
       magic-string: 0.30.5
+    optionalDependencies:
       rollup: 4.21.2
 
   '@rollup/plugin-json@6.0.0(rollup@3.28.1)':
     dependencies:
       '@rollup/pluginutils': 5.0.4(rollup@3.28.1)
+    optionalDependencies:
       rollup: 3.28.1
 
   '@rollup/plugin-json@6.0.0(rollup@4.21.2)':
     dependencies:
       '@rollup/pluginutils': 5.0.4(rollup@4.21.2)
+    optionalDependencies:
       rollup: 4.21.2
 
   '@rollup/plugin-json@6.1.0(rollup@3.29.4)':
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@3.29.4)
+    optionalDependencies:
       rollup: 3.29.4
 
   '@rollup/plugin-typescript@11.1.3(rollup@3.28.1)(tslib@2.6.2)(typescript@5.1.6)':
     dependencies:
       '@rollup/pluginutils': 5.0.4(rollup@3.28.1)
       resolve: 1.22.2
+      typescript: 5.1.6
+    optionalDependencies:
       rollup: 3.28.1
       tslib: 2.6.2
-      typescript: 5.1.6
 
   '@rollup/plugin-typescript@11.1.3(rollup@4.21.2)(tslib@2.6.2)(typescript@5.1.6)':
     dependencies:
       '@rollup/pluginutils': 5.0.4(rollup@4.21.2)
       resolve: 1.22.2
+      typescript: 5.1.6
+    optionalDependencies:
       rollup: 4.21.2
       tslib: 2.6.2
-      typescript: 5.1.6
 
   '@rollup/plugin-typescript@11.1.6(rollup@3.29.4)(tslib@2.6.2)(typescript@5.1.6)':
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@3.29.4)
       resolve: 1.22.2
+      typescript: 5.1.6
+    optionalDependencies:
       rollup: 3.29.4
       tslib: 2.6.2
-      typescript: 5.1.6
 
   '@rollup/pluginutils@5.0.4(rollup@3.28.1)':
     dependencies:
       '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
       rollup: 3.28.1
 
   '@rollup/pluginutils@5.0.4(rollup@4.21.2)':
@@ -8585,6 +8630,7 @@ snapshots:
       '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
       rollup: 4.21.2
 
   '@rollup/pluginutils@5.1.0(rollup@3.28.1)':
@@ -8592,6 +8638,7 @@ snapshots:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
       rollup: 3.28.1
 
   '@rollup/pluginutils@5.1.0(rollup@3.29.4)':
@@ -8599,6 +8646,7 @@ snapshots:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
       rollup: 3.29.4
 
   '@rollup/rollup-android-arm-eabi@4.21.2':
@@ -8848,7 +8896,7 @@ snapshots:
       '@vue/shared': 3.3.6
       csstype: 3.1.2
 
-  '@vue/server-renderer@3.3.6(vue@3.3.6)':
+  '@vue/server-renderer@3.3.6(vue@3.3.6(typescript@5.1.6))':
     dependencies:
       '@vue/compiler-ssr': 3.3.6
       '@vue/shared': 3.3.6
@@ -8905,18 +8953,19 @@ snapshots:
     dependencies:
       humanize-ms: 1.2.1
 
-  ai@2.2.17(react@18.2.0)(solid-js@1.8.3)(svelte@4.2.2)(vue@3.3.6):
+  ai@2.2.17(react@18.2.0)(solid-js@1.8.3)(svelte@4.2.2)(vue@3.3.6(typescript@5.1.6)):
     dependencies:
       eventsource-parser: 1.0.0
       nanoid: 3.3.6
-      react: 18.2.0
-      solid-js: 1.8.3
       solid-swr-store: 0.10.7(solid-js@1.8.3)(swr-store@0.10.6)
       sswr: 2.0.0(svelte@4.2.2)
-      svelte: 4.2.2
       swr: 2.2.0(react@18.2.0)
       swr-store: 0.10.6
-      swrv: 1.0.4(vue@3.3.6)
+      swrv: 1.0.4(vue@3.3.6(typescript@5.1.6))
+    optionalDependencies:
+      react: 18.2.0
+      solid-js: 1.8.3
+      svelte: 4.2.2
       vue: 3.3.6(typescript@5.1.6)
 
   ajv@6.12.6:
@@ -9035,14 +9084,14 @@ snapshots:
 
   auto-bind@5.0.1: {}
 
-  autoevals@0.0.26:
+  autoevals@0.0.26(encoding@0.1.13)(zod@3.23.8):
     dependencies:
       '@types/node': 20.16.3
       esbuild: 0.19.4
       js-levenshtein: 1.1.6
       js-yaml: 4.1.0
       mustache: 4.2.0
-      openai: 4.67.1(zod@3.22.2)
+      openai: 4.67.1(encoding@0.1.13)(zod@3.23.8)
       tsx: 3.12.8
     transitivePeerDependencies:
       - encoding
@@ -9419,26 +9468,27 @@ snapshots:
     dependencies:
       browserslist: 4.21.10
 
-  cosmiconfig-typescript-loader@5.0.0(@types/node@20.16.3)(cosmiconfig@9.0.0)(typescript@5.1.6):
+  cosmiconfig-typescript-loader@5.0.0(@types/node@20.16.3)(cosmiconfig@9.0.0(typescript@5.5.4))(typescript@5.5.4):
     dependencies:
       '@types/node': 20.16.3
-      cosmiconfig: 9.0.0(typescript@5.1.6)
+      cosmiconfig: 9.0.0(typescript@5.5.4)
       jiti: 1.21.6
-      typescript: 5.1.6
+      typescript: 5.5.4
 
-  cosmiconfig@9.0.0(typescript@5.1.6):
+  cosmiconfig@9.0.0(typescript@5.5.4):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
-      typescript: 5.1.6
+    optionalDependencies:
+      typescript: 5.5.4
 
   create-require@1.1.1: {}
 
-  cross-fetch@3.1.8:
+  cross-fetch@3.1.8(encoding@0.1.13):
     dependencies:
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
 
@@ -9855,9 +9905,9 @@ snapshots:
 
   eslint-visitor-keys@4.0.0: {}
 
-  eslint@9.9.1:
+  eslint@9.9.1(jiti@1.21.6):
     dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@9.9.1)
+      '@eslint-community/eslint-utils': 4.4.0(eslint@9.9.1(jiti@1.21.6))
       '@eslint-community/regexpp': 4.11.0
       '@eslint/config-array': 0.18.0
       '@eslint/eslintrc': 3.1.0
@@ -9891,6 +9941,8 @@ snapshots:
       optionator: 0.9.3
       strip-ansi: 6.0.1
       text-table: 0.2.0
+    optionalDependencies:
+      jiti: 1.21.6
     transitivePeerDependencies:
       - supports-color
 
@@ -10136,19 +10188,19 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
-  gaxios@6.3.0:
+  gaxios@6.3.0(encoding@0.1.13):
     dependencies:
       extend: 3.0.2
       https-proxy-agent: 7.0.4
       is-stream: 2.0.1
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  gcp-metadata@6.1.0:
+  gcp-metadata@6.1.0(encoding@0.1.13):
     dependencies:
-      gaxios: 6.3.0
+      gaxios: 6.3.0(encoding@0.1.13)
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - encoding
@@ -10277,13 +10329,13 @@ snapshots:
       merge2: 1.4.1
       slash: 3.0.0
 
-  google-auth-library@9.7.0:
+  google-auth-library@9.7.0(encoding@0.1.13):
     dependencies:
       base64-js: 1.5.1
       ecdsa-sig-formatter: 1.0.11
-      gaxios: 6.3.0
-      gcp-metadata: 6.1.0
-      gtoken: 7.1.0
+      gaxios: 6.3.0(encoding@0.1.13)
+      gcp-metadata: 6.1.0(encoding@0.1.13)
+      gtoken: 7.1.0(encoding@0.1.13)
       jws: 4.0.0
     transitivePeerDependencies:
       - encoding
@@ -10303,9 +10355,9 @@ snapshots:
 
   graphql@16.8.0: {}
 
-  gtoken@7.1.0:
+  gtoken@7.1.0(encoding@0.1.13):
     dependencies:
-      gaxios: 6.3.0
+      gaxios: 6.3.0(encoding@0.1.13)
       jws: 4.0.0
     transitivePeerDependencies:
       - encoding
@@ -10421,13 +10473,13 @@ snapshots:
 
   ini@4.1.1: {}
 
-  ink-link@3.0.0(ink@4.4.1):
+  ink-link@3.0.0(ink@4.4.1(react@18.2.0)):
     dependencies:
       ink: 4.4.1(react@18.2.0)
       prop-types: 15.8.1
       terminal-link: 3.0.0
 
-  ink-text-input@5.0.1(ink@4.4.1)(react@18.2.0):
+  ink-text-input@5.0.1(ink@4.4.1(react@18.2.0))(react@18.2.0):
     dependencies:
       chalk: 5.3.0
       ink: 4.4.1(react@18.2.0)
@@ -10730,16 +10782,16 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@29.6.4(@types/node@12.20.55):
+  jest-cli@29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6)):
     dependencies:
-      '@jest/core': 29.6.4(ts-node@10.9.1)
+      '@jest/core': 29.6.4(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       '@jest/test-result': 29.6.4
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
       import-local: 3.1.0
-      jest-config: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1)
+      jest-config: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       jest-util: 29.6.3
       jest-validate: 29.6.3
       prompts: 2.4.2
@@ -10750,16 +10802,16 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.6.4(@types/node@12.20.55)(ts-node@10.9.1):
+  jest-cli@29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6)):
     dependencies:
-      '@jest/core': 29.6.4(ts-node@10.9.1)
+      '@jest/core': 29.6.4(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       '@jest/test-result': 29.6.4
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
       import-local: 3.1.0
-      jest-config: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1)
+      jest-config: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       jest-util: 29.6.3
       jest-validate: 29.6.3
       prompts: 2.4.2
@@ -10770,32 +10822,42 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.6.4(@types/node@18.15.13):
-    dependencies:
-      '@jest/core': 29.6.4(ts-node@10.9.1)
-      '@jest/test-result': 29.6.4
-      '@jest/types': 29.6.3
-      chalk: 4.1.2
-      exit: 0.1.2
-      graceful-fs: 4.2.11
-      import-local: 3.1.0
-      jest-config: 29.6.4(@types/node@18.15.13)
-      jest-util: 29.6.3
-      jest-validate: 29.6.3
-      prompts: 2.4.2
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - ts-node
-
-  jest-config@29.6.4(@types/node@12.20.55)(ts-node@10.9.1):
+  jest-config@29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6)):
     dependencies:
       '@babel/core': 7.22.20
       '@jest/test-sequencer': 29.6.4
       '@jest/types': 29.6.3
+      babel-jest: 29.6.4(@babel/core@7.22.20)
+      chalk: 4.1.2
+      ci-info: 3.8.0
+      deepmerge: 4.3.1
+      glob: 7.2.3
+      graceful-fs: 4.2.11
+      jest-circus: 29.6.4
+      jest-environment-node: 29.6.4
+      jest-get-type: 29.6.3
+      jest-regex-util: 29.6.3
+      jest-resolve: 29.6.4
+      jest-runner: 29.6.4
+      jest-util: 29.6.3
+      jest-validate: 29.6.3
+      micromatch: 4.0.5
+      parse-json: 5.2.0
+      pretty-format: 29.6.3
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
       '@types/node': 12.20.55
+      ts-node: 10.9.1(@types/node@12.20.55)(typescript@5.1.6)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - supports-color
+
+  jest-config@29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6)):
+    dependencies:
+      '@babel/core': 7.22.20
+      '@jest/test-sequencer': 29.6.4
+      '@jest/types': 29.6.3
       babel-jest: 29.6.4(@babel/core@7.22.20)
       chalk: 4.1.2
       ci-info: 3.8.0
@@ -10815,46 +10877,18 @@ snapshots:
       pretty-format: 29.6.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@types/node@12.20.55)(typescript@5.1.6)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - supports-color
-
-  jest-config@29.6.4(@types/node@18.15.13):
-    dependencies:
-      '@babel/core': 7.22.20
-      '@jest/test-sequencer': 29.6.4
-      '@jest/types': 29.6.3
+    optionalDependencies:
       '@types/node': 18.15.13
-      babel-jest: 29.6.4(@babel/core@7.22.20)
-      chalk: 4.1.2
-      ci-info: 3.8.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.6.4
-      jest-environment-node: 29.6.4
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.6.4
-      jest-runner: 29.6.4
-      jest-util: 29.6.3
-      jest-validate: 29.6.3
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 29.6.3
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
+      ts-node: 10.9.1(@types/node@18.15.13)(typescript@5.1.6)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
 
-  jest-config@29.6.4(@types/node@20.16.3)(ts-node@10.9.1):
+  jest-config@29.6.4(@types/node@20.16.3)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6)):
     dependencies:
       '@babel/core': 7.22.20
       '@jest/test-sequencer': 29.6.4
       '@jest/types': 29.6.3
-      '@types/node': 20.16.3
       babel-jest: 29.6.4(@babel/core@7.22.20)
       chalk: 4.1.2
       ci-info: 3.8.0
@@ -10874,7 +10908,40 @@ snapshots:
       pretty-format: 29.6.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 20.16.3
       ts-node: 10.9.1(@types/node@12.20.55)(typescript@5.1.6)
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - supports-color
+
+  jest-config@29.6.4(@types/node@20.16.3)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6)):
+    dependencies:
+      '@babel/core': 7.22.20
+      '@jest/test-sequencer': 29.6.4
+      '@jest/types': 29.6.3
+      babel-jest: 29.6.4(@babel/core@7.22.20)
+      chalk: 4.1.2
+      ci-info: 3.8.0
+      deepmerge: 4.3.1
+      glob: 7.2.3
+      graceful-fs: 4.2.11
+      jest-circus: 29.6.4
+      jest-environment-node: 29.6.4
+      jest-get-type: 29.6.3
+      jest-regex-util: 29.6.3
+      jest-resolve: 29.6.4
+      jest-runner: 29.6.4
+      jest-util: 29.6.3
+      jest-validate: 29.6.3
+      micromatch: 4.0.5
+      parse-json: 5.2.0
+      pretty-format: 29.6.3
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    optionalDependencies:
+      '@types/node': 20.16.3
+      ts-node: 10.9.1(@types/node@18.15.13)(typescript@5.1.6)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -10956,7 +11023,7 @@ snapshots:
       jest-util: 29.6.3
 
   jest-pnp-resolver@1.2.3(jest-resolve@29.6.4):
-    dependencies:
+    optionalDependencies:
       jest-resolve: 29.6.4
 
   jest-regex-util@29.6.3: {}
@@ -11094,36 +11161,24 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@29.6.4(@types/node@12.20.55):
+  jest@29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6)):
     dependencies:
-      '@jest/core': 29.6.4(ts-node@10.9.1)
+      '@jest/core': 29.6.4(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.6.4(@types/node@12.20.55)
+      jest-cli: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
       - supports-color
       - ts-node
 
-  jest@29.6.4(@types/node@12.20.55)(ts-node@10.9.1):
+  jest@29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6)):
     dependencies:
-      '@jest/core': 29.6.4(ts-node@10.9.1)
+      '@jest/core': 29.6.4(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1)
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - ts-node
-
-  jest@29.6.4(@types/node@18.15.13):
-    dependencies:
-      '@jest/core': 29.6.4(ts-node@10.9.1)
-      '@jest/types': 29.6.3
-      import-local: 3.1.0
-      jest-cli: 29.6.4(@types/node@18.15.13)
+      jest-cli: 29.6.4(@types/node@18.15.13)(ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -11494,7 +11549,7 @@ snapshots:
 
   ms@2.1.2: {}
 
-  msw@1.2.5(typescript@5.1.6):
+  msw@1.2.5(encoding@0.1.13)(typescript@5.1.6):
     dependencies:
       '@mswjs/cookies': 0.2.2
       '@mswjs/interceptors': 0.17.9
@@ -11509,13 +11564,14 @@ snapshots:
       inquirer: 8.2.6
       is-node-process: 1.2.0
       js-levenshtein: 1.1.6
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       outvariant: 1.4.0
       path-to-regexp: 6.2.1
       strict-event-emitter: 0.4.6
       type-fest: 2.19.0
-      typescript: 5.1.6
       yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.1.6
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -11536,9 +11592,11 @@ snapshots:
 
   node-domexception@1.0.0: {}
 
-  node-fetch@2.7.0:
+  node-fetch@2.7.0(encoding@0.1.13):
     dependencies:
       whatwg-url: 5.0.0
+    optionalDependencies:
+      encoding: 0.1.13
 
   node-forge@1.3.1: {}
 
@@ -11619,7 +11677,7 @@ snapshots:
     dependencies:
       mimic-function: 5.0.1
 
-  openai@4.57.0(zod@3.22.2):
+  openai@4.57.0(encoding@0.1.13)(zod@3.22.2):
     dependencies:
       '@types/node': 18.15.13
       '@types/node-fetch': 2.6.4
@@ -11628,13 +11686,30 @@ snapshots:
       agentkeepalive: 4.5.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       qs: 6.13.0
+    optionalDependencies:
       zod: 3.22.2
     transitivePeerDependencies:
       - encoding
 
-  openai@4.67.1(zod@3.22.2):
+  openai@4.57.0(encoding@0.1.13)(zod@3.23.8):
+    dependencies:
+      '@types/node': 18.15.13
+      '@types/node-fetch': 2.6.4
+      '@types/qs': 6.9.15
+      abort-controller: 3.0.0
+      agentkeepalive: 4.5.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0(encoding@0.1.13)
+      qs: 6.13.0
+    optionalDependencies:
+      zod: 3.23.8
+    transitivePeerDependencies:
+      - encoding
+
+  openai@4.67.1(encoding@0.1.13)(zod@3.22.2):
     dependencies:
       '@types/node': 18.15.13
       '@types/node-fetch': 2.6.4
@@ -11642,12 +11717,13 @@ snapshots:
       agentkeepalive: 4.5.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
+    optionalDependencies:
       zod: 3.22.2
     transitivePeerDependencies:
       - encoding
 
-  openai@4.67.1(zod@3.23.8):
+  openai@4.67.1(encoding@0.1.13)(zod@3.23.8):
     dependencies:
       '@types/node': 18.15.13
       '@types/node-fetch': 2.6.4
@@ -11655,7 +11731,8 @@ snapshots:
       agentkeepalive: 4.5.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
+    optionalDependencies:
       zod: 3.23.8
     transitivePeerDependencies:
       - encoding
@@ -12431,7 +12508,7 @@ snapshots:
 
   swrev@4.0.0: {}
 
-  swrv@1.0.4(vue@3.3.6):
+  swrv@1.0.4(vue@3.3.6(typescript@5.1.6)):
     dependencies:
       vue: 3.3.6(typescript@5.1.6)
 
@@ -12477,12 +12554,11 @@ snapshots:
 
   ts-dedent@2.2.0: {}
 
-  ts-jest@29.1.1(@babel/core@7.22.20)(jest@29.6.4)(typescript@5.1.6):
+  ts-jest@29.1.1(@babel/core@7.22.20)(@jest/types@29.6.3)(babel-jest@29.6.4(@babel/core@7.22.20))(jest@29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6)))(typescript@5.1.6):
     dependencies:
-      '@babel/core': 7.22.20
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1)
+      jest: 29.6.4(@types/node@12.20.55)(ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6))
       jest-util: 29.6.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -12490,6 +12566,10 @@ snapshots:
       semver: 7.5.4
       typescript: 5.1.6
       yargs-parser: 21.1.1
+    optionalDependencies:
+      '@babel/core': 7.22.20
+      '@jest/types': 29.6.3
+      babel-jest: 29.6.4(@babel/core@7.22.20)
 
   ts-node@10.9.1(@types/node@12.20.55)(typescript@5.1.6):
     dependencies:
@@ -12508,6 +12588,25 @@ snapshots:
       typescript: 5.1.6
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+
+  ts-node@10.9.1(@types/node@18.15.13)(typescript@5.1.6):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.9
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 18.15.13
+      acorn: 8.11.3
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.1.6
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    optional: true
 
   ts-pattern@5.0.5: {}
 
@@ -12702,8 +12801,9 @@ snapshots:
       '@vue/compiler-dom': 3.3.6
       '@vue/compiler-sfc': 3.3.6
       '@vue/runtime-dom': 3.3.6
-      '@vue/server-renderer': 3.3.6(vue@3.3.6)
+      '@vue/server-renderer': 3.3.6(vue@3.3.6(typescript@5.1.6))
       '@vue/shared': 3.3.6
+    optionalDependencies:
       typescript: 5.1.6
 
   walker@1.0.8:

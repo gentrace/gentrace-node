@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+### Minor Changes
+
+- 4159312: Adds run/step error support
+
 ## 3.1.2
 
 ### Patch Changes

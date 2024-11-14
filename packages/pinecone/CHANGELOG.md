@@ -1,5 +1,13 @@
 # @gentrace/pinecone
 
+## 4.0.0
+
+### Patch Changes
+
+- 4159312: Adds run/step error support
+- Updated dependencies [4159312]
+  - @gentrace/core@3.2.0
+
 ## 3.1.0
 
 ### Minor Changes

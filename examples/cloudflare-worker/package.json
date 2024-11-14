@@ -1,6 +1,6 @@
 {
   "name": "@examples/cloudflare-worker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "dotenv wrangler dev"
@@ -13,8 +13,8 @@
     "wrangler": "^3.0.0"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^3.0.0",
-    "@gentrace/openai": "workspace:^4.1.9",
+    "@gentrace/core": "workspace:^3.2.0",
+    "@gentrace/openai": "workspace:^5.0.0",
     "ai": "^2.2.17"
   }
 }
