@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.1
+
+### Patch Changes
+
+- d3a957d: fix: Remove excessive logging
+
 ## 3.2.0
 
 ### Minor Changes
