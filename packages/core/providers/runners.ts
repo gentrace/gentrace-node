@@ -135,11 +135,6 @@ export async function submitTestRunners(
       triggerRemoteEvals,
     );
 
-    console.log(
-      "[SUBMIT_TEST_RUNNERS] Submission payload:",
-      JSON.stringify(body, null, 2),
-    );
-
     const response = await globalGentraceApi.v1TestResultPost(body);
     return response.data;
   } catch (e) {
