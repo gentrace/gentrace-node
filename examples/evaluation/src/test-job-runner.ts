@@ -23,7 +23,6 @@ const writeEmailPromptParameter = templateParameter({
     "Write an email to {{toEmail}} from ({{fromName}}) {{fromEmail}} according to these instructions: {{instructions}}",
 });
 
-let i = 0;
 const writeEmail = defineInteraction({
   name: "Write email",
   fn: async ({ fromName, fromEmail, toEmail, instructions }) => {
@@ -79,4 +78,5 @@ const guessTheYear = defineInteraction({
   parameters: [randomYearParameter],
 });
 
+// Open a websocket connection to the Gentrace server
 listen();
