@@ -29,6 +29,8 @@ export let GENTRACE_RUN_NAME = "";
 
 export let GENTRACE_RESULT_NAME = "";
 
+export let GENTRACE_ENVIRONMENT_NAME = "";
+
 export let globalGentraceConfig: Configuration | null = null;
 
 export let globalGentraceApi: V1Api | null = null;
@@ -53,6 +55,7 @@ export function init(values?: {
   branch?: string;
   commit?: string;
   showConnectionErrors?: string;
+  environmentName?: string;
 
   // @deprecated: use resultName instead
   runName?: string;
@@ -66,6 +69,7 @@ export function init(values?: {
     showConnectionErrors,
     runName,
     resultName,
+    environmentName,
   } = values ?? {};
 
   if (!apiKey && !getProcessEnv("GENTRACE_API_KEY")) {
@@ -79,6 +83,9 @@ export function init(values?: {
   GENTRACE_RUN_NAME = runName || getProcessEnv("GENTRACE_RUN_NAME");
 
   GENTRACE_RESULT_NAME = resultName || getProcessEnv("GENTRACE_RESULT_NAME");
+
+  GENTRACE_ENVIRONMENT_NAME =
+    environmentName || getProcessEnv("GENTRACE_ENVIRONMENT_NAME");
 
   GENTRACE_SHOW_CONNECTION_ERRORS =
     showConnectionErrors || getProcessEnv("GENTRACE_SHOW_CONNECTION_ERRORS");

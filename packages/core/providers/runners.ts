@@ -6,8 +6,6 @@ import { GentracePlugin } from "./plugin";
 import {
   constructSubmissionPayloadAdvanced,
   PipelineRunDataTuple,
-  PipelineRunLocalDataTuple,
-  PipelineRunTestCaseTuple,
   TestRun,
 } from "./test-result";
 import {
@@ -31,7 +29,7 @@ export const getTestRunners = async (
   caseFilter?: (
     testCase: Omit<TestCase, "createdAt" | "updatedAt" | "archivedAt">,
   ) => boolean,
-): Promise<Array<PipelineRunTestCaseTuple>> => {
+): Promise<Array<PipelineRunDataTuple>> => {
   if (!globalGentraceApi) {
     throw new Error("Gentrace API key not initialized. Call init() first.");
   }
@@ -64,7 +62,7 @@ export const getTestRunners = async (
   const testCases = response.data.testCases ?? [];
 
   // create tuples of pipeline run and test case
-  const testRunners: Array<PipelineRunTestCaseTuple> = [];
+  const testRunners: Array<PipelineRunDataTuple> = [];
 
   for (const testCase of testCases) {
     if (caseFilter && !caseFilter(testCase)) {
@@ -97,9 +95,7 @@ interface SubmitTestRunnersOptions {
  */
 export async function submitTestRunners(
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
-  pipelineRunTestCases: Array<
-    PipelineRunDataTuple<TestCase | TestCaseV2 | LocalTestData>
-  >,
+  pipelineRunTestCases: Array<PipelineRunDataTuple>,
   options: SubmitTestRunnersOptions = {},
 ): Promise<V1TestResultPost200Response> {
   const { context, caseFilter, triggerRemoteEvals } = options;
@@ -153,7 +149,7 @@ export async function submitTestRunners(
  */
 export async function updateTestResultWithRunners(
   resultId: string,
-  runners: PipelineRunDataTuple<TestCase | TestCaseV2 | LocalTestData>[],
+  runners: PipelineRunDataTuple[],
 ) {
   const testRuns: TestRun[] = [];
 
@@ -177,12 +173,12 @@ export async function updateTestResultWithRunners(
 export function createTestRunners(
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,
   localData: LocalTestData[],
-): Array<PipelineRunLocalDataTuple> {
+): Array<PipelineRunDataTuple> {
   if (!pipeline) {
     throw new Error(`Invalid pipeline found`);
   }
 
-  const testRunners: Array<PipelineRunLocalDataTuple> = [];
+  const testRunners: Array<PipelineRunDataTuple> = [];
 
   for (const data of localData) {
     const pipelineRun = pipeline.start();

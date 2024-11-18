@@ -4,6 +4,7 @@ const PIPELINE_SLUG = "monkies";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
+  basePath: process.env.GENTRACE_BASE_PATH ?? "",
   resultName: "Vivek's Result Name",
 });
 
