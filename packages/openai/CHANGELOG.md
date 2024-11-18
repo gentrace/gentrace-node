@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- Updated dependencies [d12adcd]
+  - @gentrace/core@3.3.0
+
+## 5.0.0
+
+### Patch Changes
+
 - 4159312: Adds run/step error support
 - Updated dependencies [4159312]
   - @gentrace/core@3.2.0

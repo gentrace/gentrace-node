@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- d12adcd: Adding experiment runner
+
 ## 3.2.1
 
 ### Patch Changes

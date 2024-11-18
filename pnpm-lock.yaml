@@ -338,7 +338,7 @@ importers:
   examples/full:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.2.0
+        specifier: workspace:^3.3.0
         version: link:../../packages/core
       '@gentrace/openai':
         specifier: workspace:^5.0.0
@@ -530,10 +530,10 @@ importers:
   examples/pinecone-v0:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.2.0
+        specifier: workspace:^3.3.0
         version: link:../../packages/core
       '@gentrace/pinecone-v0':
-        specifier: workspace:^1.0.0
+        specifier: workspace:^2.0.0
         version: link:../../packages/pinecone-v0
     devDependencies:
       '@gentrace/tsconfig':
@@ -969,7 +969,7 @@ importers:
   packages/openai:
     devDependencies:
       '@gentrace/core':
-        specifier: workspace:^3.2.0
+        specifier: workspace:^3.3.0
         version: link:../core
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -1026,7 +1026,7 @@ importers:
   packages/pinecone:
     devDependencies:
       '@gentrace/core':
-        specifier: workspace:^3.2.0
+        specifier: workspace:^3.3.0
         version: link:../core
       '@gentrace/tsconfig':
         specifier: workspace:*
@@ -1083,7 +1083,7 @@ importers:
   packages/pinecone-v0:
     devDependencies:
       '@gentrace/core':
-        specifier: workspace:^3.2.0
+        specifier: workspace:^3.3.0
         version: link:../core
       '@gentrace/tsconfig':
         specifier: workspace:*
