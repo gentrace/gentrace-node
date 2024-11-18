@@ -1,5 +1,13 @@
 # @examples/cloudflare-worker
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [d12adcd]
+  - @gentrace/core@3.3.0
+  - @gentrace/openai@5.0.0
+
 ## 0.0.2
 
 ### Patch Changes

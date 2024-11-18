@@ -1,14 +1,14 @@
 {
   "name": "@examples/pinecone",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/core": "workspace:^3.2.0",
-    "@gentrace/pinecone": "workspace:^3.0.0",
+    "@gentrace/core": "workspace:^3.3.0",
+    "@gentrace/pinecone": "workspace:^4.0.0",
     "@pinecone-database/pinecone": "^3"
   },
   "devDependencies": {
