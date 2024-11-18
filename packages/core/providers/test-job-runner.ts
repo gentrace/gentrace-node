@@ -354,7 +354,7 @@ async function runWebSocket(
   let pluginId: string | undefined;
   let isClosed = false;
   const id = makeUuid();
-  let intervals: NodeJS.Timeout[] = [];
+  let intervals: ReturnType<typeof setInterval>[] = [];
   let ws = new WebSocket(wsBasePath);
 
   const sendMessage = (message: OutboundMessage) => {
@@ -479,10 +479,6 @@ async function runWebSocket(
       } catch (e) {
         runner.setError(e.toString());
       }
-      // DS TODO: remove this
-      // await new Promise((resolve) =>
-      //   setTimeout(resolve, 1000 * 15 * Math.random()),
-      // );
       await updateTestResultWithRunners(testJobId, [
         [runner, { id: testCase.id }],
       ]);
