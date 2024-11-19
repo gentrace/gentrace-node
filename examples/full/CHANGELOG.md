@@ -1,5 +1,20 @@
 # @examples/full
 
+## 0.3.0
+
+### Minor Changes
+
+- d12adcd: Adding experiment runner
+
+### Patch Changes
+
+- Updated dependencies [4573389]
+- Updated dependencies [0135baa]
+- Updated dependencies [b6341a9]
+- Updated dependencies [d12adcd]
+  - @gentrace/core@3.3.0
+  - @gentrace/openai@4.2.1
+
 ## 0.2.0
 
 ### Minor Changes

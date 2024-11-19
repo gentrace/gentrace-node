@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.2.1
+
+### Patch Changes
+
+- 4573389: Quick fix for reference
+
 ## 5.0.0
 
 ### Patch Changes
