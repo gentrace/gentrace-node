@@ -25,7 +25,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@gentrace/core": "workspace:^3",
+    "@gentrace/core": "^3",
     "@pinecone-database/pinecone": "^3"
   },
   "devDependencies": {

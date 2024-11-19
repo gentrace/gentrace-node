@@ -23,7 +23,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@gentrace/core": "workspace:^3",
+    "@gentrace/core": "^3",
     "openai": "^4.56.0"
   },
   "devDependencies": {
