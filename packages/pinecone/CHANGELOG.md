@@ -1,5 +1,11 @@
 # @gentrace/pinecone
 
+## 3.1.1
+
+### Patch Changes
+
+- 4573389: Quick fix for reference
+
 ## 4.0.0
 
 ### Patch Changes
