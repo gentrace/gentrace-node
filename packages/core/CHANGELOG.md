@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.0
+
+### Minor Changes
+
+- 0135baa: Make sure steps are bumped correctly
+- d12adcd: Adding experiment runner
+
 ## 3.2.1
 
 ### Patch Changes
