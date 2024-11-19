@@ -1,5 +1,14 @@
 # @gentrace/pinecone
 
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies [4573389]
+- Updated dependencies [0135baa]
+- Updated dependencies [d12adcd]
+  - @gentrace/core@3.3.0
+
 ## 1.0.0
 
 ### Patch Changes

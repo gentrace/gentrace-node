@@ -1,5 +1,15 @@
 # @examples/openai
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [4573389]
+- Updated dependencies [0135baa]
+- Updated dependencies [d12adcd]
+  - @gentrace/core@3.3.0
+  - @gentrace/openai@5.0.0
+
 ## 0.1.2
 
 ### Patch Changes
