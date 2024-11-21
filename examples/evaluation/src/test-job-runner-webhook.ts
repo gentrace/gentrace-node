@@ -8,6 +8,7 @@ import {
 import OpenAI from "openai";
 import { z } from "zod";
 import express from "express";
+import { createHmac } from "crypto";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
@@ -81,7 +82,44 @@ const guessTheYear = defineInteraction({
 
 // Create Express app
 const app = express();
-app.use(express.json());
+
+// Verify the signature of the request
+app.use(
+  express.json({
+    verify: (req: any, res: express.Response, buf, next) => {
+      req.rawBody = buf;
+      const webhookSecret = process.env.GENTRACE_WEBHOOK_SECRET ?? "";
+
+      // Get the signature from the header
+      const signature = req.header("x-gentrace-signature");
+
+      if (!signature) {
+        throw new Error("No signature provided");
+      }
+
+      const calculatedSignature = `sha256=${createHmac("sha256", webhookSecret)
+        .update(req.rawBody)
+        .digest("hex")}`;
+
+      // Verify the signature
+      if (signature !== calculatedSignature) {
+        throw new Error("Invalid signature");
+      }
+    },
+  }),
+);
+
+// Add error handling middleware
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    res.status(401).send("Unauthorized");
+  },
+);
 
 // Add webhook endpoint
 app.post("/", async (req: express.Request, res: express.Response) => {
