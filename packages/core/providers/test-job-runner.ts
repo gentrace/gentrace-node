@@ -2,6 +2,7 @@ import {
   GENTRACE_API_KEY,
   GENTRACE_ENVIRONMENT_NAME,
   getGentraceBasePath,
+  globalGentraceConfig,
 } from "./init";
 import { Pipeline } from "./pipeline";
 import { updateTestResultWithRunners } from "./runners";
@@ -107,7 +108,13 @@ type InboundMessageRunTestSuite = {
   testSuiteName: string;
 };
 
+type InboundMessageEnvironmentDetails = {
+  type: "environment-details";
+  id: string;
+};
+
 type InboundMessage =
+  | InboundMessageEnvironmentDetails
   | InboundMessageTestInteractionInputs
   | InboundMessageRunTestInteraction
   | InboundMessageRunTestSuite;
@@ -116,13 +123,15 @@ type OutboundMessageHeartbeat = {
   type: "heartbeat";
 };
 
+type InteractionMetadata = {
+  name: string;
+  hasValidation: boolean;
+  parameters: Parameter[];
+};
+
 type OutboundMessageRegisterInteraction = {
   type: "register-interaction";
-  interaction: {
-    name: string;
-    hasValidation: boolean;
-    parameters: Parameter[];
-  };
+  interaction: InteractionMetadata;
 };
 
 type OutboundMessageRegisterTestSuite = {
@@ -132,12 +141,6 @@ type OutboundMessageRegisterTestSuite = {
   };
 };
 
-type OutboundMessageFinishTestJob = {
-  type: "test-job-finished";
-  testJobId: string;
-  pipelineId: string;
-};
-
 type OutboundMessageTestInteractionInputValidationResults = {
   type: "run-interaction-input-validation-results";
   id: string;
@@ -145,19 +148,24 @@ type OutboundMessageTestInteractionInputValidationResults = {
   data: { id: string; status: "success" | "failure"; error?: string }[];
 };
 
-type OutboundMessageDataSubmitted = {
-  type: "data-submitted";
-  testJobId: string;
-  pipelineId: string;
+type OutboundMessageEnvironmentDetails = {
+  type: "environment-details";
+  interactions: InteractionMetadata[];
+  testSuites: { name: string }[];
+};
+
+type OutboundMessageConfirmation = {
+  type: "confirmation";
+  ok: boolean;
 };
 
 type OutboundMessage =
   | OutboundMessageHeartbeat
+  | OutboundMessageEnvironmentDetails
   | OutboundMessageRegisterInteraction
   | OutboundMessageRegisterTestSuite
   | OutboundMessageTestInteractionInputValidationResults
-  | OutboundMessageFinishTestJob
-  | OutboundMessageDataSubmitted;
+  | OutboundMessageConfirmation;
 
 const makeUuid = () => {
   // Generate 16 random bytes
@@ -214,7 +222,6 @@ const overridesAsyncLocalStorage = new AsyncLocalStorage<Record<string, any>>();
 const makeGetValue = <T>(name: string, defaultValue: T): (() => T) => {
   return () => {
     const overrides = overridesAsyncLocalStorage.getStore();
-    console.log("get value", name, overrides);
     return overrides?.[name] ?? defaultValue;
   };
 };
@@ -332,6 +339,268 @@ function makeParallelRunner(parallelism?: undefined | number) {
   };
 }
 
+type WebSocketTransport = {
+  type: "ws";
+  pluginId: string;
+  ws: WebSocket;
+  isClosed: boolean;
+  messageQueue: any[];
+};
+
+type HttpTransport = {
+  type: "http";
+  sendResponse: (responseBody: any) => void;
+};
+
+type Transport = WebSocketTransport | HttpTransport;
+
+async function sendMessage(message: OutboundMessage, transport: Transport) {
+  if (transport.type === "ws") {
+    if (!transport.pluginId) {
+      transport.messageQueue.push(message);
+      return;
+    }
+    if (transport.isClosed) {
+      return;
+    }
+    transport.ws.send(
+      JSON.stringify({
+        id: makeUuid(),
+        for: transport.pluginId,
+        data: message,
+      }),
+    );
+  } else {
+    transport.sendResponse(message);
+  }
+}
+
+const handleRunInteractionInputValidation = async (
+  message: InboundMessageTestInteractionInputs,
+  transport: Transport,
+) => {
+  const { id, interactionName, data: testCases } = message;
+  const interaction = interactions[interactionName];
+  if (!interaction) {
+    sendMessage(
+      {
+        type: "run-interaction-input-validation-results",
+        id,
+        interactionName,
+        data: testCases.map((tc) => ({
+          id: tc.id,
+          status: "failure",
+          error: `Interaction ${interactionName} not found`,
+        })),
+      },
+      transport,
+    );
+  }
+  const validationResults = await Promise.all(
+    testCases.map((testCase) => validate(interaction, testCase)),
+  );
+  sendMessage(
+    {
+      type: "run-interaction-input-validation-results",
+      id,
+      interactionName,
+      data: validationResults,
+    },
+    transport,
+  );
+};
+
+const runTestCaseThroughInteraction = async (
+  pipelineId: string,
+  testJobId: string,
+  interactionName: string,
+  testCase: { id: string; inputs: any },
+) => {
+  const pipeline = new Pipeline<{}>({
+    id: pipelineId,
+  });
+  const interaction = interactions[interactionName];
+
+  if (!interaction) {
+    // TODO: submit error to gentrace
+    return;
+  }
+  const runner = pipeline.start();
+  try {
+    try {
+      await runner.measure(interaction.fn, [testCase.inputs]);
+    } catch (e) {
+      runner.setError(e.toString());
+    }
+    await updateTestResultWithRunners(testJobId, [
+      [runner, { id: testCase.id }],
+    ]);
+  } catch (e) {
+    // TODO: submit error to gentrace
+    console.error(e);
+    throw e;
+  }
+};
+
+const handleRunTestInteraction = async (
+  message: InboundMessageRunTestInteraction,
+) => {
+  const {
+    testJobId,
+    pipelineId,
+    interactionName,
+    parallelism,
+    data: testCases,
+    overrides,
+  } = message;
+  const interaction = interactions[interactionName];
+  if (!interaction) {
+    return;
+  }
+  overridesAsyncLocalStorage.run(overrides, async () => {
+    const overrides = overridesAsyncLocalStorage.getStore();
+    console.log("overrides", overrides);
+    const parallelRunner = makeParallelRunner(parallelism);
+    for (const testCase of testCases) {
+      parallelRunner.run(() =>
+        runTestCaseThroughInteraction(
+          pipelineId,
+          testJobId,
+          interactionName,
+          testCase,
+        ),
+      );
+    }
+    const results = await Promise.allSettled(parallelRunner.results);
+    const erroredResults = results.filter<PromiseRejectedResult>(
+      (r): r is PromiseRejectedResult => r.status === "rejected",
+    );
+    if (erroredResults.length > 0) {
+      console.error(
+        "Errors in test job:",
+        erroredResults.map((r) => r.reason),
+      );
+    }
+    await fetch(`${globalGentraceConfig.basePath}/v1/test-result/status`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(globalGentraceConfig.baseOptions?.headers ?? {}),
+      },
+      body: JSON.stringify({
+        id: testJobId,
+        finished: true,
+      }),
+    });
+  });
+};
+
+const handleRunTestSuite = async (message: InboundMessageRunTestSuite) => {
+  const { testSuiteName, testJobId, pipelineId } = message;
+  const testSuite = testSuites[testSuiteName];
+  if (!testSuite) {
+    return;
+  }
+  await testSuite.fn();
+  await fetch(`${globalGentraceConfig.basePath}/v1/test-result/status`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(globalGentraceConfig.baseOptions?.headers ?? {}),
+    },
+    body: JSON.stringify({
+      id: testJobId,
+      finished: true,
+    }),
+  });
+};
+
+const onInteraction = (
+  interaction: InteractionDefinition,
+  transport: Transport,
+) => {
+  sendMessage(
+    {
+      type: "register-interaction",
+      interaction: {
+        name: interaction.name,
+        hasValidation: !!interaction.inputType,
+        parameters:
+          interaction.parameters
+            ?.map(({ name }) => parameters[name])
+            .filter((v) => !!v) ?? [],
+      },
+    },
+    transport,
+  );
+};
+
+const onTestSuite = (testSuite: TestSuiteDefinition, transport: Transport) => {
+  sendMessage(
+    {
+      type: "register-test-suite",
+      testSuite: {
+        name: testSuite.name,
+      },
+    },
+    transport,
+  );
+};
+
+const handleEnvironmentDetails = async (
+  message: InboundMessageEnvironmentDetails,
+  transport: Transport,
+) => {
+  sendMessage(
+    {
+      type: "environment-details",
+      interactions: Object.values(interactions).map((interaction) => ({
+        name: interaction.name,
+        hasValidation: !!interaction.inputType,
+        parameters:
+          interaction.parameters?.map(({ name }) => parameters[name]) ?? [],
+      })),
+      testSuites: Object.values(testSuites).map((testSuite) => ({
+        name: testSuite.name,
+      })),
+    },
+    transport,
+  );
+};
+
+const onMessage = async (message: InboundMessage, transport: Transport) => {
+  switch (message.type) {
+    case "environment-details":
+      await handleEnvironmentDetails(message, transport);
+      break;
+    case "run-interaction-input-validation":
+      await handleRunInteractionInputValidation(message, transport);
+      break;
+    case "run-test-interaction":
+      // Immediately send confirmation to avoid timeout, then run everything
+      // else async
+      sendMessage(
+        {
+          type: "confirmation",
+          ok: true,
+        },
+        transport,
+      );
+      await handleRunTestInteraction(message);
+      break;
+    case "run-test-suite":
+      sendMessage(
+        {
+          type: "confirmation",
+          ok: true,
+        },
+        transport,
+      );
+      await handleRunTestSuite(message);
+      break;
+  }
+};
+
 async function runWebSocket(
   environmentName: string | undefined,
   resolve: () => void,
@@ -349,34 +618,37 @@ async function runWebSocket(
     }
   }
 
-  const messageQueue: any[] = [];
+  const transport: WebSocketTransport = {
+    type: "ws",
+    pluginId: undefined,
+    ws: new WebSocket(wsBasePath),
+    isClosed: false,
+    messageQueue: [],
+  };
 
-  let pluginId: string | undefined;
-  let isClosed = false;
   const id = makeUuid();
   let intervals: ReturnType<typeof setInterval>[] = [];
-  let ws = new WebSocket(wsBasePath);
 
   const sendMessage = (message: OutboundMessage) => {
-    if (!pluginId) {
-      messageQueue.push(message);
+    if (!transport.pluginId) {
+      transport.messageQueue.push(message);
       return;
     }
-    if (isClosed) {
+    if (transport.isClosed) {
       return;
     }
     console.log("WebSocket sending message:", JSON.stringify(message, null, 2));
-    ws.send(
+    transport.ws.send(
       JSON.stringify({
         id: makeUuid(),
-        for: pluginId,
+        for: transport.pluginId,
         data: message,
       }),
     );
   };
 
   const setup = () => {
-    messageQueue.forEach(sendMessage);
+    transport.messageQueue.forEach(sendMessage);
     intervals.push(
       setInterval(() => {
         console.log("sending heartbeat");
@@ -388,18 +660,18 @@ async function runWebSocket(
   };
 
   const cleanup = () => {
-    isClosed = true;
+    transport.isClosed = true;
     delete listeners[id];
     intervals.forEach(clearInterval);
     intervals = [];
   };
 
-  ws.onopen = () => {
-    if (isClosed) {
+  transport.ws.onopen = () => {
+    if (transport.isClosed) {
       return;
     }
     console.log("WebSocket connection opened, sending setup message");
-    ws.send(
+    transport.ws.send(
       JSON.stringify({
         id: makeUuid(),
         init: "test-job-runner",
@@ -414,11 +686,11 @@ async function runWebSocket(
     // WSS layer, not plugin layer
     intervals.push(
       setInterval(() => {
-        if (isClosed) {
+        if (transport.isClosed) {
           return;
         }
         console.log("sending ping");
-        ws.send(
+        transport.ws.send(
           JSON.stringify({
             id: makeUuid(),
             ping: true,
@@ -428,135 +700,8 @@ async function runWebSocket(
     );
   };
 
-  const handleRunInteractionInputValidation = async (
-    message: InboundMessageTestInteractionInputs,
-  ) => {
-    const { id, interactionName, data: testCases } = message;
-    const interaction = interactions[interactionName];
-    if (!interaction) {
-      sendMessage({
-        type: "run-interaction-input-validation-results",
-        id,
-        interactionName,
-        data: testCases.map((tc) => ({
-          id: tc.id,
-          status: "failure",
-          error: `Interaction ${interactionName} not found`,
-        })),
-      });
-      return;
-    }
-    const validationResults = await Promise.all(
-      testCases.map((testCase) => validate(interaction, testCase)),
-    );
-    sendMessage({
-      type: "run-interaction-input-validation-results",
-      id,
-      interactionName,
-      data: validationResults,
-    });
-  };
-
-  const runTestCaseThroughInteraction = async (
-    pipelineId: string,
-    testJobId: string,
-    interactionName: string,
-    testCase: { id: string; inputs: any },
-  ) => {
-    const pipeline = new Pipeline<{}>({
-      id: pipelineId,
-    });
-    const interaction = interactions[interactionName];
-
-    if (!interaction) {
-      // TODO: submit error to gentrace
-      return;
-    }
-    const runner = pipeline.start();
-    try {
-      try {
-        await runner.measure(interaction.fn, [testCase.inputs]);
-      } catch (e) {
-        runner.setError(e.toString());
-      }
-      await updateTestResultWithRunners(testJobId, [
-        [runner, { id: testCase.id }],
-      ]);
-      sendMessage({
-        type: "data-submitted",
-        testJobId,
-        pipelineId,
-      });
-    } catch (e) {
-      // TODO: submit error to gentrace
-      console.error(e);
-      throw e;
-    }
-  };
-
-  const handleRunTestInteraction = async (
-    message: InboundMessageRunTestInteraction,
-  ) => {
-    const {
-      testJobId,
-      pipelineId,
-      interactionName,
-      parallelism,
-      data: testCases,
-      overrides,
-    } = message;
-    const interaction = interactions[interactionName];
-    if (!interaction) {
-      return;
-    }
-    overridesAsyncLocalStorage.run(overrides, async () => {
-      const overrides = overridesAsyncLocalStorage.getStore();
-      console.log("overrides", overrides);
-      const parallelRunner = makeParallelRunner(parallelism);
-      for (const testCase of testCases) {
-        parallelRunner.run(() =>
-          runTestCaseThroughInteraction(
-            pipelineId,
-            testJobId,
-            interactionName,
-            testCase,
-          ),
-        );
-      }
-      const results = await Promise.allSettled(parallelRunner.results);
-      const erroredResults = results.filter<PromiseRejectedResult>(
-        (r): r is PromiseRejectedResult => r.status === "rejected",
-      );
-      if (erroredResults.length > 0) {
-        console.error(
-          "Errors in test job:",
-          erroredResults.map((r) => r.reason),
-        );
-      }
-      sendMessage({
-        type: "test-job-finished",
-        testJobId,
-        pipelineId,
-      });
-    });
-  };
-
-  const handleRunTestSuite = async (message: InboundMessageRunTestSuite) => {
-    const { testSuiteName, testJobId, pipelineId } = message;
-    const testSuite = testSuites[testSuiteName];
-    if (!testSuite) {
-      return;
-    }
-    await testSuite.fn();
-    sendMessage({
-      type: "test-job-finished",
-      testJobId,
-      pipelineId,
-    });
-  };
-
-  ws.onmessage = async (event) => {
-    if (isClosed) {
+  transport.ws.onmessage = async (event) => {
+    if (transport.isClosed) {
       return;
     }
     console.log("WebSocket message received:", event.data);
@@ -565,7 +710,7 @@ async function runWebSocket(
       typeof event.data === "string" ? event.data : event.data.toString(),
     );
     if (messageWrapper?.data?.pluginId) {
-      pluginId = messageWrapper.data.pluginId;
+      transport.pluginId = messageWrapper.data.pluginId;
       setup();
       return;
     }
@@ -578,25 +723,15 @@ async function runWebSocket(
 
     try {
       const message = messageWrapper.data as InboundMessage;
-      switch (message.type) {
-        case "run-interaction-input-validation":
-          await handleRunInteractionInputValidation(message);
-          break;
-        case "run-test-interaction":
-          await handleRunTestInteraction(message);
-          break;
-        case "run-test-suite":
-          await handleRunTestSuite(message);
-          break;
-      }
+      await onMessage(message, transport);
     } catch (e) {
       console.error("Error in WebSocket message handler:", e);
       reject(e);
     }
   };
 
-  ws.onclose = () => {
-    if (isClosed) {
+  transport.ws.onclose = () => {
+    if (transport.isClosed) {
       return;
     }
     cleanup();
@@ -604,64 +739,45 @@ async function runWebSocket(
     reject(new Error("WebSocket connection closed"));
   };
 
-  ws.onerror = (error) => {
+  transport.ws.onerror = (error) => {
     console.error("Gentrace websocket error:", error);
   };
 
   // wait for close signal from process
   process.on("SIGINT", () => {
-    if (isClosed) {
+    if (transport.isClosed) {
       return;
     }
     console.log("Received SIGINT, closing WebSocket connection");
     cleanup();
-    ws.close();
+    transport.ws.close();
     resolve();
   });
 
   process.on("SIGTERM", () => {
-    if (isClosed) {
+    if (transport.isClosed) {
       return;
     }
     console.log("Received SIGTERM, closing WebSocket connection");
     cleanup();
-    ws.close();
+    transport.ws.close();
     resolve();
   });
 
-  const onInteraction = (interaction: InteractionDefinition) => {
-    sendMessage({
-      type: "register-interaction",
-      interaction: {
-        name: interaction.name,
-        hasValidation: !!interaction.inputType,
-        parameters:
-          interaction.parameters
-            ?.map(({ name }) => parameters[name])
-            .filter((v) => !!v) ?? [],
-      },
-    });
-  };
-
-  const onTestSuite = (testSuite: TestSuiteDefinition) => {
-    sendMessage({
-      type: "register-test-suite",
-      testSuite: {
-        name: testSuite.name,
-      },
-    });
-  };
-
-  Object.values(interactions).forEach(onInteraction);
-  Object.values(testSuites).forEach(onTestSuite);
+  Object.values(interactions).forEach((interaction) =>
+    onInteraction(interaction, transport),
+  );
+  Object.values(testSuites).forEach((testSuite) =>
+    onTestSuite(testSuite, transport),
+  );
 
   listeners[id] = (event) => {
     switch (event.type) {
       case "register-interaction":
-        onInteraction(event.interaction);
+        onInteraction(event.interaction, transport);
         break;
       case "register-test-suite":
-        onTestSuite(event.testSuite);
+        onTestSuite(event.testSuite, transport);
         break;
     }
   };
@@ -711,4 +827,15 @@ export function listen(values?: {
 }): Promise<void> {
   const { environmentName } = values ?? {};
   return listenInner({ environmentName, retries: 0 });
+}
+
+export async function handleWebhook(
+  body: any,
+  sendResponse: (response: OutboundMessage) => void,
+): Promise<void> {
+  console.log("Gentrace HTTP message received:", body);
+  await onMessage(body, {
+    type: "http",
+    sendResponse,
+  });
 }
