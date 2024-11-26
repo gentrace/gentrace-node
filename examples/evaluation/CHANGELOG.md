@@ -1,5 +1,16 @@
 # @examples/evaluation
 
+## 0.3.0
+
+### Minor Changes
+
+- cbb71de: feat: server webhook transport for experiment runner
+
+### Patch Changes
+
+- Updated dependencies [cbb71de]
+  - @gentrace/core@3.4.0
+
 ## 0.2.0
 
 ### Minor Changes

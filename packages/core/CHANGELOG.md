@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.0
+
+### Minor Changes
+
+- cbb71de: feat: server webhook transport for experiment runner
+
 ## 3.3.0
 
 ### Minor Changes
