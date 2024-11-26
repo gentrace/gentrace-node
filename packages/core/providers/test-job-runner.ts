@@ -240,6 +240,12 @@ type Parameter =
       defaultValue: string;
     }
   | {
+      type: "enum";
+      name: string;
+      defaultValue: string;
+      options: string[];
+    }
+  | {
       type: "template";
       name: string;
       defaultValue: string;
@@ -274,6 +280,27 @@ export const stringParameter = ({
     name,
     type: "string",
     defaultValue,
+  };
+  return {
+    name,
+    getValue: makeGetValue(name, defaultValue),
+  };
+};
+
+export const enumParameter = ({
+  name,
+  options,
+  defaultValue,
+}: {
+  name: string;
+  options: string[];
+  defaultValue: string;
+}) => {
+  parameters[name] = {
+    name,
+    type: "enum",
+    defaultValue,
+    options,
   };
   return {
     name,

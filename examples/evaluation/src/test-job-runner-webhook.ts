@@ -4,6 +4,7 @@ import {
   handleWebhook,
   numericParameter,
   templateParameter,
+  enumParameter,
 } from "@gentrace/core";
 import OpenAI from "openai";
 import { z } from "zod";
@@ -78,6 +79,23 @@ const guessTheYear = defineInteraction({
     query: z.string(),
   }),
   parameters: [randomYearParameter],
+});
+
+const modelParameter = enumParameter({
+  name: "AI Model",
+  defaultValue: "GPT-4o",
+  options: ["GPT-4o", "GPT-4o-mini", "claude-3.5-sonnet", "gemini-1.5-pro-002"],
+});
+
+const chooseModel = defineInteraction({
+  name: "Choose model",
+  fn: async ({ query }) => {
+    return `I will use the model ${modelParameter.getValue()}.`;
+  },
+  inputType: z.object({
+    query: z.string(),
+  }),
+  parameters: [modelParameter],
 });
 
 // Create Express app
