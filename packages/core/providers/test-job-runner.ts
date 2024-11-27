@@ -10,6 +10,7 @@ import type { ZodType } from "zod";
 import WebSocket from "ws";
 import { AsyncLocalStorage } from "async_hooks";
 import * as Mustache from "mustache";
+import { BASE_PATH } from "../base";
 
 type InteractionFn<T = any> = (...args: [T, ...any[]]) => any;
 
@@ -69,10 +70,12 @@ const getWSBasePath = () => {
     return "ws://localhost:3001";
   }
   return (
+    "wss://" +
     apiBasePath.slice(
-      apiBasePath.indexOf("/") + 1,
+      apiBasePath.indexOf("/") + 2,
       apiBasePath.lastIndexOf("/"),
-    ) + "/ws"
+    ) +
+    "/ws"
   );
 };
 
@@ -508,7 +511,8 @@ const handleRunTestInteraction = async (
         erroredResults.map((r) => r.reason),
       );
     }
-    await fetch(`${globalGentraceConfig.basePath}/v1/test-result/status`, {
+    const apiBasePath = globalGentraceConfig.basePath || BASE_PATH;
+    await fetch(`${apiBasePath}/v1/test-result/status`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -529,7 +533,8 @@ const handleRunTestSuite = async (message: InboundMessageRunTestSuite) => {
     return;
   }
   await testSuite.fn();
-  await fetch(`${globalGentraceConfig.basePath}/v1/test-result/status`, {
+  const apiBasePath = globalGentraceConfig.basePath || BASE_PATH;
+  await fetch(`${apiBasePath}/v1/test-result/status`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
