@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.4.1
+
+### Patch Changes
+
+- cdfc401: fix: base path handling
+
 ## 3.4.0
 
 ### Minor Changes
