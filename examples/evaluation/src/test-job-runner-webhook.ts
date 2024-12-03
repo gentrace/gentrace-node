@@ -24,6 +24,15 @@ const writeEmailPromptParameter = templateParameter({
   name: "Write email prompt",
   defaultValue:
     "Write an email to {{toEmail}} from ({{fromName}}) {{fromEmail}} according to these instructions: {{instructions}}",
+  variables: [
+    { name: "fromName", example: "John Doe" },
+    { name: "fromEmail", example: "john.doe@gmail.com" },
+    { name: "toEmail", example: "blah@gmail.com" },
+    {
+      name: "instructions",
+      example: { subject: "Hello", body: "Write a short email" },
+    },
+  ],
 });
 
 const writeEmail = defineInteraction({

@@ -252,6 +252,7 @@ type Parameter =
       type: "template";
       name: string;
       defaultValue: string;
+      variables: { name: string; example: any }[];
     };
 
 export const numericParameter = ({
@@ -311,21 +312,24 @@ export const enumParameter = ({
   };
 };
 
-export const templateParameter = ({
+export const templateParameter = <T extends Record<string, any>>({
   name,
   defaultValue,
+  variables,
 }: {
   name: string;
   defaultValue: string;
+  variables?: { name: keyof T; example: T[keyof T] }[];
 }) => {
   parameters[name] = {
     name,
     type: "template",
     defaultValue,
+    variables: variables ? (variables as { name: string; example: any }[]) : [],
   };
   return {
     name,
-    render: (values: Record<string, any>) => {
+    render: (values: T) => {
       const overrides = overridesAsyncLocalStorage.getStore();
       const template = overrides?.[name] ?? defaultValue;
       return Mustache.render(template, values);
