@@ -137,7 +137,7 @@ importers:
   examples/evals:
     dependencies:
       '@gentrace/evals':
-        specifier: workspace:^0.0.2
+        specifier: workspace:^0.0.3
         version: link:../../packages/evals
     devDependencies:
       '@gentrace/tsconfig':
@@ -198,7 +198,7 @@ importers:
         specifier: workspace:^
         version: link:../../packages/core
       '@gentrace/evals':
-        specifier: workspace:^0.0.2
+        specifier: workspace:^0.0.3
         version: link:../../packages/evals
       '@gentrace/openai':
         specifier: workspace:^
@@ -923,7 +923,7 @@ importers:
   packages/evals:
     dependencies:
       '@gentrace/core':
-        specifier: workspace:^3.0.0
+        specifier: workspace:^3.5.0
         version: link:../core
       openai:
         specifier: ^4.67.1

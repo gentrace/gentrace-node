@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.0
+
+### Minor Changes
+
+- 64cb3e6: feat: add variables to prompt parameter
+
 ## 3.4.1
 
 ### Patch Changes
