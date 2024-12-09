@@ -6,6 +6,7 @@ import {
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 const DEFAULT_MODEL = "gpt-4o";
 
@@ -13,6 +14,7 @@ interface EvalOptions {
   name: string;
   prompt: string;
   scoreAs: Record<string, number> | "percentage";
+  imageUrls?: string[];
 }
 
 export namespace evals {
@@ -37,6 +39,18 @@ export namespace evals {
       let parsedResponse: EvalResponseType | null = null;
       let error: LocalEvaluationDebugError | null = null;
 
+      const imageUrls: ChatCompletionMessageParam[] = options.imageUrls
+        ? [
+            {
+              role: "user",
+              content: options.imageUrls.map((url) => ({
+                type: "image_url",
+                image_url: { url },
+              })),
+            },
+          ]
+        : [];
+
       try {
         const completion = await openai.beta.chat.completions.parse({
           model: DEFAULT_MODEL,
@@ -47,6 +61,7 @@ export namespace evals {
                 "You are a helpful assistant that evaluates content based on given criteria.",
             },
             { role: "user", content: options.prompt },
+            ...imageUrls,
           ],
           response_format: zodResponseFormat(
             EvalResponse,
