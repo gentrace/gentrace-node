@@ -1,5 +1,18 @@
 # @examples/evaluation
 
+## 0.4.0
+
+### Minor Changes
+
+- 64cb3e6: feat: add variables to prompt parameter
+
+### Patch Changes
+
+- Updated dependencies [64cb3e6]
+- Updated dependencies [1761bb8]
+  - @gentrace/core@3.5.0
+  - @gentrace/evals@0.0.3
+
 ## 0.3.1
 
 ### Patch Changes

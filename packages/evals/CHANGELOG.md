@@ -1,5 +1,13 @@
 # @gentrace/evals
 
+## 0.0.3
+
+### Patch Changes
+
+- 1761bb8: feat: provide image urls for llm evals
+- Updated dependencies [64cb3e6]
+  - @gentrace/core@3.5.0
+
 ## 0.0.2
 
 ### Patch Changes

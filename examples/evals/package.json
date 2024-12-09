@@ -1,13 +1,13 @@
 {
   "name": "@examples/evals",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "start": "dotenv tsx"
   },
   "dependencies": {
-    "@gentrace/evals": "workspace:^0.0.2"
+    "@gentrace/evals": "workspace:^0.0.3"
   },
   "devDependencies": {
     "@gentrace/tsconfig": "workspace:*",
