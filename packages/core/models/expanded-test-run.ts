@@ -23,6 +23,9 @@ import { FullRun } from "./full-run";
 import { ResolvedStepRun } from "./resolved-step-run";
 // May contain unused imports in some cases
 // @ts-ignore
+import { RunPathSection } from "./run-path-section";
+// May contain unused imports in some cases
+// @ts-ignore
 import { TestCase } from "./test-case";
 // May contain unused imports in some cases
 // @ts-ignore

@@ -12,6 +12,10 @@
  * Do not edit the class manually.
  */
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { RunPathSection } from "./run-path-section";
+
 /**
  *
  * @export
@@ -48,4 +52,10 @@ export interface TestRun {
    * @memberof TestRun
    */
   resultId: string;
+  /**
+   *
+   * @type {Array<RunPathSection>}
+   * @memberof TestRun
+   */
+  path?: Array<RunPathSection> | null;
 }

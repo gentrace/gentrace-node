@@ -12,6 +12,10 @@
  * Do not edit the class manually.
  */
 
+// May contain unused imports in some cases
+// @ts-ignore
+import { RunPathSection } from "./run-path-section";
+
 /**
  *
  * @export
@@ -42,6 +46,12 @@ export interface V1TestResultSimpleIdPostRequestTestRunsInner {
    * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
    */
   outputs?: { [key: string]: any };
+  /**
+   * Optional path which describes the organizational hierarchy of this test run in relation to all the pipeline tests.
+   * @type {Array<RunPathSection>}
+   * @memberof V1TestResultSimpleIdPostRequestTestRunsInner
+   */
+  path?: Array<RunPathSection> | null;
   /**
    *
    * @type {string}
