@@ -1,5 +1,4 @@
 ---
-"@gentrace/evals": patch
 "@gentrace/core": patch
 ---
 

@@ -42,11 +42,11 @@ export namespace evals {
           model: DEFAULT_MODEL,
           messages: [
             {
-              role: "system" as const,
+              role: "system",
               content:
                 "You are a helpful assistant that evaluates content based on given criteria.",
             },
-            { role: "user" as const, content: options.prompt },
+            { role: "user", content: options.prompt },
           ],
           response_format: zodResponseFormat(
             EvalResponse,
