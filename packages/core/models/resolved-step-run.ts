@@ -79,7 +79,7 @@ export interface ResolvedStepRun {
    */
   pipelineRunId?: string;
   /**
-   * Error message if the step run failed
+   *
    * @type {string}
    * @memberof ResolvedStepRun
    */

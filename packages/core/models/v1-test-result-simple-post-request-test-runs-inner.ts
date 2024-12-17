@@ -15,6 +15,9 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import { LocalEvaluation } from "./local-evaluation";
+// May contain unused imports in some cases
+// @ts-ignore
+import { RunPathSection } from "./run-path-section";
 
 /**
  *
@@ -52,6 +55,12 @@ export interface V1TestResultSimplePostRequestTestRunsInner {
    * @memberof V1TestResultSimplePostRequestTestRunsInner
    */
   evaluations?: Array<LocalEvaluation>;
+  /**
+   * Optional path which describes the organizational hierarchy of this test run in relation to all the pipeline tests.
+   * @type {Array<RunPathSection>}
+   * @memberof V1TestResultSimplePostRequestTestRunsInner
+   */
+  path?: Array<RunPathSection> | null;
   /**
    *
    * @type {string}

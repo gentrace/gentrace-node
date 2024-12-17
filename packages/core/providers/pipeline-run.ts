@@ -63,6 +63,7 @@ export class PipelineRun {
   private pipeline: PipelineLike;
   public stepRuns: StepRun[];
   private evaluations: LocalEvaluation[] = [];
+  private path: string[] = [];
   private error?: string | undefined;
 
   public context?: Context;

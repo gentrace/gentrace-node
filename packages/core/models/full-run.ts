@@ -15,6 +15,9 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import { MetadataValueObject } from "./metadata-value-object";
+// May contain unused imports in some cases
+// @ts-ignore
+import { RunPathSection } from "./run-path-section";
 
 /**
  *
@@ -100,6 +103,12 @@ export interface FullRun {
    * @memberof FullRun
    */
   metadata?: { [key: string]: MetadataValueObject } | null;
+  /**
+   *
+   * @type {Array<RunPathSection>}
+   * @memberof FullRun
+   */
+  path?: Array<RunPathSection> | null;
   /**
    *
    * @type {string}

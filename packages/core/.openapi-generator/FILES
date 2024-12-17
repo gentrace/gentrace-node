@@ -43,6 +43,7 @@ models/metadata-value-object.ts
 models/pipeline-v2.ts
 models/pipeline.ts
 models/resolved-step-run.ts
+models/run-path-section.ts
 models/run-request.ts
 models/run-response.ts
 models/run-v2-step-runs-inner.ts

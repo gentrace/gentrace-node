@@ -17,6 +17,9 @@
 import { MetadataValueObject } from "./metadata-value-object";
 // May contain unused imports in some cases
 // @ts-ignore
+import { RunPathSection } from "./run-path-section";
+// May contain unused imports in some cases
+// @ts-ignore
 import { StepRun } from "./step-run";
 
 /**
@@ -61,6 +64,12 @@ export interface V1TestResultIdPostRequestTestRunsInner {
    * @memberof V1TestResultIdPostRequestTestRunsInner
    */
   stepRuns: Array<StepRun>;
+  /**
+   * Optional path which describes the organizational hierarchy of this test run in relation to all the pipeline tests.
+   * @type {Array<RunPathSection>}
+   * @memberof V1TestResultIdPostRequestTestRunsInner
+   */
+  path?: Array<RunPathSection> | null;
   /**
    *
    * @type {string}

@@ -33,6 +33,7 @@ export * from "./metadata-value-object";
 export * from "./pipeline";
 export * from "./pipeline-v2";
 export * from "./resolved-step-run";
+export * from "./run-path-section";
 export * from "./run-request";
 export * from "./run-response";
 export * from "./run-v2";
