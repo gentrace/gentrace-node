@@ -1,5 +1,12 @@
 # @examples/evaluation
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [730be1a]
+  - @gentrace/core@3.5.1
+
 ## 0.4.0
 
 ### Minor Changes
