@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.1
+
+### Patch Changes
+
+- 730be1a: feat: add path to run model
+
 ## 3.5.0
 
 ### Minor Changes
