@@ -27,6 +27,9 @@ export type TestCaseForSubmission = {
 };
 export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
 
+/** @deprecated Use PipelineRunDataTuple instead */
+export type PipelineRunTestCaseTuple = [PipelineRun, TestCase | TestCaseV2];
+
 export const constructSubmissionPayloadSimple = (
   pipelineSlug: string,
   testRuns: V1TestResultSimplePostRequestTestRunsInner[],
