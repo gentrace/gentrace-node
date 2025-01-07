@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.2
+
+### Patch Changes
+
+- 7497ded: fix: Reintroduce deprecated type
+
 ## 3.5.1
 
 ### Patch Changes
