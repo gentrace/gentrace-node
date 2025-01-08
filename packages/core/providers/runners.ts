@@ -10,9 +10,8 @@ import {
 } from "./test-result";
 import {
   constructStepRuns,
-  getContextTestCaseFilter,
-  LocalTestData,
   isTestCaseOrTestCaseV2,
+  LocalTestData,
 } from "./utils";
 
 /**

@@ -467,7 +467,7 @@ const runTestCaseThroughInteraction = async (
       runner.setError(e.toString());
     }
     await updateTestResultWithRunners(testJobId, [
-      [runner, { id: testCase.id }],
+      [runner, { id: testCase.id, name: "" }],
     ]);
   } catch (e) {
     // TODO: submit error to gentrace

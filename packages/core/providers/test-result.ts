@@ -20,20 +20,21 @@ import { PipelineRun } from "./pipeline-run";
 import { getProcessEnv, LocalTestData } from "./utils";
 
 export type TestRun = V1TestResultPostRequestTestRunsInner;
+
+/**
+ * A test case for submission.
+ * @public
+ */
 export type TestCaseForSubmission = {
   id?: string;
-  name?: string;
-  inputs?: Record<string, any>;
+  name: string;
 };
 
 /**
  * A tuple containing a PipelineRun and a test case for submission.
  * @public
  */
-export type PipelineRunDataTuple = [
-  PipelineRun,
-  TestCaseForSubmission | TestCase | TestCaseV2,
-];
+export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
 
 /** @deprecated Use PipelineRunDataTuple instead */
 export type PipelineRunTestCaseTuple = PipelineRunDataTuple;

@@ -447,7 +447,7 @@ export class PipelineRun {
     updateContext(updatedContext: Partial<Context>): Context;
 }
 
-// @public (undocumented)
+// @public
 export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
 
 // @public @deprecated (undocumented)
@@ -589,11 +589,10 @@ export interface TestCase {
     updatedAt: string;
 }
 
-// @public (undocumented)
+// @public
 export type TestCaseForSubmission = {
     id?: string;
-    name?: string;
-    inputs?: Record<string, any>;
+    name: string;
 };
 
 // @public
@@ -909,12 +908,12 @@ export const V3ApiFp: (configuration?: Configuration) => {
 
 // Warnings were encountered during analysis:
 //
-// dist/index.d.ts:169:5 - (ae-forgotten-export) The symbol "Metadata" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:1975:9 - (ae-forgotten-export) The symbol "PipelineLike" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:2041:9 - (ae-forgotten-export) The symbol "StepRunWhitelistDescriptor" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:2377:9 - (ae-forgotten-export) The symbol "MetadataValueObject" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:4063:5 - (ae-forgotten-export) The symbol "RequestArgs" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:4988:9 - (ae-forgotten-export) The symbol "FilterableMetadataInputValue" needs to be exported by the entry point index.d.ts
+// dist/api/v1-api.d.ts:46:5 - (ae-forgotten-export) The symbol "RequestArgs" needs to be exported by the entry point index.d.ts
+// dist/api/v2-api.d.ts:710:9 - (ae-forgotten-export) The symbol "FilterableMetadataInputValue" needs to be exported by the entry point index.d.ts
+// dist/models/run-request.d.ts:50:9 - (ae-forgotten-export) The symbol "MetadataValueObject" needs to be exported by the entry point index.d.ts
+// dist/providers/context.d.ts:15:5 - (ae-forgotten-export) The symbol "Metadata" needs to be exported by the entry point index.d.ts
+// dist/providers/pipeline-run.d.ts:40:9 - (ae-forgotten-export) The symbol "PipelineLike" needs to be exported by the entry point index.d.ts
+// dist/providers/pipeline-run.d.ts:106:9 - (ae-forgotten-export) The symbol "StepRunWhitelistDescriptor" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

@@ -210,7 +210,7 @@
             },
             {
               "kind": "Content",
-              "text": "<"
+              "text": "<import(\"../models\")."
             },
             {
               "kind": "Reference",
@@ -226,7 +226,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/evaluation.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 6,
             "endIndex": 10
@@ -255,7 +255,7 @@
               "text": "export declare class Configuration "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/configuration.d.ts",
           "releaseTag": "Public",
           "isAbstract": false,
           "name": "Configuration",
@@ -637,10 +637,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface ConfigurationParameters "
+              "text": "export interface ConfigurationParameters "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/configuration.d.ts",
           "releaseTag": "Public",
           "name": "ConfigurationParameters",
           "preserveMemberOrder": false,
@@ -958,11 +958,11 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPostRequest",
+              "text": "V1TestResultPostRequest",
               "canonicalReference": "@gentrace/core!TestResultPostRequest:interface"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 10,
             "endIndex": 11
@@ -1050,7 +1050,7 @@
               "canonicalReference": "@gentrace/core!~V1TestResultSimplePostRequest:interface"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 8,
             "endIndex": 9
@@ -1092,7 +1092,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type Context = "
+              "text": "export type Context = "
             },
             {
               "kind": "Reference",
@@ -1113,7 +1113,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/context.d.ts",
           "releaseTag": "Public",
           "name": "Context",
           "typeTokenRange": {
@@ -1128,7 +1128,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type CoreStepRunContext = "
+              "text": "export type CoreStepRunContext = "
             },
             {
               "kind": "Content",
@@ -1148,7 +1148,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/context.d.ts",
           "releaseTag": "Public",
           "name": "CoreStepRunContext",
           "typeTokenRange": {
@@ -1193,7 +1193,7 @@
               "text": ">"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/dataset.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -1219,7 +1219,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type CreateEvaluationType = "
+              "text": "export type CreateEvaluationType = "
             },
             {
               "kind": "Reference",
@@ -1231,7 +1231,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/evaluation.d.ts",
           "releaseTag": "Public",
           "name": "CreateEvaluationType",
           "typeTokenRange": {
@@ -1267,7 +1267,7 @@
               "text": "<string>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-case.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 5
@@ -1314,7 +1314,7 @@
               "text": "<number>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-case.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 5
@@ -1400,7 +1400,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/runners.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 9,
             "endIndex": 13
@@ -1492,7 +1492,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 12,
             "endIndex": 13
@@ -1570,7 +1570,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 5,
             "endIndex": 6
@@ -1620,7 +1620,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 1,
             "endIndex": 2
@@ -1657,7 +1657,7 @@
               "text": "<boolean>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-case.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 5
@@ -1698,7 +1698,7 @@
               "text": "{\n    name: string;\n    getValue: () => string;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 4
@@ -1724,7 +1724,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type EvaluationType = "
+              "text": "export type EvaluationType = "
             },
             {
               "kind": "Reference",
@@ -1736,7 +1736,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/evaluation.d.ts",
           "releaseTag": "Public",
           "name": "EvaluationType",
           "typeTokenRange": {
@@ -1751,10 +1751,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface FeedbackRequest "
+              "text": "export interface FeedbackRequest "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/feedback-request.d.ts",
           "releaseTag": "Public",
           "name": "FeedbackRequest",
           "preserveMemberOrder": false,
@@ -1877,10 +1877,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface FeedbackResponse "
+              "text": "export interface FeedbackResponse "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/feedback-response.d.ts",
           "releaseTag": "Public",
           "name": "FeedbackResponse",
           "preserveMemberOrder": false,
@@ -1938,7 +1938,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 1,
             "endIndex": 3
@@ -1980,7 +1980,7 @@
               "text": "<string>)"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_API_KEY",
@@ -2003,7 +2003,7 @@
               "text": "string"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_BASE_PATH",
@@ -2026,7 +2026,7 @@
               "text": "string"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_BRANCH",
@@ -2049,7 +2049,7 @@
               "text": "string"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_COMMIT",
@@ -2072,7 +2072,7 @@
               "text": "string"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_ENVIRONMENT_NAME",
@@ -2095,7 +2095,7 @@
               "text": "string"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_RESULT_NAME",
@@ -2118,7 +2118,7 @@
               "text": "string"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_RUN_NAME",
@@ -2141,7 +2141,7 @@
               "text": "string"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "GENTRACE_SHOW_CONNECTION_ERRORS",
@@ -2160,7 +2160,7 @@
               "text": "export declare abstract class GentracePlugin<C, A> "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/plugin.d.ts",
           "releaseTag": "Public",
           "typeParameters": [
             {
@@ -2395,7 +2395,7 @@
               "text": ">"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/dataset.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2450,7 +2450,7 @@
               "text": "[]>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/dataset.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2505,7 +2505,7 @@
               "text": "[]>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/evaluation.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2548,7 +2548,7 @@
             },
             {
               "kind": "Content",
-              "text": "<"
+              "text": "<import(\"../models\")."
             },
             {
               "kind": "Reference",
@@ -2560,7 +2560,7 @@
               "text": "[]>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/evaluator.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2615,7 +2615,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 1,
             "endIndex": 6
@@ -2643,7 +2643,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 1,
             "endIndex": 2
@@ -2678,7 +2678,7 @@
             },
             {
               "kind": "Content",
-              "text": "<"
+              "text": "<import(\"../models\")."
             },
             {
               "kind": "Reference",
@@ -2690,7 +2690,7 @@
               "text": "[]>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/pipeline-methods.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2733,7 +2733,7 @@
             },
             {
               "kind": "Content",
-              "text": "<"
+              "text": "<import(\"../models\")."
             },
             {
               "kind": "Reference",
@@ -2745,7 +2745,7 @@
               "text": ">"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/pipeline-run.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2788,7 +2788,7 @@
             },
             {
               "kind": "Content",
-              "text": "<"
+              "text": "<import(\"../models\")."
             },
             {
               "kind": "Reference",
@@ -2800,7 +2800,7 @@
               "text": ">"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-case.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2855,7 +2855,7 @@
               "text": "[]>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-case.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2910,7 +2910,7 @@
               "text": "[]>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-case.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -2953,7 +2953,7 @@
             },
             {
               "kind": "Content",
-              "text": "<"
+              "text": "<import(\"../models\")."
             },
             {
               "kind": "Reference",
@@ -2965,7 +2965,7 @@
               "text": ">"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -3008,7 +3008,7 @@
             },
             {
               "kind": "Content",
-              "text": "<"
+              "text": "<import(\"../models\")."
             },
             {
               "kind": "Reference",
@@ -3020,7 +3020,7 @@
               "text": "[]>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -3075,7 +3075,7 @@
               "text": ">"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 7
@@ -3187,7 +3187,7 @@
               "text": ">>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/runners.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 14,
             "endIndex": 20
@@ -3241,7 +3241,7 @@
               "text": " | null"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "globalGentraceApi",
@@ -3269,7 +3269,7 @@
               "text": " | null"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "globalGentraceApiV2",
@@ -3297,7 +3297,7 @@
               "text": " | null"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "globalGentraceApiV3",
@@ -3325,7 +3325,7 @@
               "text": " | null"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "globalGentraceConfig",
@@ -3357,7 +3357,7 @@
               "text": "<any>;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "isReadonly": false,
           "releaseTag": "Public",
           "name": "globalRequestBuffer",
@@ -3414,7 +3414,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 7,
             "endIndex": 9
@@ -3485,7 +3485,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 7,
             "endIndex": 8
@@ -3511,7 +3511,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type InitPluginFunction<C extends "
+              "text": "export type InitPluginFunction<C extends "
             },
             {
               "kind": "Content",
@@ -3557,7 +3557,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/plugin.d.ts",
           "releaseTag": "Public",
           "name": "InitPluginFunction",
           "typeParameters": [
@@ -3637,7 +3637,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/handler.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 7,
             "endIndex": 9
@@ -3700,7 +3700,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 5
@@ -3726,10 +3726,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface LocalEvaluation "
+              "text": "export interface LocalEvaluation "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/local-evaluation.d.ts",
           "releaseTag": "Public",
           "name": "LocalEvaluation",
           "preserveMemberOrder": false,
@@ -3853,10 +3853,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface LocalEvaluationDebug "
+              "text": "export interface LocalEvaluationDebug "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/local-evaluation-debug.d.ts",
           "releaseTag": "Public",
           "name": "LocalEvaluationDebug",
           "preserveMemberOrder": false,
@@ -4062,10 +4062,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface LocalEvaluationDebugError "
+              "text": "export interface LocalEvaluationDebugError "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/local-evaluation-debug-error.d.ts",
           "releaseTag": "Public",
           "name": "LocalEvaluationDebugError",
           "preserveMemberOrder": false,
@@ -4134,7 +4134,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type LocalTestData = "
+              "text": "export type LocalTestData = "
             },
             {
               "kind": "Content",
@@ -4163,7 +4163,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/utils.d.ts",
           "releaseTag": "Public",
           "name": "LocalTestData",
           "typeTokenRange": {
@@ -4193,7 +4193,7 @@
               "text": "{\n    name: string;\n    getValue: () => number;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 4
@@ -4219,7 +4219,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type PartialStepRunType = "
+              "text": "export type PartialStepRunType = "
             },
             {
               "kind": "Reference",
@@ -4244,7 +4244,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/step-run.d.ts",
           "releaseTag": "Public",
           "name": "PartialStepRunType",
           "typeTokenRange": {
@@ -4279,7 +4279,7 @@
               "text": "> "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/pipeline.d.ts",
           "releaseTag": "Public",
           "typeParameters": [
             {
@@ -4744,7 +4744,7 @@
               "text": "export declare class PipelineRun "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/pipeline-run.d.ts",
           "releaseTag": "Public",
           "isAbstract": false,
           "name": "PipelineRun",
@@ -5802,11 +5802,11 @@
         {
           "kind": "TypeAlias",
           "canonicalReference": "@gentrace/core!PipelineRunDataTuple:type",
-          "docComment": "",
+          "docComment": "/**\n * A tuple containing a PipelineRun and a test case for submission.\n *\n * @public\n */\n",
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type PipelineRunDataTuple = "
+              "text": "export type PipelineRunDataTuple = "
             },
             {
               "kind": "Content",
@@ -5835,7 +5835,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "releaseTag": "Public",
           "name": "PipelineRunDataTuple",
           "typeTokenRange": {
@@ -5850,7 +5850,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type PipelineRunTestCaseTuple = "
+              "text": "export type PipelineRunTestCaseTuple = "
             },
             {
               "kind": "Reference",
@@ -5862,7 +5862,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "releaseTag": "Public",
           "name": "PipelineRunTestCaseTuple",
           "typeTokenRange": {
@@ -5877,10 +5877,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface PipelinesGet200Response "
+              "text": "export interface V1PipelinesGet200Response "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/v1-pipelines-get200-response.d.ts",
           "releaseTag": "Public",
           "name": "PipelinesGet200Response",
           "preserveMemberOrder": false,
@@ -5936,7 +5936,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type PluginContext = "
+              "text": "export type PluginContext = "
             },
             {
               "kind": "Reference",
@@ -5948,7 +5948,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/context.d.ts",
           "releaseTag": "Public",
           "name": "PluginContext",
           "typeTokenRange": {
@@ -5963,7 +5963,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type PluginStepRunContext = "
+              "text": "export type PluginStepRunContext = "
             },
             {
               "kind": "Content",
@@ -5983,7 +5983,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/context.d.ts",
           "releaseTag": "Public",
           "name": "PluginStepRunContext",
           "typeTokenRange": {
@@ -6005,7 +6005,7 @@
               "text": "void"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/init.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 1,
             "endIndex": 2
@@ -6022,7 +6022,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type ResultContext = "
+              "text": "export type ResultContext = "
             },
             {
               "kind": "Content",
@@ -6042,7 +6042,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/context.d.ts",
           "releaseTag": "Public",
           "name": "ResultContext",
           "typeTokenRange": {
@@ -6057,10 +6057,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface RunRequest "
+              "text": "export interface RunRequest "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/run-request.d.ts",
           "releaseTag": "Public",
           "name": "RunRequest",
           "preserveMemberOrder": false,
@@ -6257,7 +6257,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "StepRun_2",
+                  "text": "StepRun",
                   "canonicalReference": "@gentrace/core!~StepRun_2:interface"
                 },
                 {
@@ -6288,10 +6288,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface RunResponse "
+              "text": "export interface RunResponse "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/run-response.d.ts",
           "releaseTag": "Public",
           "name": "RunResponse",
           "preserveMemberOrder": false,
@@ -6455,7 +6455,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -6467,7 +6467,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/run-test.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 26,
             "endIndex": 30
@@ -6625,7 +6625,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -6637,7 +6637,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/run-test.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 23,
             "endIndex": 27
@@ -6794,7 +6794,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -6806,7 +6806,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/run-test.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 21,
             "endIndex": 25
@@ -6856,7 +6856,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface SimpleHandler<C extends "
+              "text": "export interface SimpleHandler<C extends "
             },
             {
               "kind": "Content",
@@ -6867,7 +6867,7 @@
               "text": "> "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/handler.d.ts",
           "releaseTag": "Public",
           "typeParameters": [
             {
@@ -6972,7 +6972,7 @@
               "text": "export declare class StepRun "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/step-run.d.ts",
           "releaseTag": "Public",
           "isAbstract": false,
           "name": "StepRun",
@@ -7466,7 +7466,7 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type StepRunType = "
+              "text": "export type StepRunType = "
             },
             {
               "kind": "Content",
@@ -7482,7 +7482,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/step-run.d.ts",
           "releaseTag": "Public",
           "name": "StepRunType",
           "typeTokenRange": {
@@ -7512,7 +7512,7 @@
               "text": "{\n    name: string;\n    getValue: () => string;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 4
@@ -7607,7 +7607,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -7619,7 +7619,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 14,
             "endIndex": 18
@@ -7735,7 +7735,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -7747,7 +7747,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/runners.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 13,
             "endIndex": 17
@@ -7817,7 +7817,7 @@
               "text": "{\n    name: string;\n    render: (values: T) => string;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-job-runner.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 6,
             "endIndex": 7
@@ -7856,10 +7856,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestCase "
+              "text": "export interface TestCase "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/test-case.d.ts",
           "releaseTag": "Public",
           "name": "TestCase",
           "preserveMemberOrder": false,
@@ -8140,36 +8140,27 @@
         {
           "kind": "TypeAlias",
           "canonicalReference": "@gentrace/core!TestCaseForSubmission:type",
-          "docComment": "",
+          "docComment": "/**\n * A test case for submission.\n *\n * @public\n */\n",
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type TestCaseForSubmission = "
+              "text": "export type TestCaseForSubmission = "
             },
             {
               "kind": "Content",
-              "text": "{\n    id?: string;\n    name?: string;\n    inputs?: "
-            },
-            {
-              "kind": "Reference",
-              "text": "Record",
-              "canonicalReference": "!Record:type"
-            },
-            {
-              "kind": "Content",
-              "text": "<string, any>;\n}"
+              "text": "{\n    id?: string;\n    name: string;\n}"
             },
             {
               "kind": "Content",
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "releaseTag": "Public",
           "name": "TestCaseForSubmission",
           "typeTokenRange": {
             "startIndex": 1,
-            "endIndex": 4
+            "endIndex": 2
           }
         },
         {
@@ -8179,10 +8170,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestCaseGet200Response "
+              "text": "export interface V1TestCaseGet200Response "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/v1-test-case-get200-response.d.ts",
           "releaseTag": "Public",
           "name": "TestCaseGet200Response",
           "preserveMemberOrder": false,
@@ -8238,10 +8229,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestResult "
+              "text": "export interface TestResult "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/test-result.d.ts",
           "releaseTag": "Public",
           "name": "TestResult",
           "preserveMemberOrder": false,
@@ -8481,10 +8472,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestResultGet200Response "
+              "text": "export interface V1TestResultGet200Response "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/v1-test-result-get200-response.d.ts",
           "releaseTag": "Public",
           "name": "TestResultGet200Response",
           "preserveMemberOrder": false,
@@ -8540,10 +8531,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestResultPost200Response "
+              "text": "export interface V1TestResultPost200Response "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/v1-test-result-post200-response.d.ts",
           "releaseTag": "Public",
           "name": "TestResultPost200Response",
           "preserveMemberOrder": false,
@@ -8585,10 +8576,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestResultPostRequest "
+              "text": "export interface V1TestResultPostRequest "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/v1-test-result-post-request.d.ts",
           "releaseTag": "Public",
           "name": "TestResultPostRequest",
           "preserveMemberOrder": false,
@@ -8812,7 +8803,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultPostRequestTestRunsInner",
+                  "text": "V1TestResultPostRequestTestRunsInner",
                   "canonicalReference": "@gentrace/core!TestResultPostRequestTestRunsInner:interface"
                 },
                 {
@@ -8870,10 +8861,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestResultPostRequestTestRunsInner "
+              "text": "export interface V1TestResultPostRequestTestRunsInner "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/v1-test-result-post-request-test-runs-inner.d.ts",
           "releaseTag": "Public",
           "name": "TestResultPostRequestTestRunsInner",
           "preserveMemberOrder": false,
@@ -9178,7 +9169,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "StepRun_2",
+                  "text": "StepRun",
                   "canonicalReference": "@gentrace/core!~StepRun_2:interface"
                 },
                 {
@@ -9209,10 +9200,10 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare interface TestResultStatusGet200Response "
+              "text": "export interface V1TestResultStatusGet200Response "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/models/v1-test-result-status-get200-response.d.ts",
           "releaseTag": "Public",
           "name": "TestResultStatusGet200Response",
           "preserveMemberOrder": false,
@@ -9335,11 +9326,11 @@
           "excerptTokens": [
             {
               "kind": "Content",
-              "text": "export declare type TestRun = "
+              "text": "export type TestRun = "
             },
             {
               "kind": "Reference",
-              "text": "TestResultPostRequestTestRunsInner",
+              "text": "V1TestResultPostRequestTestRunsInner",
               "canonicalReference": "@gentrace/core!TestResultPostRequestTestRunsInner:interface"
             },
             {
@@ -9347,7 +9338,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "releaseTag": "Public",
           "name": "TestRun",
           "typeTokenRange": {
@@ -9400,7 +9391,7 @@
               "text": ">"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/dataset.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 5,
             "endIndex": 9
@@ -9455,7 +9446,7 @@
               "text": "<string>"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-case.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 5
@@ -9541,7 +9532,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -9553,7 +9544,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/test-result.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 12,
             "endIndex": 16
@@ -9629,7 +9620,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -9641,7 +9632,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/runners.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 6,
             "endIndex": 10
@@ -9721,7 +9712,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/files.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 8,
             "endIndex": 10
@@ -9788,7 +9779,7 @@
               "text": ";"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/providers/files.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 5
@@ -9826,7 +9817,7 @@
               "text": " "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v1-api.d.ts",
           "releaseTag": "Public",
           "isAbstract": false,
           "name": "V1Api",
@@ -9866,7 +9857,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -9963,7 +9954,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10067,7 +10058,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10080,7 +10071,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "PipelinesGet200Response",
+                  "text": "V1PipelinesGet200Response",
                   "canonicalReference": "@gentrace/core!PipelinesGet200Response:interface"
                 },
                 {
@@ -10164,7 +10155,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10268,7 +10259,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10281,7 +10272,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestCaseGet200Response",
+                  "text": "V1TestCaseGet200Response",
                   "canonicalReference": "@gentrace/core!TestCaseGet200Response:interface"
                 },
                 {
@@ -10373,7 +10364,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10462,7 +10453,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10550,7 +10541,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10563,7 +10554,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultGet200Response",
+                  "text": "V1TestResultGet200Response",
                   "canonicalReference": "@gentrace/core!TestResultGet200Response:interface"
                 },
                 {
@@ -10638,7 +10629,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10735,7 +10726,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10748,7 +10739,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultPost200Response",
+                  "text": "V1TestResultPost200Response",
                   "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
                 },
                 {
@@ -10809,7 +10800,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultPostRequest",
+                  "text": "V1TestResultPostRequest",
                   "canonicalReference": "@gentrace/core!TestResultPostRequest:interface"
                 },
                 {
@@ -10832,7 +10823,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10845,7 +10836,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultPost200Response",
+                  "text": "V1TestResultPost200Response",
                   "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
                 },
                 {
@@ -10929,7 +10920,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -10942,7 +10933,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultPost200Response",
+                  "text": "V1TestResultPost200Response",
                   "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
                 },
                 {
@@ -11026,7 +11017,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -11039,7 +11030,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultPost200Response",
+                  "text": "V1TestResultPost200Response",
                   "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
                 },
                 {
@@ -11114,7 +11105,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -11127,7 +11118,7 @@
                 },
                 {
                   "kind": "Reference",
-                  "text": "TestResultStatusGet200Response",
+                  "text": "V1TestResultStatusGet200Response",
                   "canonicalReference": "@gentrace/core!TestResultStatusGet200Response:interface"
                 },
                 {
@@ -11524,7 +11515,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPostRequest",
+              "text": "V1TestResultPostRequest",
               "canonicalReference": "@gentrace/core!TestResultPostRequest:interface"
             },
             {
@@ -11658,7 +11649,7 @@
               "text": ">;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v1-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 106
@@ -11781,7 +11772,7 @@
             },
             {
               "kind": "Reference",
-              "text": "PipelinesGet200Response",
+              "text": "V1PipelinesGet200Response",
               "canonicalReference": "@gentrace/core!PipelinesGet200Response:interface"
             },
             {
@@ -11826,7 +11817,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestCaseGet200Response",
+              "text": "V1TestCaseGet200Response",
               "canonicalReference": "@gentrace/core!TestCaseGet200Response:interface"
             },
             {
@@ -11898,7 +11889,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultGet200Response",
+              "text": "V1TestResultGet200Response",
               "canonicalReference": "@gentrace/core!TestResultGet200Response:interface"
             },
             {
@@ -11943,7 +11934,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -11952,7 +11943,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPostRequest",
+              "text": "V1TestResultPostRequest",
               "canonicalReference": "@gentrace/core!TestResultPostRequest:interface"
             },
             {
@@ -11970,7 +11961,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -11997,7 +11988,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -12024,7 +12015,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -12042,7 +12033,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultStatusGet200Response",
+              "text": "V1TestResultStatusGet200Response",
               "canonicalReference": "@gentrace/core!TestResultStatusGet200Response:interface"
             },
             {
@@ -12050,7 +12041,7 @@
               "text": ">;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v1-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 7,
             "endIndex": 82
@@ -12253,7 +12244,7 @@
             },
             {
               "kind": "Reference",
-              "text": "PipelinesGet200Response",
+              "text": "V1PipelinesGet200Response",
               "canonicalReference": "@gentrace/core!PipelinesGet200Response:interface"
             },
             {
@@ -12352,7 +12343,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestCaseGet200Response",
+              "text": "V1TestCaseGet200Response",
               "canonicalReference": "@gentrace/core!TestCaseGet200Response:interface"
             },
             {
@@ -12505,7 +12496,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultGet200Response",
+              "text": "V1TestResultGet200Response",
               "canonicalReference": "@gentrace/core!TestResultGet200Response:interface"
             },
             {
@@ -12604,7 +12595,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -12613,7 +12604,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPostRequest",
+              "text": "V1TestResultPostRequest",
               "canonicalReference": "@gentrace/core!TestResultPostRequest:interface"
             },
             {
@@ -12658,7 +12649,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -12712,7 +12703,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -12766,7 +12757,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultPost200Response",
+              "text": "V1TestResultPost200Response",
               "canonicalReference": "@gentrace/core!TestResultPost200Response:interface"
             },
             {
@@ -12811,7 +12802,7 @@
             },
             {
               "kind": "Reference",
-              "text": "TestResultStatusGet200Response",
+              "text": "V1TestResultStatusGet200Response",
               "canonicalReference": "@gentrace/core!TestResultStatusGet200Response:interface"
             },
             {
@@ -12819,7 +12810,7 @@
               "text": ">>;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v1-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 162
@@ -12857,7 +12848,7 @@
               "text": " "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v2-api.d.ts",
           "releaseTag": "Public",
           "isAbstract": false,
           "name": "V2Api",
@@ -12912,7 +12903,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13016,7 +13007,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13113,7 +13104,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13210,7 +13201,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13299,7 +13290,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13387,7 +13378,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13483,7 +13474,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13579,7 +13570,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13676,7 +13667,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13773,7 +13764,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13861,7 +13852,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -13949,7 +13940,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -14054,7 +14045,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -14158,7 +14149,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -14262,7 +14253,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -14366,7 +14357,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -14454,7 +14445,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -14576,7 +14567,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -15243,7 +15234,7 @@
               "text": ">;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v2-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 128
@@ -15698,7 +15689,7 @@
               "text": ">;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v2-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 7,
             "endIndex": 96
@@ -16638,7 +16629,7 @@
               "text": ">>;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v2-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 200
@@ -16676,7 +16667,7 @@
               "text": " "
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v3-api.d.ts",
           "releaseTag": "Public",
           "isAbstract": false,
           "name": "V3Api",
@@ -16715,7 +16706,7 @@
                 },
                 {
                   "kind": "Content",
-                  "text": "<"
+                  "text": "<import(\"axios\")."
                 },
                 {
                   "kind": "Reference",
@@ -16827,7 +16818,7 @@
               "text": ">;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v3-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 10
@@ -16904,7 +16895,7 @@
               "text": ">;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v3-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 7,
             "endIndex": 12
@@ -17007,7 +16998,7 @@
               "text": ">>;\n}"
             }
           ],
-          "fileUrlPath": "dist/index.d.ts",
+          "fileUrlPath": "dist/api/v3-api.d.ts",
           "returnTypeTokenRange": {
             "startIndex": 3,
             "endIndex": 14
