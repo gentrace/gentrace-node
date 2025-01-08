@@ -448,10 +448,7 @@ export class PipelineRun {
 }
 
 // @public (undocumented)
-export type PipelineRunDataTuple = [
-PipelineRun,
-TestCaseForSubmission | TestCase | TestCaseV2
-];
+export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
 
 // @public @deprecated (undocumented)
 export type PipelineRunTestCaseTuple = PipelineRunDataTuple;
@@ -915,9 +912,9 @@ export const V3ApiFp: (configuration?: Configuration) => {
 // dist/index.d.ts:169:5 - (ae-forgotten-export) The symbol "Metadata" needs to be exported by the entry point index.d.ts
 // dist/index.d.ts:1975:9 - (ae-forgotten-export) The symbol "PipelineLike" needs to be exported by the entry point index.d.ts
 // dist/index.d.ts:2041:9 - (ae-forgotten-export) The symbol "StepRunWhitelistDescriptor" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:2380:9 - (ae-forgotten-export) The symbol "MetadataValueObject" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:4066:5 - (ae-forgotten-export) The symbol "RequestArgs" needs to be exported by the entry point index.d.ts
-// dist/index.d.ts:4991:9 - (ae-forgotten-export) The symbol "FilterableMetadataInputValue" needs to be exported by the entry point index.d.ts
+// dist/index.d.ts:2377:9 - (ae-forgotten-export) The symbol "MetadataValueObject" needs to be exported by the entry point index.d.ts
+// dist/index.d.ts:4063:5 - (ae-forgotten-export) The symbol "RequestArgs" needs to be exported by the entry point index.d.ts
+// dist/index.d.ts:4988:9 - (ae-forgotten-export) The symbol "FilterableMetadataInputValue" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

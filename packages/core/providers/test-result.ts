@@ -26,6 +26,10 @@ export type TestCaseForSubmission = {
   inputs?: Record<string, any>;
 };
 
+/**
+ * A tuple containing a PipelineRun and a test case for submission.
+ * @public
+ */
 export type PipelineRunDataTuple = [
   PipelineRun,
   TestCaseForSubmission | TestCase | TestCaseV2,
