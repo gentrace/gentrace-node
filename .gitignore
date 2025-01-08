@@ -47,3 +47,6 @@ yarn-error.log
 .rollup.cache
 tsconfig.tsbuildinfo
 .idea
+
+# For API extractor
+temp
