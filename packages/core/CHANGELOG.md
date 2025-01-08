@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.3
+
+### Patch Changes
+
+- 041b4fa: fix: Fix typing
+
 ## 3.5.2
 
 ### Patch Changes
