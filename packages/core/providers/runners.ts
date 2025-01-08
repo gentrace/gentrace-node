@@ -21,7 +21,7 @@ import {
  * @param {Pipeline<{ [key: string]: GentracePlugin<any, any> }>} pipeline - The pipeline instance
  * @param {string} [datasetId] - Optional dataset ID to filter test cases by.
  * @throws {Error} Throws an error if the SDK is not initialized. Call init() first.
- * @returns {Promise<Array<PipelineRunTestCaseTuple>>} A Promise that resolves with an array of PipelineRunTestCaseTuple.
+ * @returns {Promise<Array<PipelineRunDataTuple>>} A Promise that resolves with an array of PipelineRunDataTuple.
  */
 export const getTestRunners = async (
   pipeline: Pipeline<{ [key: string]: GentracePlugin<any, any> }>,

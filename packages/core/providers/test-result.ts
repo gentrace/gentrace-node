@@ -25,10 +25,14 @@ export type TestCaseForSubmission = {
   name?: string;
   inputs?: Record<string, any>;
 };
-export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
+
+export type PipelineRunDataTuple = [
+  PipelineRun,
+  TestCaseForSubmission | TestCase | TestCaseV2,
+];
 
 /** @deprecated Use PipelineRunDataTuple instead */
-export type PipelineRunTestCaseTuple = [PipelineRun, TestCase | TestCaseV2];
+export type PipelineRunTestCaseTuple = PipelineRunDataTuple;
 
 export const constructSubmissionPayloadSimple = (
   pipelineSlug: string,
