@@ -35,7 +35,10 @@ export type TestCaseForSubmission = {
  * A tuple containing a PipelineRun and a test case for submission.
  * @public
  */
-export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
+export type PipelineRunDataTuple = [
+  PipelineRun,
+  TestCaseForSubmission | TestCase | TestCaseV2,
+];
 
 /** @deprecated Use PipelineRunDataTuple instead */
 export type PipelineRunTestCaseTuple = PipelineRunDataTuple;

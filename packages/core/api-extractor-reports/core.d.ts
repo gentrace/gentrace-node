@@ -2215,7 +2215,10 @@ declare type PipelineRunContext = {
  * A tuple containing a PipelineRun and a test case for submission.
  * @public
  */
-export declare type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
+export declare type PipelineRunDataTuple = [
+  PipelineRun,
+  TestCaseForSubmission | TestCase | TestCaseV2,
+];
 
 declare type PipelineRunPayload = {
   id: string;

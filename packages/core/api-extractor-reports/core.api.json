@@ -5810,7 +5810,7 @@
             },
             {
               "kind": "Content",
-              "text": "["
+              "text": "[\n    "
             },
             {
               "kind": "Reference",
@@ -5819,7 +5819,7 @@
             },
             {
               "kind": "Content",
-              "text": ", "
+              "text": ",\n    "
             },
             {
               "kind": "Reference",
@@ -5828,7 +5828,25 @@
             },
             {
               "kind": "Content",
-              "text": "]"
+              "text": " | "
+            },
+            {
+              "kind": "Reference",
+              "text": "TestCase",
+              "canonicalReference": "@gentrace/core!TestCase:interface"
+            },
+            {
+              "kind": "Content",
+              "text": " | "
+            },
+            {
+              "kind": "Reference",
+              "text": "TestCaseV2",
+              "canonicalReference": "@gentrace/core!~TestCaseV2:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "\n]"
             },
             {
               "kind": "Content",
@@ -5840,7 +5858,7 @@
           "name": "PipelineRunDataTuple",
           "typeTokenRange": {
             "startIndex": 1,
-            "endIndex": 6
+            "endIndex": 10
           }
         },
         {

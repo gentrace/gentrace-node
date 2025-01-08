@@ -448,7 +448,10 @@ export class PipelineRun {
 }
 
 // @public
-export type PipelineRunDataTuple = [PipelineRun, TestCaseForSubmission];
+export type PipelineRunDataTuple = [
+PipelineRun,
+TestCaseForSubmission | TestCase | TestCaseV2
+];
 
 // @public @deprecated (undocumented)
 export type PipelineRunTestCaseTuple = PipelineRunDataTuple;
