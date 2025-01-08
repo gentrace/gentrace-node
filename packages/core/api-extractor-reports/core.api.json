@@ -8148,7 +8148,16 @@
             },
             {
               "kind": "Content",
-              "text": "{\n    id?: string;\n    name: string;\n}"
+              "text": "{\n    id?: string;\n    name?: string;\n    inputs?: "
+            },
+            {
+              "kind": "Reference",
+              "text": "Record",
+              "canonicalReference": "!Record:type"
+            },
+            {
+              "kind": "Content",
+              "text": "<string, any>;\n}"
             },
             {
               "kind": "Content",
@@ -8160,7 +8169,7 @@
           "name": "TestCaseForSubmission",
           "typeTokenRange": {
             "startIndex": 1,
-            "endIndex": 2
+            "endIndex": 4
           }
         },
         {

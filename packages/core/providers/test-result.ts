@@ -27,7 +27,8 @@ export type TestRun = V1TestResultPostRequestTestRunsInner;
  */
 export type TestCaseForSubmission = {
   id?: string;
-  name: string;
+  name?: string;
+  inputs?: Record<string, any>;
 };
 
 /**

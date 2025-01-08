@@ -3237,7 +3237,8 @@ export declare interface TestCase {
  */
 export declare type TestCaseForSubmission = {
   id?: string;
-  name: string;
+  name?: string;
+  inputs?: Record<string, any>;
 };
 
 /**

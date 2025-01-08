@@ -592,7 +592,8 @@ export interface TestCase {
 // @public
 export type TestCaseForSubmission = {
     id?: string;
-    name: string;
+    name?: string;
+    inputs?: Record<string, any>;
 };
 
 // @public
