@@ -30,7 +30,7 @@ jobs:
       - name: Build assets
         run: pnpm -w run build
 
-      # Will fail if exit code > 0, indicating breaking change. If you're updating the types,
+      # Will fail if exit code > 0, indicating a POTENTIAL breaking change. If you're updating the types,
       # you must manually commit the changes with npx api-extractor run --local and repush. This
       # is an opportunity to review the changes and commit them manually.
       - name: Check API changes
