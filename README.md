@@ -12,18 +12,11 @@ Gentrace Node.js Monorepo
 </p>
 <!-- TEXT_SECTION:header:END -->
 
-> [!IMPORTANT]
-> This version of the Node.JS SDK is a monorepo that contains multiple different packages. Previously, we had separated [our v0 branch](https://github.com/gentrace/gentrace-node/tree/v0) and [our v1 branch](https://github.com/gentrace/gentrace-node/tree/v1) to support OpenAI v3 and v4, respectively.
->
-> Visit the above URLs to learn more about how to install those deprecated packages.
-
 ## Packages
 
 _Gentrace Core_ (`@gentrace/core`): core logic that implements important Gentrace abstractions and provides utilities for creating new plugins.
 
-_Gentrace OpenAI v3_ (`@gentrace/openai@v3`): plugin for the OpenAI v3 SDK. This version is incompatible with v4.
-
-_Gentrace OpenAI v4_ (`@gentrace/openai@v4`): plugin for the OpenAI v4 SDK. This version is incompatible with v3.
+_Gentrace OpenAI_ (`@gentrace/openai`): plugin for the OpenAI SDK.
 
 _Gentrace Pinecone_ (`@gentrace/pinecone`): plugin for the Pinecone SDK.
 
@@ -35,11 +28,8 @@ _Gentrace Pinecone_ (`@gentrace/pinecone`): plugin for the Pinecone SDK.
 # Gentrace core
 npm install @gentrace/core
 
-# Gentrace OpenAI v3 plugin
-npm install @gentrace/openai@v3
-
-# Gentrace OpenAI v4 plugin
-npm install @gentrace/openai@v4
+# Gentrace OpenAI plugin
+npm install @gentrace/openai
 
 # Gentrace Pinecone plugin
 npm install @gentrace/pinecone
