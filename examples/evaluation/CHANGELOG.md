@@ -1,5 +1,12 @@
 # @examples/evaluation
 
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies [639d6e6]
+  - @gentrace/openai@4.2.3
+
 ## 0.4.4
 
 ### Patch Changes

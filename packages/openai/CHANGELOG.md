@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.2.3
+
+### Patch Changes
+
+- 639d6e6: fix issues with beta class
+
 ## 4.2.2
 
 ### Patch Changes
