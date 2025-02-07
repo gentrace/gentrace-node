@@ -1,5 +1,11 @@
 # @examples/openai
 
+## 0.1.3
+
+### Patch Changes
+
+- e290c32: fix OpenAI summary
+
 ## 0.1.2
 
 ### Patch Changes
