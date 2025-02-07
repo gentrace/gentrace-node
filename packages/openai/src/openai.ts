@@ -85,7 +85,7 @@ export class GentraceStream<Item> implements AsyncIterable<Item> {
     const allItems: Item[] = [];
 
     for await (const item of this.stream) {
-      // Yield each item from the original stream
+      // Yield each item from original stream
       yield item;
 
       allItems.push(item);
