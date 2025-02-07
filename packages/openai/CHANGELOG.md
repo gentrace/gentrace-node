@@ -1,5 +1,11 @@
 # @gentrace/openai
 
+## 4.2.2
+
+### Patch Changes
+
+- ccf2911: Fix Beta import
+
 ## 4.2.1
 
 ### Patch Changes
