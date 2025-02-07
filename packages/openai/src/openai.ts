@@ -21,6 +21,7 @@ import {
 } from "openai/resources";
 import {
   ChatCompletionParseParams,
+  Completions,
   ParsedChatCompletion,
 } from "openai/resources/beta/chat/completions";
 import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
@@ -624,7 +625,7 @@ export interface GentraceChatCompletionParseParams<
   gentrace?: Context;
 }
 
-export class GentraceBetaChatCompletions extends OpenAI.Beta.Chat.Completions {
+export class GentraceBetaChatCompletions extends Completions {
   private pipelineRun?: PipelineRun;
   private gentraceConfig: GentraceConfiguration;
 
