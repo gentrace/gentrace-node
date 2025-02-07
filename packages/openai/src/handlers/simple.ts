@@ -39,6 +39,7 @@ import {
   OpenAIPipelineHandler,
 } from "../openai";
 import { ExtractParsedContentFromParams } from "openai/lib/parser";
+import { Chat } from "openai/resources/beta/chat/chat";
 
 class SimpleOpenAI
   extends OpenAIPipelineHandler
@@ -276,7 +277,7 @@ export class SimpleGentraceBeta extends OpenAI.Beta {
   }
 }
 
-export class SimpleGentraceBetaChat extends OpenAI.Beta.Chat {
+export class SimpleGentraceBetaChat extends Chat {
   // @ts-ignore
   public completions: SimpleGentraceBetaChatCompletions;
 

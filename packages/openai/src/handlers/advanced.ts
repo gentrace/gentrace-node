@@ -36,6 +36,7 @@ import {
   GentraceStream,
   OpenAIPipelineHandler,
 } from "../openai";
+import { Chat } from "openai/resources/beta/chat/chat";
 
 type OpenAIPipelineHandlerOptions = {
   pipelineRun?: PipelineRun;
@@ -232,7 +233,7 @@ export class AdvancedGentraceBeta extends OpenAI.Beta {
   }
 }
 
-export class AdvancedGentraceBetaChat extends OpenAI.Beta.Chat {
+export class AdvancedGentraceBetaChat extends Chat {
   // @ts-ignore
   public completions: AdvancedGentraceBetaChatCompletions;
 
