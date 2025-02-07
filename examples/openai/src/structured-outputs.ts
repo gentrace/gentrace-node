@@ -60,7 +60,7 @@ async function createStructuredCompletion() {
     },
   });
 
-  console.log("Parsed math reasoning result:", completion.choices[0].message);
+  console.log("Parsed math reasoning result", completion.choices[0].message);
 
   await runner.submit({ waitForServer: true });
 }
