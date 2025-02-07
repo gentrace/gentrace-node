@@ -9,7 +9,7 @@
   "dependencies": {
     "@gentrace/core": "workspace:^3.2.0",
     "@gentrace/openai": "workspace:^4.0.0",
-    "openai": "^4.56.0",
+    "openai": "^4.83.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
