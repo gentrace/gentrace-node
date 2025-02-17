@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.4
+
+### Patch Changes
+
+- 946fb64: Add back in error interceptor
+
 ## 3.5.3
 
 ### Patch Changes
