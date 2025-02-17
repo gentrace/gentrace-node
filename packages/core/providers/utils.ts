@@ -176,67 +176,27 @@ export function getContextTestCaseFilter(
   return { context, caseFilter };
 }
 
-let lastErrorCheckpoint = Date.now(); // used for error throttling
-let errorSent = false; // make sure first error is always shown
+interface ExtendedError extends Error {
+  details?: any;
+}
 
-export function setErrorInterceptor(showErrorsInput: string) {
+export function setErrorInterceptor() {
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
-      let showErrors = showErrorsInput;
-      if (showErrorsInput) {
-        showErrors = showErrorsInput.toLowerCase();
-      }
+      const simplified = {
+        status: error.response?.status,
+        method: error.config?.method?.toUpperCase(), // GET, POST, etc.
+        requestUrl: error.config?.url,
+        requestData: error.config?.data,
+        responseData: error.response?.data,
+        message: error.response?.data?.message,
+      };
 
-      if (showErrors === "none") {
-        return Promise.reject("");
-      }
+      const newError = new Error(simplified.message) as ExtendedError;
+      newError.details = simplified;
 
-      if (showErrors === "all") {
-        return Promise.reject(error);
-      }
-
-      // default path: make the error message more user friendly
-
-      const now = Date.now();
-      let friendlyMessage = new Date(now).toUTCString(); // timestamp
-
-      if (error.config?.url) {
-        friendlyMessage += "\nGentrace URL: " + error.config.url;
-      }
-      if (error.message === "Network Error") {
-        friendlyMessage +=
-          "\nA network error occurred. Please check your connection.";
-      } else if (error.message) {
-        friendlyMessage += "\nError message: " + error.message;
-      }
-      if (error.response?.data?.message) {
-        friendlyMessage += "\n🛑 " + error.response.data.message;
-      }
-      if (error.response?.data?.errors) {
-        friendlyMessage +=
-          "\n🛑 Errors: " + JSON.stringify(error.response.data.errors, null, 2);
-      }
-      if (error.code === "ECONNABORTED") {
-        friendlyMessage += "\nThe request timed out. Please try again later.";
-      } else if (error.code) {
-        friendlyMessage += "\nError code: " + error.code;
-      }
-      if (error.status) {
-        friendlyMessage += "\nError status: " + error.status;
-      }
-
-      // show errors at most every 10 seconds
-      // (errors that occur in between are throttled)
-
-      if (errorSent === false || now - lastErrorCheckpoint > 10000) {
-        errorSent = true;
-        lastErrorCheckpoint = now;
-
-        return Promise.reject(friendlyMessage);
-      } else {
-        return Promise.reject(""); // throttled error
-      }
+      return Promise.reject(newError);
     },
   );
 }

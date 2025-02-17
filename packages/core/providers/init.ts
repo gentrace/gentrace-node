@@ -90,7 +90,7 @@ export function init(values?: {
   GENTRACE_SHOW_CONNECTION_ERRORS =
     showConnectionErrors || getProcessEnv("GENTRACE_SHOW_CONNECTION_ERRORS");
 
-  setErrorInterceptor(GENTRACE_SHOW_CONNECTION_ERRORS);
+  setErrorInterceptor();
 
   if (basePath) {
     try {
