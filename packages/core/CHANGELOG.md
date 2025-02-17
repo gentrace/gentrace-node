@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.5
+
+### Patch Changes
+
+- 2c1fe09: prevent recursive interceptor
+
 ## 3.5.4
 
 ### Patch Changes
