@@ -199,32 +199,6 @@ export function setErrorInterceptor() {
       return Promise.reject(newError);
     },
   );
-
-  // axios.interceptors.response.use(
-  //   (response) => {
-  //     console.log(
-  //       "❤️ [error-interceptor] Response received",
-  //       response.status,
-  //       response.data
-  //     );
-  //     return response;
-  //   },
-  //   (error) => {
-  //     const simplified = {
-  //       status: error.response?.status,
-  //       requestData: error.config?.data,
-  //       responseData: error.response?.data,
-  //     };
-  //     console.log(
-  //       "❤️ [error-interceptor] Error intercepted",
-  //       error,
-  //       simplified.status,
-  //       simplified.requestData,
-  //       simplified.responseData
-  //     );
-  //     return Promise.reject(simplified);
-  //   }
-  // );
 }
 
 /**
