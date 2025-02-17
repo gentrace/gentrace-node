@@ -178,23 +178,32 @@ export function getContextTestCaseFilter(
 
 interface ExtendedError extends Error {
   details?: any;
+  isInterceptorError?: boolean;
 }
 
 export function setErrorInterceptor() {
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
+      // Guard against recursive error handling
+      if ((error as ExtendedError).isInterceptorError) {
+        return Promise.reject(error);
+      }
+
       const simplified = {
         status: error.response?.status,
-        method: error.config?.method?.toUpperCase(), // GET, POST, etc.
+        method: error.config?.method?.toUpperCase(),
         requestUrl: error.config?.url,
         requestData: error.config?.data,
         responseData: error.response?.data,
         message: error.response?.data?.message,
       };
 
-      const newError = new Error(simplified.message) as ExtendedError;
+      const newError = new Error(
+        simplified.message || "Request failed",
+      ) as ExtendedError;
       newError.details = simplified;
+      newError.isInterceptorError = true; // Mark as already processed
 
       return Promise.reject(newError);
     },
