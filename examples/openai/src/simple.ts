@@ -12,7 +12,7 @@ async function createCompletion() {
   });
 
   const pipeline = new Pipeline({
-    slug: "testing-vivek-5",
+    slug: "guess-the-year",
     plugins: {
       openai: plugin,
     },
@@ -21,7 +21,7 @@ async function createCompletion() {
   const runner = pipeline.start();
 
   const completion = await runner.openai.chat.completions.create({
-    model: "gpt-4-turbo-preview",
+    model: "gpt-4o",
     messages: [
       {
         role: "user",

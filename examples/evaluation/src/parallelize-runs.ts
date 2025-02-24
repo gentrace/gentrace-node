@@ -54,7 +54,7 @@ async function main() {
   ]: PipelineRunTestCaseTuple) => {
     // @ts-ignore
     const completion = await runner.openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o",
       messages: [
         {
           role: "user",

@@ -1,6 +1,6 @@
 import { init, Pipeline, runTest } from "@gentrace/core";
 
-const PIPELINE_SLUG = "copilot";
+const PIPELINE_SLUG = "guess-the-year";
 
 init({
   apiKey: process.env.GENTRACE_API_KEY ?? "",
@@ -14,39 +14,37 @@ const pipeline = new Pipeline({
 
 async function submitTestRun() {
   try {
-    await runTest(
-      PIPELINE_SLUG,
-      async (testCase) => {
-        const runner = pipeline.start();
+    await runTest(PIPELINE_SLUG, async (testCase) => {
+      const runner = pipeline.start();
 
-        const outputs = await runner.measure(
-          (inputs) => {
-            console.log("inputs", inputs);
-            // Simply return inputs as outputs
-            return {
-              example:
-                "<h1>Example</h1><div>This is an <strong>example</strong></div>",
-            };
-          },
-          [testCase.inputs],
-          {
-            context: {
-              render: {
-                type: "html",
-                key: "example",
-              },
+      const outputs = await runner.measure(
+        (inputs) => {
+          console.log("inputs", inputs);
+          // Simply return inputs as outputs
+          return {
+            example:
+              "<h1>Example</h1><div>This is an <strong>example</strong></div>",
+            cost: {
+              type: "number[]",
+              value: [1, 2, 3],
+            },
+          };
+        },
+        [testCase.inputs],
+        {
+          context: {
+            render: {
+              type: "html",
+              key: "example",
             },
           },
-        );
+        },
+      );
 
-        await runner.submit();
+      await runner.submit();
 
-        return [outputs, runner];
-      },
-      (testCase) => {
-        return testCase.id === "a2bddcbc-51ac-5831-be0d-5868a7ffa1db";
-      },
-    );
+      return [outputs, runner];
+    });
   } catch (e) {
     console.error("Error value", e);
   }
