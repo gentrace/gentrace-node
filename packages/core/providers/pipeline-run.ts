@@ -226,7 +226,7 @@ export class PipelineRun {
 
       // Our server only accepts outputs as an object.
       let modifiedOutput = returnValue;
-      if (typeof returnValue !== "object") {
+      if (typeof returnValue !== "object" || Array.isArray(returnValue)) {
         modifiedOutput = { value: returnValue };
       }
       const endTime = Date.now();

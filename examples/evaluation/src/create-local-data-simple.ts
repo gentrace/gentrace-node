@@ -11,6 +11,7 @@ const PIPELINE_SLUG = "guess-the-year";
 async function main() {
   init({
     apiKey: process.env.GENTRACE_API_KEY ?? "",
+    basePath: "http://localhost:3000/api",
   });
 
   const pipeline = new Pipeline({
@@ -53,9 +54,10 @@ async function main() {
     const outputs = await runner.measure(
       async (inputs) => {
         // FOR EACH TEST CASE, submit your custom data here
-        return {
-          result: "Hello, world!",
-        };
+        // return {
+        //   result: "Hello, world!",
+        // };
+        return [1, 2, 3];
       },
       [testCase.inputs],
     );
@@ -65,11 +67,6 @@ async function main() {
   console.log(
     `Test result submitted successfully. Result ID: ${response.resultId}`,
   );
-
-  // You can use this resultId for further operations if needed
-  const resultId = response.resultId;
-
-  console.log(`Result ID for future reference: ${resultId}`);
 }
 
 main();
