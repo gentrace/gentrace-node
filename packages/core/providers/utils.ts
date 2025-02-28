@@ -198,9 +198,10 @@ export function setErrorInterceptor() {
         responseData: error.response?.data,
         message: error.response?.data?.message,
       };
-
       const newError = new Error(
-        simplified.message || "Request failed",
+        (simplified.message || "Request failed") +
+          ": " +
+          JSON.stringify(simplified, null, 2),
       ) as ExtendedError;
       newError.details = simplified;
       newError.isInterceptorError = true; // Mark as already processed
