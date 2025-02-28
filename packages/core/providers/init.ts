@@ -117,6 +117,8 @@ export function init(values?: {
 
   globalGentraceApiV2 = new V2Api(globalGentraceConfig);
 
+  globalGentraceApiV3 = new V3Api(globalGentraceConfig);
+
   if (branch) {
     GENTRACE_BRANCH = branch;
   }
@@ -134,6 +136,8 @@ export function deinit() {
   GENTRACE_SHOW_CONNECTION_ERRORS = "";
   globalGentraceConfig = null;
   globalGentraceApi = null;
+  globalGentraceApiV2 = null;
+  globalGentraceApiV3 = null;
   globalRequestBuffer = {};
 }
 
