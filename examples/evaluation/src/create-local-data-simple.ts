@@ -54,10 +54,9 @@ async function main() {
     const outputs = await runner.measure(
       async (inputs) => {
         // FOR EACH TEST CASE, submit your custom data here
-        // return {
-        //   result: "Hello, world!",
-        // };
-        return [1, 2, 3];
+        return {
+          result: "Hello, world!",
+        };
       },
       [testCase.inputs],
     );
@@ -67,6 +66,11 @@ async function main() {
   console.log(
     `Test result submitted successfully. Result ID: ${response.resultId}`,
   );
+
+  // You can use this resultId for further operations if needed
+  const resultId = response.resultId;
+
+  console.log(`Result ID for future reference: ${resultId}`);
 }
 
 main();
