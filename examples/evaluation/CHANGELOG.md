@@ -1,5 +1,12 @@
 # @examples/evaluation
 
+## 0.4.9
+
+### Patch Changes
+
+- Updated dependencies [7332538]
+  - @gentrace/core@3.5.7
+
 ## 0.4.8
 
 ### Patch Changes
