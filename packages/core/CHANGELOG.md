@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.6
+
+### Patch Changes
+
+- 76921f9: fix: Add the full error details as JSON-stringified blob in message, handle arrays
+
 ## 3.5.5
 
 ### Patch Changes
