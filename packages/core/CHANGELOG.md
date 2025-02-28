@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.7
+
+### Patch Changes
+
+- 7332538: fix: Fix issue with getEvaluations() functionality being removed
+
 ## 3.5.6
 
 ### Patch Changes
