@@ -203,7 +203,7 @@ export function setErrorInterceptor() {
           ": " +
           JSON.stringify(simplified, null, 2),
       ) as ExtendedError;
-      newError.details = simplified;
+      newError.details = JSON.stringify(simplified, null, 2);
       newError.isInterceptorError = true; // Mark as already processed
 
       return Promise.reject(newError);
