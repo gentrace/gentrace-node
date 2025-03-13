@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.8
+
+### Patch Changes
+
+- 6ead1fa: JSON.stringify() the details to make them more obvious
+
 ## 3.5.7
 
 ### Patch Changes
