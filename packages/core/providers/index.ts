@@ -15,4 +15,5 @@ export * from "./test-result";
 export * from "./evaluator";
 export * from "./runners";
 export * from "./test-job-runner";
+export * from "./otel";
 export { LocalTestData } from "./utils";
