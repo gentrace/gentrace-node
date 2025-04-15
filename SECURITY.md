@@ -20,7 +20,7 @@ or products provided by Gentrace please follow the respective company's security
 
 ### Gentrace Terms and Policies
 
-Please contact dev-feedback@gentrace.com for any questions or concerns regarding security of our services.
+Please contact support@gentrace.ai for any questions or concerns regarding security of our services.
 
 ---
 
