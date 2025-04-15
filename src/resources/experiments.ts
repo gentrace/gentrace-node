@@ -60,6 +60,11 @@ export interface Experiment {
   createdAt: string;
 
   /**
+   * Metadata
+   */
+  metadata: Record<string, unknown> | null;
+
+  /**
    * Friendly experiment name
    */
   name: string | null;
@@ -78,11 +83,6 @@ export interface Experiment {
    * Last update timestamp (ISO 8601)
    */
   updatedAt: string;
-
-  /**
-   * Metadata
-   */
-  metadata?: null;
 }
 
 export interface ExperimentListResponse {
