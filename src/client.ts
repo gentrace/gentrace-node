@@ -151,7 +151,7 @@ export class Gentrace {
   /**
    * API Client for interfacing with the Gentrace API.
    *
-   * @param {string | undefined} [opts.bearerToken=process.env['GENTRACE_BEARER_TOKEN'] ?? undefined]
+   * @param {string | undefined} [opts.bearerToken=process.env['GENTRACE_API_KEY'] ?? undefined]
    * @param {string} [opts.baseURL=process.env['GENTRACE_BASE_URL'] ?? https://gentrace.ai/api] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
@@ -162,12 +162,12 @@ export class Gentrace {
    */
   constructor({
     baseURL = readEnv('GENTRACE_BASE_URL'),
-    bearerToken = readEnv('GENTRACE_BEARER_TOKEN'),
+    bearerToken = readEnv('GENTRACE_API_KEY'),
     ...opts
   }: ClientOptions = {}) {
     if (bearerToken === undefined) {
       throw new Errors.GentraceError(
-        "The GENTRACE_BEARER_TOKEN environment variable is missing or empty; either provide it, or instantiate the Gentrace client with an bearerToken option, like new Gentrace({ bearerToken: 'My Bearer Token' }).",
+        "The GENTRACE_API_KEY environment variable is missing or empty; either provide it, or instantiate the Gentrace client with an bearerToken option, like new Gentrace({ bearerToken: 'My Bearer Token' }).",
       );
     }
 
