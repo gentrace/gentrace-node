@@ -192,7 +192,7 @@ export interface PipelineUpdateParams {
 
 export namespace PipelineUpdateParams {
   /**
-   * Saved runs display configuration
+   * @deprecated Saved runs display configuration
    */
   export interface SavedRunsDisplay {
     evaluators?: SavedRunsDisplay.Evaluators;
