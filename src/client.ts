@@ -22,37 +22,46 @@ import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
 import {
-  APIResponse,
-  Pet,
-  PetCreateParams,
-  PetFindByStatusParams,
-  PetFindByStatusResponse,
-  PetFindByTagsParams,
-  PetFindByTagsResponse,
-  PetUpdateByIDParams,
-  PetUpdateParams,
-  PetUploadImageParams,
-  Pets,
-} from './resources/pets';
+  Dataset,
+  DatasetCreateParams,
+  DatasetListParams,
+  DatasetListResponse,
+  DatasetUpdateParams,
+  Datasets,
+} from './resources/datasets';
 import {
-  User,
-  UserCreateParams,
-  UserCreateWithListParams,
-  UserLoginParams,
-  UserLoginResponse,
-  UserResource,
-  UserUpdateParams,
-} from './resources/user';
+  Experiment,
+  ExperimentCreateParams,
+  ExperimentListParams,
+  ExperimentListResponse,
+  ExperimentUpdateParams,
+  Experiments,
+} from './resources/experiments';
+import {
+  Pipeline,
+  PipelineCreateParams,
+  PipelineListParams,
+  PipelineListResponse,
+  PipelineUpdateParams,
+  Pipelines,
+} from './resources/pipelines';
+import {
+  TestCase,
+  TestCaseCreateParams,
+  TestCaseDeleteResponse,
+  TestCaseListParams,
+  TestCaseListResponse,
+  TestCases,
+} from './resources/test-cases';
 import { readEnv } from './internal/utils/env';
 import { formatRequestDetails, loggerFor } from './internal/utils/log';
 import { isEmptyObj } from './internal/utils/values';
-import { Store, StoreInventoryResponse } from './resources/store/store';
 
 export interface ClientOptions {
   /**
-   * Defaults to process.env['PETSTORE_API_KEY'].
+   * Enter Gentrace API key (Format: Authorization: Bearer <token>)
    */
-  apiKey?: string | undefined;
+  bearerToken?: string | undefined;
 
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
@@ -125,7 +134,7 @@ export interface ClientOptions {
  * API Client for interfacing with the Gentrace API.
  */
 export class Gentrace {
-  apiKey: string;
+  bearerToken: string;
 
   baseURL: string;
   maxRetries: number;
@@ -142,8 +151,8 @@ export class Gentrace {
   /**
    * API Client for interfacing with the Gentrace API.
    *
-   * @param {string | undefined} [opts.apiKey=process.env['PETSTORE_API_KEY'] ?? undefined]
-   * @param {string} [opts.baseURL=process.env['GENTRACE_BASE_URL'] ?? https://petstore3.swagger.io/api/v3] - Override the default base URL for the API.
+   * @param {string | undefined} [opts.bearerToken=process.env['GENTRACE_BEARER_TOKEN'] ?? undefined]
+   * @param {string} [opts.baseURL=process.env['GENTRACE_BASE_URL'] ?? https://gentrace.ai/api] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -153,19 +162,19 @@ export class Gentrace {
    */
   constructor({
     baseURL = readEnv('GENTRACE_BASE_URL'),
-    apiKey = readEnv('PETSTORE_API_KEY'),
+    bearerToken = readEnv('GENTRACE_BEARER_TOKEN'),
     ...opts
   }: ClientOptions = {}) {
-    if (apiKey === undefined) {
+    if (bearerToken === undefined) {
       throw new Errors.GentraceError(
-        "The PETSTORE_API_KEY environment variable is missing or empty; either provide it, or instantiate the Gentrace client with an apiKey option, like new Gentrace({ apiKey: 'My API Key' }).",
+        "The GENTRACE_BEARER_TOKEN environment variable is missing or empty; either provide it, or instantiate the Gentrace client with an bearerToken option, like new Gentrace({ bearerToken: 'My Bearer Token' }).",
       );
     }
 
     const options: ClientOptions = {
-      apiKey,
+      bearerToken,
       ...opts,
-      baseURL: baseURL || `https://petstore3.swagger.io/api/v3`,
+      baseURL: baseURL || `https://gentrace.ai/api`,
     };
 
     this.baseURL = options.baseURL!;
@@ -185,7 +194,7 @@ export class Gentrace {
 
     this._options = options;
 
-    this.apiKey = apiKey;
+    this.bearerToken = bearerToken;
   }
 
   protected defaultQuery(): Record<string, string | undefined> | undefined {
@@ -197,7 +206,7 @@ export class Gentrace {
   }
 
   protected authHeaders(opts: FinalRequestOptions): NullableHeaders | undefined {
-    return buildHeaders([{ api_key: this.apiKey }]);
+    return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
   }
 
   protected stringifyQuery(query: Record<string, unknown>): string {
@@ -681,41 +690,51 @@ export class Gentrace {
 
   static toFile = Uploads.toFile;
 
-  pets: API.Pets = new API.Pets(this);
-  store: API.Store = new API.Store(this);
-  user: API.UserResource = new API.UserResource(this);
+  pipelines: API.Pipelines = new API.Pipelines(this);
+  experiments: API.Experiments = new API.Experiments(this);
+  datasets: API.Datasets = new API.Datasets(this);
+  testCases: API.TestCases = new API.TestCases(this);
 }
-Gentrace.Pets = Pets;
-Gentrace.Store = Store;
-Gentrace.UserResource = UserResource;
+Gentrace.Pipelines = Pipelines;
+Gentrace.Experiments = Experiments;
+Gentrace.Datasets = Datasets;
+Gentrace.TestCases = TestCases;
 export declare namespace Gentrace {
   export type RequestOptions = Opts.RequestOptions;
 
   export {
-    Pets as Pets,
-    type APIResponse as APIResponse,
-    type Pet as Pet,
-    type PetFindByStatusResponse as PetFindByStatusResponse,
-    type PetFindByTagsResponse as PetFindByTagsResponse,
-    type PetCreateParams as PetCreateParams,
-    type PetUpdateParams as PetUpdateParams,
-    type PetFindByStatusParams as PetFindByStatusParams,
-    type PetFindByTagsParams as PetFindByTagsParams,
-    type PetUpdateByIDParams as PetUpdateByIDParams,
-    type PetUploadImageParams as PetUploadImageParams,
+    Pipelines as Pipelines,
+    type Pipeline as Pipeline,
+    type PipelineListResponse as PipelineListResponse,
+    type PipelineCreateParams as PipelineCreateParams,
+    type PipelineUpdateParams as PipelineUpdateParams,
+    type PipelineListParams as PipelineListParams,
   };
-
-  export { Store as Store, type StoreInventoryResponse as StoreInventoryResponse };
 
   export {
-    UserResource as UserResource,
-    type User as User,
-    type UserLoginResponse as UserLoginResponse,
-    type UserCreateParams as UserCreateParams,
-    type UserUpdateParams as UserUpdateParams,
-    type UserCreateWithListParams as UserCreateWithListParams,
-    type UserLoginParams as UserLoginParams,
+    Experiments as Experiments,
+    type Experiment as Experiment,
+    type ExperimentListResponse as ExperimentListResponse,
+    type ExperimentCreateParams as ExperimentCreateParams,
+    type ExperimentUpdateParams as ExperimentUpdateParams,
+    type ExperimentListParams as ExperimentListParams,
   };
 
-  export type Order = API.Order;
+  export {
+    Datasets as Datasets,
+    type Dataset as Dataset,
+    type DatasetListResponse as DatasetListResponse,
+    type DatasetCreateParams as DatasetCreateParams,
+    type DatasetUpdateParams as DatasetUpdateParams,
+    type DatasetListParams as DatasetListParams,
+  };
+
+  export {
+    TestCases as TestCases,
+    type TestCase as TestCase,
+    type TestCaseListResponse as TestCaseListResponse,
+    type TestCaseDeleteResponse as TestCaseDeleteResponse,
+    type TestCaseCreateParams as TestCaseCreateParams,
+    type TestCaseListParams as TestCaseListParams,
+  };
 }

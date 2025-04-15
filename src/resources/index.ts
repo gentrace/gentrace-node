@@ -1,26 +1,34 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-export * from './shared';
 export {
-  Pets,
-  type APIResponse,
-  type Pet,
-  type PetFindByStatusResponse,
-  type PetFindByTagsResponse,
-  type PetCreateParams,
-  type PetUpdateParams,
-  type PetFindByStatusParams,
-  type PetFindByTagsParams,
-  type PetUpdateByIDParams,
-  type PetUploadImageParams,
-} from './pets';
-export { Store, type StoreInventoryResponse } from './store/store';
+  Datasets,
+  type Dataset,
+  type DatasetListResponse,
+  type DatasetCreateParams,
+  type DatasetUpdateParams,
+  type DatasetListParams,
+} from './datasets';
 export {
-  UserResource,
-  type User,
-  type UserLoginResponse,
-  type UserCreateParams,
-  type UserUpdateParams,
-  type UserCreateWithListParams,
-  type UserLoginParams,
-} from './user';
+  Experiments,
+  type Experiment,
+  type ExperimentListResponse,
+  type ExperimentCreateParams,
+  type ExperimentUpdateParams,
+  type ExperimentListParams,
+} from './experiments';
+export {
+  Pipelines,
+  type Pipeline,
+  type PipelineListResponse,
+  type PipelineCreateParams,
+  type PipelineUpdateParams,
+  type PipelineListParams,
+} from './pipelines';
+export {
+  TestCases,
+  type TestCase,
+  type TestCaseListResponse,
+  type TestCaseDeleteResponse,
+  type TestCaseCreateParams,
+  type TestCaseListParams,
+} from './test-cases';
