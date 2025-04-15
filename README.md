@@ -26,7 +26,7 @@ The full API of this library can be found in [api.md](api.md).
 import Gentrace from 'gentrace';
 
 const client = new Gentrace({
-  bearerToken: process.env['GENTRACE_BEARER_TOKEN'], // This is the default and can be omitted
+  bearerToken: process.env['GENTRACE_API_KEY'], // This is the default and can be omitted
 });
 
 async function main() {
@@ -47,7 +47,7 @@ This library includes TypeScript definitions for all request params and response
 import Gentrace from 'gentrace';
 
 const client = new Gentrace({
-  bearerToken: process.env['GENTRACE_BEARER_TOKEN'], // This is the default and can be omitted
+  bearerToken: process.env['GENTRACE_API_KEY'], // This is the default and can be omitted
 });
 
 async function main() {
