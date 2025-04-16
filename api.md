@@ -4,14 +4,14 @@ Types:
 
 - <code><a href="./src/resources/pipelines.ts">CreatePipelineBody</a></code>
 - <code><a href="./src/resources/pipelines.ts">Pipeline</a></code>
-- <code><a href="./src/resources/pipelines.ts">PipelineListResponse</a></code>
+- <code><a href="./src/resources/pipelines.ts">PipelineList</a></code>
 
 Methods:
 
 - <code title="post /v4/pipelines">client.pipelines.<a href="./src/resources/pipelines.ts">create</a>({ ...params }) -> Pipeline</code>
 - <code title="get /v4/pipelines/{id}">client.pipelines.<a href="./src/resources/pipelines.ts">retrieve</a>(id) -> Pipeline</code>
 - <code title="post /v4/pipelines/{id}">client.pipelines.<a href="./src/resources/pipelines.ts">update</a>(id, { ...params }) -> Pipeline</code>
-- <code title="get /v4/pipelines">client.pipelines.<a href="./src/resources/pipelines.ts">list</a>({ ...params }) -> PipelineListResponse</code>
+- <code title="get /v4/pipelines">client.pipelines.<a href="./src/resources/pipelines.ts">list</a>({ ...params }) -> PipelineList</code>
 
 # Experiments
 
