@@ -59,7 +59,7 @@ import { isEmptyObj } from './internal/utils/values';
 
 export interface ClientOptions {
   /**
-   * Enter Gentrace API key (Format: Authorization: Bearer <token>)
+   * Enter Gentrace API key (Format: Authorization: Bearer <API key>)
    */
   bearerToken?: string | undefined;
 
