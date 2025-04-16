@@ -27,7 +27,7 @@ export {
 export {
   TestCases,
   type TestCase,
-  type TestCaseListResponse,
+  type TestCaseList,
   type TestCaseDeleteResponse,
   type TestCaseCreateParams,
   type TestCaseListParams,

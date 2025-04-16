@@ -49,8 +49,8 @@ import {
   TestCase,
   TestCaseCreateParams,
   TestCaseDeleteResponse,
+  TestCaseList,
   TestCaseListParams,
-  TestCaseListResponse,
   TestCases,
 } from './resources/test-cases';
 import { readEnv } from './internal/utils/env';
@@ -732,7 +732,7 @@ export declare namespace Gentrace {
   export {
     TestCases as TestCases,
     type TestCase as TestCase,
-    type TestCaseListResponse as TestCaseListResponse,
+    type TestCaseList as TestCaseList,
     type TestCaseDeleteResponse as TestCaseDeleteResponse,
     type TestCaseCreateParams as TestCaseCreateParams,
     type TestCaseListParams as TestCaseListParams,
