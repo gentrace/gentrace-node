@@ -3,7 +3,7 @@
 export {
   Datasets,
   type Dataset,
-  type DatasetListResponse,
+  type DatasetList,
   type DatasetCreateParams,
   type DatasetUpdateParams,
   type DatasetListParams,

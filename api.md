@@ -31,14 +31,14 @@ Methods:
 Types:
 
 - <code><a href="./src/resources/datasets.ts">Dataset</a></code>
-- <code><a href="./src/resources/datasets.ts">DatasetListResponse</a></code>
+- <code><a href="./src/resources/datasets.ts">DatasetList</a></code>
 
 Methods:
 
 - <code title="post /v4/datasets">client.datasets.<a href="./src/resources/datasets.ts">create</a>({ ...params }) -> Dataset</code>
 - <code title="get /v4/datasets/{id}">client.datasets.<a href="./src/resources/datasets.ts">retrieve</a>(id) -> Dataset</code>
 - <code title="post /v4/datasets/{id}">client.datasets.<a href="./src/resources/datasets.ts">update</a>(id, { ...params }) -> Dataset</code>
-- <code title="get /v4/datasets">client.datasets.<a href="./src/resources/datasets.ts">list</a>({ ...params }) -> DatasetListResponse</code>
+- <code title="get /v4/datasets">client.datasets.<a href="./src/resources/datasets.ts">list</a>({ ...params }) -> string</code>
 
 # TestCases
 
@@ -52,5 +52,5 @@ Methods:
 
 - <code title="post /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">create</a>({ ...params }) -> TestCase</code>
 - <code title="get /v4/test-cases/{id}">client.testCases.<a href="./src/resources/test-cases.ts">retrieve</a>(id) -> TestCase</code>
-- <code title="get /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">list</a>({ ...params }) -> string</code>
+- <code title="get /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">list</a>({ ...params }) -> TestCaseList</code>
 - <code title="delete /v4/test-cases/{id}">client.testCases.<a href="./src/resources/test-cases.ts">delete</a>(id) -> TestCaseDeleteResponse</code>

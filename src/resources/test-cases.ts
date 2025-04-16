@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as DatasetsAPI from './datasets';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -23,7 +24,10 @@ export class TestCases extends APIResource {
   /**
    * Retrieve a list of all test cases for a given dataset
    */
-  list(query: TestCaseListParams | null | undefined = {}, options?: RequestOptions): APIPromise<string> {
+  list(
+    query: TestCaseListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<TestCaseList> {
     return this._client.get('/v4/test-cases', { query, ...options });
   }
 
@@ -92,10 +96,9 @@ export interface TestCase {
   updatedAt: string;
 }
 
-/**
- * Pipeline slug
- */
-export type TestCaseList = string;
+export interface TestCaseList {
+  data: Array<TestCase>;
+}
 
 /**
  * Delete test case response
@@ -143,7 +146,7 @@ export interface TestCaseListParams {
   /**
    * Pipeline slug
    */
-  pipelineSlug?: TestCaseList;
+  pipelineSlug?: DatasetsAPI.DatasetList;
 }
 
 export declare namespace TestCases {
