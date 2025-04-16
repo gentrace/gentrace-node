@@ -1,7 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
-import * as PipelinesAPI from './pipelines';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -143,7 +142,7 @@ export interface DatasetListParams {
   /**
    * Pipeline slug
    */
-  pipelineSlug?: PipelinesAPI.TestCaseList;
+  pipelineSlug?: string;
 }
 
 export declare namespace Datasets {

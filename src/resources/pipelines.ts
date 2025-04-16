@@ -115,11 +115,6 @@ export interface Pipeline {
   version: number;
 }
 
-/**
- * Pipeline slug
- */
-export type TestCaseList = string;
-
 export interface PipelineListResponse {
   data: Array<Pipeline>;
 }
@@ -286,7 +281,6 @@ export namespace PipelineListParams {
 export declare namespace Pipelines {
   export {
     type Pipeline as Pipeline,
-    type TestCaseList as TestCaseList,
     type PipelineListResponse as PipelineListResponse,
     type PipelineCreateParams as PipelineCreateParams,
     type PipelineUpdateParams as PipelineUpdateParams,

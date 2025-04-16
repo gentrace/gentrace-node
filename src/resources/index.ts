@@ -19,7 +19,6 @@ export {
 export {
   Pipelines,
   type Pipeline,
-  type TestCaseList,
   type PipelineListResponse,
   type PipelineCreateParams,
   type PipelineUpdateParams,
