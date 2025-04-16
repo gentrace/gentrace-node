@@ -38,6 +38,7 @@ import {
   Experiments,
 } from './resources/experiments';
 import {
+  CreateInput,
   Pipeline,
   PipelineCreateParams,
   PipelineListParams,
@@ -704,6 +705,7 @@ export declare namespace Gentrace {
 
   export {
     Pipelines as Pipelines,
+    type CreateInput as CreateInput,
     type Pipeline as Pipeline,
     type PipelineListResponse as PipelineListResponse,
     type PipelineCreateParams as PipelineCreateParams,
