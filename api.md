@@ -45,12 +45,12 @@ Methods:
 Types:
 
 - <code><a href="./src/resources/test-cases.ts">TestCase</a></code>
-- <code><a href="./src/resources/test-cases.ts">TestCaseListResponse</a></code>
+- <code><a href="./src/resources/test-cases.ts">TestCaseList</a></code>
 - <code><a href="./src/resources/test-cases.ts">TestCaseDeleteResponse</a></code>
 
 Methods:
 
 - <code title="post /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">create</a>({ ...params }) -> TestCase</code>
 - <code title="get /v4/test-cases/{id}">client.testCases.<a href="./src/resources/test-cases.ts">retrieve</a>(id) -> TestCase</code>
-- <code title="get /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">list</a>({ ...params }) -> TestCaseListResponse</code>
+- <code title="get /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">list</a>({ ...params }) -> string</code>
 - <code title="delete /v4/test-cases/{id}">client.testCases.<a href="./src/resources/test-cases.ts">delete</a>(id) -> TestCaseDeleteResponse</code>
