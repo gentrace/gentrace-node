@@ -30,9 +30,9 @@ const client = new Gentrace({
 });
 
 async function main() {
-  const pipelines = await client.pipelines.list();
+  const pipelineList = await client.pipelines.list();
 
-  console.log(pipelines.data);
+  console.log(pipelineList.data);
 }
 
 main();
@@ -51,7 +51,7 @@ const client = new Gentrace({
 });
 
 async function main() {
-  const pipelines: Gentrace.PipelineListResponse = await client.pipelines.list();
+  const pipelineList: Gentrace.PipelineList = await client.pipelines.list();
 }
 
 main();
@@ -68,7 +68,7 @@ a subclass of `APIError` will be thrown:
 <!-- prettier-ignore -->
 ```ts
 async function main() {
-  const pipelines = await client.pipelines.list().catch(async (err) => {
+  const pipelineList = await client.pipelines.list().catch(async (err) => {
     if (err instanceof Gentrace.APIError) {
       console.log(err.status); // 400
       console.log(err.name); // BadRequestError
@@ -155,9 +155,9 @@ const response = await client.pipelines.list().asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: pipelines, response: raw } = await client.pipelines.list().withResponse();
+const { data: pipelineList, response: raw } = await client.pipelines.list().withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(pipelines.data);
+console.log(pipelineList.data);
 ```
 
 ### Logging

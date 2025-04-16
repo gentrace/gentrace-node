@@ -33,7 +33,7 @@ export class Pipelines extends APIResource {
   list(
     query: PipelineListParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<PipelineListResponse> {
+  ): APIPromise<PipelineList> {
     return this._client.get('/v4/pipelines', { query, ...options });
   }
 }
@@ -156,7 +156,7 @@ export interface Pipeline {
   version: number;
 }
 
-export interface PipelineListResponse {
+export interface PipelineList {
   data: Array<Pipeline>;
 }
 
@@ -323,7 +323,7 @@ export declare namespace Pipelines {
   export {
     type CreatePipelineBody as CreatePipelineBody,
     type Pipeline as Pipeline,
-    type PipelineListResponse as PipelineListResponse,
+    type PipelineList as PipelineList,
     type PipelineCreateParams as PipelineCreateParams,
     type PipelineUpdateParams as PipelineUpdateParams,
     type PipelineListParams as PipelineListParams,
