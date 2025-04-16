@@ -24,8 +24,8 @@ import { FinalRequestOptions, RequestOptions } from './internal/request-options'
 import {
   Dataset,
   DatasetCreateParams,
+  DatasetList,
   DatasetListParams,
-  DatasetListResponse,
   DatasetUpdateParams,
   Datasets,
 } from './resources/datasets';
@@ -723,7 +723,7 @@ export declare namespace Gentrace {
   export {
     Datasets as Datasets,
     type Dataset as Dataset,
-    type DatasetListResponse as DatasetListResponse,
+    type DatasetList as DatasetList,
     type DatasetCreateParams as DatasetCreateParams,
     type DatasetUpdateParams as DatasetUpdateParams,
     type DatasetListParams as DatasetListParams,
