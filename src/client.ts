@@ -44,13 +44,12 @@ import {
   PipelineListResponse,
   PipelineUpdateParams,
   Pipelines,
-  TestCaseList,
 } from './resources/pipelines';
 import {
   TestCase,
   TestCaseCreateParams,
   TestCaseDeleteResponse,
-  TestCaseList as TestCasesAPITestCaseList,
+  TestCaseList,
   TestCaseListParams,
   TestCases,
 } from './resources/test-cases';
@@ -706,7 +705,6 @@ export declare namespace Gentrace {
   export {
     Pipelines as Pipelines,
     type Pipeline as Pipeline,
-    type TestCaseList as TestCaseList,
     type PipelineListResponse as PipelineListResponse,
     type PipelineCreateParams as PipelineCreateParams,
     type PipelineUpdateParams as PipelineUpdateParams,
@@ -734,7 +732,7 @@ export declare namespace Gentrace {
   export {
     TestCases as TestCases,
     type TestCase as TestCase,
-    type TestCasesAPITestCaseList as TestCaseList,
+    type TestCaseList as TestCaseList,
     type TestCaseDeleteResponse as TestCaseDeleteResponse,
     type TestCaseCreateParams as TestCaseCreateParams,
     type TestCaseListParams as TestCaseListParams,
