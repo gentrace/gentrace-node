@@ -3,7 +3,7 @@
 export {
   Datasets,
   type Dataset,
-  type DatasetList,
+  type DatasetListResponse,
   type DatasetCreateParams,
   type DatasetUpdateParams,
   type DatasetListParams,
@@ -11,7 +11,7 @@ export {
 export {
   Experiments,
   type Experiment,
-  type ExperimentList,
+  type ExperimentListResponse,
   type ExperimentCreateParams,
   type ExperimentUpdateParams,
   type ExperimentListParams,
@@ -27,7 +27,7 @@ export {
 export {
   TestCases,
   type TestCase,
-  type TestCaseList,
+  type TestCaseListResponse,
   type TestCaseDeleteResponse,
   type TestCaseCreateParams,
   type TestCaseListParams,
