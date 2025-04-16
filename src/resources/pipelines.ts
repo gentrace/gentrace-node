@@ -41,7 +41,7 @@ export class Pipelines extends APIResource {
 /**
  * Input schema for creating a pipeline
  */
-export interface CreateInput {
+export interface CreatePipelineBody {
   /**
    * A URL-friendly identifier (lowercase alphanumeric with dashes)
    */
@@ -321,7 +321,7 @@ export namespace PipelineListParams {
 
 export declare namespace Pipelines {
   export {
-    type CreateInput as CreateInput,
+    type CreatePipelineBody as CreatePipelineBody,
     type Pipeline as Pipeline,
     type PipelineListResponse as PipelineListResponse,
     type PipelineCreateParams as PipelineCreateParams,
