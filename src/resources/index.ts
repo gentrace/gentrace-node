@@ -19,7 +19,7 @@ export {
 export {
   Pipelines,
   type Pipeline,
-  type PipelineList,
+  type PipelineListResponse,
   type PipelineCreateParams,
   type PipelineUpdateParams,
   type PipelineListParams,
