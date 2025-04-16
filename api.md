@@ -2,7 +2,6 @@
 
 Types:
 
-- <code><a href="./src/resources/pipelines.ts">CreatePipelineBody</a></code>
 - <code><a href="./src/resources/pipelines.ts">Pipeline</a></code>
 - <code><a href="./src/resources/pipelines.ts">PipelineList</a></code>
 

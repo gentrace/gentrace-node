@@ -18,7 +18,6 @@ export {
 } from './experiments';
 export {
   Pipelines,
-  type CreatePipelineBody,
   type Pipeline,
   type PipelineList,
   type PipelineCreateParams,
