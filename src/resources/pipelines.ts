@@ -35,47 +35,6 @@ export class Pipelines extends APIResource {
   }
 }
 
-/**
- * Input schema for creating a pipeline
- */
-export interface CreatePipelineBody {
-  /**
-   * A URL-friendly identifier (lowercase alphanumeric with dashes)
-   */
-  slug: string;
-
-  /**
-   * The branch of the pipeline
-   */
-  branch?: string | null;
-
-  /**
-   * The display name of the pipeline
-   */
-  displayName?: string | null;
-
-  /**
-   * The ID of the folder containing the pipeline. If not provided, the pipeline will
-   * be created at root level
-   */
-  folderId?: string | null;
-
-  /**
-   * Whether the pipeline is private
-   */
-  isPrivate?: boolean | null;
-
-  /**
-   * Labels for the pipeline
-   */
-  labels?: Array<string>;
-
-  /**
-   * The version of the pipeline
-   */
-  version?: 1 | 2;
-}
-
 export interface Pipeline {
   /**
    * Pipeline UUID
@@ -319,7 +278,6 @@ export namespace PipelineListParams {
 
 export declare namespace Pipelines {
   export {
-    type CreatePipelineBody as CreatePipelineBody,
     type Pipeline as Pipeline,
     type PipelineList as PipelineList,
     type PipelineCreateParams as PipelineCreateParams,
