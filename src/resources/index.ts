@@ -11,7 +11,7 @@ export {
 export {
   Experiments,
   type Experiment,
-  type ExperimentListResponse,
+  type ExperimentList,
   type ExperimentCreateParams,
   type ExperimentUpdateParams,
   type ExperimentListParams,
