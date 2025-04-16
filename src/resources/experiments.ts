@@ -33,7 +33,7 @@ export class Experiments extends APIResource {
   list(
     query: ExperimentListParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<ExperimentListResponse> {
+  ): APIPromise<ExperimentList> {
     return this._client.get('/v4/experiments', { query, ...options });
   }
 }
@@ -85,7 +85,7 @@ export interface Experiment {
   updatedAt: string;
 }
 
-export interface ExperimentListResponse {
+export interface ExperimentList {
   data: Array<Experiment>;
 }
 
@@ -143,7 +143,7 @@ export interface ExperimentListParams {
 export declare namespace Experiments {
   export {
     type Experiment as Experiment,
-    type ExperimentListResponse as ExperimentListResponse,
+    type ExperimentList as ExperimentList,
     type ExperimentCreateParams as ExperimentCreateParams,
     type ExperimentUpdateParams as ExperimentUpdateParams,
     type ExperimentListParams as ExperimentListParams,

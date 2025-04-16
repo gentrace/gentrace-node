@@ -30,7 +30,7 @@ export class Datasets extends APIResource {
   /**
    * Retrieve a list of all datasets
    */
-  list(query: DatasetListParams | null | undefined = {}, options?: RequestOptions): APIPromise<string> {
+  list(query: DatasetListParams | null | undefined = {}, options?: RequestOptions): APIPromise<DatasetList> {
     return this._client.get('/v4/datasets', { query, ...options });
   }
 }
@@ -72,10 +72,9 @@ export interface Dataset {
   updatedAt: string;
 }
 
-/**
- * Pipeline slug
- */
-export type DatasetList = string;
+export interface DatasetList {
+  data: Array<Dataset>;
+}
 
 export interface DatasetCreateParams {
   /**
@@ -140,7 +139,7 @@ export interface DatasetListParams {
   /**
    * Pipeline slug
    */
-  pipelineSlug?: DatasetList;
+  pipelineSlug?: string;
 }
 
 export declare namespace Datasets {

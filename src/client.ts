@@ -32,8 +32,8 @@ import {
 import {
   Experiment,
   ExperimentCreateParams,
+  ExperimentList,
   ExperimentListParams,
-  ExperimentListResponse,
   ExperimentUpdateParams,
   Experiments,
 } from './resources/experiments';
@@ -716,7 +716,7 @@ export declare namespace Gentrace {
   export {
     Experiments as Experiments,
     type Experiment as Experiment,
-    type ExperimentListResponse as ExperimentListResponse,
+    type ExperimentList as ExperimentList,
     type ExperimentCreateParams as ExperimentCreateParams,
     type ExperimentUpdateParams as ExperimentUpdateParams,
     type ExperimentListParams as ExperimentListParams,
