@@ -23,10 +23,7 @@ export class TestCases extends APIResource {
   /**
    * Retrieve a list of all test cases for a given dataset
    */
-  list(
-    query: TestCaseListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<TestCaseListResponse> {
+  list(query: TestCaseListParams | null | undefined = {}, options?: RequestOptions): APIPromise<string> {
     return this._client.get('/v4/test-cases', { query, ...options });
   }
 
@@ -95,9 +92,10 @@ export interface TestCase {
   updatedAt: string;
 }
 
-export interface TestCaseListResponse {
-  data: Array<TestCase>;
-}
+/**
+ * Pipeline slug
+ */
+export type TestCaseList = string;
 
 /**
  * Delete test case response
@@ -145,13 +143,13 @@ export interface TestCaseListParams {
   /**
    * Pipeline slug
    */
-  pipelineSlug?: string;
+  pipelineSlug?: TestCaseList;
 }
 
 export declare namespace TestCases {
   export {
     type TestCase as TestCase,
-    type TestCaseListResponse as TestCaseListResponse,
+    type TestCaseList as TestCaseList,
     type TestCaseDeleteResponse as TestCaseDeleteResponse,
     type TestCaseCreateParams as TestCaseCreateParams,
     type TestCaseListParams as TestCaseListParams,
