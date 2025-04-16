@@ -24,16 +24,16 @@ import { FinalRequestOptions, RequestOptions } from './internal/request-options'
 import {
   Dataset,
   DatasetCreateParams,
+  DatasetList,
   DatasetListParams,
-  DatasetListResponse,
   DatasetUpdateParams,
   Datasets,
 } from './resources/datasets';
 import {
   Experiment,
   ExperimentCreateParams,
+  ExperimentList,
   ExperimentListParams,
-  ExperimentListResponse,
   ExperimentUpdateParams,
   Experiments,
 } from './resources/experiments';
@@ -41,8 +41,8 @@ import {
   CreatePipelineBody,
   Pipeline,
   PipelineCreateParams,
+  PipelineList,
   PipelineListParams,
-  PipelineListResponse,
   PipelineUpdateParams,
   Pipelines,
 } from './resources/pipelines';
@@ -707,7 +707,7 @@ export declare namespace Gentrace {
     Pipelines as Pipelines,
     type CreatePipelineBody as CreatePipelineBody,
     type Pipeline as Pipeline,
-    type PipelineListResponse as PipelineListResponse,
+    type PipelineList as PipelineList,
     type PipelineCreateParams as PipelineCreateParams,
     type PipelineUpdateParams as PipelineUpdateParams,
     type PipelineListParams as PipelineListParams,
@@ -716,7 +716,7 @@ export declare namespace Gentrace {
   export {
     Experiments as Experiments,
     type Experiment as Experiment,
-    type ExperimentListResponse as ExperimentListResponse,
+    type ExperimentList as ExperimentList,
     type ExperimentCreateParams as ExperimentCreateParams,
     type ExperimentUpdateParams as ExperimentUpdateParams,
     type ExperimentListParams as ExperimentListParams,
@@ -725,7 +725,7 @@ export declare namespace Gentrace {
   export {
     Datasets as Datasets,
     type Dataset as Dataset,
-    type DatasetListResponse as DatasetListResponse,
+    type DatasetList as DatasetList,
     type DatasetCreateParams as DatasetCreateParams,
     type DatasetUpdateParams as DatasetUpdateParams,
     type DatasetListParams as DatasetListParams,

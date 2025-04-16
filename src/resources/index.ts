@@ -3,7 +3,7 @@
 export {
   Datasets,
   type Dataset,
-  type DatasetListResponse,
+  type DatasetList,
   type DatasetCreateParams,
   type DatasetUpdateParams,
   type DatasetListParams,
@@ -11,7 +11,7 @@ export {
 export {
   Experiments,
   type Experiment,
-  type ExperimentListResponse,
+  type ExperimentList,
   type ExperimentCreateParams,
   type ExperimentUpdateParams,
   type ExperimentListParams,
@@ -20,7 +20,7 @@ export {
   Pipelines,
   type CreatePipelineBody,
   type Pipeline,
-  type PipelineListResponse,
+  type PipelineList,
   type PipelineCreateParams,
   type PipelineUpdateParams,
   type PipelineListParams,

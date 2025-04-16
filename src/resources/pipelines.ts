@@ -30,10 +30,7 @@ export class Pipelines extends APIResource {
   /**
    * Retrieve a list of all pipelines
    */
-  list(
-    query: PipelineListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<PipelineListResponse> {
+  list(query: PipelineListParams | null | undefined = {}, options?: RequestOptions): APIPromise<string> {
     return this._client.get('/v4/pipelines', { query, ...options });
   }
 }
@@ -156,9 +153,10 @@ export interface Pipeline {
   version: number;
 }
 
-export interface PipelineListResponse {
-  data: Array<Pipeline>;
-}
+/**
+ * Filter pipelines by label
+ */
+export type PipelineList = string;
 
 export interface PipelineCreateParams {
   /**
@@ -293,7 +291,7 @@ export interface PipelineListParams {
   /**
    * Filter pipelines by label
    */
-  label?: string;
+  label?: PipelineList;
 
   /**
    * Filter pipelines by slug
@@ -323,7 +321,7 @@ export declare namespace Pipelines {
   export {
     type CreatePipelineBody as CreatePipelineBody,
     type Pipeline as Pipeline,
-    type PipelineListResponse as PipelineListResponse,
+    type PipelineList as PipelineList,
     type PipelineCreateParams as PipelineCreateParams,
     type PipelineUpdateParams as PipelineUpdateParams,
     type PipelineListParams as PipelineListParams,

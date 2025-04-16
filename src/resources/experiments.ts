@@ -30,10 +30,7 @@ export class Experiments extends APIResource {
   /**
    * Retrieve a list of all experiments
    */
-  list(
-    query: ExperimentListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<ExperimentListResponse> {
+  list(query: ExperimentListParams | null | undefined = {}, options?: RequestOptions): APIPromise<string> {
     return this._client.get('/v4/experiments', { query, ...options });
   }
 }
@@ -85,9 +82,10 @@ export interface Experiment {
   updatedAt: string;
 }
 
-export interface ExperimentListResponse {
-  data: Array<Experiment>;
-}
+/**
+ * Filter to the datasets for a specific pipeline by UUID
+ */
+export type ExperimentList = string;
 
 export interface ExperimentCreateParams {
   /**
@@ -137,13 +135,13 @@ export interface ExperimentListParams {
   /**
    * Filter to the datasets for a specific pipeline by UUID
    */
-  pipelineId?: string;
+  pipelineId?: ExperimentList;
 }
 
 export declare namespace Experiments {
   export {
     type Experiment as Experiment,
-    type ExperimentListResponse as ExperimentListResponse,
+    type ExperimentList as ExperimentList,
     type ExperimentCreateParams as ExperimentCreateParams,
     type ExperimentUpdateParams as ExperimentUpdateParams,
     type ExperimentListParams as ExperimentListParams,
