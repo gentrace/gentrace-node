@@ -40,8 +40,8 @@ import {
 import {
   Pipeline,
   PipelineCreateParams,
-  PipelineList,
   PipelineListParams,
+  PipelineListResponse,
   PipelineUpdateParams,
   Pipelines,
 } from './resources/pipelines';
@@ -705,7 +705,7 @@ export declare namespace Gentrace {
   export {
     Pipelines as Pipelines,
     type Pipeline as Pipeline,
-    type PipelineList as PipelineList,
+    type PipelineListResponse as PipelineListResponse,
     type PipelineCreateParams as PipelineCreateParams,
     type PipelineUpdateParams as PipelineUpdateParams,
     type PipelineListParams as PipelineListParams,
