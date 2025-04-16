@@ -1,7 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
-import * as ExperimentsAPI from './experiments';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -24,7 +23,10 @@ export class TestCases extends APIResource {
   /**
    * Retrieve a list of all test cases for a given dataset
    */
-  list(query: TestCaseListParams | null | undefined = {}, options?: RequestOptions): APIPromise<string> {
+  list(
+    query: TestCaseListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<TestCaseListResponse> {
     return this._client.get('/v4/test-cases', { query, ...options });
   }
 
@@ -93,10 +95,9 @@ export interface TestCase {
   updatedAt: string;
 }
 
-/**
- * Pipeline slug
- */
-export type TestCaseList = string;
+export interface TestCaseListResponse {
+  data: Array<TestCase>;
+}
 
 /**
  * Delete test case response
@@ -139,18 +140,18 @@ export interface TestCaseListParams {
   /**
    * Filter to the datasets for a specific pipeline by UUID
    */
-  pipelineId?: ExperimentsAPI.ExperimentList;
+  pipelineId?: string;
 
   /**
    * Pipeline slug
    */
-  pipelineSlug?: TestCaseList;
+  pipelineSlug?: string;
 }
 
 export declare namespace TestCases {
   export {
     type TestCase as TestCase,
-    type TestCaseList as TestCaseList,
+    type TestCaseListResponse as TestCaseListResponse,
     type TestCaseDeleteResponse as TestCaseDeleteResponse,
     type TestCaseCreateParams as TestCaseCreateParams,
     type TestCaseListParams as TestCaseListParams,

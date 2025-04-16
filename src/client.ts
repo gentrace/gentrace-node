@@ -24,16 +24,16 @@ import { FinalRequestOptions, RequestOptions } from './internal/request-options'
 import {
   Dataset,
   DatasetCreateParams,
-  DatasetList,
   DatasetListParams,
+  DatasetListResponse,
   DatasetUpdateParams,
   Datasets,
 } from './resources/datasets';
 import {
   Experiment,
   ExperimentCreateParams,
-  ExperimentList,
   ExperimentListParams,
+  ExperimentListResponse,
   ExperimentUpdateParams,
   Experiments,
 } from './resources/experiments';
@@ -49,8 +49,8 @@ import {
   TestCase,
   TestCaseCreateParams,
   TestCaseDeleteResponse,
-  TestCaseList,
   TestCaseListParams,
+  TestCaseListResponse,
   TestCases,
 } from './resources/test-cases';
 import { readEnv } from './internal/utils/env';
@@ -714,7 +714,7 @@ export declare namespace Gentrace {
   export {
     Experiments as Experiments,
     type Experiment as Experiment,
-    type ExperimentList as ExperimentList,
+    type ExperimentListResponse as ExperimentListResponse,
     type ExperimentCreateParams as ExperimentCreateParams,
     type ExperimentUpdateParams as ExperimentUpdateParams,
     type ExperimentListParams as ExperimentListParams,
@@ -723,7 +723,7 @@ export declare namespace Gentrace {
   export {
     Datasets as Datasets,
     type Dataset as Dataset,
-    type DatasetList as DatasetList,
+    type DatasetListResponse as DatasetListResponse,
     type DatasetCreateParams as DatasetCreateParams,
     type DatasetUpdateParams as DatasetUpdateParams,
     type DatasetListParams as DatasetListParams,
@@ -732,7 +732,7 @@ export declare namespace Gentrace {
   export {
     TestCases as TestCases,
     type TestCase as TestCase,
-    type TestCaseList as TestCaseList,
+    type TestCaseListResponse as TestCaseListResponse,
     type TestCaseDeleteResponse as TestCaseDeleteResponse,
     type TestCaseCreateParams as TestCaseCreateParams,
     type TestCaseListParams as TestCaseListParams,
