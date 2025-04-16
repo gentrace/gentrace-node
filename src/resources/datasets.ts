@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as ExperimentsAPI from './experiments';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -30,10 +31,7 @@ export class Datasets extends APIResource {
   /**
    * Retrieve a list of all datasets
    */
-  list(
-    query: DatasetListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<DatasetListResponse> {
+  list(query: DatasetListParams | null | undefined = {}, options?: RequestOptions): APIPromise<string> {
     return this._client.get('/v4/datasets', { query, ...options });
   }
 }
@@ -75,9 +73,10 @@ export interface Dataset {
   updatedAt: string;
 }
 
-export interface DatasetListResponse {
-  data: Array<Dataset>;
-}
+/**
+ * Pipeline slug
+ */
+export type DatasetList = string;
 
 export interface DatasetCreateParams {
   /**
@@ -137,18 +136,18 @@ export interface DatasetListParams {
   /**
    * Filter to the datasets for a specific pipeline by UUID
    */
-  pipelineId?: string;
+  pipelineId?: ExperimentsAPI.ExperimentList;
 
   /**
    * Pipeline slug
    */
-  pipelineSlug?: string;
+  pipelineSlug?: DatasetList;
 }
 
 export declare namespace Datasets {
   export {
     type Dataset as Dataset,
-    type DatasetListResponse as DatasetListResponse,
+    type DatasetList as DatasetList,
     type DatasetCreateParams as DatasetCreateParams,
     type DatasetUpdateParams as DatasetUpdateParams,
     type DatasetListParams as DatasetListParams,
