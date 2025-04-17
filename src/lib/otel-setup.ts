@@ -7,15 +7,13 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
-// Optional: For detailed OTEL debugging
-// Set the global logger (optional)
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 let sdk: NodeSDK | null = null;
 let isShutdown = false;
 let spanProcessor: BatchSpanProcessor | null = null;
 
-const DEFAULT_SERVICE_NAME = 'gentrace';
+const GENTRACE_SERVICE_NAME = 'gentrace';
 
 interface GentraceOtelConfig {
   apiKey: string;
@@ -25,11 +23,7 @@ interface GentraceOtelConfig {
   diagLogLevel?: DiagLogLevel;
 }
 
-export async function initializeGentraceOtel({
-  apiKey,
-  baseURL,
-  diagLogLevel,
-}: GentraceOtelConfig): Promise<void> {
+export async function initializeOtel({ apiKey, baseURL, diagLogLevel }: GentraceOtelConfig): Promise<void> {
   if (sdk) {
     diag.warn('OpenTelemetry SDK already initialized.');
     return;
@@ -41,7 +35,7 @@ export async function initializeGentraceOtel({
 
   try {
     const baseResource = resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: DEFAULT_SERVICE_NAME,
+      [ATTR_SERVICE_NAME]: GENTRACE_SERVICE_NAME,
     });
 
     const detectedResource = await detectResources({ detectors: [envDetector] });
@@ -79,13 +73,10 @@ export async function initializeGentraceOtel({
     diag.info('Gentrace OpenTelemetry SDK initialized successfully.');
     isShutdown = false;
 
-    // Graceful shutdown handling
-    setupShutdownListeners(); // Setup SIGTERM/beforeExit
+    setupShutdownListeners();
 
-    // Add handlers for critical errors after SDK setup
     process.on('uncaughtExceptionMonitor', (error: Error) => {
       diag.error('uncaughtExceptionMonitor caught exception:', error);
-      // Attempt to flush telemetry before process potentially exits
       spanProcessor?.forceFlush().catch((flushErr) => {
         diag.error('Error flushing spans during uncaughtExceptionMonitor:', flushErr);
       });
@@ -93,14 +84,12 @@ export async function initializeGentraceOtel({
 
     process.on('unhandledRejection', (reason: unknown) => {
       diag.error('unhandledRejection caught:', reason);
-      // Attempt to flush telemetry
       spanProcessor?.forceFlush().catch((flushErr) => {
         diag.error('Error flushing spans during unhandledRejection:', flushErr);
       });
     });
   } catch (error) {
     diag.error('Error initializing Gentrace OpenTelemetry SDK:', error);
-    // Optionally re-throw or handle initialization failure
     throw error;
   }
 }
@@ -119,22 +108,19 @@ function setupShutdownListeners() {
     } catch (err) {
       diag.error('Error terminating Gentrace OpenTelemetry SDK:', err);
     } finally {
-      // Ensure process exits even if shutdown fails in SIGTERM handler
       if (process.listenerCount('SIGTERM') === 1 && process.listeners('SIGTERM')[0] === boundShutdown) {
         process.exit(0);
       }
     }
   };
 
-  // Bind `this` or ensure shutdown has access to `sdk` and `isShutdown`
   const boundShutdown = shutdown.bind(null);
 
-  // Add listeners only once
   process.removeListener('SIGTERM', boundShutdown);
   process.removeListener('beforeExit', boundShutdown);
 
   process.once('SIGTERM', boundShutdown);
-  process.once('beforeExit', boundShutdown); // Attempt graceful shutdown before exit
+  process.once('beforeExit', boundShutdown);
 }
 
 export async function shutdownGentraceOtel(): Promise<void> {
@@ -155,7 +141,3 @@ export async function shutdownGentraceOtel(): Promise<void> {
     diag.error('Error terminating Gentrace OpenTelemetry SDK:', err);
   }
 }
-
-// Consider exporting the tracer provider or a getTracer function if needed elsewhere
-// import { trace } from '@opentelemetry/api';
-// export const getTracer = () => trace.getTracer(DEFAULT_SERVICE_NAME, DEFAULT_SERVICE_VERSION);
