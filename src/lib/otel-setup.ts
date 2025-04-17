@@ -5,7 +5,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { detectResources, envDetector, resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
-import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 // Optional: For detailed OTEL debugging
 // Set the global logger (optional)
@@ -15,7 +15,6 @@ let sdk: NodeSDK | null = null;
 let isShutdown = false;
 let spanProcessor: BatchSpanProcessor | null = null;
 
-// Define default attributes, can be overridden by env vars or config
 const DEFAULT_SERVICE_NAME = 'gentrace';
 
 interface GentraceOtelConfig {
@@ -24,13 +23,11 @@ interface GentraceOtelConfig {
   serviceName?: string;
   serviceVersion?: string;
   diagLogLevel?: DiagLogLevel;
-  // Add more config options as needed: deploymentEnvironment, vcs info, etc.
 }
 
 export async function initializeGentraceOtel({
   apiKey,
   baseURL,
-  serviceName = process.env['OTEL_SERVICE_NAME'] || DEFAULT_SERVICE_NAME,
   diagLogLevel,
 }: GentraceOtelConfig): Promise<void> {
   if (sdk) {
@@ -44,7 +41,7 @@ export async function initializeGentraceOtel({
 
   try {
     const baseResource = resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: serviceName,
+      [ATTR_SERVICE_NAME]: DEFAULT_SERVICE_NAME,
     });
 
     const detectedResource = await detectResources({ detectors: [envDetector] });
