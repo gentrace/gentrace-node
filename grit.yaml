@@ -1,0 +1,4 @@
+version: 0.0.1
+patterns:
+  # Include patterns from the local .grit directory
+  - directory: .grit
