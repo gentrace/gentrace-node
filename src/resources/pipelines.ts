@@ -131,16 +131,6 @@ export interface Pipeline {
   privateMemberId: string | null;
 
   /**
-   * @deprecated Saved result display configuration
-   */
-  savedResultDisplay: Record<string, unknown> | null;
-
-  /**
-   * @deprecated Saved runs display configuration
-   */
-  savedRunsDisplay: Record<string, unknown> | null;
-
-  /**
    * Pipeline slug
    */
   slug: string;

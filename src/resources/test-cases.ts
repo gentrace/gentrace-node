@@ -72,7 +72,7 @@ export interface TestCase {
   /**
    * Input data for the test case
    */
-  inputs: Record<string, unknown> | null;
+  inputs: Record<string, unknown>;
 
   /**
    * Test Case name
