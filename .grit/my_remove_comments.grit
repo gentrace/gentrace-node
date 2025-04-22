@@ -1,4 +1,0 @@
-language js // e.g. js, ts, python, go, etc. - THIS IS IMPORTANT!
-
-// Match any node identified as a comment by the parser
-comment() => . 
