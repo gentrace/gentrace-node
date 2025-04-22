@@ -118,6 +118,6 @@ async function _finishExperiment(
 
     client.logger?.info(`Finished experiment ${id} with status: ${result.status}`);
   } catch (error) {
-    client.logger?.error(`Failed to finish experiment ${id} via API:`);
+    client.logger?.error(`Failed to finish experiment ${id} via API:`, JSON.stringify(error, null, 2));
   }
 }
