@@ -48,7 +48,7 @@ export function interaction<Arg extends Record<string, any>, Return>(
 
   const wrappedFn = (arg: Arg): Return | Promise<Return> => {
     return tracer.startActiveSpan(interactionName, (span: Span) => {
-      span.setAttribute('pipeline_id', pipelineId);
+      span.setAttribute('gentrace.pipeline_id', pipelineId);
 
       try {
         span.addEvent('gentrace.fn.args', {
