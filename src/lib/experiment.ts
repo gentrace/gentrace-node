@@ -26,7 +26,7 @@ export const experimentContextStorage = new AsyncLocalStorage<ExperimentContext>
 
 /**
  * Retrieves the experiment ID from the current asynchronous context, if any.
- * @returns The current experiment ID or undefined if not within a runExperiment context.
+ * @returns The current experiment ID or undefined if not within an experiment() context.
  */
 export function getCurrentExperimentContext(): ExperimentContext | undefined {
   return experimentContextStorage.getStore();

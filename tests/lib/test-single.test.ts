@@ -160,7 +160,7 @@ describe('test() function', () => {
     const callback = jest.fn(async () => {});
 
     await expect(testLib.test(testName, callback)).rejects.toThrow(
-      `${testName} must be called within the context of a runExperiment block.`,
+      `${testName} must be called within the context of an experiment() function.`,
     );
 
     expect(mockedStartActiveSpan).not.toHaveBeenCalled(); // Span shouldn't even start

@@ -1,23 +1,28 @@
+import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import { trace, SpanKind, SpanStatusCode } from '@opentelemetry/api';
+import dotenv from 'dotenv';
+import { readEnv } from 'gentrace/internal/utils';
+import OpenAI from 'openai';
 import { stringify } from 'superjson';
+import { init } from '../src/lib/init';
+import { interaction } from '../src/lib/interaction';
+
+const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
 
 const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: 'openai-email-composition-example',
 });
 
-console.log('api key', process.env['GENTRACE_API_KEY']);
-
 const sdk = new NodeSDK({
   resource,
   traceExporter: new OTLPTraceExporter({
-    url: 'http://localhost:3000/api/otel/v1/traces',
+    url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
     headers: {
-      Authorization: `Bearer ${process.env['GENTRACE_API_KEY']}`,
+      Authorization: `Bearer ${readEnv('GENTRACE_API_KEY')}`,
     },
   }),
   instrumentations: [getNodeAutoInstrumentations()],
@@ -37,17 +42,10 @@ process.on('SIGTERM', () => {
     .finally(() => process.exit(0));
 });
 
-import dotenv from 'dotenv';
-import OpenAI from 'openai';
-import { experiment } from '../src/lib/experiment';
-import { init } from '../src/lib/init';
-import { interaction } from '../src/lib/interaction';
-import { test } from '../src/lib/test-single';
-
 dotenv.config();
 
 init({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: GENTRACE_BASE_URL,
 });
 
 const PIPELINE_ID = '26d64c23-e38c-56fd-9b45-9adc87de797b';
@@ -237,62 +235,9 @@ const compose = interaction(
   },
 );
 
-// Example usage within an experiment:
-async function runExperiment() {
-  try {
-    await experiment(PIPELINE_ID, async () => {
-      console.log(`Running experiment for pipeline: ${PIPELINE_ID}`);
-
-      // Define test cases
-      try {
-        await test('Test Case 1: Project Phoenix Update', async () => {
-          const recipient = 'Alice';
-          const topic = 'Project Phoenix Update';
-          const sender = 'John Doe';
-          const draft = await compose({ recipient, topic, sender });
-
-          if (draft) {
-            console.log('\n--- Test Case 1 Draft ---\n');
-            console.log(draft);
-            console.log('\n-------------------------\n');
-          }
-          // In a real scenario, you might add assertions here
-          // e.g., expect(draft).toContain('Project Phoenix');
-        });
-      } catch (error) {
-        console.error('Error in Test Case 1:', error);
-      }
-
-      try {
-        await test('Test Case 2: Quarterly Review', async () => {
-          const recipient = 'Bob';
-          const topic = 'Quarterly Review Preparation';
-          const sender = 'John Doe';
-          const draft = await compose({ recipient, topic, sender });
-
-          if (draft) {
-            console.log('\n--- Test Case 2 Draft ---\n');
-            console.log(draft);
-            console.log('\n-------------------------\n');
-          }
-          // Assertions would go here too
-        });
-      } catch (error) {
-        console.error('Error in Test Case 2:', error);
-      }
-
-      // Add more test cases as needed
-    });
-  } catch (error) {
-    console.error(JSON.stringify(error, null, 2), 'Error running experiment:');
-  }
-
-  console.log('Experiment run finished.');
-}
-
 async function main() {
   try {
-    await runExperiment();
+    await compose({ recipient: 'Alice', topic: 'Project Phoenix Update', sender: 'John Doe' });
   } catch (error) {
     console.error('Unhandled error during script execution:', error);
     process.exitCode = 1; // Indicate failure

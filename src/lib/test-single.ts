@@ -7,7 +7,7 @@ import { _getClient } from './client-instance';
 /**
  * Runs a single named test case within the context of an active experiment.
  * Creates an OpenTelemetry span capturing the test execution details, result, and status.
- * Must be called within the callback of `runExperiment`.
+ * Must be called within the callback of `experiment()`.
  *
  * @template TResult The expected return type of the test callback function
  * @param {string} spanName A descriptive name for the test case, used for tracing and reporting
@@ -66,13 +66,13 @@ export type RunTestInternalOptions<TResult, TInput> = {
 /**
  * Runs a single named test case within the context of an active experiment.
  * Creates an OpenTelemetry span capturing the test execution details, result, and status.
- * Must be called within the callback of `runExperiment`.
+ * Must be called within the callback of `experiment()`.
  *
  * @template T The return type of the test callback.
  * @param {string} name The name of the test case.
  * @param {() => T | Promise<T>} callback The test function to execute.
  * @returns The result of the callback function.
- * @throws If called outside of a `runExperiment` context or if the callback throws.
+ * @throws If called outside of a `experiment()` context or if the callback throws.
  */
 export async function _runTest<TResult, TInput = any>(
   options: RunTestInternalOptions<TResult, TInput>, // Single options parameter
@@ -82,7 +82,7 @@ export async function _runTest<TResult, TInput = any>(
   const experimentContext = getCurrentExperimentContext();
 
   if (!experimentContext) {
-    throw new Error(`${spanName} must be called within the context of a runExperiment block.`);
+    throw new Error(`${spanName} must be called within the context of an experiment() function.`);
   }
 
   const { experimentId } = experimentContext;
@@ -103,7 +103,6 @@ export async function _runTest<TResult, TInput = any>(
             dataToProcess = schema.parse(rawData);
           } catch (parsingError: any) {
             span.recordException(parsingError);
-            span.setAttribute('gentrace.error', parsingError.name);
             span.setAttribute('error.type', parsingError.name);
             throw parsingError;
           }
@@ -147,7 +146,6 @@ export async function _runTest<TResult, TInput = any>(
         span.recordException(error);
         span.setStatus({ code: SpanStatusCode.ERROR, message: error?.message });
         span.setAttribute('error.type', error.name);
-        span.setAttribute('gentrace.error', 'ExecutionError');
         span.end();
 
         // Don't reject here, just log the error. The span will record the error.
