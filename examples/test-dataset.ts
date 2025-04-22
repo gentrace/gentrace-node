@@ -3,13 +3,14 @@ import { experiment } from 'gentrace/lib/experiment';
 import { init, testCases } from 'gentrace/lib/init';
 import { testDataset } from 'gentrace/lib/test-dataset';
 import OpenAI from 'openai';
-import * as z from 'zod';
+import { z } from 'zod';
 
 const PIPELINE_ID = '26d64c23-e38c-56fd-9b45-9adc87de797b';
 const DATASET_ID = '26d64c23-e38c-56fd-9b45-9adc87de797b';
 
-init();
-
+init({
+  baseURL: readEnv('GENTRACE_BASE_URL'),
+});
 const openai = new OpenAI({
   apiKey: readEnv('OPENAI_API_KEY'),
 });

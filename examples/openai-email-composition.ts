@@ -3,6 +3,8 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { trace, SpanKind, SpanStatusCode } from '@opentelemetry/api';
+import { stringify } from 'superjson';
 
 const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: 'openai-email-composition-example',
@@ -57,38 +59,181 @@ const openai = new OpenAI();
 const compose = interaction(
   PIPELINE_ID, // Name for the interaction
   async ({ recipient, topic, sender }: { recipient: string; topic: string; sender: string }) => {
-    console.log(`Composing email to ${recipient} about ${topic} from ${sender}...`);
+    const tracer = trace.getTracer('openai-email-composition-example');
+    const initialArgs = { recipient, topic, sender }; // Capture initial args
 
-    try {
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful assistant that drafts concise and professional emails.',
-          },
-          {
-            role: 'user',
-            content: `Compose an email to ${recipient} regarding the topic: ${topic} from ${sender}`,
-          },
-        ],
-        max_tokens: 200,
-        temperature: 0.7,
-      });
+    return await tracer.startActiveSpan('composeEmailProcess', async (processSpan) => {
+      let finalResult: string | null = null; // To capture final result for output event
+      try {
+        console.log(`Composing email to ${recipient} about ${topic} from ${sender}...`);
+        // Add input event for the main process span
+        processSpan.addEvent('gentrace.fn.args', { args: stringify(initialArgs) });
 
-      const message = completion.choices[0]?.message;
-      if (!message || !message.content) {
-        console.warn('OpenAI response did not contain message content.');
-        return null;
+        processSpan.setAttributes({
+          'email.recipient': recipient,
+          'email.topic': topic,
+          'email.sender': sender,
+        });
+
+        // 1. Simulate fetching recipient details (e.g., from a database)
+        let recipientDetails = {};
+        await tracer.startActiveSpan('fetchRecipientPreferences', async (dbSpan) => {
+          try {
+            // Add input event
+            dbSpan.addEvent('gentrace.fn.args', { args: stringify({ recipient }) });
+
+            dbSpan.setAttributes({
+              'db.system': 'fakedb',
+              'db.operation': 'select',
+              'db.statement': `SELECT preferences FROM users WHERE email = '${recipient}'`,
+            });
+            // Simulate DB call delay
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            recipientDetails = { preferredTone: 'formal' };
+            dbSpan.setStatus({ code: SpanStatusCode.OK });
+            // Add output event
+            dbSpan.addEvent('gentrace.fn.output', { output: stringify(recipientDetails) });
+            console.log('Fetched recipient preferences (simulated).');
+          } catch (dbError: any) {
+            dbSpan.recordException(dbError);
+            dbSpan.setStatus({ code: SpanStatusCode.ERROR, message: dbError.message });
+            throw dbError;
+          } finally {
+            dbSpan.end();
+          }
+        });
+
+        // 2. Construct the prompt
+        let messages: any[];
+        await tracer.startActiveSpan('constructPrompt', (promptSpan) => {
+          const promptArgs = { recipientDetails, recipient, topic, sender };
+          // Add input event
+          promptSpan.addEvent('gentrace.fn.args', { args: stringify(promptArgs) });
+
+          messages = [
+            {
+              role: 'system',
+              content: `You are a helpful assistant that drafts concise and professional emails. Adapt to a ${
+                (recipientDetails as any).preferredTone || 'neutral'
+              } tone.`,
+            },
+            {
+              role: 'user',
+              content: `Compose an email to ${recipient} regarding the topic: ${topic} from ${sender}`,
+            },
+          ];
+          promptSpan.setAttribute('prompt.system', messages[0].content);
+          promptSpan.setAttribute('prompt.user', messages[1].content);
+          promptSpan.setStatus({ code: SpanStatusCode.OK });
+          // Add output event
+          promptSpan.addEvent('gentrace.fn.output', { output: stringify(messages) });
+          promptSpan.end();
+          console.log('Prompt constructed.');
+        });
+
+        // 3. Call OpenAI API (this will also be traced by auto-instrumentation, but we add a custom span for context)
+        let completion: OpenAI.Chat.Completions.ChatCompletion | null = null;
+        await tracer.startActiveSpan('callOpenAI', { kind: SpanKind.CLIENT }, async (apiSpan) => {
+          try {
+            const apiArgs = { messages, model: 'gpt-4o', temperature: 0.7, max_tokens: 200 };
+            // Add input event
+            apiSpan.addEvent('gentrace.fn.args', { args: stringify(apiArgs) });
+
+            apiSpan.setAttributes({
+              'openai.model': 'gpt-4o',
+              'openai.temperature': 0.7,
+              'openai.max_tokens': 200,
+            });
+            completion = await openai.chat.completions.create({
+              model: 'gpt-4o',
+              messages: messages,
+              max_tokens: 200,
+              temperature: 0.7,
+            });
+            apiSpan.setStatus({ code: SpanStatusCode.OK });
+            // Add output event
+            apiSpan.addEvent('gentrace.fn.output', { output: stringify(completion) });
+            console.log('OpenAI API call successful.');
+          } catch (apiError: any) {
+            apiSpan.recordException(apiError);
+            apiSpan.setStatus({ code: SpanStatusCode.ERROR, message: apiError.message });
+            throw apiError;
+          } finally {
+            apiSpan.end();
+          }
+        });
+
+        // 4. Parse the response
+        let emailContent: string | null = null;
+        await tracer.startActiveSpan('parseOpenAIResponse', (parseSpan) => {
+          try {
+            // Add input event
+            parseSpan.addEvent('gentrace.fn.args', { args: stringify(completion) });
+
+            const message = completion?.choices[0]?.message;
+            if (!message || !message.content) {
+              console.warn('OpenAI response did not contain message content.');
+              parseSpan.setStatus({
+                code: SpanStatusCode.ERROR,
+                message: 'Missing message content in OpenAI response',
+              });
+              parseSpan.setAttribute('parsing.error', 'MissingContent');
+            } else {
+              emailContent = message.content;
+              parseSpan.setAttribute('parsing.output_length', emailContent.length);
+              parseSpan.setStatus({ code: SpanStatusCode.OK });
+              // Add output event
+              parseSpan.addEvent('gentrace.fn.output', { output: stringify(emailContent) });
+              console.log('Email draft parsed successfully.');
+            }
+          } catch (parseError: any) {
+            parseSpan.recordException(parseError);
+            parseSpan.setStatus({ code: SpanStatusCode.ERROR, message: parseError.message });
+            throw parseError;
+          } finally {
+            parseSpan.end();
+          }
+        });
+
+        // 5. Simulate saving the draft
+        await tracer.startActiveSpan('saveEmailDraft', async (saveSpan) => {
+          try {
+            // Add input event
+            saveSpan.addEvent('gentrace.fn.args', { args: stringify({ emailContent }) });
+
+            saveSpan.setAttributes({
+              'db.system': 'fakedb',
+              'db.operation': 'insert',
+              'db.collection': 'email_drafts',
+            });
+            // Simulate DB call delay
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            saveSpan.setStatus({ code: SpanStatusCode.OK });
+            console.log('Email draft saved (simulated).');
+          } catch (dbError: any) {
+            saveSpan.recordException(dbError);
+            saveSpan.setStatus({ code: SpanStatusCode.ERROR, message: dbError.message });
+            console.error('Failed to save draft (simulated):', dbError);
+          } finally {
+            saveSpan.end();
+          }
+        });
+
+        processSpan.setStatus({ code: SpanStatusCode.OK });
+        finalResult = emailContent; // Store final result before returning
+        return finalResult;
+      } catch (error: any) {
+        console.error('Error composing email:', error);
+        processSpan.recordException(error);
+        processSpan.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+        finalResult = null; // Ensure finalResult is null on error
+        return finalResult;
+      } finally {
+        // Add output event for the main process span
+        processSpan.addEvent('gentrace.fn.output', { output: stringify(finalResult) });
+        processSpan.end();
       }
-
-      const emailContent = message.content;
-      console.log('Email draft composed successfully.');
-      return emailContent;
-    } catch (error) {
-      console.error('Error composing email:', error);
-      return null;
-    }
+    });
   },
 );
 
