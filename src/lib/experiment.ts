@@ -59,7 +59,6 @@ export async function experiment<T>(
   callback: () => T | Promise<T>,
   options?: ExperimentOptions,
 ): Promise<T> {
-  // The overall function needs to return the result of the callback
   let callbackResult: T | undefined;
 
   const client = _getClient();
@@ -71,7 +70,6 @@ export async function experiment<T>(
     experimentId = await startExperiment(startParams);
 
     await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
-      // Store the callback result
       callbackResult = await callback();
     });
 
@@ -91,6 +89,5 @@ export async function experiment<T>(
     throw error;
   }
 
-  // Return the stored result (cast needed as it might technically be undefined if runWith fails before callback)
   return callbackResult as T;
 }

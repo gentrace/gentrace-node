@@ -26,7 +26,6 @@ describe('init', () => {
   });
 
   it('should initialize the client with default options', async () => {
-    // Import init *after* mocks are fully configured by jest.mock
     const { init } = await import('../../src/lib/init');
 
     const mockLogger = {

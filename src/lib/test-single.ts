@@ -16,10 +16,9 @@ import { _getClient } from './client-instance';
  * @throws {Error} If called outside of an experiment context
  *
  * @example
- * await experiment('pipeline-uuid', async () => {
- *   await test('test-structural-correctness', async () => {
- *     // TODO: Implement the test logic here
- *     return someResult;
+ * experiment('pipeline-uuid', () => {
+ *   test('simple-addition-test', () => {
+ *     return 1 + 1;
  *   });
  * });
  */
