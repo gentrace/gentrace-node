@@ -176,10 +176,10 @@ describe('interaction wrapper', () => {
   });
 
   it('should use custom span name from options', () => {
-    const originalFn = jest.fn(() => 'result');
+    const originalFn = jest.fn(({ a }: { a: number }) => 'result');
     const options: InteractionSpanOptionsType = { name: 'customInteractionName' };
     const wrappedFn = interaction(pipelineId, originalFn, options);
-    wrappedFn();
+    wrappedFn({ a: 1 });
 
     expect(mockStartActiveSpan).toHaveBeenCalledWith('customInteractionName', expect.any(Function));
   });
