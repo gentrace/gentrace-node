@@ -1,11 +1,6 @@
 import { jest } from '@jest/globals';
 import { http, HttpResponse } from 'msw';
-import {
-  experiment,
-  ExperimentContext,
-  ExperimentOptions,
-  getCurrentExperimentContext,
-} from '../../src/lib/experiment';
+import { experiment, ExperimentOptions, getCurrentExperimentContext } from '../../src/lib/experiment';
 import { server } from '../mocks/server';
 
 import { experimentContextStorage } from '../../src/lib/experiment';
