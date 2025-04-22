@@ -1,12 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import {
-  ExperimentMetadata,
-  finishExperiment,
-  startExperiment,
-  StartExperimentParams,
-} from './experiment-control';
-import { GentraceState } from './state';
 import { _getClient } from './client-instance';
+import { finishExperiment, startExperiment, StartExperimentParams } from './experiment-control';
+import { GentraceState } from './state';
 
 /**
  * Represents the context for an experiment run. This context is stored in

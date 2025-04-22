@@ -1,5 +1,5 @@
-import { finishExperiment, startExperiment, StartExperimentParams } from '../../src/lib/experiment-control';
-import { jest, describe, beforeEach, afterEach, it, expect } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { StartExperimentParams } from '../../src/lib/experiment-control';
 
 interface MockExperiment {
   id: string;

@@ -1,5 +1,5 @@
-import { readEnv } from 'gentrace/internal/utils';
 import { Gentrace, ClientOptions } from '../client';
+import { readEnv } from '../internal/utils';
 
 /**
  * Singleton instance of the Gentrace client used to expose namespace methods.
