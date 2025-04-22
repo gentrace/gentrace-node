@@ -48,14 +48,14 @@ export function interaction<Arg extends Record<string, any>, Return>(
 
   const wrappedFn = (arg: Arg): Return | Promise<Return> => {
     return tracer.startActiveSpan(interactionName, (span: Span) => {
-      span.setAttribute('pipelineId', pipelineId);
+      span.setAttribute('pipeline_id', pipelineId);
 
       try {
         span.addEvent('gentrace.fn.args', {
           args: stringify(arg),
         });
 
-        const result = fn(arg); // Call the original function with the correctly typed argument
+        const result = fn(arg);
 
         if (result instanceof Promise) {
           return result.then(

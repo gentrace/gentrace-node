@@ -4,19 +4,16 @@ import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
-// Build the resource using resourceFromAttributes
 const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: 'openai-email-composition-example',
 });
 
 console.log('api key', process.env['GENTRACE_API_KEY']);
 
-// Configure the OpenTelemetry SDK
 const sdk = new NodeSDK({
-  resource: resource, // Pass the created resource object
+  resource,
   traceExporter: new OTLPTraceExporter({
     url: 'http://localhost:3000/api/otel/v1/traces',
-    // Optional: Add Gentrace API key if required by the endpoint
     headers: {
       Authorization: `Bearer ${process.env['GENTRACE_API_KEY']}`,
     },

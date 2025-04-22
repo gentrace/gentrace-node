@@ -101,18 +101,19 @@ export async function _runTest<TResult, TInput = any>(
         if (schema) {
           try {
             dataToProcess = schema.parse(rawData);
-            span.addEvent('gentrace.input.parsed');
           } catch (parsingError: any) {
             span.recordException(parsingError);
-            span.setAttribute('gentrace.error', 'ParsingError');
+            span.setAttribute('gentrace.error', parsingError.name);
             span.setAttribute('error.type', parsingError.name);
             throw parsingError;
           }
         } else {
           dataToProcess = rawData as TInput;
-          span.addEvent('gentrace.input.raw');
         }
 
+        span.addEvent('gentrace.fn.args', {
+          args: stringify(dataToProcess),
+        });
         const result = callback(dataToProcess);
 
         if (result instanceof Promise) {
