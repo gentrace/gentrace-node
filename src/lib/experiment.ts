@@ -1,5 +1,4 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { _getClient } from './client-instance';
 import { finishExperiment, startExperiment, StartExperimentParams } from './experiment-control';
 
 /**
