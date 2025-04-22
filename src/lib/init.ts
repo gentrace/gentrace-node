@@ -1,6 +1,5 @@
 import { ClientOptions } from '../client';
 import { _getClient, _setClient } from './client-instance';
-import { GentraceState, _setGlobalState } from './state';
 
 /**
  * Initializes the global Gentrace state.
@@ -10,9 +9,6 @@ import { GentraceState, _setGlobalState } from './state';
  * @param {ClientOptions} [options={}] - New configuration options.
  */
 export function init(options: ClientOptions = {}) {
-  const state = new GentraceState(options);
-  _setGlobalState(state);
-
   // Always use _setClient to ensure the constructor logic is run
   // for creating or potentially updating the client instance.
   _setClient(options);
@@ -20,8 +16,6 @@ export function init(options: ClientOptions = {}) {
   // Re-assign the module-scope variables based on the latest client.
   // Importers with live bindings will now see these new values.
   _updateExports();
-
-  return state;
 }
 
 const client = _getClient();
@@ -35,7 +29,7 @@ let testCases = client.testCases;
  * This function is called after the client is potentially created or updated.
  */
 function _updateExports() {
-  const client = _getClient(); // Get the most current client instance
+  const client = _getClient();
   pipelines = client.pipelines;
   experiments = client.experiments;
   datasets = client.datasets;

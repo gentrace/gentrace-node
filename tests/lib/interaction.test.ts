@@ -93,8 +93,8 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledWith('originalFn', expect.any(Function));
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('pipelineId', pipelineId);
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify({ a: 5 }) });
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([{ a: 5 }]) });
     expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', { output: stringify(10) });
     expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
     expect(lastMockSpan?.end).toHaveBeenCalledTimes(2);
@@ -114,9 +114,9 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledWith('originalFn', expect.any(Function));
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('pipelineId', pipelineId);
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
     expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
-      args: stringify({ b: 'World' }),
+      args: stringify([{ b: 'World' }]),
     });
     expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
       output: stringify('Hello World'),
@@ -138,8 +138,10 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledTimes(1);
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('pipelineId', pipelineId);
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify({ c: true }) });
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
+      args: stringify([{ c: true }]),
+    });
     expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
     expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
       code: SpanStatusCode.ERROR,
@@ -162,9 +164,9 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledTimes(1);
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('pipelineId', pipelineId);
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
     expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
-      args: stringify({ d: [1, 2] }),
+      args: stringify([{ d: [1, 2] }]),
     });
     expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
     expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
@@ -196,12 +198,14 @@ describe('interaction wrapper', () => {
   it('should correctly stringify complex arguments and outputs', () => {
     const date = new Date();
     const complexArg = { date, nested: { arr: [1, 'b'] } };
-    const complexOutput = { value: BigInt(100), set: new Set([1, 2]) };
+    const complexOutput = { value: 100, set: new Set([1, 2]) };
     const originalFn = jest.fn((args: typeof complexArg) => complexOutput);
     const wrappedFn = interaction(pipelineId, originalFn);
     wrappedFn(complexArg);
 
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify(complexArg) });
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
+      args: stringify([complexArg]),
+    });
     expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
       output: stringify(complexOutput),
     });

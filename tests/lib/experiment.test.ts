@@ -6,40 +6,7 @@ import {
   ExperimentOptions,
   getCurrentExperimentContext,
 } from '../../src/lib/experiment';
-import { GentraceState } from '../../src/lib/state';
 import { server } from '../mocks/server';
-
-class MockGentraceStateImpl {
-  runWith = jest.fn(async (cb: () => any) => {
-    return await cb();
-  });
-  getExperimentContext = jest.fn<() => ExperimentContext | undefined>();
-  getClient = jest.fn(() => ({
-    logger: {
-      debug: jest.fn(),
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-    },
-  }));
-}
-
-interface MockedStateModule {
-  GentraceState: jest.Mock;
-  _globalState: MockGentraceStateImpl;
-  getActiveState: jest.Mock<() => MockGentraceStateImpl>;
-}
-
-jest.mock('../../src/lib/state', () => {
-  const mockGlobalStateInstance = new MockGentraceStateImpl();
-
-  return {
-    GentraceState: jest.fn().mockImplementation(() => new MockGentraceStateImpl()),
-    _globalState: mockGlobalStateInstance,
-    getActiveState: jest.fn(() => mockGlobalStateInstance),
-    getInternalClient: jest.fn(() => mockGlobalStateInstance.getClient()),
-  };
-});
 
 import { experimentContextStorage } from '../../src/lib/experiment';
 import { init } from '../../src/lib/init';
@@ -48,13 +15,9 @@ describe('experiment', () => {
   const mockExperimentId = 'exp-msw-123';
   const mockPipelineId = 'pipe-123';
 
-  let mockGetActiveState: jest.Mock<() => MockGentraceStateImpl>;
-
   beforeEach(() => {
     jest.clearAllMocks();
 
-    const mockedState = jest.requireMock('../../src/lib/state') as MockedStateModule;
-    mockGetActiveState = mockedState.getActiveState;
     init({
       logger: {
         debug: jest.fn(),
@@ -112,22 +75,6 @@ describe('experiment', () => {
     await expect(experiment(mockPipelineId, callback)).rejects.toThrow(error);
   });
 
-  it('should use provided GentraceState if available', async () => {
-    const specificStateInstance = new MockGentraceStateImpl();
-    const options: ExperimentOptions = { state: specificStateInstance as unknown as GentraceState };
-    const callback = jest.fn<() => void>();
-    await experiment(mockPipelineId, callback, options);
-    expect(specificStateInstance.runWith).toHaveBeenCalledTimes(1);
-  });
-
-  it('should use global state if no specific state provided', async () => {
-    const mockedState = jest.requireMock('../../src/lib/state') as MockedStateModule;
-    const globalStateInstance = mockedState._globalState;
-    const callback = jest.fn<() => void>();
-    await experiment(mockPipelineId, callback);
-    expect(callback).toHaveBeenCalledTimes(1);
-  });
-
   it('should handle error during startExperiment', async () => {
     server.use(
       http.post('https://gentrace.ai/api/v4/experiments', () => {
@@ -137,6 +84,7 @@ describe('experiment', () => {
     const callback = jest.fn<() => void>();
     await expect(experiment(mockPipelineId, callback)).rejects.toThrow();
     expect(callback).not.toHaveBeenCalled();
+    expect(getCurrentExperimentContext()).toBeUndefined();
   });
 
   it('should attempt finishExperiment even if finishExperiment fails', async () => {

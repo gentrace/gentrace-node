@@ -6,19 +6,7 @@ export { type Uploadable, toFile } from './core/uploads';
 export { APIPromise } from './core/api-promise';
 export { Gentrace, type ClientOptions } from './client';
 
-// Start custom exports
-export { init } from './lib/init';
-export { experiment } from './lib/experiment';
-export {
-  startExperiment,
-  finishExperiment,
-  StartExperimentParams,
-  FinishExperimentParams,
-} from './lib/experiment-control';
-export { interaction } from './lib/interaction';
-export { testDataset } from './lib/test-dataset';
-export { test } from './lib/test-single';
-// End custom exports
+export * from './lib/index';
 
 export {
   GentraceError,

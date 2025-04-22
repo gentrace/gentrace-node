@@ -49,7 +49,6 @@ export function interaction<Arg extends Record<string, any>, Return>(
       span.setAttribute('gentrace.pipeline_id', pipelineId);
 
       try {
-        console.log('arg', arg, stringify(arg));
         span.addEvent('gentrace.fn.args', {
           args: stringify([arg]),
         });

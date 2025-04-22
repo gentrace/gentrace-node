@@ -1,7 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { _getClient } from './client-instance';
 import { finishExperiment, startExperiment, StartExperimentParams } from './experiment-control';
-import { GentraceState } from './state';
 
 /**
  * Represents the context for an experiment run. This context is stored in
@@ -44,7 +43,6 @@ export function getCurrentExperimentContext(): ExperimentContext | undefined {
  */
 export type ExperimentOptions = {
   metadata?: Record<string, any>;
-  state?: GentraceState;
 };
 
 /**
@@ -61,47 +59,37 @@ export async function experiment<T>(
   callback: () => T | Promise<T>,
   options?: ExperimentOptions,
 ): Promise<T> {
-  const state = options?.state ?? GentraceState.getActiveState();
-
-  if (!state) {
-    throw new Error(
-      'Gentrace state is not initialized. Please call init() or pass a GentraceState instance in the options.',
-    );
-  }
-
   // The overall function needs to return the result of the callback
   let callbackResult: T | undefined;
 
-  await state.runWith(async () => {
-    const client = _getClient();
-    let experimentId: string | undefined;
-    const metadata = options?.metadata;
-    const startParams: StartExperimentParams = metadata ? { pipelineId, metadata } : { pipelineId };
+  const client = _getClient();
+  let experimentId: string | undefined;
+  const metadata = options?.metadata;
+  const startParams: StartExperimentParams = metadata ? { pipelineId, metadata } : { pipelineId };
 
-    try {
-      experimentId = await startExperiment(startParams);
+  try {
+    experimentId = await startExperiment(startParams);
 
-      await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
-        // Store the callback result
-        callbackResult = await callback();
-      });
+    await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
+      // Store the callback result
+      callbackResult = await callback();
+    });
 
-      await finishExperiment({ id: experimentId });
-    } catch (error) {
-      client.logger?.error('Error during experiment run:', error);
-      if (experimentId) {
-        try {
-          await finishExperiment({
-            id: experimentId,
-            error: error instanceof Error ? error : String(error),
-          });
-        } catch (finishError) {
-          client.logger?.error('Failed to finish experiment with error status:', finishError);
-        }
+    await finishExperiment({ id: experimentId });
+  } catch (error) {
+    client.logger?.error('Error during experiment run:', error);
+    if (experimentId) {
+      try {
+        await finishExperiment({
+          id: experimentId,
+          error: error instanceof Error ? error : String(error),
+        });
+      } catch (finishError) {
+        client.logger?.error('Failed to finish experiment with error status:', finishError);
       }
-      throw error;
     }
-  });
+    throw error;
+  }
 
   // Return the stored result (cast needed as it might technically be undefined if runWith fails before callback)
   return callbackResult as T;

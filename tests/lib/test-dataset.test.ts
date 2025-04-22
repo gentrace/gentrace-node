@@ -1,6 +1,6 @@
 import { TestInput } from '../../src/lib/test-dataset';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import * as z from 'zod';
+import { z } from 'zod';
 
 const mockGentraceClient: {
   logger: { warn: jest.Mock; error: jest.Mock; info: jest.Mock };
@@ -96,21 +96,21 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
-      rawData: { input: 1 },
+      inputs: { input: 1 },
       schema: InputSchema,
       callback: mockInteraction,
     });
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 2',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 2' },
-      rawData: { input: 2 },
+      inputs: { input: 2 },
       schema: InputSchema,
       callback: mockInteraction,
     });
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 3',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 3' },
-      rawData: { input: 3 },
+      inputs: { input: 3 },
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -129,7 +129,7 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Case 1' },
-      rawData: { input: 10 },
+      inputs: { input: 10 },
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -137,7 +137,7 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case (ID: case-id-20)',
       spanAttributes: { 'gentrace.test_case_id': 'case-id-20' },
-      rawData: { input: 20 },
+      inputs: { input: 20 },
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -145,7 +145,7 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Case 30',
       spanAttributes: { 'gentrace.test_case_id': 'case-id-30' },
-      rawData: { input: 30 },
+      inputs: { input: 30 },
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -153,7 +153,7 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 4',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 4' },
-      rawData: { input: 40 },
+      inputs: { input: 40 },
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -265,7 +265,7 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
-      rawData: { input: 5 },
+      inputs: { input: 5 },
       schema: CustomSchema, // Check that the custom schema object is passed
       callback: customInteraction,
     });
@@ -300,7 +300,7 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
-      rawData: { input: 99 },
+      inputs: { input: 99 },
       schema: FailingSchema, // The failing schema is passed
       callback: failingInteraction,
     });
