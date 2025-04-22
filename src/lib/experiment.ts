@@ -61,33 +61,16 @@ export async function experiment<T>(
 ): Promise<T> {
   let callbackResult: T | undefined;
 
-  const client = _getClient();
-  let experimentId: string | undefined;
   const metadata = options?.metadata;
   const startParams: StartExperimentParams = metadata ? { pipelineId, metadata } : { pipelineId };
 
-  try {
-    experimentId = await startExperiment(startParams);
+  const experimentId = await startExperiment(startParams);
 
-    await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
-      callbackResult = await callback();
-    });
+  await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
+    callbackResult = await callback();
+  });
 
-    await finishExperiment({ id: experimentId });
-  } catch (error) {
-    client.logger?.error('Error during experiment run:', error);
-    if (experimentId) {
-      try {
-        await finishExperiment({
-          id: experimentId,
-          error: error instanceof Error ? error : String(error),
-        });
-      } catch (finishError) {
-        client.logger?.error('Failed to finish experiment with error status:', finishError);
-      }
-    }
-    throw error;
-  }
+  await finishExperiment({ id: experimentId });
 
   return callbackResult as T;
 }

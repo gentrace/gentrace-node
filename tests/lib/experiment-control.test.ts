@@ -80,21 +80,6 @@ describe('experiment-control', () => {
       expect(processOnSpy).toHaveBeenCalledWith('SIGINT', expect.any(Function));
       expect(processOnSpy).toHaveBeenCalledWith('SIGTERM', expect.any(Function));
     });
-
-    it('should log info on successful start', async () => {
-      mockGentraceClient.experiments.create.mockResolvedValue(mockExperiment);
-      await experimentControlLib.startExperiment(params);
-      expect(mockGentraceClient.logger.info).toHaveBeenCalledWith(
-        `Started experiment ${mockExperiment.id} for pipeline ${params.pipelineId}`,
-      );
-    });
-
-    it('should throw and log error if client.experiments.create fails', async () => {
-      const error = new Error('Failed to create');
-      mockGentraceClient.experiments.create.mockRejectedValue(error);
-      await expect(experimentControlLib.startExperiment(params)).rejects.toThrow(error);
-      expect(mockGentraceClient.logger.error).toHaveBeenCalledWith(`Failed to start experiment: ${error}`);
-    });
   });
 
   describe('finishExperiment', () => {
@@ -151,57 +136,24 @@ describe('experiment-control', () => {
       expect(processRemoveListenerSpy).toHaveBeenCalledWith('SIGTERM', expect.any(Function));
     });
 
-    it('should log info on successful finish', async () => {
-      await simulateStartExperiment(experimentId);
-      mockGentraceClient.experiments.update.mockResolvedValue({});
-
-      await experimentControlLib.finishExperiment({ id: experimentId });
-      expect(mockGentraceClient.logger.info).toHaveBeenCalledWith(
-        `Finished experiment ${experimentId} with status: success`,
-      );
-    });
-
-    it('should log info on finish with error', async () => {
-      await simulateStartExperiment(experimentId);
-      const error = new Error('Finish error');
-      mockGentraceClient.experiments.update.mockResolvedValue({});
-
-      await experimentControlLib.finishExperiment({ id: experimentId, error });
-      expect(mockGentraceClient.logger.info).toHaveBeenCalledWith(
-        `Finished experiment ${experimentId} with status: error`,
-      );
-    });
-
-    it('should log error if client.experiments.update fails', async () => {
-      await simulateStartExperiment(experimentId);
-      const updateError = new Error('Failed to update');
-      mockGentraceClient.experiments.update.mockRejectedValue(updateError);
-      try {
-        await experimentControlLib.finishExperiment({ id: experimentId });
-      } catch (e) {}
-      expect(mockGentraceClient.logger.error).toHaveBeenCalledWith(
-        `Failed to finish experiment ${experimentId} via API:`,
-      );
-    });
-
-    it('should warn and return if experiment ID is not active', async () => {
+    it('should throw an error if experiment ID is not active', async () => {
+      const nonExistentId = 'non-existent-id';
       const loggerWarnSpy = jest.spyOn(mockGentraceClient.logger, 'warn');
 
-      try {
-        await experimentControlLib.finishExperiment({ id: 'non-existent-id' });
+      await expect(experimentControlLib.finishExperiment({ id: nonExistentId })).rejects.toThrow(
+        `Experiment ${nonExistentId} not found in active experiments list.`,
+      );
 
-        expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
-        expect(loggerWarnSpy).toHaveBeenCalledWith(
-          'Attempted to finish experiment non-existent-id, but it was not found in the active list.',
-        );
-        expect(mockGentraceClient.experiments.update).not.toHaveBeenCalled();
-        expect(processRemoveListenerSpy).not.toHaveBeenCalled();
-      } finally {
-        loggerWarnSpy.mockRestore();
-      }
+      expect(loggerWarnSpy).toHaveBeenCalledWith(
+        `Attempted to finish experiment ${nonExistentId}, but it was not found in the active list.`,
+      );
+      expect(mockGentraceClient.experiments.update).not.toHaveBeenCalled();
+      expect(processRemoveListenerSpy).not.toHaveBeenCalled();
+
+      loggerWarnSpy.mockRestore();
     });
 
-    it('shutdown listener should call finishExperimentInternal with error', async () => {
+    it('shutdown listener should call _finishExperiment with error', async () => {
       mockGentraceClient.experiments.create.mockResolvedValue(mockExperiment);
       await experimentControlLib.startExperiment(params);
 

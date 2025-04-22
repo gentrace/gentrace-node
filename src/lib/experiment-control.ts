@@ -31,37 +31,32 @@ export type StartExperimentParams = {
 export async function startExperiment({ pipelineId, metadata }: StartExperimentParams): Promise<string> {
   const client = _getClient();
 
-  try {
-    const experiment = await client.experiments.create({
-      pipelineId,
-      ...(metadata && { metadata }),
+  const experiment = await client.experiments.create({
+    pipelineId,
+    ...(metadata && { metadata }),
+  });
+
+  const experimentId = experiment.id;
+
+  const shutdownListener: NodeJS.SignalsListener = async (signal) => {
+    await _finishExperiment(experimentId, {
+      status: 'error',
+      error: `Process terminated with signal ${signal}`,
     });
+  };
 
-    const experimentId = experiment.id;
+  // Store experiment info and listener
+  activeExperiments.set(experimentId, {
+    id: experimentId,
+    pipelineId: pipelineId,
+    shutdownListener: shutdownListener,
+  });
 
-    const shutdownListener: NodeJS.SignalsListener = async (signal) => {
-      await _finishExperiment(experimentId, {
-        status: 'error',
-        error: `Process terminated with signal ${signal}`,
-      });
-    };
+  process.on('SIGINT', shutdownListener);
+  process.on('SIGTERM', shutdownListener);
 
-    // Store experiment info and listener
-    activeExperiments.set(experimentId, {
-      id: experimentId,
-      pipelineId: pipelineId,
-      shutdownListener: shutdownListener,
-    });
-
-    process.on('SIGINT', shutdownListener);
-    process.on('SIGTERM', shutdownListener);
-
-    client.logger?.info(`Started experiment ${experimentId} for pipeline ${pipelineId}`);
-    return experimentId;
-  } catch (error) {
-    client.logger?.error(`Failed to start experiment: ${error}`);
-    throw error;
-  }
+  client.logger?.info(`Started experiment ${experimentId} for pipeline ${pipelineId}`);
+  return experimentId;
 }
 
 /**
@@ -100,9 +95,9 @@ async function _finishExperiment(
   const activeExperiment = activeExperiments.get(id);
 
   if (!activeExperiment) {
-    // Experiment already finished or never started tracking
+    // This shouldn't happen. Experiment already finished or never started tracking.
     client.logger?.warn(`Attempted to finish experiment ${id}, but it was not found in the active list.`);
-    return;
+    throw new Error(`Experiment ${id} not found in active experiments list.`);
   }
 
   process.removeListener('SIGINT', activeExperiment.shutdownListener);
@@ -110,14 +105,8 @@ async function _finishExperiment(
 
   activeExperiments.delete(id);
 
-  try {
-    await client.experiments.update(id, {
-      status: 'EVALUATING',
-      ...(result.status === 'error' && { errorMessage: result.error }),
-    });
-
-    client.logger?.info(`Finished experiment ${id} with status: ${result.status}`);
-  } catch (error) {
-    client.logger?.error(`Failed to finish experiment ${id} via API:`, JSON.stringify(error, null, 2));
-  }
+  await client.experiments.update(id, {
+    status: 'EVALUATING',
+    ...(result.status === 'error' && { errorMessage: result.error }),
+  });
 }
