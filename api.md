@@ -1,60 +1,57 @@
-# Shared
+# Pipelines
 
 Types:
 
-- <code><a href="./src/resources/shared.ts">Order</a></code>
+- <code><a href="./src/resources/pipelines.ts">CreatePipelineBody</a></code>
+- <code><a href="./src/resources/pipelines.ts">Pipeline</a></code>
+- <code><a href="./src/resources/pipelines.ts">PipelineList</a></code>
 
-# Pets
+Methods:
+
+- <code title="post /v4/pipelines">client.pipelines.<a href="./src/resources/pipelines.ts">create</a>({ ...params }) -> Pipeline</code>
+- <code title="get /v4/pipelines/{id}">client.pipelines.<a href="./src/resources/pipelines.ts">retrieve</a>(id) -> Pipeline</code>
+- <code title="post /v4/pipelines/{id}">client.pipelines.<a href="./src/resources/pipelines.ts">update</a>(id, { ...params }) -> Pipeline</code>
+- <code title="get /v4/pipelines">client.pipelines.<a href="./src/resources/pipelines.ts">list</a>({ ...params }) -> PipelineList</code>
+
+# Experiments
 
 Types:
 
-- <code><a href="./src/resources/pets.ts">APIResponse</a></code>
-- <code><a href="./src/resources/pets.ts">Pet</a></code>
-- <code><a href="./src/resources/pets.ts">PetFindByStatusResponse</a></code>
-- <code><a href="./src/resources/pets.ts">PetFindByTagsResponse</a></code>
+- <code><a href="./src/resources/experiments.ts">Experiment</a></code>
+- <code><a href="./src/resources/experiments.ts">ExperimentList</a></code>
 
 Methods:
 
-- <code title="post /pet">client.pets.<a href="./src/resources/pets.ts">create</a>({ ...params }) -> Pet</code>
-- <code title="get /pet/{petId}">client.pets.<a href="./src/resources/pets.ts">retrieve</a>(petID) -> Pet</code>
-- <code title="put /pet">client.pets.<a href="./src/resources/pets.ts">update</a>({ ...params }) -> Pet</code>
-- <code title="delete /pet/{petId}">client.pets.<a href="./src/resources/pets.ts">delete</a>(petID) -> void</code>
-- <code title="get /pet/findByStatus">client.pets.<a href="./src/resources/pets.ts">findByStatus</a>({ ...params }) -> PetFindByStatusResponse</code>
-- <code title="get /pet/findByTags">client.pets.<a href="./src/resources/pets.ts">findByTags</a>({ ...params }) -> PetFindByTagsResponse</code>
-- <code title="post /pet/{petId}">client.pets.<a href="./src/resources/pets.ts">updateByID</a>(petID, { ...params }) -> void</code>
-- <code title="post /pet/{petId}/uploadImage">client.pets.<a href="./src/resources/pets.ts">uploadImage</a>(petID, { ...params }) -> APIResponse</code>
+- <code title="post /v4/experiments">client.experiments.<a href="./src/resources/experiments.ts">create</a>({ ...params }) -> Experiment</code>
+- <code title="get /v4/experiments/{id}">client.experiments.<a href="./src/resources/experiments.ts">retrieve</a>(id) -> Experiment</code>
+- <code title="post /v4/experiments/{id}">client.experiments.<a href="./src/resources/experiments.ts">update</a>(id, { ...params }) -> Experiment</code>
+- <code title="get /v4/experiments">client.experiments.<a href="./src/resources/experiments.ts">list</a>({ ...params }) -> ExperimentList</code>
 
-# Store
+# Datasets
 
 Types:
 
-- <code><a href="./src/resources/store/store.ts">StoreInventoryResponse</a></code>
+- <code><a href="./src/resources/datasets.ts">Dataset</a></code>
+- <code><a href="./src/resources/datasets.ts">DatasetList</a></code>
 
 Methods:
 
-- <code title="get /store/inventory">client.store.<a href="./src/resources/store/store.ts">inventory</a>() -> StoreInventoryResponse</code>
+- <code title="post /v4/datasets">client.datasets.<a href="./src/resources/datasets.ts">create</a>({ ...params }) -> Dataset</code>
+- <code title="get /v4/datasets/{id}">client.datasets.<a href="./src/resources/datasets.ts">retrieve</a>(id) -> Dataset</code>
+- <code title="post /v4/datasets/{id}">client.datasets.<a href="./src/resources/datasets.ts">update</a>(id, { ...params }) -> Dataset</code>
+- <code title="get /v4/datasets">client.datasets.<a href="./src/resources/datasets.ts">list</a>({ ...params }) -> DatasetList</code>
 
-## Orders
-
-Methods:
-
-- <code title="post /store/order">client.store.orders.<a href="./src/resources/store/orders.ts">create</a>({ ...params }) -> Order</code>
-- <code title="get /store/order/{orderId}">client.store.orders.<a href="./src/resources/store/orders.ts">retrieve</a>(orderID) -> Order</code>
-- <code title="delete /store/order/{orderId}">client.store.orders.<a href="./src/resources/store/orders.ts">delete</a>(orderID) -> void</code>
-
-# User
+# TestCases
 
 Types:
 
-- <code><a href="./src/resources/user.ts">User</a></code>
-- <code><a href="./src/resources/user.ts">UserLoginResponse</a></code>
+- <code><a href="./src/resources/test-cases.ts">TestCase</a></code>
+- <code><a href="./src/resources/test-cases.ts">TestCaseList</a></code>
+- <code><a href="./src/resources/test-cases.ts">TestCaseDeleteResponse</a></code>
 
 Methods:
 
-- <code title="post /user">client.user.<a href="./src/resources/user.ts">create</a>({ ...params }) -> User</code>
-- <code title="get /user/{username}">client.user.<a href="./src/resources/user.ts">retrieve</a>(username) -> User</code>
-- <code title="put /user/{username}">client.user.<a href="./src/resources/user.ts">update</a>(existingUsername, { ...params }) -> void</code>
-- <code title="delete /user/{username}">client.user.<a href="./src/resources/user.ts">delete</a>(username) -> void</code>
-- <code title="post /user/createWithList">client.user.<a href="./src/resources/user.ts">createWithList</a>([ ...items ]) -> User</code>
-- <code title="get /user/login">client.user.<a href="./src/resources/user.ts">login</a>({ ...params }) -> string</code>
-- <code title="get /user/logout">client.user.<a href="./src/resources/user.ts">logout</a>() -> void</code>
+- <code title="post /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">create</a>({ ...params }) -> TestCase</code>
+- <code title="get /v4/test-cases/{id}">client.testCases.<a href="./src/resources/test-cases.ts">retrieve</a>(id) -> TestCase</code>
+- <code title="get /v4/test-cases">client.testCases.<a href="./src/resources/test-cases.ts">list</a>({ ...params }) -> TestCaseList</code>
+- <code title="delete /v4/test-cases/{id}">client.testCases.<a href="./src/resources/test-cases.ts">delete</a>(id) -> TestCaseDeleteResponse</code>

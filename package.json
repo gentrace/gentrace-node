@@ -1,13 +1,13 @@
 {
   "name": "gentrace",
-  "version": "0.0.1-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "The official TypeScript library for the Gentrace API",
-  "author": "Gentrace <dev-feedback@gentrace.com>",
+  "author": "Gentrace <support@gentrace.ai>",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "type": "commonjs",
-  "repository": "github:stainless-sdks/gentrace-typescript",
-  "license": "Apache-2.0",
+  "repository": "github:gentrace/gentrace-node",
+  "license": "MIT",
   "packageManager": "yarn@1.22.22",
   "files": [
     "**/*"
@@ -48,6 +48,10 @@
   },
   "resolutions": {
     "synckit": "0.8.8"
+  },
+  "browser": {
+    "./internal/shims/getBuiltinModule.mjs": "./internal/shims/nullGetBuiltinModule.mjs",
+    "./internal/shims/getBuiltinModule.js": "./internal/shims/nullGetBuiltinModule.js"
   },
   "imports": {
     "gentrace": ".",

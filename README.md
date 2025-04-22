@@ -4,14 +4,14 @@
 
 This library provides convenient access to the Gentrace REST API from server-side TypeScript or JavaScript.
 
-The REST API documentation can be found on [docs.gentrace.com](https://docs.gentrace.com). The full API of this library can be found in [api.md](api.md).
+The REST API documentation can be found on [gentrace.ai](https://gentrace.ai). The full API of this library can be found in [api.md](api.md).
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
 ```sh
-npm install git+ssh://git@github.com:stainless-sdks/gentrace-typescript.git
+npm install git+ssh://git@github.com:gentrace/gentrace-node.git
 ```
 
 > [!NOTE]
@@ -26,13 +26,13 @@ The full API of this library can be found in [api.md](api.md).
 import Gentrace from 'gentrace';
 
 const client = new Gentrace({
-  apiKey: process.env['PETSTORE_API_KEY'], // This is the default and can be omitted
+  bearerToken: process.env['GENTRACE_API_KEY'], // This is the default and can be omitted
 });
 
 async function main() {
-  const order = await client.store.orders.create({ petId: 1, quantity: 1, status: 'placed' });
+  const pipelineList = await client.pipelines.list();
 
-  console.log(order.id);
+  console.log(pipelineList.data);
 }
 
 main();
@@ -47,46 +47,17 @@ This library includes TypeScript definitions for all request params and response
 import Gentrace from 'gentrace';
 
 const client = new Gentrace({
-  apiKey: process.env['PETSTORE_API_KEY'], // This is the default and can be omitted
+  bearerToken: process.env['GENTRACE_API_KEY'], // This is the default and can be omitted
 });
 
 async function main() {
-  const response: Gentrace.StoreInventoryResponse = await client.store.inventory();
+  const pipelineList: Gentrace.PipelineList = await client.pipelines.list();
 }
 
 main();
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
-
-## File uploads
-
-Request parameters that correspond to file uploads can be passed in many different forms:
-
-- `File` (or an object with the same structure)
-- a `fetch` `Response` (or an object with the same structure)
-- an `fs.ReadStream`
-- the return value of our `toFile` helper
-
-```ts
-import fs from 'fs';
-import Gentrace, { toFile } from 'gentrace';
-
-const client = new Gentrace();
-
-// If you have access to Node `fs` we recommend using `fs.createReadStream()`:
-await client.pets.uploadImage(0, { image: fs.createReadStream('/path/to/file') });
-
-// Or if you have the web `File` API you can pass a `File` instance:
-await client.pets.uploadImage(0, { image: new File(['my bytes'], 'file') });
-
-// You can also pass a `fetch` `Response`:
-await client.pets.uploadImage(0, { image: await fetch('https://somesite/file') });
-
-// Finally, if none of the above are convenient, you can use our `toFile` helper:
-await client.pets.uploadImage(0, { image: await toFile(Buffer.from('my bytes'), 'file') });
-await client.pets.uploadImage(0, { image: await toFile(new Uint8Array([0, 1, 2]), 'file') });
-```
 
 ## Handling errors
 
@@ -97,7 +68,7 @@ a subclass of `APIError` will be thrown:
 <!-- prettier-ignore -->
 ```ts
 async function main() {
-  const response = await client.store.inventory().catch(async (err) => {
+  const pipelineList = await client.pipelines.list().catch(async (err) => {
     if (err instanceof Gentrace.APIError) {
       console.log(err.status); // 400
       console.log(err.name); // BadRequestError
@@ -140,7 +111,7 @@ const client = new Gentrace({
 });
 
 // Or, configure per-request:
-await client.store.inventory({
+await client.pipelines.list({
   maxRetries: 5,
 });
 ```
@@ -157,7 +128,7 @@ const client = new Gentrace({
 });
 
 // Override per-request:
-await client.store.inventory({
+await client.pipelines.list({
   timeout: 5 * 1000,
 });
 ```
@@ -180,13 +151,13 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 ```ts
 const client = new Gentrace();
 
-const response = await client.store.inventory().asResponse();
+const response = await client.pipelines.list().asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: response, response: raw } = await client.store.inventory().withResponse();
+const { data: pipelineList, response: raw } = await client.pipelines.list().withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(response);
+console.log(pipelineList.data);
 ```
 
 ### Logging
@@ -377,7 +348,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/gentrace-typescript/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/gentrace/gentrace-node/issues) with questions, bugs, or suggestions.
 
 ## Requirements
 
