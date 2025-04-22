@@ -33,8 +33,8 @@ export async function startExperiment({ pipelineId, metadata }: StartExperimentP
 
   try {
     const experiment = await client.experiments.create({
-      pipelineId: pipelineId,
-      ...(metadata && { metadata: metadata }),
+      pipelineId,
+      ...(metadata && { metadata }),
     });
 
     const experimentId = experiment.id;

@@ -7,6 +7,15 @@ import { _getClient, _setClient } from './client-instance';
  * with API keys, base URLs, or other settings. Gentrace functionality depends on this initialization.
  *
  * @param {ClientOptions} [options={}] - New configuration options.
+ * @example
+ * ```typescript
+ * import { init } from 'gentrace';
+ *
+ * init({
+ *   bearerToken: 'your-gentrace-api-key',
+ *   baseURL: 'https://gentrace.ai/api' // optional
+ * });
+ * ```
  */
 export function init(options: ClientOptions = {}) {
   // Always use _setClient to ensure the constructor logic is run
