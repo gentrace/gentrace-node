@@ -1,5 +1,5 @@
 import { trace, SpanStatusCode, Span } from '@opentelemetry/api';
-import { stringify } from 'superjson';
+import stringify from 'json-stringify-safe';
 
 /**
  * Options for configuring the behavior of the wrapInteraction function.
@@ -39,10 +39,8 @@ export function interaction<Arg extends Record<string, any>, Return>(
   fn: (arg: Arg) => Return | Promise<Return>,
   options: InteractionSpanOptions = {},
 ): (arg: Arg) => Return | Promise<Return> {
-  // Return the identical function type
   const tracer = trace.getTracer('gentrace-sdk');
 
-  // Attempt to get function name, fall back safely
   const fnName = typeof fn === 'function' ? (fn as any).name : '';
   const interactionName = options?.name || fnName || 'anonymousInteraction';
 
@@ -51,8 +49,9 @@ export function interaction<Arg extends Record<string, any>, Return>(
       span.setAttribute('gentrace.pipeline_id', pipelineId);
 
       try {
+        console.log('arg', arg, stringify(arg));
         span.addEvent('gentrace.fn.args', {
-          args: stringify(arg),
+          args: stringify([arg]),
         });
 
         const result = fn(arg);

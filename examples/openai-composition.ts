@@ -7,7 +7,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import dotenv from 'dotenv';
 import { readEnv } from 'gentrace/internal/utils';
 import OpenAI from 'openai';
-import { stringify } from 'superjson';
+import stringify from 'json-stringify-safe';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
 

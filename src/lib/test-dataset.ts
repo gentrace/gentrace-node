@@ -69,7 +69,7 @@ export async function testDataset<
       continue;
     }
 
-    const rawArgumentObject = inputItem.inputs;
+    const inputs = inputItem.inputs;
     const extractedName: string | undefined = inputItem.name;
     const extractedId: string | undefined = inputItem.id;
 
@@ -90,7 +90,7 @@ export async function testDataset<
     await _runTest<any, TInput>({
       spanName: finalName,
       spanAttributes,
-      rawData: rawArgumentObject,
+      inputs,
       schema,
       callback: interaction,
     });

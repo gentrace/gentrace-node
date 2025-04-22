@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import { Span, SpanStatusCode } from '@opentelemetry/api';
-import { stringify } from 'superjson';
+import stringify from 'json-stringify-safe';
 import type { InteractionSpanOptions as InteractionSpanOptionsType } from '../../src/lib/interaction';
 
 let lastMockSpan: Partial<Span> | null = null;

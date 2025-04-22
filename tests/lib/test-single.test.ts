@@ -5,7 +5,7 @@ import { jest } from '@jest/globals';
 // Import types, but rely on require/doMock for implementation
 import type { Span } from '@opentelemetry/api';
 import { init } from 'gentrace/lib/init'; // Keep non-mocked imports
-import { stringify } from 'superjson';
+import stringify from 'json-stringify-safe';
 // Remove experimentContextStorage import here
 // import { experimentContextStorage } from 'gentrace/lib/experiment';
 // Do not import _runTest etc. here, require it inside isolateModules

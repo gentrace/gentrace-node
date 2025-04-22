@@ -1,5 +1,5 @@
 import { Span, SpanStatusCode, trace } from '@opentelemetry/api';
-import { stringify } from 'superjson';
+import stringify from 'json-stringify-safe';
 import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
 import { ParseableSchema } from './test-dataset'; // Import the interface
 import { _getClient } from './client-instance';
@@ -58,7 +58,7 @@ export type RunTestParams<T> = {
 export type RunTestInternalOptions<TResult, TInput> = {
   spanName: string;
   spanAttributes: Record<string, string>;
-  rawData?: unknown | undefined;
+  inputs?: unknown | undefined;
   schema?: ParseableSchema<TInput> | undefined;
   callback: (parsedData: TInput) => TResult | null | Promise<TResult | null>;
 };
@@ -77,7 +77,7 @@ export type RunTestInternalOptions<TResult, TInput> = {
 export async function _runTest<TResult, TInput = any>(
   options: RunTestInternalOptions<TResult, TInput>, // Single options parameter
 ): Promise<TResult | null> {
-  const { spanName, spanAttributes, rawData, schema, callback } = options;
+  const { spanName, spanAttributes, inputs, schema, callback } = options;
 
   const experimentContext = getCurrentExperimentContext();
 
@@ -88,32 +88,35 @@ export async function _runTest<TResult, TInput = any>(
   const { experimentId } = experimentContext;
   const tracer = trace.getTracer('gentrace-sdk');
 
-  return new Promise<TResult | null>((resolve, reject) => {
+  return new Promise<TResult | null>((resolve) => {
     tracer.startActiveSpan(spanName, async (span: Span) => {
       span.setAttribute('gentrace.experiment_id', experimentId);
       Object.entries(spanAttributes).forEach(([key, value]) => {
-        span.setAttribute(key, value as any);
+        span.setAttribute(key, value);
       });
 
       try {
-        let dataToProcess: TInput;
+        let parsedInputs: TInput;
 
         if (schema) {
           try {
-            dataToProcess = schema.parse(rawData);
+            parsedInputs = schema.parse(inputs);
           } catch (parsingError: any) {
             span.recordException(parsingError);
             span.setAttribute('error.type', parsingError.name);
             throw parsingError;
           }
         } else {
-          dataToProcess = rawData as TInput;
+          parsedInputs = inputs as TInput;
         }
 
-        span.addEvent('gentrace.fn.args', {
-          args: stringify(dataToProcess),
-        });
-        const result = callback(dataToProcess);
+        if (parsedInputs) {
+          span.addEvent('gentrace.fn.args', {
+            args: stringify([parsedInputs]),
+          });
+        }
+
+        const result = callback(parsedInputs);
 
         if (result instanceof Promise) {
           result.then(
@@ -132,7 +135,7 @@ export async function _runTest<TResult, TInput = any>(
               });
               span.setAttribute('error.type', (error as any).name);
               span.end();
-              reject(error);
+              resolve(null);
             },
           );
         } else {
@@ -153,22 +156,5 @@ export async function _runTest<TResult, TInput = any>(
         resolve(null);
       }
     });
-  });
-}
-
-export async function _testWithId<TResult, TInput = any>(
-  testCaseId: string,
-  caseName: string | undefined,
-  rawData: unknown,
-  schema: ParseableSchema<TInput> | undefined,
-  callback: (parsedData: TInput) => TResult | Promise<TResult>,
-): Promise<TResult | null> {
-  const spanName = caseName ?? `Test Case (ID: ${testCaseId})`;
-  return _runTest<TResult, TInput>({
-    spanName,
-    spanAttributes: { 'gentrace.test_case_id': testCaseId },
-    rawData,
-    schema,
-    callback,
   });
 }

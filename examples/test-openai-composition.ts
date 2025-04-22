@@ -7,7 +7,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import dotenv from 'dotenv';
 import { readEnv } from 'gentrace/internal/utils';
 import OpenAI from 'openai';
-import { stringify } from 'superjson';
+import stringify from 'json-stringify-safe';
 import { experiment } from '../src/lib/experiment';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
@@ -243,45 +243,34 @@ async function runExperiment() {
     await experiment(PIPELINE_ID, async () => {
       console.log(`Running experiment for pipeline: ${PIPELINE_ID}`);
 
-      // Define test cases
-      try {
-        await test('Test Case 1: Project Phoenix Update', async () => {
-          const recipient = 'Alice';
-          const topic = 'Project Phoenix Update';
-          const sender = 'John Doe';
-          const draft = await compose({ recipient, topic, sender });
+      await test('Test Case 1: Project Phoenix Update', async () => {
+        const recipient = 'Alice';
+        const topic = 'Project Phoenix Update';
+        const sender = 'John Doe';
+        const draft = await compose({ recipient, topic, sender });
 
-          if (draft) {
-            console.log('\n--- Test Case 1 Draft ---\n');
-            console.log(draft);
-            console.log('\n-------------------------\n');
-          }
-          // In a real scenario, you might add assertions here
-          // e.g., expect(draft).toContain('Project Phoenix');
-        });
-      } catch (error) {
-        console.error('Error in Test Case 1:', error);
-      }
+        if (draft) {
+          console.log('\n--- Test Case 1 Draft ---\n');
+          console.log(draft);
+          console.log('\n-------------------------\n');
+        }
+        return draft;
+      });
 
-      try {
-        await test('Test Case 2: Quarterly Review', async () => {
-          const recipient = 'Bob';
-          const topic = 'Quarterly Review Preparation';
-          const sender = 'John Doe';
-          const draft = await compose({ recipient, topic, sender });
+      await test('Test Case 2: Quarterly Review', async () => {
+        const recipient = 'Bob';
+        const topic = 'Quarterly Review Preparation';
+        const sender = 'John Doe';
+        const draft = await compose({ recipient, topic, sender });
 
-          if (draft) {
-            console.log('\n--- Test Case 2 Draft ---\n');
-            console.log(draft);
-            console.log('\n-------------------------\n');
-          }
-          // Assertions would go here too
-        });
-      } catch (error) {
-        console.error('Error in Test Case 2:', error);
-      }
+        if (draft) {
+          console.log('\n--- Test Case 2 Draft ---\n');
+          console.log(draft);
+          console.log('\n-------------------------\n');
+        }
 
-      // Add more test cases as needed
+        return draft;
+      });
     });
   } catch (error) {
     console.error(JSON.stringify(error, null, 2), 'Error running experiment:');
