@@ -5,10 +5,10 @@ import { readEnv } from 'gentrace/internal/utils';
 dotenv.config();
 
 init({
-  bearerToken: readEnv('GENTRACE_API_KEY'),
+  baseURL: readEnv('GENTRACE_BASE_URL'),
 });
 
-const PIPELINE_ID = '26d64c23-e38c-56fd-9b45-9adc87de797b';
+const PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
 
 experiment(PIPELINE_ID, async () => {
   test('simple-addition-test', () => {

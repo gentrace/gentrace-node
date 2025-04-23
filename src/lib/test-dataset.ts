@@ -61,6 +61,7 @@ export async function testDataset<
     throw new Error('Dataset function must return an array of test cases.');
   }
 
+  const promises: Promise<void>[] = [];
   for (let i = 0; i < rawTestInputs.length; i++) {
     const inputItem = rawTestInputs[i];
 
@@ -87,14 +88,18 @@ export async function testDataset<
       spanAttributes['gentrace.test_case_name'] = finalName;
     }
 
-    await _runTest<any, TInput>({
-      spanName: finalName,
-      spanAttributes,
-      inputs,
-      schema,
-      callback: interaction,
-    });
+    promises.push(
+      _runTest<any, TInput>({
+        spanName: finalName,
+        spanAttributes,
+        inputs,
+        schema,
+        callback: interaction,
+      }),
+    );
   }
+
+  await Promise.all(promises);
 }
 
 /**
