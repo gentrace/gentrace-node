@@ -1,4 +1,5 @@
 import { ClientOptions } from '../client';
+import { Datasets, Experiments, Pipelines, TestCases } from '../resources';
 import { _getClient, _setClient } from './client-instance';
 
 /**
@@ -28,10 +29,10 @@ export function init(options: ClientOptions = {}) {
 }
 
 const client = _getClient();
-let pipelines = client.pipelines;
-let experiments = client.experiments;
-let datasets = client.datasets;
-let testCases = client.testCases;
+let pipelines: Pipelines = client.pipelines;
+let experiments: Experiments = client.experiments;
+let datasets: Datasets = client.datasets;
+let testCases: TestCases = client.testCases;
 
 /**
  * Updates the exported namespace variables to point to the current client's namespaces.
