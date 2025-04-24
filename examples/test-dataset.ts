@@ -10,6 +10,8 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import dotenv from 'dotenv';
+import { queryAi } from './functions/query';
+import { interaction } from 'gentrace/lib/interaction';
 
 dotenv.config();
 
@@ -72,6 +74,10 @@ const foo = async (query: string) => {
   return response.choices[0]!.message.content;
 };
 
+const queryAiInteraction = interaction(GENTRACE_PIPELINE_ID, async ({ query }) => {
+  return queryAi(query);
+});
+
 experiment(GENTRACE_PIPELINE_ID, async () => {
   await testDataset({
     data: async () => {
@@ -79,8 +85,6 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
       return testCasesList.data;
     },
     schema: InputSchema,
-    interaction: async ({ query }) => {
-      return foo(query);
-    },
+    interaction: queryAiInteraction,
   });
 }).then(async () => await sdk.shutdown());
