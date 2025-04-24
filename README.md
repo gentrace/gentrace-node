@@ -1,374 +1,283 @@
-# Gentrace TypeScript API Library
+# Gentrace Node.js SDK
 
 [![NPM version](https://img.shields.io/npm/v/gentrace.svg)](https://npmjs.org/package/gentrace) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/gentrace)
 
-This library provides convenient access to the Gentrace REST API from server-side TypeScript or JavaScript.
+This library provides tools to instrument and test your AI applications using Gentrace.
 
-The REST API documentation can be found on [gentrace.ai](https://gentrace.ai). The full API of this library can be found in [api.md](api.md).
-
-It is generated with [Stainless](https://www.stainless.com/).
+The full API documentation can be found in [api.md](api.md).
 
 ## Installation
 
 ```sh
-npm install git+ssh://git@github.com:gentrace/gentrace-node.git
+yarn add gentrace
 ```
 
-> [!NOTE]
-> Once this package is [published to npm](https://app.stainless.com/docs/guides/publish), this will become: `npm install gentrace`
+## Core Concepts
 
-## Usage
+The Gentrace SDK provides several key functions to help you instrument and evaluate your AI pipelines:
 
-The full API of this library can be found in [api.md](api.md).
+- **`init`**: Initializes the Gentrace SDK with your API key and other configuration.
+- **`interaction`**: Wraps your core AI logic (like calls to OpenAI, Anthropic, etc.) to capture traces and metadata. ([Requires OpenTelemetry](#opentelemetry-integration))
+- **`experiment`**: Defines a testing context for grouping related tests. ([Requires OpenTelemetry](#opentelemetry-integration))
+- **`test`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
+- **`testDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
+
+## Basic Usage
+
+### Initialization
+
+First, initialize the SDK with your Gentrace API key. You typically do this once when your application starts.
 
 <!-- prettier-ignore -->
-```js
-import Gentrace from 'gentrace';
+```typescript
+import { init } from 'gentrace';
+import dotenv from 'dotenv';
 
-const client = new Gentrace({
-  bearerToken: process.env['GENTRACE_API_KEY'], // This is the default and can be omitted
+dotenv.config();
+
+init({
+  apiKey: process.env.GENTRACE_API_KEY,
+  // Optional: Specify base URL if using self-hosted or enterprise Gentrace
+  // The format should be: http(s)://<hostname>/api
+  // baseURL: process.env.GENTRACE_BASE_URL,
 });
 
-async function main() {
-  const pipelineList = await client.pipelines.list();
-
-  console.log(pipelineList.data);
-}
-
-main();
+console.log('Gentrace initialized!');
 ```
 
-### Request & Response types
+### Instrumenting Your Code (`interaction`)
 
-This library includes TypeScript definitions for all request params and response fields. You may import and use them like so:
+Wrap the functions that contain your core AI logic using `interaction`. This allows Gentrace to capture detailed traces.
+
+Let's say you have a function `queryAi` that calls an AI model:
+
+**`src/aiFunctions.ts`**:
 
 <!-- prettier-ignore -->
-```ts
-import Gentrace from 'gentrace';
+```typescript
+import OpenAI from 'openai';
 
-const client = new Gentrace({
-  bearerToken: process.env['GENTRACE_API_KEY'], // This is the default and can be omitted
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function main() {
-  const pipelineList: Gentrace.PipelineList = await client.pipelines.list();
-}
-
-main();
-```
-
-Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
-
-## Handling errors
-
-When the library is unable to connect to the API,
-or if the API returns a non-success status code (i.e., 4xx or 5xx response),
-a subclass of `APIError` will be thrown:
-
-<!-- prettier-ignore -->
-```ts
-async function main() {
-  const pipelineList = await client.pipelines.list().catch(async (err) => {
-    if (err instanceof Gentrace.APIError) {
-      console.log(err.status); // 400
-      console.log(err.name); // BadRequestError
-      console.log(err.headers); // {server: 'nginx', ...}
-    } else {
-      throw err;
-    }
+export async function queryAi({ query }: { query: string }): Promise<string | null> {
+  // Your AI logic here, e.g., calling OpenAI
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [{ role: 'user', content: query }],
   });
+  return completion.choices[0]?.message?.content ?? null;
+}
+```
+
+Now, wrap it with `interaction`:
+
+**`src/instrumentedAi.ts`**:
+
+<!-- prettier-ignore -->
+```typescript
+import { interaction } from 'gentrace';
+import { queryAi } from './aiFunctions'; // Assuming your function is here
+
+const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+
+// Create an instrumented version of your function
+export const instrumentedQueryAi = interaction(
+  GENTRACE_PIPELINE_ID,
+  queryAi // Pass your original function
+);
+
+// Example of calling the instrumented function
+async function run() {
+  const result = await instrumentedQueryAi({ query: 'Explain quantum computing simply.' });
+  console.log('AI Response:', result);
 }
 
-main();
+run();
 ```
 
-Error codes are as followed:
+Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
 
-| Status Code | Error Type                 |
-| ----------- | -------------------------- |
-| 400         | `BadRequestError`          |
-| 401         | `AuthenticationError`      |
-| 403         | `PermissionDeniedError`    |
-| 404         | `NotFoundError`            |
-| 422         | `UnprocessableEntityError` |
-| 429         | `RateLimitError`           |
-| >=500       | `InternalServerError`      |
-| N/A         | `APIConnectionError`       |
+## Testing and Evaluation
 
-### Retries
+Gentrace provides powerful tools for testing your AI applications.
 
-Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
-Connection errors (for example, due to a network connectivity problem), 408 Request Timeout, 409 Conflict,
-429 Rate Limit, and >=500 Internal errors will all be retried by default.
+### Running Single Tests (`test`)
 
-You can use the `maxRetries` option to configure or disable this:
+Use `experiment` to group tests and `test` to define individual test cases.
+
+**`src/tests/simple.ts`**:
 
 <!-- prettier-ignore -->
-```js
-// Configure the default for all requests:
-const client = new Gentrace({
-  maxRetries: 0, // default is 2
+```typescript
+import { init, experiment, test } from 'gentrace';
+import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+init({
+  apiKey: process.env.GENTRACE_API_KEY,
 });
 
-// Or, configure per-request:
-await client.pipelines.list({
-  maxRetries: 5,
+const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+
+experiment(GENTRACE_PIPELINE_ID, async () => {
+  test('simple-query-test', async () => {
+    const result = await instrumentedQueryAi({ query: 'What is the capital of France?' });
+    // You can add assertions here if needed
+    console.log('Test Result:', result);
+    return result; // Return value is captured by Gentrace
+  });
+
+  test('another-query-test', async () => {
+    const result = await instrumentedQueryAi({ query: 'Summarize the plot of Hamlet.' });
+    console.log('Test Result:', result);
+    return result;
+  });
 });
 ```
 
-### Timeouts
+To run these tests, simply execute the file:
 
-Requests time out after 1 minute by default. You can configure this with a `timeout` option:
+```sh
+npx ts-node src/tests/simple.ts
+```
+
+Results will be available in the experiment section corresponding to that particular pipeline.
+
+### Testing with Datasets (`testDataset`)
+
+You can run your instrumented functions against datasets defined in Gentrace. This is useful for regression testing and evaluating performance across many examples.
+
+**`src/tests/dataset.ts`**:
 
 <!-- prettier-ignore -->
-```ts
-// Configure the default for all requests:
-const client = new Gentrace({
-  timeout: 20 * 1000, // 20 seconds (default is 1 minute)
+```typescript
+import { init, experiment, testDataset, testCases } from 'gentrace';
+import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
+import { z } from 'zod'; // For defining input schema
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+init({
+  apiKey: process.env.GENTRACE_API_KEY,
 });
 
-// Override per-request:
-await client.pipelines.list({
-  timeout: 5 * 1000,
+const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+const GENTRACE_DATASET_ID = process.env.GENTRACE_DATASET_ID!;
+
+// Define the expected input schema for your test cases in the dataset
+const InputSchema = z.object({
+  query: z.string(),
+});
+
+experiment(GENTRACE_PIPELINE_ID, async () => {
+  await testDataset({
+    // Fetch test cases from your Gentrace dataset
+    data: async () => {
+      const testCaseList = await testCases.list({ datasetId: GENTRACE_DATASET_ID });
+      return testCaseList.data;
+    },
+    // Provide the schema for validation
+    schema: InputSchema,
+    // Provide the instrumented function to run against each test case
+    interaction: instrumentedQueryAi,
+  });
 });
 ```
 
-On timeout, an `APIConnectionTimeoutError` is thrown.
+> Note: While `zod` is used in the example, any schema validation library that conforms to the [Standard Schema](https://github.com/standard-schema/standard-schema) interface (like `zod`, `valibot`, `arktype`, etc.) can be used for the `schema` parameter. This interface requires the library to expose a `parse()` function, which `testDataset` uses internally.
 
-Note that requests which time out will be [retried twice by default](#retries).
+Run the dataset test:
 
-## Advanced Usage
+```sh
+npx ts-node src/tests/dataset.ts
+```
 
-### Accessing raw Response data (e.g., headers)
+Gentrace will execute `instrumentedQueryAi` for each test case in your dataset and record the results.
 
-The "raw" `Response` returned by `fetch()` can be accessed through the `.asResponse()` method on the `APIPromise` type that all methods return.
-This method returns as soon as the headers for a successful response are received and does not consume the response body, so you are free to write custom parsing or streaming logic.
+## OpenTelemetry Integration
 
-You can also use the `.withResponse()` method to get the raw `Response` along with the parsed data.
-Unlike `.asResponse()` this method consumes the body, returning once it is parsed.
+OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation features (`interaction`, `test`, `testDataset`) to function correctly. You must set up the OpenTelemetry SDK to capture and export traces to Gentrace.
+
+You can install the necessary OpenTelemetry peer dependencies with yarn (or npm/pnpm):
+
+```sh
+# OR npm/pnpm install
+yarn add @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.51.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.51.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0
+```
+
+The described OpenTelemetry setup supports both v1 and v2 of the specification, although v2 is preferred.
 
 <!-- prettier-ignore -->
-```ts
-const client = new Gentrace();
+```typescript
+import { init } from 'gentrace';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import dotenv from 'dotenv';
 
-const response = await client.pipelines.list().asResponse();
-console.log(response.headers.get('X-My-Header'));
-console.log(response.statusText); // access the underlying Response object
+dotenv.config();
 
-const { data: pipelineList, response: raw } = await client.pipelines.list().withResponse();
-console.log(raw.headers.get('X-My-Header'));
-console.log(pipelineList.data);
-```
+const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
+const GENTRACE_BASE_URL = process.env.GENTRACE_BASE_URL ?? 'https://gentrace.ai/api';
 
-### Logging
-
-> [!IMPORTANT]
-> All log messages are intended for debugging only. The format and content of log messages
-> may change between releases.
-
-#### Log levels
-
-The log level can be configured in two ways:
-
-1. Via the `GENTRACE_LOG` environment variable
-2. Using the `logLevel` client option (overrides the environment variable if set)
-
-```ts
-import Gentrace from 'gentrace';
-
-const client = new Gentrace({
-  logLevel: 'debug', // Show all log messages
+init({
+  apiKey: GENTRACE_API_KEY,
+  baseURL: GENTRACE_BASE_URL,
 });
-```
 
-Available log levels, from most to least verbose:
-
-- `'debug'` - Show debug messages, info, warnings, and errors
-- `'info'` - Show info messages, warnings, and errors
-- `'warn'` - Show warnings and errors (default)
-- `'error'` - Show only errors
-- `'off'` - Disable all logging
-
-At the `'debug'` level, all HTTP requests and responses are logged, including headers and bodies.
-Some authentication-related headers are redacted, but sensitive data in request and response bodies
-may still be visible.
-
-#### Custom logger
-
-By default, this library logs to `globalThis.console`. You can also provide a custom logger.
-Most logging libraries are supported, including [pino](https://www.npmjs.com/package/pino), [winston](https://www.npmjs.com/package/winston), [bunyan](https://www.npmjs.com/package/bunyan), [consola](https://www.npmjs.com/package/consola), [signale](https://www.npmjs.com/package/signale), and [@std/log](https://jsr.io/@std/log). If your logger doesn't work, please open an issue.
-
-When providing a custom logger, the `logLevel` option still controls which messages are emitted, messages
-below the configured level will not be sent to your logger.
-
-```ts
-import Gentrace from 'gentrace';
-import pino from 'pino';
-
-const logger = pino();
-
-const client = new Gentrace({
-  logger: logger.child({ name: 'Gentrace' }),
-  logLevel: 'debug', // Send all messages to pino, allowing it to filter
-});
-```
-
-### Making custom/undocumented requests
-
-This library is typed for convenient access to the documented API. If you need to access undocumented
-endpoints, params, or response properties, the library can still be used.
-
-#### Undocumented endpoints
-
-To make requests to undocumented endpoints, you can use `client.get`, `client.post`, and other HTTP verbs.
-Options on the client, such as retries, will be respected when making these requests.
-
-```ts
-await client.post('/some/path', {
-  body: { some_prop: 'foo' },
-  query: { some_query_arg: 'bar' },
-});
-```
-
-#### Undocumented request params
-
-To make requests using undocumented parameters, you may use `// @ts-expect-error` on the undocumented
-parameter. This library doesn't validate at runtime that the request matches the type, so any extra values you
-send will be sent as-is.
-
-```ts
-client.foo.create({
-  foo: 'my_param',
-  bar: 12,
-  // @ts-expect-error baz is not yet public
-  baz: 'undocumented option',
-});
-```
-
-For requests with the `GET` verb, any extra params will be in the query, all other requests will send the
-extra param in the body.
-
-If you want to explicitly send an extra argument, you can do so with the `query`, `body`, and `headers` request
-options.
-
-#### Undocumented response properties
-
-To access undocumented response properties, you may access the response object with `// @ts-expect-error` on
-the response object, or cast the response object to the requisite type. Like the request params, we do not
-validate or strip extra properties from the response from the API.
-
-### Customizing the fetch client
-
-By default, this library expects a global `fetch` function is defined.
-
-If you want to use a different `fetch` function, you can either polyfill the global:
-
-```ts
-import fetch from 'my-fetch';
-
-globalThis.fetch = fetch;
-```
-
-Or pass it to the client:
-
-```ts
-import Gentrace from 'gentrace';
-import fetch from 'my-fetch';
-
-const client = new Gentrace({ fetch });
-```
-
-### Fetch options
-
-If you want to set custom `fetch` options without overriding the `fetch` function, you can provide a `fetchOptions` object when instantiating the client or making a request. (Request-specific options override client options.)
-
-```ts
-import Gentrace from 'gentrace';
-
-const client = new Gentrace({
-  fetchOptions: {
-    // `RequestInit` options
+// Configure OTLP Exporter to send traces to Gentrace
+const traceExporter = new OTLPTraceExporter({
+  url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+  headers: {
+    Authorization: `Bearer ${GENTRACE_API_KEY}`,
   },
 });
-```
 
-#### Configuring proxies
-
-To modify proxy behavior, you can provide custom `fetchOptions` that add runtime-specific proxy
-options to requests:
-
-<img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/node.svg" align="top" width="18" height="21"> **Node** <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/docs/api/ProxyAgent.md#example---proxyagent-with-fetch)]</sup>
-
-```ts
-import Gentrace from 'gentrace';
-import * as undici from 'undici';
-
-const proxyAgent = new undici.ProxyAgent('http://localhost:8888');
-const client = new Gentrace({
-  fetchOptions: {
-    dispatcher: proxyAgent,
-  },
+const sdk = new NodeSDK({
+  traceExporter,
 });
-```
 
-<img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/bun.svg" align="top" width="18" height="21"> **Bun** <sup>[[docs](https://bun.sh/guides/http/proxy)]</sup>
+// Start the SDK
+sdk.start();
+console.log('OpenTelemetry SDK started, exporting traces to Gentrace.');
 
-```ts
-import Gentrace from 'gentrace';
-
-const client = new Gentrace({
-  fetchOptions: {
-    proxy: 'http://localhost:8888',
-  },
+// Ensure graceful shutdown
+process.on('SIGTERM', () => {
+  sdk
+    .shutdown()
+    .then(() => console.log('Tracing terminated.'))
+    .catch((error) => console.log('Error terminating tracing', error))
+    .finally(() => process.exit(0));
 });
+
+// Now, any code run in this process that uses instrumented libraries
+// (or manual OTel tracing) will send traces to Gentrace.
+// You can still use `interaction` alongside this for specific function tracing.
+
+// Example: Your application logic starts here
+// import { instrumentedQueryAi } from './instrumentedAi';
+// instrumentedQueryAi({ query: "What is OpenTelemetry?" });
 ```
 
-<img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/deno.svg" align="top" width="18" height="21"> **Deno** <sup>[[docs](https://docs.deno.com/api/deno/~/Deno.createHttpClient)]</sup>
-
-```ts
-import Gentrace from 'npm:gentrace';
-
-const httpClient = Deno.createHttpClient({ proxy: { url: 'http://localhost:8888' } });
-const client = new Gentrace({
-  fetchOptions: {
-    client: httpClient,
-  },
-});
-```
-
-## Frequently Asked Questions
-
-## Semantic versioning
-
-This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
-
-1. Changes that only affect static types, without breaking runtime behavior.
-2. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals.)_
-3. Changes that we do not expect to impact the vast majority of users in practice.
-
-We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
-
-We are keen for your feedback; please open an [issue](https://www.github.com/gentrace/gentrace-node/issues) with questions, bugs, or suggestions.
-
-## Requirements
-
-TypeScript >= 4.9 is supported.
-
-The following runtimes are supported:
-
-- Web browsers (Up-to-date Chrome, Firefox, Safari, Edge, and more)
-- Node.js 18 LTS or later ([non-EOL](https://endoflife.date/nodejs)) versions.
-- Deno v1.28.0 or higher.
-- Bun 1.0 or later.
-- Cloudflare Workers.
-- Vercel Edge Runtime.
-- Jest 28 or greater with the `"node"` environment (`"jsdom"` is not supported at this time).
-- Nitro v2.6 or greater.
-
-Note that React Native is not supported at this time.
-
-If you are interested in other runtime environments, please open or upvote an issue on GitHub.
+See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry.
 
 ## Contributing
 
 See [the contributing documentation](./CONTRIBUTING.md).
+
+## Requirements
+
+- Node.js 18 LTS or later.
+- TypeScript >= 4.9 (optional, for type safety).
+
+Note that React Native is not supported at this time.
+
+If you are interested in other runtime environments, please open an issue on GitHub.
+
+## Support
+
+For questions or support, please reach out to us at support@gentrace.ai.
