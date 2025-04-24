@@ -34,11 +34,8 @@ export function getCurrentExperimentContext(): ExperimentContext | undefined {
  * Optional parameters for running an experiment.
  *
  * @typedef {Object} ExperimentOptions
- * @property {ExperimentMetadata} [metadata] - Optional metadata to associate with the experiment.
+ * @property {Record<string, any>} [metadata] - Optional metadata to associate with the experiment.
  * @property {any} [key: string] - Allows for additional arbitrary properties.
- */
-/**
- * Optional parameters for running an experiment.
  */
 export type ExperimentOptions = {
   metadata?: Record<string, any>;

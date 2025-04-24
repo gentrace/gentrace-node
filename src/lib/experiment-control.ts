@@ -109,4 +109,6 @@ async function _finishExperiment(
     status: 'EVALUATING',
     ...(result.status === 'error' && { errorMessage: result.error }),
   });
+
+  client.logger?.info(`Finished experiment ${id} with status ${result.status}`);
 }

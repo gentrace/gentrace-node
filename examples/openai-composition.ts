@@ -5,6 +5,7 @@ import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import dotenv from 'dotenv';
+import OpenAI from 'openai';
 import { readEnv } from 'gentrace/internal/utils';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
@@ -42,6 +43,10 @@ init({
   baseURL: GENTRACE_BASE_URL,
 });
 
+const openai = new OpenAI({
+  apiKey: readEnv('OPENAI_API_KEY'),
+});
+
 const PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
 
 const compose = interaction(
@@ -50,7 +55,7 @@ const compose = interaction(
     const tracer = trace.getTracer('openai-email-composition-simplified');
 
     return await tracer.startActiveSpan('composeEmailProcess', async (processSpan) => {
-      let finalResult: string | null = 'Simplified email draft';
+      let finalResult: string | null = null;
       try {
         processSpan.setAttributes({
           'email.recipient': recipient,
@@ -76,18 +81,72 @@ const compose = interaction(
           ];
           promptSpan.setAttribute('prompt.system', messages[0].content);
           promptSpan.setAttribute('prompt.user', messages[1].content);
+
+          messages.forEach((msg, index) => {
+            promptSpan.addEvent(`gen_ai.${msg.role}.message`, {
+              'gen_ai.message.index': index,
+              'gen_ai.message.role': msg.role,
+              'gen_ai.message.content': msg.content,
+            });
+          });
+
           promptSpan.end();
         });
 
-        let completion: any | null = null;
+        let completion: OpenAI.Chat.Completions.ChatCompletion | null = null;
         await tracer.startActiveSpan('callOpenAI', { kind: SpanKind.CLIENT }, async (apiSpan) => {
+          const model = 'gpt-4o-mini';
+          const temperature = 0.1;
+          const max_tokens = 100;
+
           apiSpan.setAttributes({
-            'openai.model': 'gpt-4o-mini',
-            'openai.temperature': 0.1,
-            'openai.max_tokens': 50,
+            'gen_ai.system': 'openai',
+            'gen_ai.request.model': model,
+            'gen_ai.request.temperature': temperature,
+            'gen_ai.request.max_tokens': max_tokens,
+            'server.address': 'api.openai.com',
+            'server.port': 443,
           });
-          completion = { choices: [{ message: { content: finalResult } }] };
-          apiSpan.end();
+
+          try {
+            completion = await openai.chat.completions.create({
+              model: model,
+              messages: messages,
+              temperature: temperature,
+              max_tokens: max_tokens,
+            });
+
+            apiSpan.setAttributes({
+              'gen_ai.response.id': completion.id,
+              'gen_ai.response.model': completion.model,
+              'gen_ai.response.finish_reasons': JSON.stringify(
+                completion.choices.map((c) => c.finish_reason),
+              ),
+              'gen_ai.usage.input_tokens': completion.usage?.prompt_tokens,
+              'gen_ai.usage.output_tokens': completion.usage?.completion_tokens,
+            });
+
+            completion.choices.forEach((choice, index) => {
+              apiSpan.addEvent('gen_ai.choice', {
+                'gen_ai.choice.index': index,
+                'gen_ai.choice.finish_reason': choice.finish_reason,
+                'gen_ai.choice.message.role': choice.message.role,
+                'gen_ai.choice.message.content': choice.message.content ?? '',
+              });
+            });
+
+            apiSpan.setStatus({ code: SpanStatusCode.OK });
+          } catch (error: any) {
+            apiSpan.recordException(error);
+            apiSpan.setStatus({
+              code: SpanStatusCode.ERROR,
+              message: error.message,
+            });
+            apiSpan.setAttribute('error.type', error.name);
+            throw error;
+          } finally {
+            apiSpan.end();
+          }
         });
 
         let emailContent: string | null = null;
@@ -110,6 +169,7 @@ const compose = interaction(
           saveSpan.end();
         });
 
+        finalResult = emailContent;
         return finalResult;
       } catch (error: any) {
         processSpan.recordException(error);
