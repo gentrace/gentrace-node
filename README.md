@@ -9,6 +9,7 @@ The full API documentation can be found in [api.md](api.md).
 ## Installation
 
 ```sh
+# OR npm/pnpm install
 yarn add gentrace
 ```
 
