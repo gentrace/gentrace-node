@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.3 (2025-04-24)
+
+Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
+
+### Features
+
+* fix: Update package manager instructions in README ([#533](https://github.com/gentrace/gentrace-node/issues/533)) ([b644e91](https://github.com/gentrace/gentrace-node/commit/b644e91f1d81ff113229d4c0759a081b02da4a88))
+
+
+### Chores
+
+* update SDK settings ([7188003](https://github.com/gentrace/gentrace-node/commit/718800361ebe43f304dc38e850447ec4385638d8))
+
 ## 0.1.0-alpha.2 (2025-04-24)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
