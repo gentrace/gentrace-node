@@ -9,9 +9,27 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
+const GENTRACE_API_KEY = readEnv('GENTRACE_API_KEY');
+const OPENAI_API_KEY = readEnv('OPENAI_API_KEY');
+const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID');
+const GENTRACE_DATASET_ID = readEnv('GENTRACE_DATASET_ID');
 
+if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY || !OPENAI_API_KEY || !GENTRACE_DATASET_ID) {
+  throw new Error(
+    'GENTRACE_PIPELINE_ID, GENTRACE_API_KEY, OPENAI_API_KEY and GENTRACE_DATASET_ID must be set',
+  );
+}
+
+init({
+  baseURL: GENTRACE_BASE_URL,
+});
+
+// Begin OpenTelemetry SDK setup
 const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: 'openai-email-composition-simplified-test',
 });
@@ -21,7 +39,7 @@ const sdk = new NodeSDK({
   traceExporter: new OTLPTraceExporter({
     url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
     headers: {
-      Authorization: `Bearer ${readEnv('GENTRACE_API_KEY')}`,
+      Authorization: `Bearer ${GENTRACE_API_KEY}`,
     },
   }),
   instrumentations: [getNodeAutoInstrumentations()],
@@ -29,22 +47,17 @@ const sdk = new NodeSDK({
 
 sdk.start();
 
-process.on('SIGTERM', () => {
-  sdk
-    .shutdown()
-    .then(() => console.log('Tracing terminated.'))
-    .catch((error) => console.log('Error terminating tracing', error))
-    .finally(() => process.exit(0));
+process.on('beforeExit', async () => {
+  await sdk.shutdown();
 });
 
-const PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
-const DATASET_ID = readEnv('GENTRACE_DATASET_ID')!;
-
-init({
-  baseURL: readEnv('GENTRACE_BASE_URL'),
+process.on('SIGTERM', async () => {
+  await sdk.shutdown();
 });
+// End OpenTelemetry SDK setup
+
 const openai = new OpenAI({
-  apiKey: readEnv('OPENAI_API_KEY'),
+  apiKey: OPENAI_API_KEY,
 });
 
 const InputSchema = z.object({
@@ -59,10 +72,10 @@ const foo = async (query: string) => {
   return response.choices[0]!.message.content;
 };
 
-experiment(PIPELINE_ID, async () => {
+experiment(GENTRACE_PIPELINE_ID, async () => {
   await testDataset({
     data: async () => {
-      const testCasesList = await testCases.list({ datasetId: DATASET_ID });
+      const testCasesList = await testCases.list({ datasetId: GENTRACE_DATASET_ID });
       return testCasesList.data;
     },
     schema: InputSchema,
