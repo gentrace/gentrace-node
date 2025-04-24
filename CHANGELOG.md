@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0-alpha.2 (2025-04-24)
+
+Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
+
+### Features
+
+* feat: Introduce API/SDK observability wrappers ([#529](https://github.com/gentrace/gentrace-node/issues/529)) ([ae4c6b6](https://github.com/gentrace/gentrace-node/commit/ae4c6b6595c2b465ca84c0a57e1f4fb6a0fb14e0))
+
+
+### Chores
+
+* **ci:** add timeout thresholds for CI jobs ([7c67bc1](https://github.com/gentrace/gentrace-node/commit/7c67bc14880dd1ca9cb8b12be91ae58b2618dc81))
+* **ci:** only use depot for staging repos ([8a29273](https://github.com/gentrace/gentrace-node/commit/8a29273249f12d0793b1c6040f4e8ee5d4798344))
+* **internal:** codegen related update ([5f143ff](https://github.com/gentrace/gentrace-node/commit/5f143ff14952a7453baa7cd440922bd7e05b2c93))
+* **perf:** faster base64 decoding ([4c08cfa](https://github.com/gentrace/gentrace-node/commit/4c08cfa4d949800245bf17456c2bb6d2cff589ef))
+
 ## 0.1.0-alpha.1 (2025-04-21)
 
 Full Changelog: [v0.0.1-alpha.0...v0.1.0-alpha.1](https://github.com/gentrace/gentrace-node/compare/v0.0.1-alpha.0...v0.1.0-alpha.1)
