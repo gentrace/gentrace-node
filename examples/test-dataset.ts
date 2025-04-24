@@ -1,17 +1,16 @@
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { resourceFromAttributes } from '@opentelemetry/resources';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import dotenv from 'dotenv';
 import { readEnv } from 'gentrace/internal/utils';
 import { experiment } from 'gentrace/lib/experiment';
 import { init, testCases } from 'gentrace/lib/init';
-import { testDataset } from 'gentrace/lib/test-dataset';
-import OpenAI from 'openai';
-import { z } from 'zod';
-import { resourceFromAttributes } from '@opentelemetry/resources';
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import dotenv from 'dotenv';
-import { queryAi } from './functions/query';
 import { interaction } from 'gentrace/lib/interaction';
+import { testDataset } from 'gentrace/lib/test-dataset';
+import { z } from 'zod';
+import { queryAi } from './functions/query';
 
 dotenv.config();
 
@@ -58,24 +57,8 @@ process.on('SIGTERM', async () => {
 });
 // End OpenTelemetry SDK setup
 
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-});
-
 const InputSchema = z.object({
   query: z.string(),
-});
-
-const foo = async (query: string) => {
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4.1-nano',
-    messages: [{ role: 'user', content: query }],
-  });
-  return response.choices[0]!.message.content;
-};
-
-const queryAiInteraction = interaction(GENTRACE_PIPELINE_ID, async ({ query }) => {
-  return queryAi(query);
 });
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
@@ -85,6 +68,6 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
       return testCasesList.data;
     },
     schema: InputSchema,
-    interaction: queryAiInteraction,
+    interaction: interaction(GENTRACE_PIPELINE_ID, queryAi),
   });
-}).then(async () => await sdk.shutdown());
+});

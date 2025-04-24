@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: readEnv('OPENAI_API_KEY'),
 });
 
-export async function queryAi(query: string): Promise<string | null> {
+export async function queryAi({ query }: { query: string }): Promise<string | null> {
   const tracer = trace.getTracer('openai-query-simplified');
   return await tracer.startActiveSpan('queryOpenAIProcess', async (processSpan) => {
     let finalResult: string | null = null;
