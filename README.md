@@ -126,9 +126,10 @@ const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 experiment(GENTRACE_PIPELINE_ID, async () => {
   test('simple-query-test', async () => {
     const result = await instrumentedQueryAi({ query: 'What is the capital of France?' });
-    // You can add assertions here if needed
+    // You can add assertions here if needed, exceptions will get captured and recorded on the
+    // test span.
     console.log('Test Result:', result);
-    return result; // Return value is captured by Gentrace
+    return result; // Return value is captured in the span
   });
 
   test('another-query-test', async () => {
@@ -181,7 +182,7 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
       const testCaseList = await testCases.list({ datasetId: GENTRACE_DATASET_ID });
       return testCaseList.data;
     },
-    // Provide the schema for validation
+    // Provide the schema to validate the inputs for each test case in the dataset
     schema: InputSchema,
     // Provide the instrumented function to run against each test case
     interaction: instrumentedQueryAi,
@@ -210,7 +211,7 @@ You can install the necessary OpenTelemetry peer dependencies with yarn (or npm/
 yarn add @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.51.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.51.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0
 ```
 
-The described OpenTelemetry setup supports both v1 and v2 of the specification, although v2 is preferred.
+The described OpenTelemetry setup supports both v1 and v2 of the spec, although v2 is preferred.
 
 <!-- prettier-ignore -->
 ```typescript
@@ -229,7 +230,7 @@ init({
   baseURL: GENTRACE_BASE_URL,
 });
 
-// Configure OTLP Exporter to send traces to Gentrace
+// ====> Begin OpenTelemetry tracing
 const traceExporter = new OTLPTraceExporter({
   url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
   headers: {
@@ -241,18 +242,19 @@ const sdk = new NodeSDK({
   traceExporter,
 });
 
-// Start the SDK
 sdk.start();
 console.log('OpenTelemetry SDK started, exporting traces to Gentrace.');
 
-// Ensure graceful shutdown
-process.on('SIGTERM', () => {
-  sdk
-    .shutdown()
-    .then(() => console.log('Tracing terminated.'))
-    .catch((error) => console.log('Error terminating tracing', error))
-    .finally(() => process.exit(0));
+// Ensures spans get flushed before the runtime exits
+process.on('beforeExit', async () => {
+  await sdk.shutdown();
 });
+
+// Ensures spans get flushed when the runtime is asked to terminate
+process.on('SIGTERM', async () => {
+  await sdk.shutdown();
+});
+// ====> End OpenTelemetry tracing
 
 // Now, any code run in this process that uses instrumented libraries
 // (or manual OTel tracing) will send traces to Gentrace.
@@ -280,4 +282,4 @@ If you are interested in other runtime environments, please open an issue on Git
 
 ## Support
 
-For questions or support, please reach out to us at support@gentrace.ai.
+For questions or support, please reach out to us at [support@gentrace.ai](mailto:support@gentrace.ai).
