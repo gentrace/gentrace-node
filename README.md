@@ -9,8 +9,8 @@ The full API documentation can be found in [api.md](api.md).
 ## Installation
 
 ```sh
-# OR npm/pnpm install
-yarn add gentrace
+# OR yarn add/pnpm install
+npm install gentrace
 ```
 
 ## Core Concepts
@@ -208,8 +208,8 @@ OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation
 You can install the necessary OpenTelemetry peer dependencies with yarn (or npm/pnpm):
 
 ```sh
-# OR npm/pnpm install
-yarn add @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.51.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.51.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0
+# OR yarn add/pnpm install
+npm install @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.200.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.200.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0
 ```
 
 The described OpenTelemetry setup supports both v1 and v2 of the spec, although v2 is preferred.
