@@ -1,7 +1,7 @@
-import { traced } from '../../src/lib/traced';
-import { SpanStatusCode, trace } from '@opentelemetry/api';
+import { SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { AnonymousSpanName } from '../../src/lib/constants';
+import { traced } from '../../src/lib/traced';
 
 // Mock OpenTelemetry API
 const mockSpan = {
