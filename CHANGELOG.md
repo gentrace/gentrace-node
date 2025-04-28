@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.4 (2025-04-28)
+
+Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)
+
+### Features
+
+* **api:** api update ([1513ba3](https://github.com/gentrace/gentrace-node/commit/1513ba3fa3d38b780e2a798ab04ecfbe0719e9ac))
+
 ## 0.1.0-alpha.3 (2025-04-24)
 
 Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)

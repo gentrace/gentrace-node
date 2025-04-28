@@ -7,28 +7,28 @@ import { path } from '../internal/utils/path';
 
 export class Pipelines extends APIResource {
   /**
-   * Creates a new pipeline definition
+   * Create a new pipeline
    */
   create(body: PipelineCreateParams, options?: RequestOptions): APIPromise<Pipeline> {
     return this._client.post('/v4/pipelines', { body, ...options });
   }
 
   /**
-   * Retrieves the details of a specific pipeline
+   * Retrieve the details of a pipeline by ID
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Pipeline> {
     return this._client.get(path`/v4/pipelines/${id}`, options);
   }
 
   /**
-   * Updates a pipeline with the given ID
+   * Update the details of a pipeline by ID
    */
   update(id: string, body: PipelineUpdateParams, options?: RequestOptions): APIPromise<Pipeline> {
     return this._client.post(path`/v4/pipelines/${id}`, { body, ...options });
   }
 
   /**
-   * Retrieve a list of all pipelines
+   * List pipelines
    */
   list(
     query: PipelineListParams | null | undefined = {},
@@ -38,45 +38,21 @@ export class Pipelines extends APIResource {
   }
 }
 
-/**
- * Input schema for creating a pipeline
- */
 export interface CreatePipelineBody {
   /**
-   * A URL-friendly identifier (lowercase alphanumeric with dashes)
+   * Pipeline slug
    */
   slug: string;
 
   /**
-   * The branch of the pipeline
-   */
-  branch?: string | null;
-
-  /**
-   * The display name of the pipeline
+   * Pipeline display name
    */
   displayName?: string | null;
 
   /**
-   * The ID of the folder containing the pipeline. If not provided, the pipeline will
-   * be created at root level
+   * Folder UUID
    */
   folderId?: string | null;
-
-  /**
-   * Whether the pipeline is private
-   */
-  isPrivate?: boolean | null;
-
-  /**
-   * Labels for the pipeline
-   */
-  labels?: Array<string>;
-
-  /**
-   * The version of the pipeline
-   */
-  version?: 1 | 2;
 }
 
 export interface Pipeline {
@@ -89,11 +65,6 @@ export interface Pipeline {
    * Archive timestamp (ISO 8601)
    */
   archivedAt: string | null;
-
-  /**
-   * Branch name
-   */
-  branch: string | null;
 
   /**
    * Creation timestamp (ISO 8601)
@@ -116,21 +87,6 @@ export interface Pipeline {
   goldenDatasetId: string | null;
 
   /**
-   * Labels
-   */
-  labels: Array<string>;
-
-  /**
-   * Organization UUID
-   */
-  organizationId: string;
-
-  /**
-   * Private member UUID
-   */
-  privateMemberId: string | null;
-
-  /**
    * Pipeline slug
    */
   slug: string;
@@ -139,11 +95,6 @@ export interface Pipeline {
    * Last update timestamp (ISO 8601)
    */
   updatedAt: string;
-
-  /**
-   * Pipeline version (version 2 and beyond have tracing support)
-   */
-  version: number;
 }
 
 export interface PipelineList {
@@ -152,56 +103,29 @@ export interface PipelineList {
 
 export interface PipelineCreateParams {
   /**
-   * A URL-friendly identifier (lowercase alphanumeric with dashes)
+   * Pipeline slug
    */
   slug: string;
 
   /**
-   * The branch of the pipeline
-   */
-  branch?: string | null;
-
-  /**
-   * The display name of the pipeline
+   * Pipeline display name
    */
   displayName?: string | null;
 
   /**
-   * The ID of the folder containing the pipeline. If not provided, the pipeline will
-   * be created at root level
+   * Folder UUID
    */
   folderId?: string | null;
-
-  /**
-   * Whether the pipeline is private
-   */
-  isPrivate?: boolean | null;
-
-  /**
-   * Labels for the pipeline
-   */
-  labels?: Array<string>;
-
-  /**
-   * The version of the pipeline
-   */
-  version?: 1 | 2;
 }
 
 export interface PipelineUpdateParams {
   /**
-   * The branch of the pipeline
-   */
-  branch?: string | null;
-
-  /**
-   * The display name of the pipeline
+   * Pipeline display name
    */
   displayName?: string | null;
 
   /**
-   * The ID of the folder containing the pipeline. If not provided, the pipeline will
-   * be created at root level
+   * Folder UUID
    */
   folderId?: string | null;
 
@@ -209,69 +133,6 @@ export interface PipelineUpdateParams {
    * Whether the pipeline is archived
    */
   isArchived?: boolean;
-
-  /**
-   * Labels for the pipeline
-   */
-  labels?: Array<string>;
-
-  /**
-   * Saved runs display configuration
-   */
-  savedRunsDisplay?: PipelineUpdateParams.SavedRunsDisplay | null;
-}
-
-export namespace PipelineUpdateParams {
-  /**
-   * @deprecated Saved runs display configuration
-   */
-  export interface SavedRunsDisplay {
-    evaluators?: SavedRunsDisplay.Evaluators;
-
-    feedback?: SavedRunsDisplay.Feedback;
-
-    inputs?: SavedRunsDisplay.Inputs;
-
-    metadata?: SavedRunsDisplay.Metadata;
-
-    outputs?: SavedRunsDisplay.Outputs;
-
-    size?: 'compact' | 'medium' | 'large' | 'full';
-  }
-
-  export namespace SavedRunsDisplay {
-    export interface Evaluators {
-      hide?: Array<string>;
-    }
-
-    export interface Feedback {
-      show?: boolean;
-    }
-
-    export interface Inputs {
-      as?: 'tabular' | 'json';
-
-      hide?: Array<string>;
-
-      pretty?: boolean;
-
-      showCompact?: Array<string>;
-    }
-
-    export interface Metadata {
-      as?: 'tabular' | 'json';
-
-      show?: Array<string>;
-    }
-
-    export interface Outputs {
-      as?: 'tabular' | 'json';
-
-      hide?: Array<string>;
-
-      pretty?: boolean;
-    }
-  }
 }
 
 export interface PipelineListParams {
@@ -279,11 +140,6 @@ export interface PipelineListParams {
    * The ID of the folder to filter pipelines by
    */
   folderId?: string | null;
-
-  /**
-   * Filter pipelines by label
-   */
-  label?: string;
 
   /**
    * Filter pipelines by slug
