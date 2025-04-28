@@ -1,5 +1,6 @@
 import { trace, SpanStatusCode, Span } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
+import { AnonymousSpanName } from './constants';
 
 /**
  * Options for configuring the behavior of the wrapInteraction function.
@@ -41,8 +42,8 @@ export function interaction<Arg extends Record<string, any>, Return>(
 ): (arg: Arg) => Return | Promise<Return> {
   const tracer = trace.getTracer('gentrace-sdk');
 
-  const fnName = typeof fn === 'function' ? (fn as any).name : '';
-  const interactionName = options?.name || fnName || 'anonymousInteraction';
+  const fnName = typeof fn === 'function' ? fn.name : '';
+  const interactionName = options?.name || fnName || AnonymousSpanName.INTERACTION;
 
   const wrappedFn = (arg: Arg): Return | Promise<Return> => {
     return tracer.startActiveSpan(interactionName, (span: Span) => {
