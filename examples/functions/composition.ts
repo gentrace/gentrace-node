@@ -1,14 +1,16 @@
-import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
+import { SpanKind, SpanStatusCode, trace, SpanOptions } from '@opentelemetry/api';
 import { readEnv } from 'gentrace/internal/utils';
 import OpenAI from 'openai';
+import { traced } from '../../src/lib/traced'; // Adjust path as needed
 
 const openai = new OpenAI({
   apiKey: readEnv('OPENAI_API_KEY'),
 });
 
-export async function composeEmail(recipient: string, topic: string, sender: string): Promise<string | null> {
+// Define the core logic as a separate async function
+async function _composeEmailLogic(recipient: string, topic: string, sender: string): Promise<string | null> {
   const tracer = trace.getTracer('openai-email-composition-simplified');
-  return await tracer.startActiveSpan('composeEmailProcess', async (processSpan) => {
+  return await tracer.startActiveSpan('composeEmailProcess', async (processSpan): Promise<string | null> => {
     let finalResult: string | null = null;
     try {
       processSpan.setAttributes({
@@ -134,3 +136,6 @@ export async function composeEmail(recipient: string, topic: string, sender: str
     }
   });
 }
+
+// Export the traced version of the logic function
+export const composeEmail = traced(_composeEmailLogic, { name: 'composeEmail' });
