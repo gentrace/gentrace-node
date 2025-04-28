@@ -7,28 +7,28 @@ import { path } from '../internal/utils/path';
 
 export class Experiments extends APIResource {
   /**
-   * Creates a new experiment definition
+   * Create a new experiment
    */
   create(body: ExperimentCreateParams, options?: RequestOptions): APIPromise<Experiment> {
     return this._client.post('/v4/experiments', { body, ...options });
   }
 
   /**
-   * Retrieves the details of a specific experiment
+   * Retrieve the details of a experiment by ID
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Experiment> {
     return this._client.get(path`/v4/experiments/${id}`, options);
   }
 
   /**
-   * Updates an experiment with the given ID
+   * Update the details of a experiment by ID
    */
   update(id: string, body: ExperimentUpdateParams, options?: RequestOptions): APIPromise<Experiment> {
     return this._client.post(path`/v4/experiments/${id}`, { body, ...options });
   }
 
   /**
-   * Retrieve a list of all experiments
+   * List experiments
    */
   list(
     query: ExperimentListParams | null | undefined = {},
@@ -43,16 +43,6 @@ export interface Experiment {
    * Experiment UUID
    */
   id: string;
-
-  /**
-   * Git branch
-   */
-  branch: string | null;
-
-  /**
-   * Git commit hash
-   */
-  commit: string | null;
 
   /**
    * Creation timestamp (ISO 8601)
@@ -75,11 +65,6 @@ export interface Experiment {
   pipelineId: string;
 
   /**
-   * Status
-   */
-  status: 'GENERATING' | 'EVALUATING';
-
-  /**
    * Last update timestamp (ISO 8601)
    */
   updatedAt: string;
@@ -96,16 +81,6 @@ export interface ExperimentCreateParams {
   pipelineId: string;
 
   /**
-   * Git branch
-   */
-  branch?: string;
-
-  /**
-   * Git commit hash
-   */
-  commit?: string;
-
-  /**
    * Optional metadata for the experiment
    */
   metadata?: Record<string, unknown>;
@@ -118,17 +93,17 @@ export interface ExperimentCreateParams {
 
 export interface ExperimentUpdateParams {
   /**
-   * Updated metadata for the experiment
+   * Metadata
    */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | null;
 
   /**
-   * Updated name for the experiment
+   * Friendly experiment name
    */
-  name?: string;
+  name?: string | null;
 
   /**
-   * Updated status of the experiment
+   * Status
    */
   status?: 'GENERATING' | 'EVALUATING';
 }

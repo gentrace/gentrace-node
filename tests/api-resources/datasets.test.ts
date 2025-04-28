@@ -10,7 +10,10 @@ const client = new Gentrace({
 describe('resource datasets', () => {
   // skipped: tests are disabled for the time being
   test.skip('create: only required params', async () => {
-    const responsePromise = client.datasets.create({ name: 'Dataset - negative user feedback - 2025-04-01' });
+    const responsePromise = client.datasets.create({
+      description: 'Negative user feedback collected from our production environment',
+      name: 'Dataset - negative user feedback - 2025-04-01',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,8 +26,8 @@ describe('resource datasets', () => {
   // skipped: tests are disabled for the time being
   test.skip('create: required and optional params', async () => {
     const response = await client.datasets.create({
-      name: 'Dataset - negative user feedback - 2025-04-01',
       description: 'Negative user feedback collected from our production environment',
+      name: 'Dataset - negative user feedback - 2025-04-01',
       isGolden: false,
       pipelineId: '123e4567-e89b-12d3-a456-426614174000',
       pipelineSlug: 'email-summarizer',

@@ -7,28 +7,28 @@ import { path } from '../internal/utils/path';
 
 export class Datasets extends APIResource {
   /**
-   * Creates a new dataset definition
+   * Create a new dataset
    */
   create(body: DatasetCreateParams, options?: RequestOptions): APIPromise<Dataset> {
     return this._client.post('/v4/datasets', { body, ...options });
   }
 
   /**
-   * Retrieves the details of a specific dataset
+   * Retrieve the details of a dataset by ID
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Dataset> {
     return this._client.get(path`/v4/datasets/${id}`, options);
   }
 
   /**
-   * Updates a dataset with the given ID
+   * Update the details of a dataset by ID
    */
   update(id: string, body: DatasetUpdateParams, options?: RequestOptions): APIPromise<Dataset> {
     return this._client.post(path`/v4/datasets/${id}`, { body, ...options });
   }
 
   /**
-   * Retrieve a list of all datasets
+   * List datasets
    */
   list(query: DatasetListParams | null | undefined = {}, options?: RequestOptions): APIPromise<DatasetList> {
     return this._client.get('/v4/datasets', { query, ...options });
@@ -78,49 +78,49 @@ export interface DatasetList {
 
 export interface DatasetCreateParams {
   /**
-   * The name of the dataset
+   * Dataset description
+   */
+  description: string | null;
+
+  /**
+   * Dataset name
    */
   name: string;
 
   /**
-   * The description of the dataset
-   */
-  description?: string | null;
-
-  /**
-   * Toggle to set the dataset as the golden dataset for the pipeline
+   * Whether the dataset is golden
    */
   isGolden?: boolean;
 
   /**
-   * The ID of the pipeline to create the dataset for
+   * Pipeline ID (mutually exclusive with pipelineSlug)
    */
   pipelineId?: string;
 
   /**
-   * The slug of the pipeline to create the dataset for
+   * Pipeline slug (mutually exclusive with pipelineId)
    */
   pipelineSlug?: string;
 }
 
 export interface DatasetUpdateParams {
   /**
-   * The description of the dataset
+   * Dataset description
    */
   description?: string | null;
 
   /**
-   * Toggles the archived status of the dataset
+   * Archive the dataset
    */
   isArchived?: boolean;
 
   /**
-   * Toggles whether the dataset is the golden dataset for the pipeline
+   * Set the dataset as the golden dataset
    */
   isGolden?: boolean;
 
   /**
-   * The name of the dataset
+   * Dataset name
    */
   name?: string;
 }

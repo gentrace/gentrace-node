@@ -24,8 +24,6 @@ describe('resource experiments', () => {
   test.skip('create: required and optional params', async () => {
     const response = await client.experiments.create({
       pipelineId: '123e4567-e89b-12d3-a456-426614174000',
-      branch: 'main',
-      commit: '1234567890abcdef',
       metadata: { promptTemplate: 'bar' },
       name: 'OpenAI o3-mini prompt',
     });
