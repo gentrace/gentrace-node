@@ -49,7 +49,6 @@ import {
 import {
   TestCase,
   TestCaseCreateParams,
-  TestCaseDeleteResponse,
   TestCaseList,
   TestCaseListParams,
   TestCases,
@@ -735,7 +734,6 @@ export declare namespace Gentrace {
     TestCases as TestCases,
     type TestCase as TestCase,
     type TestCaseList as TestCaseList,
-    type TestCaseDeleteResponse as TestCaseDeleteResponse,
     type TestCaseCreateParams as TestCaseCreateParams,
     type TestCaseListParams as TestCaseListParams,
   };

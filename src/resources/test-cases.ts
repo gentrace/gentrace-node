@@ -2,26 +2,27 @@
 
 import { APIResource } from '../core/resource';
 import { APIPromise } from '../core/api-promise';
+import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
 
 export class TestCases extends APIResource {
   /**
-   * Creates a new test case definition for a given dataset
+   * Create a new test case
    */
   create(body: TestCaseCreateParams, options?: RequestOptions): APIPromise<TestCase> {
     return this._client.post('/v4/test-cases', { body, ...options });
   }
 
   /**
-   * Retrieves the details of a specific test case
+   * Retrieve the details of a test case by ID
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<TestCase> {
     return this._client.get(path`/v4/test-cases/${id}`, options);
   }
 
   /**
-   * Retrieve a list of all test cases for a given dataset
+   * List test cases
    */
   list(
     query: TestCaseListParams | null | undefined = {},
@@ -31,10 +32,13 @@ export class TestCases extends APIResource {
   }
 
   /**
-   * Deletes a test case by its ID (soft delete)
+   * Delete a test case by ID
    */
-  delete(id: string, options?: RequestOptions): APIPromise<TestCaseDeleteResponse> {
-    return this._client.delete(path`/v4/test-cases/${id}`, options);
+  delete(id: string, options?: RequestOptions): APIPromise<void> {
+    return this._client.delete(path`/v4/test-cases/${id}`, {
+      ...options,
+      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
+    });
   }
 }
 
@@ -80,11 +84,6 @@ export interface TestCase {
   name: string;
 
   /**
-   * Originating Run UUID
-   */
-  originatingRunId: string | null;
-
-  /**
    * Associated Pipeline UUID
    */
   pipelineId: string;
@@ -97,16 +96,6 @@ export interface TestCase {
 
 export interface TestCaseList {
   data: Array<TestCase>;
-}
-
-/**
- * Delete test case response
- */
-export interface TestCaseDeleteResponse {
-  /**
-   * A boolean indicating the deletion was successful
-   */
-  success: boolean;
 }
 
 export interface TestCaseCreateParams {
@@ -152,7 +141,6 @@ export declare namespace TestCases {
   export {
     type TestCase as TestCase,
     type TestCaseList as TestCaseList,
-    type TestCaseDeleteResponse as TestCaseDeleteResponse,
     type TestCaseCreateParams as TestCaseCreateParams,
     type TestCaseListParams as TestCaseListParams,
   };

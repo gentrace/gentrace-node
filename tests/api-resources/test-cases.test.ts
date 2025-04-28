@@ -36,7 +36,7 @@ describe('resource testCases', () => {
 
   // skipped: tests are disabled for the time being
   test.skip('retrieve', async () => {
-    const responsePromise = client.testCases.retrieve('a1b2c3d4-e5f6-7890-1234-567890abcdef');
+    const responsePromise = client.testCases.retrieve('123e4567-e89b-12d3-a456-426614174000');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -75,7 +75,7 @@ describe('resource testCases', () => {
 
   // skipped: tests are disabled for the time being
   test.skip('delete', async () => {
-    const responsePromise = client.testCases.delete('a1b2c3d4-e5f6-7890-1234-567890abcdef');
+    const responsePromise = client.testCases.delete('123e4567-e89b-12d3-a456-426614174000');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
