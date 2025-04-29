@@ -1,50 +1,6 @@
 import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
-import { trace, Span, SpanStatusCode } from '@opentelemetry/api';
-import stringify from 'json-stringify-safe';
-import { ZodError } from 'zod';
-
-/**
- * Internal function to run a single test case within a span.
- *
- * @template TResult The expected result type of the callback.
- * @param {object} options Configuration for the test run.
- * @param {string} options.spanName Name for the OpenTelemetry span.
- * @param {Record<string, string>} options.spanAttributes Attributes to add to the span.
- * @param {() => Promise<TResult> | TResult} options.callback The async or sync function to execute for the test.
- * @returns {Promise<void>} A promise that resolves when the test function completes.
- */
-async function _runTest<TResult>(options: {
-  spanName: string;
-  spanAttributes: Record<string, string>;
-  callback: () => Promise<TResult> | TResult;
-}): Promise<void> {
-  const { spanName, spanAttributes, callback } = options;
-  const tracer = trace.getTracer('gentrace-sdk');
-
-  await tracer.startActiveSpan(spanName, spanAttributes, async (span: Span) => {
-    try {
-      // Execute the provided callback function
-      const result = await Promise.resolve(callback());
-
-      span.addEvent('gentrace.test.output', {
-        output: stringify(result),
-      });
-      span.end();
-    } catch (error: any) {
-      span.recordException(error);
-      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-      if (error instanceof ZodError) {
-        span.setAttribute('error.type', 'ZodError');
-      } else {
-        span.setAttribute('error.type', error.name || 'UnknownError');
-      }
-      span.end();
-      // Re-throw the error after recording it
-      throw error;
-    }
-  });
-}
+import { _runTest } from './test-single';
 
 /**
  * Runs a series of tests against a dataset using a provided interaction function.
@@ -134,40 +90,13 @@ export async function testDataset<
       spanAttributes['gentrace.test_case_name'] = finalName;
     }
 
-    // Define the execution logic for this specific test case
-    const executeInteraction = async () => {
-      let validatedInputs: TInput;
-      try {
-        // Validate inputs if schema is provided
-        validatedInputs = schema ? schema.parse(rawInputs) : rawInputs;
-      } catch (error) {
-        // If validation fails, wrap error and rethrow for _runTest to catch
-        const validationError = new Error(
-          `Schema validation failed for test case ${finalName}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-        if (error instanceof Error) {
-          // Check if stack exists before assigning
-          if (error.stack) {
-            validationError.stack = error.stack; // Preserve stack trace if available
-          }
-          if (error instanceof ZodError) {
-            (validationError as any).cause = error; // Attach original ZodError
-          }
-        }
-        throw validationError;
-      }
-
-      const interactionFn = interaction as (arg: TInput) => any;
-      return interactionFn(validatedInputs);
-    };
-
     promises.push(
-      _runTest<any>({
+      _runTest<any, TInput>({
         spanName: finalName,
         spanAttributes,
-        callback: executeInteraction,
+        inputs: rawInputs,
+        schema: schema,
+        callback: interaction as (arg: TInput) => any,
       }),
     );
   }
