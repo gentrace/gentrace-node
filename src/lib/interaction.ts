@@ -47,8 +47,7 @@ export function interaction<
     : ErrorType<'Interaction function argument must be assignable to Record<string, any>'>
   : ErrorType<'Interaction function must take 0 or 1 argument'>,
   options: InteractionSpanOptions = {},
-): F {
-  // Return type is F to preserve the exact signature
+): (...args: Parameters<F>) => ReturnType<F> {
   const tracer = trace.getTracer('gentrace-sdk');
 
   const fnName = typeof fn === 'function' ? fn.name : '';
@@ -64,7 +63,7 @@ export function interaction<
           args: stringify(argsToLog),
         });
 
-        // Add type assertion to satisfy the linter
+        // Type assertion gets around the non-callable tuple types
         const result = (fn as (...args: any[]) => any)(...args);
 
         if (result instanceof Promise) {
@@ -81,7 +80,7 @@ export function interaction<
               span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
               span.setAttribute('error.type', error.name);
               span.end();
-              throw error; // Re-throw the error after recording
+              throw error;
             },
           );
         } else {
@@ -96,15 +95,17 @@ export function interaction<
         span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
         span.setAttribute('error.type', error.name);
         span.end();
-        throw error; // Re-throw the error after recording
+        throw error;
       }
     });
   };
 
+  // Preserve the original function's name if possible
   if (fnName) {
     Object.defineProperty(wrappedFn, 'name', { value: fnName, configurable: true });
   }
 
-  // Cast the returned function to F to match the declared return type
+  // Return type is F to preserve the exact signature. If we return the (...args: Parameters<F>) => ReturnType<F>
+  // then inferred type will look slightly weird with "arg_0": https://share.cleanshot.com/bcvrtNzK
   return wrappedFn as F;
 }
