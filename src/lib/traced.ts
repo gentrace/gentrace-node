@@ -15,7 +15,7 @@ export type TracedOptions = {
   /**
    * Additional attributes to set on the span.
    */
-  attributes: Record<string, any>;
+  attributes?: Record<string, any>;
 };
 
 /**
@@ -41,7 +41,7 @@ export function traced<F extends (...args: any[]) => any>(
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {
-      Object.entries(attributes).forEach(([key, value]) => {
+      Object.entries(attributes ?? {}).forEach(([key, value]) => {
         span.setAttribute(key, value);
       });
 
