@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { Span, SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import type { InteractionSpanOptions as InteractionSpanOptionsType } from '../../src/lib/interaction';
+import { ANONYMOUS_SPAN_NAME } from 'gentrace/lib/constants';
 
 let lastMockSpan: Partial<Span> | null = null;
 
@@ -194,7 +195,7 @@ describe('interaction wrapper', () => {
     const wrappedFn = interaction(pipelineId, (args: {}) => 'anon result');
     wrappedFn({});
     expect(mockStartActiveSpan).toHaveBeenCalledWith(
-      expect.stringContaining('Interaction'),
+      expect.stringContaining(ANONYMOUS_SPAN_NAME),
       expect.any(Function),
     );
   });

@@ -5,13 +5,13 @@ import { ANONYMOUS_SPAN_NAME } from './constants';
 /**
  * Options for configuring the behavior of the traced function.
  */
-interface TracedOptions {
+type TracedOptions = {
   /**
    * Optional custom name for the span.
    * Defaults to the function's name or 'anonymousFunction'.
    */
-  name?: string;
-}
+  name: string;
+};
 
 /**
  * Wraps a function with OpenTelemetry tracing to track its execution.
@@ -24,10 +24,12 @@ interface TracedOptions {
  */
 export function traced<F extends (...args: any[]) => any>(
   fn: F,
-  options?: TracedOptions,
+  options: TracedOptions = {
+    name: fn.name || ANONYMOUS_SPAN_NAME,
+  },
 ): (...args: Parameters<F>) => ReturnType<F> {
   const tracer = trace.getTracer('gentrace');
-  const spanName = options?.name || fn.name || ANONYMOUS_SPAN_NAME;
+  const spanName = options.name;
 
   return (...args: Parameters<F>): ReturnType<F> => {
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {
