@@ -1,6 +1,7 @@
 import { trace, SpanStatusCode, Span } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { AnonymousSpanName } from './constants';
+import { ErrorType } from './utils';
 
 /**
  * Options for configuring the behavior of the wrapInteraction function.
@@ -43,8 +44,8 @@ export function interaction<
   : Parameters<F> extends [infer Arg] ?
     Arg extends Record<string, any> ?
       F // Allow one arg if it extends Record<string, any>
-    : [never, 'ERROR: Interaction function argument must be assignable to Record<string, any>']
-  : [never, 'ERROR: Interaction function must take 0 or 1 argument'],
+    : ErrorType<'Interaction function argument must be assignable to Record<string, any>'>
+  : ErrorType<'Interaction function must take 0 or 1 argument'>,
   options: InteractionSpanOptions = {},
 ): F {
   // Return type is F to preserve the exact signature
