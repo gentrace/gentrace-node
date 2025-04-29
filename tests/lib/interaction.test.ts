@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import { Span, SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import type { InteractionSpanOptions as InteractionSpanOptionsType } from '../../src/lib/interaction';
 import { ANONYMOUS_SPAN_NAME } from 'gentrace/lib/constants';
+import { TracedOptions } from 'gentrace/lib/traced';
 
 let lastMockSpan: Partial<Span> | null = null;
 
@@ -85,7 +85,7 @@ describe('interaction wrapper', () => {
 
   it('should wrap a synchronous function successfully', () => {
     const originalFn = jest.fn((args: { a: number }) => args.a * 2) as (args: { a: number }) => number;
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
     const result = wrappedFn({ a: 5 });
 
     const value = interaction(pipelineId, async ({ a }: { a: number }) => a * 2);
@@ -110,7 +110,7 @@ describe('interaction wrapper', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
       return `Hello ${args.b}`;
     });
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
     const result = await wrappedFn({ b: 'World' });
 
     expect(result).toBe('Hello World');
@@ -136,7 +136,7 @@ describe('interaction wrapper', () => {
       if (args.c) throw error;
       return false;
     });
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
 
     expect(() => wrappedFn({ c: true })).toThrow(error);
     expect(originalFn).toHaveBeenCalledWith({ c: true });
@@ -162,7 +162,7 @@ describe('interaction wrapper', () => {
       await new Promise((resolve) => setTimeout(resolve, 5));
       throw error;
     });
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
 
     await expect(wrappedFn({ d: [1, 2] })).rejects.toThrow(error);
     expect(originalFn).toHaveBeenCalledWith({ d: [1, 2] });
@@ -184,7 +184,7 @@ describe('interaction wrapper', () => {
 
   it('should use custom span name from options', () => {
     const originalFn = jest.fn(({ a }: { a: number }) => 'result');
-    const options: InteractionSpanOptionsType = { name: 'customInteractionName' };
+    const options: TracedOptions = { name: 'customInteractionName', attributes: {} };
     const wrappedFn = interaction(pipelineId, originalFn, options);
     wrappedFn({ a: 1 });
 

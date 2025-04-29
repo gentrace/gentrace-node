@@ -153,7 +153,7 @@ describe('traced decorator', () => {
       return 'result';
     }
 
-    const tracedFn = traced(originalName, { name: 'customSpanName' });
+    const tracedFn = traced(originalName, { name: 'customSpanName', attributes: {} });
     await tracedFn();
 
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);

@@ -1,18 +1,5 @@
-import { Span, SpanStatusCode, trace } from '@opentelemetry/api';
-import stringify from 'json-stringify-safe';
 import { ANONYMOUS_SPAN_NAME } from './constants';
-
-/**
- * Options for configuring the behavior of the wrapInteraction function.
- * Primarily used for setting a custom span name.
- */
-export type InteractionSpanOptions = {
-  /**
-   * Optional custom name for the interaction span.
-   * Defaults to the function's name or 'anonymousInteraction'.
-   */
-  name?: string;
-};
+import { TracedOptions, traced } from './traced';
 
 /**
  * Wraps a function with OpenTelemetry tracing to track interactions within a pipeline.
@@ -28,63 +15,23 @@ export type InteractionSpanOptions = {
 export function interaction<F extends (...args: any[]) => any>(
   pipelineId: string,
   fn: F,
-  options: InteractionSpanOptions = {},
+  options: TracedOptions = {
+    name: fn.name || ANONYMOUS_SPAN_NAME,
+    attributes: {
+      'gentrace.pipeline_id': pipelineId,
+    },
+  },
 ): F {
-  const tracer = trace.getTracer('gentrace-sdk');
-
   const fnName = fn.name;
   const interactionName = options?.name || fnName || ANONYMOUS_SPAN_NAME;
 
-  const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
-    return tracer.startActiveSpan(interactionName, (span: Span) => {
-      span.setAttribute('gentrace.pipeline_id', pipelineId);
+  const wrappedFn = traced(fn, {
+    name: interactionName,
+    attributes: {
+      ...options.attributes,
+      'gentrace.pipeline_id': pipelineId,
+    },
+  });
 
-      try {
-        span.addEvent('gentrace.fn.args', {
-          args: stringify(args),
-        });
-
-        const result = fn(...args);
-
-        if (result instanceof Promise) {
-          return result.then(
-            (resolvedResult) => {
-              span.addEvent('gentrace.fn.output', {
-                output: stringify(resolvedResult),
-              });
-              span.end();
-              return resolvedResult;
-            },
-            (error) => {
-              span.recordException(error);
-              span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-              span.setAttribute('error.type', error.name);
-              span.end();
-              throw error;
-            },
-          );
-        } else {
-          span.addEvent('gentrace.fn.output', {
-            output: stringify(result),
-          });
-          span.end();
-          return result;
-        }
-      } catch (error: any) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
-        span.setAttribute('error.type', error.name);
-        span.end();
-        throw error;
-      }
-    });
-  };
-
-  // Preserve the original function's name if possible
-  if (fnName) {
-    Object.defineProperty(wrappedFn, 'name', { value: fnName, configurable: true });
-  }
-
-  // Return type is F to preserve the exact signature.
   return wrappedFn as F;
 }
