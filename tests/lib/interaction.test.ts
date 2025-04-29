@@ -88,10 +88,6 @@ describe('interaction wrapper', () => {
     const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
     const result = wrappedFn({ a: 5 });
 
-    const value = interaction(pipelineId, async ({ a }: { a: number }) => a * 2);
-
-    value;
-
     expect(result).toBe(10);
     expect(originalFn).toHaveBeenCalledWith({ a: 5 });
     expect(mockStartActiveSpan).toHaveBeenCalledTimes(1);
