@@ -113,7 +113,7 @@ describe('traced decorator', () => {
 
     const tracedError = traced(syncError);
 
-    await expect(tracedError()).rejects.toThrow('Sync fail');
+    expect(() => tracedError()).toThrow('Sync fail');
 
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
     expect(mockTracer.startActiveSpan).toHaveBeenCalledWith('syncError', expect.any(Function));
