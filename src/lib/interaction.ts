@@ -50,7 +50,12 @@ export function interaction<
 ): F {
   const tracer = trace.getTracer('gentrace-sdk');
 
-  const fnName = typeof fn === 'function' ? fn.name : '';
+  // Should never happen, ensures "fn" typing later
+  if (typeof fn !== 'function') {
+    throw new Error('Interaction function must be a function');
+  }
+
+  const fnName = fn.name;
   const interactionName = options?.name || fnName || ANONYMOUS_SPAN_NAME;
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
@@ -64,7 +69,7 @@ export function interaction<
         });
 
         // Type assertion gets around the non-callable tuple types
-        const result = (fn as (...args: any[]) => any)(...args);
+        const result = fn(...args);
 
         if (result instanceof Promise) {
           return result.then(
