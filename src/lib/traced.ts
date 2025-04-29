@@ -17,30 +17,47 @@ interface TracedOptions {
  * Wraps a function with OpenTelemetry tracing to track its execution.
  * Creates a span for the function execution and records its success or failure.
  *
- * @template TArgs - The types of the arguments the function takes.
- * @template TResult - The return type of the function.
- * @param {(...args: TArgs) => Promise<TResult> | TResult} fn - The function to wrap with tracing.
+ * @template F - The type of the function to wrap with tracing.
+ * @param {F} fn - The function to wrap with tracing.
+ * @param {TracedOptions} [options] - Optional configuration for tracing.
+ * @returns A new function that has the same parameters and return type as fn.
  */
-export function traced<TArgs extends any[], TResult>(
-  fn: (...args: TArgs) => Promise<TResult> | TResult,
+export function traced<F extends (...args: any[]) => any>(
+  fn: F,
   options?: TracedOptions,
-): (...args: TArgs) => Promise<TResult> {
+): (...args: Parameters<F>) => ReturnType<F> {
   const tracer = trace.getTracer('gentrace');
   const spanName = options?.name || fn.name || AnonymousSpanName.FUNCTION;
 
-  return async (...args: TArgs): Promise<TResult> => {
-    return tracer.startActiveSpan(spanName, async (span) => {
+  return (...args: Parameters<F>): ReturnType<F> => {
+    const resultPromise = tracer.startActiveSpan(spanName, (span) => {
       try {
         const argsString = stringify(args);
         span.addEvent('gentrace.fn.args', { args: argsString });
 
-        const result = await fn(...args);
+        const result = fn(...args);
 
-        const outputString = stringify(result);
-        span.addEvent('gentrace.fn.output', { output: outputString });
-        span.end();
-
-        return result;
+        if (result instanceof Promise) {
+          return result
+            .then((finalOutput) => {
+              const outputString = stringify(finalOutput);
+              span.addEvent('gentrace.fn.output', { output: outputString });
+              span.end();
+              return finalOutput;
+            })
+            .catch((error) => {
+              span.recordException(error);
+              span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+              span.setAttribute('error.type', error.name);
+              span.end();
+              throw error;
+            });
+        } else {
+          const outputString = stringify(result);
+          span.addEvent('gentrace.fn.output', { output: outputString });
+          span.end();
+          return result;
+        }
       } catch (error: any) {
         span.recordException(error);
         span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
@@ -49,5 +66,7 @@ export function traced<TArgs extends any[], TResult>(
         throw error;
       }
     });
+
+    return resultPromise;
   };
 }
