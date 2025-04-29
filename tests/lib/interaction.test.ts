@@ -210,4 +210,94 @@ describe('interaction wrapper', () => {
       output: stringify(complexOutput),
     });
   });
+
+  describe('functions with no parameters', () => {
+    it('should wrap and execute a synchronous function with no parameters', () => {
+      const syncNoParamsFn = jest.fn(() => 'sync success');
+      const wrappedFn = interaction(pipelineId, syncNoParamsFn);
+      const result = wrappedFn();
+
+      expect(result).toBe('sync success');
+      expect(syncNoParamsFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(syncNoParamsFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+        output: stringify('sync success'),
+      });
+      expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should wrap and execute an asynchronous function with no parameters', async () => {
+      const asyncNoParamsFn = jest.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        return 'async success';
+      });
+      const wrappedFn = interaction(pipelineId, asyncNoParamsFn);
+      const result = await wrappedFn();
+
+      expect(result).toBe('async success');
+      expect(asyncNoParamsFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(asyncNoParamsFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+        output: stringify('async success'),
+      });
+      expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should handle errors in a synchronous function with no parameters', () => {
+      const error = new Error('Sync NoParam Error');
+      const syncErrorFn = jest.fn(() => {
+        throw error;
+      });
+      const wrappedFn = interaction(pipelineId, syncErrorFn);
+
+      expect(() => wrappedFn()).toThrow(error);
+      expect(syncErrorFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(syncErrorFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
+      expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
+        code: SpanStatusCode.ERROR,
+        message: error.message,
+      });
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('error.type', error.name);
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should handle rejections in an asynchronous function with no parameters', async () => {
+      const error = new Error('Async NoParam Error');
+      const asyncRejectFn = jest.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        throw error;
+      });
+      const wrappedFn = interaction(pipelineId, asyncRejectFn);
+
+      await expect(wrappedFn()).rejects.toThrow(error);
+      expect(asyncRejectFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(asyncRejectFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
+      expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
+        code: SpanStatusCode.ERROR,
+        message: error.message,
+      });
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('error.type', error.name);
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+  });
 });
