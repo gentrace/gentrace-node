@@ -1,7 +1,6 @@
-import { trace, SpanStatusCode, Span } from '@opentelemetry/api';
+import { Span, SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { ANONYMOUS_SPAN_NAME } from './constants';
-import { ErrorType } from './utils';
 
 /**
  * Options for configuring the behavior of the wrapInteraction function.
@@ -16,14 +15,6 @@ export type InteractionSpanOptions = {
 };
 
 /**
- * Configuration options for wrapInteraction, excluding the function itself.
- */
-export type InteractionConfig = {
-  pipelineId: string;
-  options?: InteractionSpanOptions;
-};
-
-/**
  * Wraps a function with OpenTelemetry tracing to track interactions within a pipeline.
  * Creates a span for the function execution and records its success or failure.
  * Handles functions that take either zero arguments or one argument which is a record.
@@ -34,26 +25,12 @@ export type InteractionConfig = {
  * @param options Optional span-specific options.
  * @returns The wrapped function with the identical type signature as fn.
  */
-export function interaction<
-  F extends (...args: any[]) => any, // Base constraint: F is a function
->(
+export function interaction<F extends (...args: any[]) => any>(
   pipelineId: string,
-  // Use conditional type to validate function signature
-  fn: Parameters<F> extends [] ?
-    F // Allow zero args
-  : Parameters<F> extends [infer Arg] ?
-    Arg extends Record<string, any> ?
-      F // Allow one arg if it extends Record<string, any>
-    : ErrorType<'Interaction function argument must be assignable to Record<string, any>'>
-  : ErrorType<'Interaction function must take 0 or 1 argument'>,
+  fn: F,
   options: InteractionSpanOptions = {},
 ): F {
   const tracer = trace.getTracer('gentrace-sdk');
-
-  // Should never happen, ensures "fn" typing later
-  if (typeof fn !== 'function') {
-    throw new Error('Interaction function must be a function');
-  }
 
   const fnName = fn.name;
   const interactionName = options?.name || fnName || ANONYMOUS_SPAN_NAME;
@@ -63,12 +40,10 @@ export function interaction<
       span.setAttribute('gentrace.pipeline_id', pipelineId);
 
       try {
-        const argsToLog = args.length > 0 && args[0] !== undefined ? [args[0]] : [];
         span.addEvent('gentrace.fn.args', {
-          args: stringify(argsToLog),
+          args: stringify(args),
         });
 
-        // Type assertion gets around the non-callable tuple types
         const result = fn(...args);
 
         if (result instanceof Promise) {
@@ -110,7 +85,6 @@ export function interaction<
     Object.defineProperty(wrappedFn, 'name', { value: fnName, configurable: true });
   }
 
-  // Return type is F to preserve the exact signature. If we return the (...args: Parameters<F>) => ReturnType<F>
-  // then inferred type will look slightly weird with "arg_0": https://share.cleanshot.com/bcvrtNzK
+  // Return type is F to preserve the exact signature.
   return wrappedFn as F;
 }

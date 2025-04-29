@@ -59,6 +59,8 @@ const InputSchema = z.object({
   query: z.string(),
 });
 
+const queryAiInteraction = interaction(GENTRACE_PIPELINE_ID, queryAi);
+
 experiment(GENTRACE_PIPELINE_ID, async () => {
   await testDataset({
     data: async () => {
@@ -66,6 +68,6 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
       return testCasesList.data;
     },
     schema: InputSchema,
-    interaction: interaction(GENTRACE_PIPELINE_ID, queryAi),
+    interaction: queryAiInteraction,
   });
 });

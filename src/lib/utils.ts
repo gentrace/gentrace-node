@@ -8,10 +8,3 @@ export function toSnakeCase(str: string): string {
     .replace(/[-\s_]+/g, '_')
     .toLowerCase();
 }
-
-declare const TypeException: unique symbol;
-
-/**
- * This is a unique symbol that is used to create a type error when the wrong type is used.
- */
-export type ErrorType<Msg extends string> = { [TypeException]: Msg };

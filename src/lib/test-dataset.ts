@@ -1,6 +1,50 @@
 import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
-import { _runTest } from './test-single';
+import { trace, Span, SpanStatusCode } from '@opentelemetry/api';
+import stringify from 'json-stringify-safe';
+import { ZodError } from 'zod';
+
+/**
+ * Internal function to run a single test case within a span.
+ *
+ * @template TResult The expected result type of the callback.
+ * @param {object} options Configuration for the test run.
+ * @param {string} options.spanName Name for the OpenTelemetry span.
+ * @param {Record<string, string>} options.spanAttributes Attributes to add to the span.
+ * @param {() => Promise<TResult> | TResult} options.callback The async or sync function to execute for the test.
+ * @returns {Promise<void>} A promise that resolves when the test function completes.
+ */
+async function _runTest<TResult>(options: {
+  spanName: string;
+  spanAttributes: Record<string, string>;
+  callback: () => Promise<TResult> | TResult;
+}): Promise<void> {
+  const { spanName, spanAttributes, callback } = options;
+  const tracer = trace.getTracer('gentrace-sdk');
+
+  await tracer.startActiveSpan(spanName, spanAttributes, async (span: Span) => {
+    try {
+      // Execute the provided callback function
+      const result = await Promise.resolve(callback());
+
+      span.addEvent('gentrace.test.output', {
+        output: stringify(result),
+      });
+      span.end();
+    } catch (error: any) {
+      span.recordException(error);
+      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      if (error instanceof ZodError) {
+        span.setAttribute('error.type', 'ZodError');
+      } else {
+        span.setAttribute('error.type', error.name || 'UnknownError');
+      }
+      span.end();
+      // Re-throw the error after recording it
+      throw error;
+    }
+  });
+}
 
 /**
  * Runs a series of tests against a dataset using a provided interaction function.
@@ -32,13 +76,11 @@ import { _runTest } from './test-single';
  *       return generateCompletion(prompt, temperature, maxTokens);
  *     }
  *   });
- * });
  */
 export async function testDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
   TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
-  Fn extends (arg: TInput) => any = (arg: TInput) => any,
->(options: TestDatasetOptions<TSchema, TInput, Fn>): Promise<void> {
+>(options: TestDatasetOptions<TSchema>): Promise<void> {
   const { interaction, data, schema } = options;
 
   const client = _getClient();
@@ -70,16 +112,20 @@ export async function testDataset<
       continue;
     }
 
-    const inputs = inputItem.inputs;
+    const rawInputs = inputItem.inputs;
     const extractedName: string | undefined = inputItem.name;
     const extractedId: string | undefined = inputItem.id;
 
-    let finalName = extractedName;
-    const finalId = extractedId;
-
-    if (!finalName) {
-      finalName = finalId ? `Test Case (ID: ${finalId})` : `Test Case ${i + 1}`;
+    let finalName: string;
+    if (typeof extractedName === 'string') {
+      finalName = extractedName;
+    } else if (typeof extractedId === 'string') {
+      finalName = `Test Case (ID: ${extractedId})`;
+    } else {
+      finalName = `Test Case ${i + 1}`;
     }
+
+    const finalId = extractedId;
 
     const spanAttributes: Record<string, string> = {};
     if (typeof finalId === 'string') {
@@ -88,13 +134,40 @@ export async function testDataset<
       spanAttributes['gentrace.test_case_name'] = finalName;
     }
 
+    // Define the execution logic for this specific test case
+    const executeInteraction = async () => {
+      let validatedInputs: TInput;
+      try {
+        // Validate inputs if schema is provided
+        validatedInputs = schema ? schema.parse(rawInputs) : rawInputs;
+      } catch (error) {
+        // If validation fails, wrap error and rethrow for _runTest to catch
+        const validationError = new Error(
+          `Schema validation failed for test case ${finalName}: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        if (error instanceof Error) {
+          // Check if stack exists before assigning
+          if (error.stack) {
+            validationError.stack = error.stack; // Preserve stack trace if available
+          }
+          if (error instanceof ZodError) {
+            (validationError as any).cause = error; // Attach original ZodError
+          }
+        }
+        throw validationError;
+      }
+
+      const interactionFn = interaction as (arg: TInput) => any;
+      return interactionFn(validatedInputs);
+    };
+
     promises.push(
-      _runTest<any, TInput>({
+      _runTest<any>({
         spanName: finalName,
         spanAttributes,
-        inputs,
-        schema,
-        callback: interaction,
+        callback: executeInteraction,
       }),
     );
   }
@@ -122,34 +195,24 @@ export interface ParseableSchema<TOutput> {
 
 /** Represents a structured test case with explicit inputs, name, and id. */
 export interface TestInput<TInput extends Record<string, any>> {
-  /** Optional descriptive name for the test case. Defaults to index if not provided. */
-  name?: string;
-
-  /** Optional unique identifier for the test case. If provided, used for reporting. */
-  id?: string;
-
-  /** The single object argument to pass to the interaction function for this test case. */
+  name?: string | undefined;
+  id?: string | undefined;
   inputs: TInput;
 }
 
 /**
  * Options for configuring a dataset test run.
+ * The interaction function's argument type is constrained by the presence and type of the schema.
  *
  * @template TSchema Optional schema object with a `.parse` method.
- * @template TInput The type of the single object argument the interaction function accepts (potentially inferred from TSchema).
- * @template Fn The type of the interaction function being tested.
+ * @template TInput The type derived from the schema, or Record<string, any> if no schema.
  */
-export type TestDatasetOptions<
-  TSchema extends ParseableSchema<any> | undefined,
-  TInput = TSchema extends ParseableSchema<infer O> ? O : Record<string, any>,
-  Fn extends (arg: TInput) => any = (arg: TInput) => any,
-> = {
-  /** A function that returns the dataset (array of TestInput objects), either directly or asynchronously. */
+export type TestDatasetOptions<TSchema extends ParseableSchema<any> | undefined> = {
   data: () => Promise<TestInput<Record<string, any>>[]> | TestInput<Record<string, any>>[];
-
-  /** Optional schema object with a .parse method to validate the 'inputs' property of each data item. */
   schema?: TSchema;
-
-  /** The function to test. It will be called with the 'inputs' object from the dataset, parsed if a schema is provided. */
-  interaction: Fn;
+  /**
+   * The function to test. It must accept a single argument whose type ('TInput')
+   * is derived from the provided 'schema', or Record<string, any> if no schema is given.
+   */
+  interaction: (arg: TSchema extends ParseableSchema<infer O> ? O : Record<string, any>) => any;
 };
