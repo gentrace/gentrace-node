@@ -47,7 +47,7 @@ export function interaction<
     : ErrorType<'Interaction function argument must be assignable to Record<string, any>'>
   : ErrorType<'Interaction function must take 0 or 1 argument'>,
   options: InteractionSpanOptions = {},
-): (...args: Parameters<F>) => ReturnType<F> {
+): F {
   const tracer = trace.getTracer('gentrace-sdk');
 
   const fnName = typeof fn === 'function' ? fn.name : '';
