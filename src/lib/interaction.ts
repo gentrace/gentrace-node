@@ -25,36 +25,68 @@ export type InteractionConfig = {
 /**
  * Wraps a function with OpenTelemetry tracing to track interactions within a pipeline.
  * Creates a span for the function execution and records its success or failure.
- * This version enforces that the function takes exactly one argument, which must be a record,
- * and preserves the exact type signature of the original function.
+ * Handles functions that take either zero arguments or one argument which is a record.
+ * Preserves the exact type signature of the original function.
  *
- * @template Arg - The type of the single record argument the function takes.
- * @template Return - The return type of the function.
- * @param {string} pipelineId - The ID of the pipeline this interaction belongs to.
- * @param {(arg: Arg) => Return | Promise<Return>} fn - The function to wrap. Must take a single record argument.
- * @param {InteractionSpanOptions} [options] - Optional span-specific options.
- * @returns {(arg: Arg) => Return | Promise<Return>} - The wrapped function with the identical type signature.
+ * @param pipelineId The ID of the pipeline this interaction belongs to.
+ * @param fn The function to wrap. Must take zero args or a single record argument.
+ * @param options Optional span-specific options.
+ * @returns The wrapped function with the identical type signature.
  */
+
+// Overload 1: Zero-arg async function
+export function interaction<Return>(
+  pipelineId: string,
+  fn: () => Promise<Return>,
+  options?: InteractionSpanOptions,
+): () => Promise<Return>;
+
+// Overload 2: Zero-arg sync function
+export function interaction<Return>(
+  pipelineId: string,
+  fn: () => Return,
+  options?: InteractionSpanOptions,
+): () => Return;
+
+// Overload 3: One-arg async function
 export function interaction<Arg extends Record<string, any>, Return>(
   pipelineId: string,
-  fn: (arg: Arg) => Return | Promise<Return>,
+  fn: (arg: Arg) => Promise<Return>,
+  options?: InteractionSpanOptions,
+): (arg: Arg) => Promise<Return>;
+
+// Overload 4: One-arg sync function
+export function interaction<Arg extends Record<string, any>, Return>(
+  pipelineId: string,
+  fn: (arg: Arg) => Return,
+  options?: InteractionSpanOptions,
+): (arg: Arg) => Return;
+
+export function interaction(
+  pipelineId: string,
+  fn: Function, // Implementation signature uses Function type
   options: InteractionSpanOptions = {},
-): (arg: Arg) => Return | Promise<Return> {
+): Function {
+  // Implementation signature uses Function type
   const tracer = trace.getTracer('gentrace-sdk');
 
   const fnName = typeof fn === 'function' ? fn.name : '';
   const interactionName = options?.name || fnName || AnonymousSpanName.INTERACTION;
 
-  const wrappedFn = (arg: Arg): Return | Promise<Return> => {
+  const wrappedFn = (...args: any[]): any => {
+    // Accept variable args
     return tracer.startActiveSpan(interactionName, (span: Span) => {
       span.setAttribute('gentrace.pipeline_id', pipelineId);
 
       try {
+        // Log arguments based on whether they exist
+        const argsToLog = args.length > 0 ? [args[0]] : [];
         span.addEvent('gentrace.fn.args', {
-          args: stringify([arg]),
+          args: stringify(argsToLog),
         });
 
-        const result = fn(arg);
+        // Call the original function with appropriate arguments
+        const result = fn(...args); // Spread operator handles both 0 and 1 arg cases
 
         if (result instanceof Promise) {
           return result.then(
@@ -70,7 +102,7 @@ export function interaction<Arg extends Record<string, any>, Return>(
               span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
               span.setAttribute('error.type', error.name);
               span.end();
-              throw error;
+              throw error; // Re-throw the error after recording
             },
           );
         } else {
@@ -85,12 +117,11 @@ export function interaction<Arg extends Record<string, any>, Return>(
         span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
         span.setAttribute('error.type', error.name);
         span.end();
-        throw error;
+        throw error; // Re-throw the error after recording
       }
     });
   };
 
-  // Preserve the original function's name if possible
   if (fnName) {
     Object.defineProperty(wrappedFn, 'name', { value: fnName, configurable: true });
   }
