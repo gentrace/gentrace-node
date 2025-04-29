@@ -1,6 +1,6 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import { AnonymousSpanName } from './constants';
+import { ANONYMOUS_SPAN_NAME } from './constants';
 
 /**
  * Options for configuring the behavior of the traced function.
@@ -27,7 +27,7 @@ export function traced<F extends (...args: any[]) => any>(
   options?: TracedOptions,
 ): (...args: Parameters<F>) => ReturnType<F> {
   const tracer = trace.getTracer('gentrace');
-  const spanName = options?.name || fn.name || AnonymousSpanName.FUNCTION;
+  const spanName = options?.name || fn.name || ANONYMOUS_SPAN_NAME;
 
   return (...args: Parameters<F>): ReturnType<F> => {
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {

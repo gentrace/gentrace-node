@@ -1,4 +1,4 @@
-export enum AnonymousSpanName {
-  FUNCTION = 'anonymousFunction',
-  INTERACTION = 'anonymousInteraction',
-}
+/**
+ * The default name for anonymous functions.
+ */
+export const ANONYMOUS_SPAN_NAME = 'anonymous';

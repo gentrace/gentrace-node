@@ -1,6 +1,6 @@
 import { SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import { AnonymousSpanName } from '../../src/lib/constants';
+import { ANONYMOUS_SPAN_NAME } from '../../src/lib/constants';
 import { traced } from '../../src/lib/traced';
 
 // Mock OpenTelemetry API
@@ -181,7 +181,7 @@ describe('traced decorator', () => {
     await tracedFn();
 
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
-    expect(mockTracer.startActiveSpan).toHaveBeenCalledWith(AnonymousSpanName.FUNCTION, expect.any(Function));
+    expect(mockTracer.startActiveSpan).toHaveBeenCalledWith(ANONYMOUS_SPAN_NAME, expect.any(Function));
     expect(mockSpan.end).toHaveBeenCalledTimes(1);
   });
 
@@ -199,7 +199,7 @@ describe('traced decorator', () => {
     expect(result).toEqual(expectedResult);
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
     // Function name might be empty string or specific depending on env, check default
-    expect(mockTracer.startActiveSpan).toHaveBeenCalledWith(AnonymousSpanName.FUNCTION, expect.any(Function));
+    expect(mockTracer.startActiveSpan).toHaveBeenCalledWith(ANONYMOUS_SPAN_NAME, expect.any(Function));
     expect(mockSpan.addEvent).toHaveBeenCalledTimes(2);
     expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([argObj, argArr]) });
     expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {

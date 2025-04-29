@@ -1,7 +1,7 @@
 import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { readEnv } from 'gentrace/internal/utils';
 import OpenAI from 'openai';
-import { traced } from '../../src/lib/traced'; // Adjust path as needed
+import { traced } from '../../src/lib/traced';
 
 const openai = new OpenAI({
   apiKey: readEnv('OPENAI_API_KEY'),
@@ -136,5 +136,4 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
   });
 }
 
-// Export the traced version of the logic function
 export const composeEmail = traced(_composeEmailLogic, { name: 'composeEmail' });

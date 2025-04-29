@@ -1,6 +1,6 @@
 import { trace, SpanStatusCode, Span } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import { AnonymousSpanName } from './constants';
+import { ANONYMOUS_SPAN_NAME } from './constants';
 import { ErrorType } from './utils';
 
 /**
@@ -52,7 +52,7 @@ export function interaction<
   const tracer = trace.getTracer('gentrace-sdk');
 
   const fnName = typeof fn === 'function' ? fn.name : '';
-  const interactionName = options?.name || fnName || AnonymousSpanName.INTERACTION;
+  const interactionName = options?.name || fnName || ANONYMOUS_SPAN_NAME;
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
     return tracer.startActiveSpan(interactionName, (span: Span) => {
