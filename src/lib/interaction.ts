@@ -26,67 +26,45 @@ export type InteractionConfig = {
  * Wraps a function with OpenTelemetry tracing to track interactions within a pipeline.
  * Creates a span for the function execution and records its success or failure.
  * Handles functions that take either zero arguments or one argument which is a record.
- * Preserves the exact type signature of the original function.
+ * Preserves the exact type signature (including sync/async return type) of the original function.
  *
  * @param pipelineId The ID of the pipeline this interaction belongs to.
  * @param fn The function to wrap. Must take zero args or a single record argument.
  * @param options Optional span-specific options.
- * @returns The wrapped function with the identical type signature.
+ * @returns The wrapped function with the identical type signature as fn.
  */
-
-// Overload 1: Zero-arg async function
-export function interaction<Return>(
+export function interaction<
+  F extends (...args: any[]) => any, // Base constraint: F is a function
+>(
   pipelineId: string,
-  fn: () => Promise<Return>,
-  options?: InteractionSpanOptions,
-): () => Promise<Return>;
-
-// Overload 2: Zero-arg sync function
-export function interaction<Return>(
-  pipelineId: string,
-  fn: () => Return,
-  options?: InteractionSpanOptions,
-): () => Return;
-
-// Overload 3: One-arg async function
-export function interaction<Arg extends Record<string, any>, Return>(
-  pipelineId: string,
-  fn: (arg: Arg) => Promise<Return>,
-  options?: InteractionSpanOptions,
-): (arg: Arg) => Promise<Return>;
-
-// Overload 4: One-arg sync function
-export function interaction<Arg extends Record<string, any>, Return>(
-  pipelineId: string,
-  fn: (arg: Arg) => Return,
-  options?: InteractionSpanOptions,
-): (arg: Arg) => Return;
-
-export function interaction(
-  pipelineId: string,
-  fn: Function, // Implementation signature uses Function type
+  // Use conditional type to validate function signature
+  fn: Parameters<F> extends [] ?
+    F // Allow zero args
+  : Parameters<F> extends [infer Arg] ?
+    Arg extends Record<string, any> ?
+      F // Allow one arg if it extends Record<string, any>
+    : [never, 'ERROR: Interaction function argument must be assignable to Record<string, any>']
+  : [never, 'ERROR: Interaction function must take 0 or 1 argument'],
   options: InteractionSpanOptions = {},
-): Function {
-  // Implementation signature uses Function type
+): F {
+  // Return type is F to preserve the exact signature
   const tracer = trace.getTracer('gentrace-sdk');
 
   const fnName = typeof fn === 'function' ? fn.name : '';
   const interactionName = options?.name || fnName || AnonymousSpanName.INTERACTION;
 
-  const wrappedFn = (...args: any[]): any => {
-    // Accept variable args
+  const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
     return tracer.startActiveSpan(interactionName, (span: Span) => {
       span.setAttribute('gentrace.pipeline_id', pipelineId);
 
       try {
-        // Log arguments based on whether they exist
-        const argsToLog = args.length > 0 ? [args[0]] : [];
+        const argsToLog = args.length > 0 && args[0] !== undefined ? [args[0]] : [];
         span.addEvent('gentrace.fn.args', {
           args: stringify(argsToLog),
         });
 
-        // Call the original function with appropriate arguments
-        const result = fn(...args); // Spread operator handles both 0 and 1 arg cases
+        // Add type assertion to satisfy the linter
+        const result = (fn as (...args: any[]) => any)(...args);
 
         if (result instanceof Promise) {
           return result.then(
@@ -126,5 +104,6 @@ export function interaction(
     Object.defineProperty(wrappedFn, 'name', { value: fnName, configurable: true });
   }
 
-  return wrappedFn;
+  // Cast the returned function to F to match the declared return type
+  return wrappedFn as F;
 }
