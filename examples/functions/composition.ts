@@ -1,4 +1,4 @@
-import { SpanKind, SpanStatusCode, trace, SpanOptions } from '@opentelemetry/api';
+import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { readEnv } from 'gentrace/internal/utils';
 import OpenAI from 'openai';
 import { traced } from '../../src/lib/traced'; // Adjust path as needed
