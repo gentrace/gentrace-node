@@ -2,11 +2,11 @@ import { _getClient } from './client-instance';
 
 export type ExperimentMetadata = Record<string, unknown>;
 
-interface ActiveExperiment {
+type ActiveExperiment = {
   id: string;
   pipelineId: string;
   shutdownListener: NodeJS.SignalsListener;
-}
+};
 
 const activeExperiments = new Map<string, ActiveExperiment>();
 

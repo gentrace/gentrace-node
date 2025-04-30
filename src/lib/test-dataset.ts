@@ -32,13 +32,11 @@ import { _runTest } from './test-single';
  *       return generateCompletion(prompt, temperature, maxTokens);
  *     }
  *   });
- * });
  */
 export async function testDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
   TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
-  Fn extends (arg: TInput) => any = (arg: TInput) => any,
->(options: TestDatasetOptions<TSchema, TInput, Fn>): Promise<void> {
+>(options: TestDatasetOptions<TSchema>): Promise<void> {
   const { interaction, data, schema } = options;
 
   const client = _getClient();
@@ -74,12 +72,16 @@ export async function testDataset<
     const extractedName: string | undefined = inputItem.name;
     const extractedId: string | undefined = inputItem.id;
 
-    let finalName = extractedName;
-    const finalId = extractedId;
-
-    if (!finalName) {
-      finalName = finalId ? `Test Case (ID: ${finalId})` : `Test Case ${i + 1}`;
+    let finalName: string;
+    if (typeof extractedName === 'string') {
+      finalName = extractedName;
+    } else if (typeof extractedId === 'string') {
+      finalName = `Test Case (ID: ${extractedId})`;
+    } else {
+      finalName = `Test Case ${i + 1}`;
     }
+
+    const finalId = extractedId;
 
     const spanAttributes: Record<string, string> = {};
     if (typeof finalId === 'string') {
@@ -93,8 +95,8 @@ export async function testDataset<
         spanName: finalName,
         spanAttributes,
         inputs,
-        schema,
-        callback: interaction,
+        schema: schema,
+        callback: interaction as (arg: TInput) => any,
       }),
     );
   }
@@ -121,35 +123,25 @@ export interface ParseableSchema<TOutput> {
 }
 
 /** Represents a structured test case with explicit inputs, name, and id. */
-export interface TestInput<TInput extends Record<string, any>> {
-  /** Optional descriptive name for the test case. Defaults to index if not provided. */
-  name?: string;
-
-  /** Optional unique identifier for the test case. If provided, used for reporting. */
-  id?: string;
-
-  /** The single object argument to pass to the interaction function for this test case. */
+export type TestInput<TInput extends Record<string, any>> = {
+  name?: string | undefined;
+  id?: string | undefined;
   inputs: TInput;
-}
+};
 
 /**
  * Options for configuring a dataset test run.
+ * The interaction function's argument type is constrained by the presence and type of the schema.
  *
  * @template TSchema Optional schema object with a `.parse` method.
- * @template TInput The type of the single object argument the interaction function accepts (potentially inferred from TSchema).
- * @template Fn The type of the interaction function being tested.
+ * @template TInput The type derived from the schema, or Record<string, any> if no schema.
  */
-export type TestDatasetOptions<
-  TSchema extends ParseableSchema<any> | undefined,
-  TInput = TSchema extends ParseableSchema<infer O> ? O : Record<string, any>,
-  Fn extends (arg: TInput) => any = (arg: TInput) => any,
-> = {
-  /** A function that returns the dataset (array of TestInput objects), either directly or asynchronously. */
+export type TestDatasetOptions<TSchema extends ParseableSchema<any> | undefined> = {
   data: () => Promise<TestInput<Record<string, any>>[]> | TestInput<Record<string, any>>[];
-
-  /** Optional schema object with a .parse method to validate the 'inputs' property of each data item. */
   schema?: TSchema;
-
-  /** The function to test. It will be called with the 'inputs' object from the dataset, parsed if a schema is provided. */
-  interaction: Fn;
+  /**
+   * The function to test. It must accept a single argument whose type ('TInput')
+   * is derived from the provided 'schema', or Record<string, any> if no schema is given.
+   */
+  interaction: (arg: TSchema extends ParseableSchema<infer O> ? O : Record<string, any>) => any;
 };

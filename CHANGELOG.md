@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.0-alpha.5 (2025-04-30)
+
+Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)
+
+### Features
+
+* Add traced function with OpenTelemetry tracing ([#537](https://github.com/gentrace/gentrace-node/issues/537)) ([74fa9e1](https://github.com/gentrace/gentrace-node/commit/74fa9e1a2f463ed2ed2c6a0e48cab86f3517a042))
+
+
+### Bug Fixes
+
+* Widen OTEL version range ([#536](https://github.com/gentrace/gentrace-node/issues/536)) ([64cdf97](https://github.com/gentrace/gentrace-node/commit/64cdf97f1b3d04e26e9cb883a4f16940cc4488d0))
+
+
+### Chores
+
+* **internal:** refactor utils ([03ce710](https://github.com/gentrace/gentrace-node/commit/03ce710b80849f81da2a0fe23b4863ad3de46688))
+
 ## 0.1.0-alpha.4 (2025-04-28)
 
 Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)
