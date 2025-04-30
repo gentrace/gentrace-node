@@ -123,11 +123,11 @@ export interface ParseableSchema<TOutput> {
 }
 
 /** Represents a structured test case with explicit inputs, name, and id. */
-export interface TestInput<TInput extends Record<string, any>> {
+export type TestInput<TInput extends Record<string, any>> = {
   name?: string | undefined;
   id?: string | undefined;
   inputs: TInput;
-}
+};
 
 /**
  * Options for configuring a dataset test run.
