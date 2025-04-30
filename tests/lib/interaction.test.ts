@@ -1,7 +1,8 @@
 import { jest } from '@jest/globals';
 import { Span, SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import type { InteractionSpanOptions as InteractionSpanOptionsType } from '../../src/lib/interaction';
+import { ANONYMOUS_SPAN_NAME } from 'gentrace/lib/constants';
+import { TracedOptions } from 'gentrace/lib/traced';
 
 let lastMockSpan: Partial<Span> | null = null;
 
@@ -84,7 +85,7 @@ describe('interaction wrapper', () => {
 
   it('should wrap a synchronous function successfully', () => {
     const originalFn = jest.fn((args: { a: number }) => args.a * 2) as (args: { a: number }) => number;
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
     const result = wrappedFn({ a: 5 });
 
     expect(result).toBe(10);
@@ -105,7 +106,7 @@ describe('interaction wrapper', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
       return `Hello ${args.b}`;
     });
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
     const result = await wrappedFn({ b: 'World' });
 
     expect(result).toBe('Hello World');
@@ -131,7 +132,7 @@ describe('interaction wrapper', () => {
       if (args.c) throw error;
       return false;
     });
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
 
     expect(() => wrappedFn({ c: true })).toThrow(error);
     expect(originalFn).toHaveBeenCalledWith({ c: true });
@@ -157,7 +158,7 @@ describe('interaction wrapper', () => {
       await new Promise((resolve) => setTimeout(resolve, 5));
       throw error;
     });
-    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn' });
+    const wrappedFn = interaction(pipelineId, originalFn, { name: 'originalFn', attributes: {} });
 
     await expect(wrappedFn({ d: [1, 2] })).rejects.toThrow(error);
     expect(originalFn).toHaveBeenCalledWith({ d: [1, 2] });
@@ -179,7 +180,7 @@ describe('interaction wrapper', () => {
 
   it('should use custom span name from options', () => {
     const originalFn = jest.fn(({ a }: { a: number }) => 'result');
-    const options: InteractionSpanOptionsType = { name: 'customInteractionName' };
+    const options: TracedOptions = { name: 'customInteractionName', attributes: {} };
     const wrappedFn = interaction(pipelineId, originalFn, options);
     wrappedFn({ a: 1 });
 
@@ -190,7 +191,7 @@ describe('interaction wrapper', () => {
     const wrappedFn = interaction(pipelineId, (args: {}) => 'anon result');
     wrappedFn({});
     expect(mockStartActiveSpan).toHaveBeenCalledWith(
-      expect.stringContaining('Interaction'),
+      expect.stringContaining(ANONYMOUS_SPAN_NAME),
       expect.any(Function),
     );
   });
@@ -208,6 +209,96 @@ describe('interaction wrapper', () => {
     });
     expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
       output: stringify(complexOutput),
+    });
+  });
+
+  describe('functions with no parameters', () => {
+    it('should wrap and execute a synchronous function with no parameters', () => {
+      const syncNoParamsFn = jest.fn(() => 'sync success');
+      const wrappedFn = interaction(pipelineId, syncNoParamsFn);
+      const result = wrappedFn();
+
+      expect(result).toBe('sync success');
+      expect(syncNoParamsFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(syncNoParamsFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+        output: stringify('sync success'),
+      });
+      expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should wrap and execute an asynchronous function with no parameters', async () => {
+      const asyncNoParamsFn = jest.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        return 'async success';
+      });
+      const wrappedFn = interaction(pipelineId, asyncNoParamsFn);
+      const result = await wrappedFn();
+
+      expect(result).toBe('async success');
+      expect(asyncNoParamsFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(asyncNoParamsFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+        output: stringify('async success'),
+      });
+      expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should handle errors in a synchronous function with no parameters', () => {
+      const error = new Error('Sync NoParam Error');
+      const syncErrorFn = jest.fn(() => {
+        throw error;
+      });
+      const wrappedFn = interaction(pipelineId, syncErrorFn);
+
+      expect(() => wrappedFn()).toThrow(error);
+      expect(syncErrorFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(syncErrorFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
+      expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
+        code: SpanStatusCode.ERROR,
+        message: error.message,
+      });
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('error.type', error.name);
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should handle rejections in an asynchronous function with no parameters', async () => {
+      const error = new Error('Async NoParam Error');
+      const asyncRejectFn = jest.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        throw error;
+      });
+      const wrappedFn = interaction(pipelineId, asyncRejectFn);
+
+      await expect(wrappedFn()).rejects.toThrow(error);
+      expect(asyncRejectFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith(asyncRejectFn.name, expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
+      expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
+        code: SpanStatusCode.ERROR,
+        message: error.message,
+      });
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('error.type', error.name);
+      expect(lastMockSpan?.end).toHaveBeenCalled();
     });
   });
 });

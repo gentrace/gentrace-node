@@ -6,7 +6,7 @@ import { finishExperiment, startExperiment, StartExperimentParams } from './expe
  * AsyncLocalStorage to make the experiment ID and pipeline ID available throughout
  * the asynchronous execution flow.
  */
-export interface ExperimentContext {
+export type ExperimentContext = {
   /**
    * The unique identifier for the current experiment.
    */
@@ -16,7 +16,7 @@ export interface ExperimentContext {
    * The ID of the pipeline associated with the experiment.
    */
   pipelineId: string;
-}
+};
 
 // Create an AsyncLocalStorage instance for experiment context
 // Export for testing purposes

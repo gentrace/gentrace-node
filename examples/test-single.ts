@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { init, experiment, test } from '../src'; // Adjust path as needed
+import { init, experiment, test } from '../src';
 import { readEnv } from 'gentrace/internal/utils';
 
 dotenv.config();
