@@ -79,10 +79,7 @@ const instrumentations =
       }),
     ];
 
-const baggageProcessor = new BaggageSpanProcessor((baggageKey: string) => {
-  console.log('baggageKey', baggageKey);
-  return baggageKey === 'gentrace.sample';
-});
+const baggageProcessor = new BaggageSpanProcessor((baggageKey: string) => baggageKey === 'gentrace.sample');
 
 let spanProcessors: SpanProcessor[];
 let sampler: Sampler | undefined = undefined;
@@ -96,7 +93,6 @@ if (process.env['ENVIRONMENT'] === 'production') {
   resource.attributes['env'] = 'production';
   resource.attributes['node.env'] = 'production';
 } else {
-  console.log('Development environment detected');
   const traceExporter = new OTLPTraceExporter({
     url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
     headers: {
