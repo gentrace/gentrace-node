@@ -205,38 +205,47 @@ Gentrace will execute `instrumentedQueryAi` for each test case in your dataset a
 
 OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation features (`interaction`, `test`, `testDataset`) to function correctly. You must set up the OpenTelemetry SDK to capture and export traces to Gentrace.
 
-You can install the necessary OpenTelemetry peer dependencies with yarn (or npm/pnpm):
+> **Note:** Modern package managers (like `pnpm` 8+, `yarn` 2+, and `npm` 7+) should automatically install these peer dependencies when you install `gentrace`. If the packages weren't already installed, you might need to install them manually.
+
+<details>
+<summary>Click here to view the command for installing OpenTelemetry peer dependencies manually</summary>
 
 ```sh
-# OR yarn add/pnpm install
-npm install @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.200.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.200.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0
+# OR use yarn or pnpm
+npm i @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.200.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.200.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0 @opentelemetry/baggage-span-processor@^0.4.0
 ```
+
+</details>
 
 The described OpenTelemetry setup supports both v1 and v2 of the spec, although v2 is preferred.
 
 <!-- prettier-ignore -->
 ```typescript
+import dotenv from 'dotenv';
 import { init } from 'gentrace';
+
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
-import dotenv from 'dotenv';
 
 dotenv.config();
 
 const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
-const GENTRACE_BASE_URL = process.env.GENTRACE_BASE_URL ?? 'https://gentrace.ai/api';
+
+const OTEL_ENDPOINT = 'https://gentrace.ai/api/otel/v1/traces';
 
 init({
   apiKey: GENTRACE_API_KEY,
-  baseURL: GENTRACE_BASE_URL,
 });
 
-// ====> Begin OpenTelemetry tracing
+// ====> COPY: Begin OpenTelemetry tracing
 const sdk = new NodeSDK({
+  resource: resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: 'openai-email-composition-simplified',
+  }),
   traceExporter: new OTLPTraceExporter({
-    url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+    url: OTEL_ENDPOINT,
     headers: {
       Authorization: `Bearer ${GENTRACE_API_KEY}`,
     },
@@ -259,7 +268,7 @@ process.on('beforeExit', async () => {
 process.on('SIGTERM', async () => {
   await sdk.shutdown();
 });
-// ====> End OpenTelemetry tracing
+// ====> COPY: End OpenTelemetry tracing
 
 // Now, any code run in this process that uses instrumented libraries
 // (or manual OTel tracing) will send traces to Gentrace.
