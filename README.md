@@ -218,7 +218,9 @@ The described OpenTelemetry setup supports both v1 and v2 of the spec, although 
 ```typescript
 import { init } from 'gentrace';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -232,15 +234,17 @@ init({
 });
 
 // ====> Begin OpenTelemetry tracing
-const traceExporter = new OTLPTraceExporter({
-  url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-  headers: {
-    Authorization: `Bearer ${GENTRACE_API_KEY}`,
-  },
-});
-
 const sdk = new NodeSDK({
-  traceExporter,
+  traceExporter: new OTLPTraceExporter({
+    url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+    headers: {
+      Authorization: `Bearer ${GENTRACE_API_KEY}`,
+    },
+  }),
+  spanProcessors: [
+    new BaggageSpanProcessor((baggageKey: string) => baggageKey === 'gentrace.sample')
+  ],
+  contextManager: (new AsyncLocalStorageContextManager()).enable()
 });
 
 sdk.start();
