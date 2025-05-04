@@ -233,8 +233,6 @@ dotenv.config();
 
 const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
 
-const OTEL_ENDPOINT = 'https://gentrace.ai/api/otel/v1/traces';
-
 init({
   apiKey: GENTRACE_API_KEY,
 });
@@ -245,7 +243,7 @@ const sdk = new NodeSDK({
     [ATTR_SERVICE_NAME]: 'openai-email-composition-simplified',
   }),
   traceExporter: new OTLPTraceExporter({
-    url: OTEL_ENDPOINT,
+    url: 'https://gentrace.ai/api/otel/v1/traces',
     headers: {
       Authorization: `Bearer ${GENTRACE_API_KEY}`,
     },
