@@ -244,11 +244,14 @@ The described OpenTelemetry setup supports both v1 and v2 of the spec, although 
 import dotenv from 'dotenv';
 import { init } from 'gentrace';
 
+// 📋 Start copying OTEL imports
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+// 📋 End copying imports
 
 dotenv.config();
 
@@ -258,10 +261,10 @@ init({
   bearerToken: GENTRACE_API_KEY,
 });
 
-// ====> COPY: Begin OpenTelemetry tracing
+// 📋 Start copying OTEL setup
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: 'openai-email-composition-simplified',
+    [ATTR_SERVICE_NAME]: 'your-generative-ai-feature',
   }),
   traceExporter: new OTLPTraceExporter({
     url: 'https://gentrace.ai/api/otel/v1/traces',
@@ -287,15 +290,7 @@ process.on('beforeExit', async () => {
 process.on('SIGTERM', async () => {
   await sdk.shutdown();
 });
-// ====> COPY: End OpenTelemetry tracing
-
-// Now, any code run in this process that uses instrumented libraries
-// (or manual OTel tracing) will send traces to Gentrace.
-// You can still use `interaction` alongside this for specific function tracing.
-
-// Example: Your application logic starts here
-// import { instrumentedQueryAi } from './instrumentedAi';
-// instrumentedQueryAi({ query: "What is OpenTelemetry?" });
+// 📋 End copying OpenTelemetry setup
 ```
 
 See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry.
