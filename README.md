@@ -225,7 +225,7 @@ Gentrace will execute `instrumentedQueryAi` for each test case in your dataset a
 OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation features (`interaction`, `test`, `testDataset`) to function correctly. You must set up the OpenTelemetry SDK to capture and export traces to Gentrace.
 
 > [!NOTE]  
-> Modern package managers (like `pnpm` 8+, `yarn` 2+, and `npm` 7+) should automatically install these peer dependencies when you install `gentrace`. If the packages weren't already installed, you might need to install them manually.
+> Modern package managers (like `pnpm` 8+, `yarn` 2+, and `npm` 7+) should automatically install the OTEL dependencies when you install `gentrace`. If the packages weren't already installed, you might need to install them manually.
 
 <details>
 <summary>Click here to view the command for installing OpenTelemetry peer dependencies manually</summary>
