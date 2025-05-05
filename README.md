@@ -4,7 +4,7 @@
 
 This library provides tools to instrument and test your AI applications using Gentrace.
 
-The full API documentation can be found in [api.md](api.md).
+The API reference documentation, auto-generated from our Stainless client code, can be found in [api.md](api.md).
 
 ## Installation
 
@@ -23,7 +23,8 @@ The Gentrace SDK provides several key functions to help you instrument and evalu
 - **`test`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`testDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
 
-> **Important:** The instrumentation features (`interaction`, `test`, `testDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
+> [!NOTE]
+> The instrumentation features (`interaction`, `test`, `testDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
 
 ## Basic Usage
 
