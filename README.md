@@ -39,7 +39,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 init({
-  apiKey: process.env.GENTRACE_API_KEY,
+  bearerToken: process.env.GENTRACE_API_KEY,
   // Optional: Specify base URL if using self-hosted or enterprise Gentrace
   // The format should be: http(s)://<hostname>/api
   // baseURL: process.env.GENTRACE_BASE_URL,
@@ -86,7 +86,7 @@ import { queryAi } from './aiFunctions'; // Assuming your function is here
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 
 init({
-  apiKey: process.env.GENTRACE_API_KEY,
+  bearerToken: process.env.GENTRACE_API_KEY,
 });
 
 // Omitted OpenTelemetry setup (view the OTEL section below)
@@ -99,8 +99,8 @@ export const instrumentedQueryAi = interaction(
 
 // Example of calling the instrumented function
 async function run() {
-  const result = await instrumentedQueryAi({ query: 'Explain quantum computing simply.' });
-  console.log('AI Response:', result);
+  const explanation = await instrumentedQueryAi({ query: 'Explain quantum computing simply.' });
+  console.log('Explanation:', explanation);
 }
 
 run();
@@ -129,17 +129,19 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 init({
-  apiKey: process.env.GENTRACE_API_KEY,
+  bearerToken: process.env.GENTRACE_API_KEY,
 });
+
+// Omitted OpenTelemetry setup (view the OTEL section below)
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
   test('simple-query-test', async () => {
-    const result = await instrumentedQueryAi({ query: 'What is the capital of France?' });
+    const capital = await instrumentedQueryAi({ query: 'What is the capital of France?' });
     // You can add assertions here if needed, exceptions will get captured and recorded on the
     // test span.
-    console.log('Test Result:', result);
+    console.log('Capital:', capital);
     return result; // Return value is captured in the span
   });
 
@@ -159,6 +161,9 @@ npx ts-node src/tests/simple.ts
 
 Results will be available in the experiment section corresponding to that particular pipeline.
 
+> [!WARNING]  
+> This testing example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section, since we're using an instrumented function call that uses the OTEL SDK.
+
 ### Testing with Datasets (`testDataset`)
 
 You can run your instrumented functions against datasets defined in Gentrace. This is useful for regression testing and evaluating performance across many examples.
@@ -175,8 +180,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 init({
-  apiKey: process.env.GENTRACE_API_KEY,
+  bearerToken: process.env.GENTRACE_API_KEY,
 });
+
+// Omitted OpenTelemetry setup (view the OTEL section below)
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 const GENTRACE_DATASET_ID = process.env.GENTRACE_DATASET_ID!;
@@ -245,7 +252,7 @@ dotenv.config();
 const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
 
 init({
-  apiKey: GENTRACE_API_KEY,
+  bearerToken: GENTRACE_API_KEY,
 });
 
 // ====> COPY: Begin OpenTelemetry tracing
