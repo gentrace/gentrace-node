@@ -89,7 +89,7 @@ init({
   bearerToken: process.env.GENTRACE_API_KEY,
 });
 
-// Omitted OpenTelemetry setup (view the OTEL section below)
+// 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
 // Create an instrumented version of your function
 export const instrumentedQueryAi = interaction(
@@ -132,7 +132,7 @@ init({
   bearerToken: process.env.GENTRACE_API_KEY,
 });
 
-// Omitted OpenTelemetry setup (view the OTEL section below)
+// 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 
@@ -183,7 +183,7 @@ init({
   bearerToken: process.env.GENTRACE_API_KEY,
 });
 
-// Omitted OpenTelemetry setup (view the OTEL section below)
+// 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 const GENTRACE_DATASET_ID = process.env.GENTRACE_DATASET_ID!;
