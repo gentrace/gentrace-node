@@ -208,7 +208,8 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
 });
 ```
 
-> Note: While `zod` is used in the example, any schema validation library that conforms to the [Standard Schema](https://github.com/standard-schema/standard-schema) interface (like `zod`, `valibot`, `arktype`, etc.) can be used for the `schema` parameter. This interface requires the library to expose a `parse()` function, which `testDataset` uses internally.
+> [!NOTE]  
+> While `zod` is used in the example, any schema validation library that conforms to the [Standard Schema](https://github.com/standard-schema/standard-schema) interface (like `zod`, `valibot`, `arktype`, etc.) can be used for the `schema` parameter. This interface requires the library to expose a `parse()` function, which `testDataset` uses internally.
 
 Run the dataset test:
 
@@ -222,7 +223,8 @@ Gentrace will execute `instrumentedQueryAi` for each test case in your dataset a
 
 OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation features (`interaction`, `test`, `testDataset`) to function correctly. You must set up the OpenTelemetry SDK to capture and export traces to Gentrace.
 
-> **Note:** Modern package managers (like `pnpm` 8+, `yarn` 2+, and `npm` 7+) should automatically install these peer dependencies when you install `gentrace`. If the packages weren't already installed, you might need to install them manually.
+> [!NOTE]  
+> Modern package managers (like `pnpm` 8+, `yarn` 2+, and `npm` 7+) should automatically install these peer dependencies when you install `gentrace`. If the packages weren't already installed, you might need to install them manually.
 
 <details>
 <summary>Click here to view the command for installing OpenTelemetry peer dependencies manually</summary>
