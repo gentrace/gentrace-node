@@ -264,7 +264,7 @@ init({
 // 📋 Start copying OTEL setup
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: 'your-generative-ai-feature',
+    [ATTR_SERVICE_NAME]: 'your-generative-ai-product',
   }),
   traceExporter: new OTLPTraceExporter({
     url: 'https://gentrace.ai/api/otel/v1/traces',
