@@ -35,9 +35,6 @@ First, initialize the SDK with your Gentrace API key. You typically do this once
 <!-- prettier-ignore -->
 ```typescript
 import { init } from 'gentrace';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 init({
   bearerToken: process.env.GENTRACE_API_KEY,
@@ -77,7 +74,7 @@ export async function queryAi({ query }: { query: string }): Promise<string | nu
 
 Now, wrap it with `interaction`:
 
-**`src/instrumentedAi.ts`**:
+**`src/run.ts`**:
 
 <!-- prettier-ignore -->
 ```typescript
@@ -107,6 +104,10 @@ async function run() {
 run();
 ```
 
+```sh
+GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/run.ts
+```
+
 > [!WARNING]  
 > This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. The `interaction` function requires this setup to capture and send traces.
 > Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
@@ -125,17 +126,15 @@ Use `experiment` to group tests and `test` to define individual test cases.
 ```typescript
 import { init, experiment, test } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 init({
   bearerToken: process.env.GENTRACE_API_KEY,
 });
 
+const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
-const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
   test('simple-query-test', async () => {
@@ -157,7 +156,7 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
 To run these tests, simply execute the file:
 
 ```sh
-npx ts-node src/tests/simple.ts
+GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/tests/simple.ts
 ```
 
 Results will be available in the experiment section corresponding to that particular pipeline.
@@ -176,9 +175,6 @@ You can run your instrumented functions against datasets defined in Gentrace. Th
 import { init, experiment, testDataset, testCases } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
 import { z } from 'zod'; // For defining input schema
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 init({
   bearerToken: process.env.GENTRACE_API_KEY,
@@ -215,7 +211,7 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
 Run the dataset test:
 
 ```sh
-npx ts-node src/tests/dataset.ts
+GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_DATASET_ID=<your-dataset-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/tests/dataset.ts
 ```
 
 Gentrace will execute `instrumentedQueryAi` for each test case in your dataset and record the results.
@@ -241,7 +237,6 @@ The described OpenTelemetry setup supports both v1 and v2 of the spec, although 
 
 <!-- prettier-ignore -->
 ```typescript
-import dotenv from 'dotenv';
 import { init } from 'gentrace';
 
 // 📋 Start copying OTEL imports
@@ -252,8 +247,6 @@ import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 // 📋 End copying imports
-
-dotenv.config();
 
 const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
 
