@@ -23,6 +23,8 @@ The Gentrace SDK provides several key functions to help you instrument and evalu
 - **`test`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`testDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
 
+> **Important:** The instrumentation features (`interaction`, `test`, `testDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
+
 ## Basic Usage
 
 ### Initialization
@@ -78,10 +80,16 @@ Now, wrap it with `interaction`:
 
 <!-- prettier-ignore -->
 ```typescript
-import { interaction } from 'gentrace';
+import { init, interaction } from 'gentrace';
 import { queryAi } from './aiFunctions'; // Assuming your function is here
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+
+init({
+  apiKey: process.env.GENTRACE_API_KEY,
+});
+
+// Omitted OpenTelemetry setup (view the OTEL section below)
 
 // Create an instrumented version of your function
 export const instrumentedQueryAi = interaction(
@@ -98,7 +106,9 @@ async function run() {
 run();
 ```
 
-Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
+> [!WARNING]  
+> This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. The `interaction` function requires this setup to capture and send traces.
+> Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
 
 ## Testing and Evaluation
 
@@ -224,9 +234,10 @@ The described OpenTelemetry setup supports both v1 and v2 of the spec, although 
 import dotenv from 'dotenv';
 import { init } from 'gentrace';
 
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
-import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 
 dotenv.config();

@@ -1,25 +1,17 @@
+import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import { ConsoleSpanExporter, SimpleSpanProcessor, SpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { OpenAIInstrumentation } from '@traceloop/instrumentation-openai';
 import dotenv from 'dotenv';
 import { readEnv } from 'gentrace/internal/utils';
+import process from 'process';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
 import { composeEmail } from './functions/composition';
-import { Attributes, Context, Link, propagation, SpanKind } from '@opentelemetry/api';
-import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
-import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
-import {
-  ConsoleSpanExporter,
-  Sampler,
-  SamplingDecision,
-  SamplingResult,
-  SimpleSpanProcessor,
-  SpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
-import { OpenAIInstrumentation } from '@traceloop/instrumentation-openai';
-import process from 'process';
 
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
 const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
@@ -40,30 +32,6 @@ const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: 'openai-email-composition-simplified',
 });
 
-class GentraceSampler implements Sampler {
-  shouldSample(
-    context: Context,
-    traceId: string,
-    spanName: string,
-    spanKind: SpanKind,
-    attributes: Attributes,
-    links: Link[],
-  ): SamplingResult {
-    const currentMomentBaggage = propagation.getBaggage(context);
-    const sampleEntry = currentMomentBaggage?.getEntry('gentrace.sample');
-
-    if ((currentMomentBaggage && sampleEntry?.value === 'true') || attributes['gentrace.sample'] === 'true') {
-      return { decision: SamplingDecision.RECORD_AND_SAMPLED };
-    } else {
-      return { decision: SamplingDecision.NOT_RECORD };
-    }
-  }
-
-  toString(): string {
-    return 'GentraceSampler';
-  }
-}
-
 const contextManager = new AsyncLocalStorageContextManager();
 contextManager.enable();
 
@@ -82,7 +50,6 @@ const instrumentations =
 const baggageProcessor = new BaggageSpanProcessor((baggageKey: string) => baggageKey === 'gentrace.sample');
 
 let spanProcessors: SpanProcessor[];
-let sampler: Sampler | undefined = undefined;
 
 if (process.env['ENVIRONMENT'] === 'production') {
   // In production, we head sample using the gentrace.sample attribute
@@ -109,7 +76,6 @@ if (process.env['ENVIRONMENT'] === 'production') {
     new SimpleSpanProcessor(traceExporter),
     new SimpleSpanProcessor(new ConsoleSpanExporter()),
   ];
-  sampler = new GentraceSampler();
 
   resource.attributes['env'] = 'development';
   resource.attributes['node.env'] = 'development';
@@ -120,7 +86,6 @@ const sdk = new NodeSDK({
   resource,
   instrumentations,
   spanProcessors,
-  ...(sampler && { sampler }), // Conditionally add sampler if defined
   contextManager,
 });
 
