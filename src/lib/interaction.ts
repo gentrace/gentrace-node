@@ -1,3 +1,4 @@
+import { context, propagation } from '@opentelemetry/api';
 import { ANONYMOUS_SPAN_NAME } from './constants';
 import { TracedOptions, traced } from './traced';
 
@@ -33,5 +34,16 @@ export function interaction<F extends (...args: any[]) => any>(
     },
   });
 
-  return wrappedFn as F;
+  const finalWrappedFn = (...args: Parameters<F>): ReturnType<F> => {
+    const currentContext = context.active();
+    const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
+
+    const newBaggage = currentBaggage.setEntry('gentrace.sample', {
+      value: 'true',
+    });
+    const newContext = propagation.setBaggage(currentContext, newBaggage);
+    return context.bind(newContext, wrappedFn)(...args);
+  };
+
+  return finalWrappedFn as F;
 }

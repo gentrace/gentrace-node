@@ -4,7 +4,7 @@
 
 This library provides tools to instrument and test your AI applications using Gentrace.
 
-The full API documentation can be found in [api.md](api.md).
+The API reference documentation, auto-generated from our Stainless client code, can be found in [api.md](api.md).
 
 ## Installation
 
@@ -23,21 +23,21 @@ The Gentrace SDK provides several key functions to help you instrument and evalu
 - **`test`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`testDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
 
+> [!NOTE]
+> The instrumentation features (`interaction`, `test`, `testDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
+
 ## Basic Usage
 
-### Initialization
+### Initialization (`init`)
 
 First, initialize the SDK with your Gentrace API key. You typically do this once when your application starts.
 
 <!-- prettier-ignore -->
 ```typescript
 import { init } from 'gentrace';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 init({
-  apiKey: process.env.GENTRACE_API_KEY,
+  bearerToken: process.env.GENTRACE_API_KEY,
   // Optional: Specify base URL if using self-hosted or enterprise Gentrace
   // The format should be: http(s)://<hostname>/api
   // baseURL: process.env.GENTRACE_BASE_URL,
@@ -50,55 +50,63 @@ console.log('Gentrace initialized!');
 
 Wrap the functions that contain your core AI logic using `interaction`. This allows Gentrace to capture detailed traces.
 
-Let's say you have a function `queryAi` that calls an AI model:
-
-**`src/aiFunctions.ts`**:
+**`src/run.ts`**:
 
 <!-- prettier-ignore -->
 ```typescript
-import OpenAI from 'openai';
+import { init, interaction } from 'gentrace';
+import dotenv from 'dotenv';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export async function queryAi({ query }: { query: string }): Promise<string | null> {
-  // Your AI logic here, e.g., calling OpenAI
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: query }],
-  });
-  return completion.choices[0]?.message?.content ?? null;
-}
-```
-
-Now, wrap it with `interaction`:
-
-**`src/instrumentedAi.ts`**:
-
-<!-- prettier-ignore -->
-```typescript
-import { interaction } from 'gentrace';
-import { queryAi } from './aiFunctions'; // Assuming your function is here
+dotenv.config();
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
 
-// Create an instrumented version of your function
+if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY) {
+  throw new Error('GENTRACE_PIPELINE_ID and GENTRACE_API_KEY must be set');
+}
+
+init();
+
+// Define the AI function directly in this file
+async function queryAi({ query }: { query: string }): Promise<string | null> {
+  console.log(`Received query: ${query}`);
+  // Simulate an AI call with a fake response
+  await new Promise(resolve => setTimeout(resolve, 50)); // Simulate network delay
+  const fakeResponse = `This is a fake explanation for "${query}".`;
+  return fakeResponse;
+}
+
+// 🚧 Add OpenTelemetry setup (view the OTEL section below)
+
+// Create an instrumented version of the function
 export const instrumentedQueryAi = interaction(
   GENTRACE_PIPELINE_ID,
-  queryAi // Pass your original function
+  queryAi // Pass the original function
 );
 
 // Example of calling the instrumented function
 async function run() {
-  const result = await instrumentedQueryAi({ query: 'Explain quantum computing simply.' });
-  console.log('AI Response:', result);
+  console.log('Running interaction example...');
+  try {
+    const explanation = await instrumentedQueryAi({ query: 'Explain quantum computing simply.' });
+    console.log('Explanation:', explanation);
+    console.log(`\nVisit https://gentrace.ai/s/pipeline/${GENTRACE_PIPELINE_ID} to see the trace.`);
+  } catch (error) {
+    console.error("Error running interaction example:", error);
+  }
 }
 
 run();
 ```
 
-Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
+```sh
+GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/run.ts
+```
+
+> [!WARNING]  
+> This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. The `interaction` function requires this setup to capture and send traces.
+> Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
 
 ## Testing and Evaluation
 
@@ -114,22 +122,19 @@ Use `experiment` to group tests and `test` to define individual test cases.
 ```typescript
 import { init, experiment, test } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
-import dotenv from 'dotenv';
 
-dotenv.config();
-
-init({
-  apiKey: process.env.GENTRACE_API_KEY,
-});
+init();
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 
+// 🚧 Add OpenTelemetry setup (view the OTEL section below)
+
 experiment(GENTRACE_PIPELINE_ID, async () => {
   test('simple-query-test', async () => {
-    const result = await instrumentedQueryAi({ query: 'What is the capital of France?' });
+    const capital = await instrumentedQueryAi({ query: 'What is the capital of France?' });
     // You can add assertions here if needed, exceptions will get captured and recorded on the
     // test span.
-    console.log('Test Result:', result);
+    console.log('Capital:', capital);
     return result; // Return value is captured in the span
   });
 
@@ -144,10 +149,13 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
 To run these tests, simply execute the file:
 
 ```sh
-npx ts-node src/tests/simple.ts
+GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/tests/simple.ts
 ```
 
 Results will be available in the experiment section corresponding to that particular pipeline.
+
+> [!WARNING]  
+> This testing example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section, since we're using an instrumented function call that uses the OTEL SDK.
 
 ### Testing with Datasets (`testDataset`)
 
@@ -160,13 +168,10 @@ You can run your instrumented functions against datasets defined in Gentrace. Th
 import { init, experiment, testDataset, testCases } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
 import { z } from 'zod'; // For defining input schema
-import dotenv from 'dotenv';
 
-dotenv.config();
+init();
 
-init({
-  apiKey: process.env.GENTRACE_API_KEY,
-});
+// 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 const GENTRACE_DATASET_ID = process.env.GENTRACE_DATASET_ID!;
@@ -191,12 +196,13 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
 });
 ```
 
-> Note: While `zod` is used in the example, any schema validation library that conforms to the [Standard Schema](https://github.com/standard-schema/standard-schema) interface (like `zod`, `valibot`, `arktype`, etc.) can be used for the `schema` parameter. This interface requires the library to expose a `parse()` function, which `testDataset` uses internally.
+> [!NOTE]  
+> While `zod` is used in the example, any schema validation library that conforms to the [Standard Schema](https://github.com/standard-schema/standard-schema) interface (like `zod`, `valibot`, `arktype`, etc.) can be used for the `schema` parameter. This interface requires the library to expose a `parse()` function, which `testDataset` uses internally.
 
 Run the dataset test:
 
 ```sh
-npx ts-node src/tests/dataset.ts
+GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_DATASET_ID=<your-dataset-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/tests/dataset.ts
 ```
 
 Gentrace will execute `instrumentedQueryAi` for each test case in your dataset and record the results.
@@ -205,42 +211,53 @@ Gentrace will execute `instrumentedQueryAi` for each test case in your dataset a
 
 OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation features (`interaction`, `test`, `testDataset`) to function correctly. You must set up the OpenTelemetry SDK to capture and export traces to Gentrace.
 
-You can install the necessary OpenTelemetry peer dependencies with yarn (or npm/pnpm):
+> [!NOTE]  
+> Modern package managers (like `pnpm` 8+, `yarn` 2+, and `npm` 7+) should automatically install the OTEL dependencies when you install `gentrace`. If the packages weren't already installed, you might need to install them manually.
+
+<details>
+<summary>Click here to view the command for installing OpenTelemetry peer dependencies manually</summary>
 
 ```sh
-# OR yarn add/pnpm install
-npm install @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.200.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.200.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0
+# OR use yarn or pnpm
+npm i @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.200.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.200.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0 @opentelemetry/baggage-span-processor@^0.4.0
 ```
+
+</details>
 
 The described OpenTelemetry setup supports both v1 and v2 of the spec, although v2 is preferred.
 
 <!-- prettier-ignore -->
 ```typescript
 import { init } from 'gentrace';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import dotenv from 'dotenv';
 
-dotenv.config();
+// 📋 Start copying OTEL imports
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { resourceFromAttributes } from '@opentelemetry/resources';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+// 📋 End copying imports
 
 const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
-const GENTRACE_BASE_URL = process.env.GENTRACE_BASE_URL ?? 'https://gentrace.ai/api';
 
-init({
-  apiKey: GENTRACE_API_KEY,
-  baseURL: GENTRACE_BASE_URL,
-});
+init();
 
-// ====> Begin OpenTelemetry tracing
-const traceExporter = new OTLPTraceExporter({
-  url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-  headers: {
-    Authorization: `Bearer ${GENTRACE_API_KEY}`,
-  },
-});
-
+// 📋 Start copying OTEL setup
 const sdk = new NodeSDK({
-  traceExporter,
+  resource: resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: 'your-generative-ai-product',
+  }),
+  traceExporter: new OTLPTraceExporter({
+    url: 'https://gentrace.ai/api/otel/v1/traces',
+    headers: {
+      Authorization: `Bearer ${GENTRACE_API_KEY}`,
+    },
+  }),
+  spanProcessors: [
+    new BaggageSpanProcessor((baggageKey: string) => baggageKey === 'gentrace.sample')
+  ],
+  contextManager: (new AsyncLocalStorageContextManager()).enable()
 });
 
 sdk.start();
@@ -255,15 +272,7 @@ process.on('beforeExit', async () => {
 process.on('SIGTERM', async () => {
   await sdk.shutdown();
 });
-// ====> End OpenTelemetry tracing
-
-// Now, any code run in this process that uses instrumented libraries
-// (or manual OTel tracing) will send traces to Gentrace.
-// You can still use `interaction` alongside this for specific function tracing.
-
-// Example: Your application logic starts here
-// import { instrumentedQueryAi } from './instrumentedAi';
-// instrumentedQueryAi({ query: "What is OpenTelemetry?" });
+// 📋 End copying OpenTelemetry setup
 ```
 
 See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry.
