@@ -28,7 +28,7 @@ The Gentrace SDK provides several key functions to help you instrument and evalu
 
 ## Basic Usage
 
-### Initialization
+### Initialization (`init`)
 
 First, initialize the SDK with your Gentrace API key. You typically do this once when your application starts.
 
@@ -50,55 +50,51 @@ console.log('Gentrace initialized!');
 
 Wrap the functions that contain your core AI logic using `interaction`. This allows Gentrace to capture detailed traces.
 
-Let's say you have a function `queryAi` that calls an AI model:
-
-**`src/aiFunctions.ts`**:
-
-<!-- prettier-ignore -->
-```typescript
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export async function queryAi({ query }: { query: string }): Promise<string | null> {
-  // Your AI logic here, e.g., calling OpenAI
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: query }],
-  });
-  return completion.choices[0]?.message?.content ?? null;
-}
-```
-
-Now, wrap it with `interaction`:
-
 **`src/run.ts`**:
 
 <!-- prettier-ignore -->
 ```typescript
 import { init, interaction } from 'gentrace';
-import { queryAi } from './aiFunctions'; // Assuming your function is here
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
 
-init({
-  bearerToken: process.env.GENTRACE_API_KEY,
-});
+if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY) {
+  throw new Error('GENTRACE_PIPELINE_ID and GENTRACE_API_KEY must be set');
+}
+
+init();
+
+// Define the AI function directly in this file
+async function queryAi({ query }: { query: string }): Promise<string | null> {
+  console.log(`Received query: ${query}`);
+  // Simulate an AI call with a fake response
+  await new Promise(resolve => setTimeout(resolve, 50)); // Simulate network delay
+  const fakeResponse = `This is a fake explanation for "${query}".`;
+  return fakeResponse;
+}
 
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
-// Create an instrumented version of your function
+// Create an instrumented version of the function
 export const instrumentedQueryAi = interaction(
   GENTRACE_PIPELINE_ID,
-  queryAi // Pass your original function
+  queryAi // Pass the original function
 );
 
 // Example of calling the instrumented function
 async function run() {
-  const explanation = await instrumentedQueryAi({ query: 'Explain quantum computing simply.' });
-  console.log('Explanation:', explanation);
+  console.log('Running interaction example...');
+  try {
+    const explanation = await instrumentedQueryAi({ query: 'Explain quantum computing simply.' });
+    console.log('Explanation:', explanation);
+    console.log(`\nVisit https://gentrace.ai/s/pipeline/${GENTRACE_PIPELINE_ID} to see the trace.`);
+  } catch (error) {
+    console.error("Error running interaction example:", error);
+  }
 }
 
 run();
@@ -127,14 +123,11 @@ Use `experiment` to group tests and `test` to define individual test cases.
 import { init, experiment, test } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
 
-init({
-  bearerToken: process.env.GENTRACE_API_KEY,
-});
+init();
 
 const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
-
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
   test('simple-query-test', async () => {
@@ -176,9 +169,7 @@ import { init, experiment, testDataset, testCases } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
 import { z } from 'zod'; // For defining input schema
 
-init({
-  bearerToken: process.env.GENTRACE_API_KEY,
-});
+init();
 
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
@@ -250,9 +241,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
 
-init({
-  bearerToken: GENTRACE_API_KEY,
-});
+init();
 
 // 📋 Start copying OTEL setup
 const sdk = new NodeSDK({
