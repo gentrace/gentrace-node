@@ -42,7 +42,7 @@ export function interaction<F extends (...args: any[]) => any>(
       value: 'true',
     });
     const newContext = propagation.setBaggage(currentContext, newBaggage);
-    return context.with(newContext, () => wrappedFn(...args));
+    return context.bind(newContext, wrappedFn)(...args);
   };
 
   return finalWrappedFn as F;
