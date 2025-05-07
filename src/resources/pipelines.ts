@@ -8,6 +8,13 @@ import { path } from '../internal/utils/path';
 export class Pipelines extends APIResource {
   /**
    * Create a new pipeline
+   *
+   * @example
+   * ```ts
+   * const pipeline = await client.pipelines.create({
+   *   slug: 'my-awesome-pipeline',
+   * });
+   * ```
    */
   create(body: PipelineCreateParams, options?: RequestOptions): APIPromise<Pipeline> {
     return this._client.post('/v4/pipelines', { body, ...options });
@@ -15,6 +22,13 @@ export class Pipelines extends APIResource {
 
   /**
    * Retrieve the details of a pipeline by ID
+   *
+   * @example
+   * ```ts
+   * const pipeline = await client.pipelines.retrieve(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Pipeline> {
     return this._client.get(path`/v4/pipelines/${id}`, options);
@@ -22,6 +36,13 @@ export class Pipelines extends APIResource {
 
   /**
    * Update the details of a pipeline by ID
+   *
+   * @example
+   * ```ts
+   * const pipeline = await client.pipelines.update(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   update(id: string, body: PipelineUpdateParams, options?: RequestOptions): APIPromise<Pipeline> {
     return this._client.post(path`/v4/pipelines/${id}`, { body, ...options });
@@ -29,6 +50,11 @@ export class Pipelines extends APIResource {
 
   /**
    * List pipelines
+   *
+   * @example
+   * ```ts
+   * const pipelineList = await client.pipelines.list();
+   * ```
    */
   list(
     query: PipelineListParams | null | undefined = {},
