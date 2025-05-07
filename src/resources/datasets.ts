@@ -8,6 +8,15 @@ import { path } from '../internal/utils/path';
 export class Datasets extends APIResource {
   /**
    * Create a new dataset
+   *
+   * @example
+   * ```ts
+   * const dataset = await client.datasets.create({
+   *   description:
+   *     'Negative user feedback collected from our production environment',
+   *   name: 'Dataset - negative user feedback - 2025-04-01',
+   * });
+   * ```
    */
   create(body: DatasetCreateParams, options?: RequestOptions): APIPromise<Dataset> {
     return this._client.post('/v4/datasets', { body, ...options });
@@ -15,6 +24,13 @@ export class Datasets extends APIResource {
 
   /**
    * Retrieve the details of a dataset by ID
+   *
+   * @example
+   * ```ts
+   * const dataset = await client.datasets.retrieve(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Dataset> {
     return this._client.get(path`/v4/datasets/${id}`, options);
@@ -22,6 +38,13 @@ export class Datasets extends APIResource {
 
   /**
    * Update the details of a dataset by ID
+   *
+   * @example
+   * ```ts
+   * const dataset = await client.datasets.update(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   update(id: string, body: DatasetUpdateParams, options?: RequestOptions): APIPromise<Dataset> {
     return this._client.post(path`/v4/datasets/${id}`, { body, ...options });
@@ -29,6 +52,11 @@ export class Datasets extends APIResource {
 
   /**
    * List datasets
+   *
+   * @example
+   * ```ts
+   * const datasetList = await client.datasets.list();
+   * ```
    */
   list(query: DatasetListParams | null | undefined = {}, options?: RequestOptions): APIPromise<DatasetList> {
     return this._client.get('/v4/datasets', { query, ...options });

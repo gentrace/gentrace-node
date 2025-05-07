@@ -9,6 +9,15 @@ import { path } from '../internal/utils/path';
 export class TestCases extends APIResource {
   /**
    * Create a new test case
+   *
+   * @example
+   * ```ts
+   * const testCase = await client.testCases.create({
+   *   datasetId: 'b2c3d4e5-f6a7-8901-2345-67890abcdef1',
+   *   inputs: { query: 'bar' },
+   *   name: 'Prompting with a SQL query that does not return any results',
+   * });
+   * ```
    */
   create(body: TestCaseCreateParams, options?: RequestOptions): APIPromise<TestCase> {
     return this._client.post('/v4/test-cases', { body, ...options });
@@ -16,6 +25,13 @@ export class TestCases extends APIResource {
 
   /**
    * Retrieve the details of a test case by ID
+   *
+   * @example
+   * ```ts
+   * const testCase = await client.testCases.retrieve(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<TestCase> {
     return this._client.get(path`/v4/test-cases/${id}`, options);
@@ -23,6 +39,11 @@ export class TestCases extends APIResource {
 
   /**
    * List test cases
+   *
+   * @example
+   * ```ts
+   * const testCaseList = await client.testCases.list();
+   * ```
    */
   list(
     query: TestCaseListParams | null | undefined = {},
@@ -33,6 +54,13 @@ export class TestCases extends APIResource {
 
   /**
    * Delete a test case by ID
+   *
+   * @example
+   * ```ts
+   * await client.testCases.delete(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<void> {
     return this._client.delete(path`/v4/test-cases/${id}`, {

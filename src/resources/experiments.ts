@@ -8,6 +8,13 @@ import { path } from '../internal/utils/path';
 export class Experiments extends APIResource {
   /**
    * Create a new experiment
+   *
+   * @example
+   * ```ts
+   * const experiment = await client.experiments.create({
+   *   pipelineId: '123e4567-e89b-12d3-a456-426614174000',
+   * });
+   * ```
    */
   create(body: ExperimentCreateParams, options?: RequestOptions): APIPromise<Experiment> {
     return this._client.post('/v4/experiments', { body, ...options });
@@ -15,6 +22,13 @@ export class Experiments extends APIResource {
 
   /**
    * Retrieve the details of a experiment by ID
+   *
+   * @example
+   * ```ts
+   * const experiment = await client.experiments.retrieve(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Experiment> {
     return this._client.get(path`/v4/experiments/${id}`, options);
@@ -22,6 +36,13 @@ export class Experiments extends APIResource {
 
   /**
    * Update the details of a experiment by ID
+   *
+   * @example
+   * ```ts
+   * const experiment = await client.experiments.update(
+   *   '123e4567-e89b-12d3-a456-426614174000',
+   * );
+   * ```
    */
   update(id: string, body: ExperimentUpdateParams, options?: RequestOptions): APIPromise<Experiment> {
     return this._client.post(path`/v4/experiments/${id}`, { body, ...options });
@@ -29,6 +50,11 @@ export class Experiments extends APIResource {
 
   /**
    * List experiments
+   *
+   * @example
+   * ```ts
+   * const experimentList = await client.experiments.list();
+   * ```
    */
   list(
     query: ExperimentListParams | null | undefined = {},
