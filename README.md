@@ -231,10 +231,10 @@ The described OpenTelemetry setup supports both v1 and v2 of the spec, although 
 import { init } from 'gentrace';
 
 // 📋 Start copying OTEL imports
+import { GentraceSpanProcessor, GentraceSampler } from "gentrace";
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 // 📋 End copying imports
@@ -254,8 +254,9 @@ const sdk = new NodeSDK({
       Authorization: `Bearer ${GENTRACE_API_KEY}`,
     },
   }),
+  sampler: new GentraceSampler(),
   spanProcessors: [
-    new BaggageSpanProcessor((baggageKey: string) => baggageKey === 'gentrace.sample')
+    new GentraceSpanProcessor()
   ],
   contextManager: (new AsyncLocalStorageContextManager()).enable()
 });
@@ -273,7 +274,12 @@ process.on('SIGTERM', async () => {
   await sdk.shutdown();
 });
 // 📋 End copying OpenTelemetry setup
-```
+
+The `GentraceSpanProcessor` is a specialized OpenTelemetry span processor. It specifically looks for the `gentrace.sample` baggage key in the current OpenTelemetry context. If found, it extracts this baggage key and adds it as an attribute to new spans. This makes sure that the sampling attribute is propagated correctly to all spans that need to be tracked by Gentrace.
+
+Gentrace provides a `GentraceSampler`. You can add this to your OpenTelemetry SDK configuration (as shown in the example above). The `GentraceSampler` will ensure that only spans containing the `gentrace.sample` baggage key (either in the context or as a span attribute with a value of `'true'`) are sampled and exported. This is useful for filtering out spans that are not relevant to Gentrace tracing, reducing noise and data volume.
+
+Alternatively, if you are using the OpenTelemetry Collector, you can configure it to filter and send only the relevant Gentrace spans. This involves setting up a filter processor in your collector configuration to keep only spans where the attribute `gentrace.sample` is `"true"`. For detailed instructions on collector-based filtering, please refer to the [Gentrace OpenTelemetry Setup Guide](https://gentrace.ai/docs/opentelemetry/setup-with-open-telemetry#2-collector-based-filtering) and the official [OpenTelemetry Collector documentation](https://opentelemetry.io/docs/collector/).
 
 See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry.
 
@@ -293,3 +299,23 @@ If you are interested in other runtime environments, please open an issue on Git
 ## Support
 
 For questions or support, please reach out to us at [support@gentrace.ai](mailto:support@gentrace.ai).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
