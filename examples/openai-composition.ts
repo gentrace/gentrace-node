@@ -1,4 +1,3 @@
-import { BaggageSpanProcessor } from '@opentelemetry/baggage-span-processor';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
@@ -8,6 +7,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { OpenAIInstrumentation } from '@traceloop/instrumentation-openai';
 import dotenv from 'dotenv';
 import { readEnv } from 'gentrace/internal/utils';
+import { GentraceSampler, GentraceSpanProcessor } from 'gentrace/lib';
 import process from 'process';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
@@ -47,8 +47,6 @@ const instrumentations =
       }),
     ];
 
-const baggageProcessor = new BaggageSpanProcessor((baggageKey: string) => baggageKey === 'gentrace.sample');
-
 let spanProcessors: SpanProcessor[];
 
 if (process.env['ENVIRONMENT'] === 'production') {
@@ -56,7 +54,7 @@ if (process.env['ENVIRONMENT'] === 'production') {
   // in the OTEL collector. The baggage processor moves the gentrace.sample
   // attribute to the trace attributes, as the baggage won't be available
   // in the collector.
-  spanProcessors = [baggageProcessor];
+  spanProcessors = [new GentraceSpanProcessor()];
   resource.attributes['env'] = 'production';
   resource.attributes['node.env'] = 'production';
 } else {
@@ -72,7 +70,7 @@ if (process.env['ENVIRONMENT'] === 'production') {
   // Note: the sampler runs BEFORE the baggage processor, so we need to
   // check both baggage and attributes.
   spanProcessors = [
-    baggageProcessor,
+    new GentraceSpanProcessor(),
     new SimpleSpanProcessor(traceExporter),
     new SimpleSpanProcessor(new ConsoleSpanExporter()),
   ];
@@ -84,6 +82,7 @@ if (process.env['ENVIRONMENT'] === 'production') {
 // Begin OpenTelemetry SDK setup
 const sdk = new NodeSDK({
   resource,
+  sampler: new GentraceSampler(),
   instrumentations,
   spanProcessors,
   contextManager,
