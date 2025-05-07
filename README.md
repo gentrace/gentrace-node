@@ -290,7 +290,7 @@ This approach allows your application to decide which traces are sampled and sen
 - **Components**:
   - `GentraceSampler`: Add this to your OpenTelemetry SDK configuration (as shown in the setup example above).
     - **Role**: During span creation, the `GentraceSampler` checks for the `gentrace.sample` key in the OpenTelemetry Baggage (propagated from the parent context, often by Gentrace SDK helpers like `interaction()`) or as an initial span attribute.
-    - If `gentrace.sample` is found and set to `'true'`, the sampler decides to `RECORD_AND_SAMPLED`, meaning the span and its children (that inherit the sampled state) will be processed and exported. Otherwise, it may decide `NOT_RECORD`.
+    - If `gentrace.sample` is found and set to `'true'`, the sampler decides to assign `RECORD_AND_SAMPLED`, meaning the span will be exported. Otherwise, it may decide `NOT_RECORD`.
   - `GentraceSpanProcessor` (Recommended): While the `GentraceSampler` makes the core sampling decision, including the `GentraceSpanProcessor` ensures the `gentrace.sample="true"` attribute is explicitly added to the span. This is best practice for visibility and crucial if you might ever use an OpenTelemetry Collector or other attribute-aware tools.
 
 **2. Collector-Based Filtering/Sampling**
