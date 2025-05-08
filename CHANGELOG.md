@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.7 (2025-05-08)
+
+Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
+
+### Features
+
+* Introduce GentraceSampler and GentraceSpanProcessor ([#543](https://github.com/gentrace/gentrace-node/issues/543)) ([30e1f7d](https://github.com/gentrace/gentrace-node/commit/30e1f7de7826fb9d9ef185537fe40df3462fdc17))
+
+
+### Bug Fixes
+
+* Add `Baggage` to the interaction to `gentrace.sample` ([#542](https://github.com/gentrace/gentrace-node/issues/542)) ([2b58351](https://github.com/gentrace/gentrace-node/commit/2b58351cc28aad5f4a50d19c9da4660f6e6198fc))
+
 ## 0.1.0-alpha.6 (2025-04-30)
 
 Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
