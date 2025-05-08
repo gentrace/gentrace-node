@@ -10,3 +10,4 @@ export { interaction } from './interaction';
 export { testDataset } from './test-dataset';
 export { traced } from './traced';
 export { test } from './test-single';
+export * from './otel';
