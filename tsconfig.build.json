@@ -6,7 +6,7 @@
     "rootDir": "./dist/src",
     "paths": {
       "gentrace/*": ["dist/src/*"],
-      "gentrace": ["dist/src/index.ts"],
+      "gentrace": ["dist/src/index.ts"]
     },
     "noEmit": false,
     "declaration": true,
