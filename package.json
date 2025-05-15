@@ -76,10 +76,6 @@
   "resolutions": {
     "synckit": "0.8.8"
   },
-  "browser": {
-    "./internal/shims/getBuiltinModule.mjs": "./internal/shims/nullGetBuiltinModule.mjs",
-    "./internal/shims/getBuiltinModule.js": "./internal/shims/nullGetBuiltinModule.js"
-  },
   "imports": {
     "gentrace": ".",
     "gentrace/*": "./src/*"
@@ -102,5 +98,8 @@
   },
   "dependencies": {
     "json-stringify-safe": "^5.0.1"
+  },
+  "engines": {
+    "node": ">= 20"
   }
 }
