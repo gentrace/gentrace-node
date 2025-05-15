@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.0-alpha.8 (2025-05-15)
+
+Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)
+
+### Features
+
+* **client:** add withOptions helper ([9b55917](https://github.com/gentrace/gentrace-node/commit/9b559173d566fbdcbf350175cd8fb02fd62a7e5c))
+
+
+### Chores
+
+* **client:** drop support for EOL node versions ([18dd728](https://github.com/gentrace/gentrace-node/commit/18dd72880f70dacc36f9334f3efcf7f59b02c871))
+* **internal:** codegen related update ([7484d25](https://github.com/gentrace/gentrace-node/commit/7484d2564c3ad9502d4ed3938954be6e97c6782c))
+* **internal:** share typescript helpers ([441134d](https://github.com/gentrace/gentrace-node/commit/441134d647b78eb8b53b4d8c26020fe0bc2475e1))
+* Temporarily disable test ([#546](https://github.com/gentrace/gentrace-node/issues/546)) ([5ed73b7](https://github.com/gentrace/gentrace-node/commit/5ed73b721d49d34584d5de539ac66c28b72f349f))
+
+
+### Documentation
+
+* add examples to tsdocs ([5c37a0a](https://github.com/gentrace/gentrace-node/commit/5c37a0a80562c13e4cf7ef6c2d82d40d64f72cef))
+* **readme:** fix typo ([2408615](https://github.com/gentrace/gentrace-node/commit/2408615763781b6dac173af84136cb77fb16975a))
+
 ## 0.1.0-alpha.7 (2025-05-08)
 
 Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
