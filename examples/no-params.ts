@@ -7,7 +7,7 @@ import { readEnv } from 'gentrace/internal/utils';
 import { experiment } from 'gentrace/lib/experiment';
 import { init } from 'gentrace/lib/init';
 import { interaction } from 'gentrace/lib/interaction';
-import { test } from 'gentrace/lib/test-single';
+import { evalOnce } from 'gentrace/lib/eval-once';
 
 dotenv.config();
 
@@ -56,7 +56,7 @@ const simpleTask = () => {
 const simpleInteraction = interaction(GENTRACE_PIPELINE_ID, simpleTask);
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
-  await test('No Params Test Case', async () => {
+  await evalOnce('No Params Test Case', async () => {
     return await simpleInteraction();
   });
 });

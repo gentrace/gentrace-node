@@ -1,7 +1,7 @@
 import { Span, SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
-import { ParseableSchema } from './test-dataset'; // Import the interface
+import { ParseableSchema } from './eval-dataset'; // Import the interface
 import { _getClient } from './client-instance';
 
 /**
@@ -17,16 +17,16 @@ import { _getClient } from './client-instance';
  *
  * @example
  * experiment('pipeline-uuid', () => {
- *   test('simple-addition-test', () => {
+ *   evalOnce('simple-addition-test', () => {
  *     return 1 + 1;
  *   });
  * });
  */
-export async function test<TResult>(
+export async function evalOnce<TResult>(
   spanName: string,
   callback: () => TResult | null | Promise<TResult | null>,
 ): Promise<TResult | null> {
-  return _runTest<TResult, any>({
+  return _runEval<TResult, any>({
     spanName,
     spanAttributes: { 'gentrace.test_case_name': spanName },
     callback,
@@ -36,12 +36,12 @@ export async function test<TResult>(
 /**
  * Metadata for a specific test run.
  */
-export type TestMetadata = Record<string, unknown>;
+export type EvalMetadata = Record<string, unknown>;
 
 /**
  * Input parameters for running a single test case.
  */
-export type RunTestParams<T> = {
+export type RunEvalParams<T> = {
   /** The descriptive name of the test case (like an 'it' block name). */
   name: string;
   /** The function containing the test logic. Can be sync or async. */
@@ -49,12 +49,12 @@ export type RunTestParams<T> = {
 };
 
 /**
- * Options for the internal _runTest function.
+ * Options for the internal _runEval function.
  *
- * @template TResult The expected return type of the test callback.
- * @template TInput The expected input type of the test callback (after potential parsing).
+ * @template TResult The expected return type of the eval callback.
+ * @template TInput The expected input type of the eval callback (after potential parsing).
  */
-export type RunTestInternalOptions<TResult, TInput> = {
+export type RunEvalInternalOptions<TResult, TInput> = {
   spanName: string;
   spanAttributes: Record<string, string>;
   inputs?: unknown | undefined;
@@ -73,8 +73,8 @@ export type RunTestInternalOptions<TResult, TInput> = {
  * @returns The result of the callback function.
  * @throws If called outside of a `experiment()` context or if the callback throws.
  */
-export async function _runTest<TResult, TInput = any>(
-  options: RunTestInternalOptions<TResult, TInput>, // Single options parameter
+export async function _runEval<TResult, TInput = any>(
+  options: RunEvalInternalOptions<TResult, TInput>, // Single options parameter
 ): Promise<TResult | null> {
   const { spanName, spanAttributes, inputs, schema, callback } = options;
 

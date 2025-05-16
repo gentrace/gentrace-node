@@ -7,7 +7,7 @@ export {
   FinishExperimentParams,
 } from './experiment-control';
 export { interaction } from './interaction';
-export { testDataset } from './test-dataset';
+export { evalDataset as evalDataset } from './eval-dataset';
 export { traced } from './traced';
-export { test } from './test-single';
+export { evalOnce } from './eval-once';
 export * from './otel';

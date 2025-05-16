@@ -72,6 +72,7 @@ if (process.env['ENVIRONMENT'] === 'production') {
   spanProcessors = [
     new GentraceSpanProcessor(),
     new SimpleSpanProcessor(traceExporter),
+
     new SimpleSpanProcessor(new ConsoleSpanExporter()),
   ];
 
