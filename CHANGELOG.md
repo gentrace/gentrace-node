@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.0 (2025-05-16)
+
+Full Changelog: [v0.1.0-alpha.8...v0.1.0](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.8...v0.1.0)
+
+### Features
+
+* **api:** Change to API key from Bearer Token ([fea116e](https://github.com/gentrace/gentrace-node/commit/fea116e7d782ed4b8113a9ab5d7750a5ff80d8a7))
+
+
+### Bug Fixes
+
+* **client:** always overwrite when merging headers ([e599191](https://github.com/gentrace/gentrace-node/commit/e599191cedc71307bd3b7319025cbffac7cbcf17))
+
+
+### Chores
+
+* **package:** remove engines ([33c6d59](https://github.com/gentrace/gentrace-node/commit/33c6d59f64292dd88cd435cc9e746b2400f2cae4))
+
 ## 0.1.0-alpha.8 (2025-05-15)
 
 Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)

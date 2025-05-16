@@ -61,7 +61,7 @@ export interface ClientOptions {
   /**
    * Enter Gentrace API key (Format: Authorization: Bearer <API key>)
    */
-  bearerToken?: string | undefined;
+  apiKey?: string | undefined;
 
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
@@ -134,7 +134,7 @@ export interface ClientOptions {
  * API Client for interfacing with the Gentrace API.
  */
 export class Gentrace {
-  bearerToken: string;
+  apiKey: string;
 
   baseURL: string;
   maxRetries: number;
@@ -151,7 +151,7 @@ export class Gentrace {
   /**
    * API Client for interfacing with the Gentrace API.
    *
-   * @param {string | undefined} [opts.bearerToken=process.env['GENTRACE_API_KEY'] ?? undefined]
+   * @param {string | undefined} [opts.apiKey=process.env['GENTRACE_API_KEY'] ?? undefined]
    * @param {string} [opts.baseURL=process.env['GENTRACE_BASE_URL'] ?? https://gentrace.ai/api] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
@@ -162,17 +162,17 @@ export class Gentrace {
    */
   constructor({
     baseURL = readEnv('GENTRACE_BASE_URL'),
-    bearerToken = readEnv('GENTRACE_API_KEY'),
+    apiKey = readEnv('GENTRACE_API_KEY'),
     ...opts
   }: ClientOptions = {}) {
-    if (bearerToken === undefined) {
+    if (apiKey === undefined) {
       throw new Errors.GentraceError(
-        "The GENTRACE_API_KEY environment variable is missing or empty; either provide it, or instantiate the Gentrace client with an bearerToken option, like new Gentrace({ bearerToken: 'My Bearer Token' }).",
+        "The GENTRACE_API_KEY environment variable is missing or empty; either provide it, or instantiate the Gentrace client with an apiKey option, like new Gentrace({ apiKey: 'My API Key' }).",
       );
     }
 
     const options: ClientOptions = {
-      bearerToken,
+      apiKey,
       ...opts,
       baseURL: baseURL || `https://gentrace.ai/api`,
     };
@@ -194,7 +194,7 @@ export class Gentrace {
 
     this._options = options;
 
-    this.bearerToken = bearerToken;
+    this.apiKey = apiKey;
   }
 
   /**
@@ -209,7 +209,7 @@ export class Gentrace {
       logger: this.logger,
       logLevel: this.logLevel,
       fetchOptions: this.fetchOptions,
-      bearerToken: this.bearerToken,
+      apiKey: this.apiKey,
       ...options,
     });
   }
@@ -223,7 +223,7 @@ export class Gentrace {
   }
 
   protected authHeaders(opts: FinalRequestOptions): NullableHeaders | undefined {
-    return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
+    return buildHeaders([{ Authorization: `Bearer ${this.apiKey}` }]);
   }
 
   protected stringifyQuery(query: Record<string, unknown>): string {

@@ -45,7 +45,7 @@ describe('init', () => {
     // Import init *after* mocks are fully configured by jest.mock
     const { init } = await import('../../src/lib/init');
 
-    const options: ClientOptions = { bearerToken: 'test-key', baseURL: 'test-url' };
+    const options: ClientOptions = { apiKey: 'test-key', baseURL: 'test-url' };
 
     init(options);
 
@@ -63,7 +63,7 @@ describe('init', () => {
 
     expect(mock_setClient).toHaveBeenCalledTimes(1);
 
-    const options: ClientOptions = { bearerToken: 'non-global-key' };
+    const options: ClientOptions = { apiKey: 'non-global-key' };
     init(options);
 
     expect(mock_setClient).toHaveBeenCalledTimes(2);

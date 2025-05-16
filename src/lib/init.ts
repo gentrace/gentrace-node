@@ -13,7 +13,7 @@ import { _getClient, _setClient } from './client-instance';
  * import { init } from 'gentrace';
  *
  * init({
- *   bearerToken: 'your-gentrace-api-key',
+ *   apiKey: 'your-gentrace-api-key',
  *   baseURL: 'https://gentrace.ai/api' // optional
  * });
  * ```
