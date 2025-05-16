@@ -95,22 +95,22 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledTimes(3);
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
-      spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
       inputs: { input: 1 },
+      spanAttributes: {},
       schema: InputSchema,
       callback: mockInteraction,
     });
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 2',
-      spanAttributes: { 'gentrace.test_case_name': 'Test Case 2' },
       inputs: { input: 2 },
+      spanAttributes: {},
       schema: InputSchema,
       callback: mockInteraction,
     });
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 3',
-      spanAttributes: { 'gentrace.test_case_name': 'Test Case 3' },
       inputs: { input: 3 },
+      spanAttributes: {},
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -128,8 +128,8 @@ describe('testDataset', () => {
 
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Case 1',
-      spanAttributes: { 'gentrace.test_case_name': 'Case 1' },
       inputs: { input: 10 },
+      spanAttributes: {},
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -152,8 +152,8 @@ describe('testDataset', () => {
 
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 4',
-      spanAttributes: { 'gentrace.test_case_name': 'Test Case 4' },
       inputs: { input: 40 },
+      spanAttributes: {},
       schema: InputSchema,
       callback: mockInteraction,
     });
@@ -264,8 +264,8 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledTimes(1);
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
-      spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
       inputs: { input: 5 },
+      spanAttributes: {},
       schema: CustomSchema, // Check that the custom schema object is passed
       callback: customInteraction,
     });
@@ -299,8 +299,8 @@ describe('testDataset', () => {
     expect(mockRunTest).toHaveBeenCalledTimes(1);
     expect(mockRunTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
-      spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
       inputs: { input: 99 },
+      spanAttributes: {},
       schema: FailingSchema, // The failing schema is passed
       callback: failingInteraction,
     });
