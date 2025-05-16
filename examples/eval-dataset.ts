@@ -7,7 +7,7 @@ import { readEnv } from 'gentrace/internal/utils';
 import { experiment } from 'gentrace/lib/experiment';
 import { init, testCases } from 'gentrace/lib/init';
 import { interaction } from 'gentrace/lib/interaction';
-import { testDataset } from 'gentrace/lib/test-dataset';
+import { evalDataset } from 'gentrace/lib/eval-dataset';
 import { z } from 'zod';
 import { queryAi } from './functions/query';
 
@@ -62,7 +62,7 @@ const InputSchema = z.object({
 const queryAiInteraction = interaction(GENTRACE_PIPELINE_ID, queryAi);
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
-  await testDataset({
+  await evalDataset({
     data: async () => {
       const testCasesList = await testCases.list({ datasetId: GENTRACE_DATASET_ID });
       return testCasesList.data;

@@ -1,4 +1,4 @@
-import { TestInput } from '../../src/lib/test-dataset';
+import { TestInput } from '../../src/lib/eval-dataset';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { z } from 'zod';
 
@@ -12,11 +12,11 @@ const mockGentraceClient: {
   },
 };
 
-describe('testDataset', () => {
+describe('evalDataset', () => {
   let mockGetCurrentExperimentContext: jest.Mock;
-  let mockRunTest: jest.Mock;
+  let mockEvalTest: jest.Mock;
   let mockGetClient: jest.Mock;
-  let testDatasetLib: typeof import('../../src/lib/test-dataset');
+  let evalDatasetLib: typeof import('../../src/lib/eval-dataset');
 
   beforeEach((done) => {
     jest.isolateModules(() => {
@@ -26,25 +26,25 @@ describe('testDataset', () => {
         }),
         getCurrentExperimentContext: jest.fn(),
       }));
-      jest.doMock('../../src/lib/test-single', () => ({
-        _runTest: jest.fn(),
+      jest.doMock('../../src/lib/eval-once', () => ({
+        _runEval: jest.fn(),
       }));
       jest.doMock('../../src/lib/client-instance', () => ({
         _getClient: jest.fn(),
       }));
 
-      const testModule = require('../../src/lib/test-single');
+      const evalOnceModule = require('../../src/lib/eval-once');
       const experimentModule = require('../../src/lib/experiment');
       const clientInstanceModule = require('../../src/lib/client-instance');
-      testDatasetLib = require('../../src/lib/test-dataset');
+      evalDatasetLib = require('../../src/lib/eval-dataset');
 
       jest.clearAllMocks();
 
-      mockRunTest = testModule._runTest as jest.Mock;
+      mockEvalTest = evalOnceModule._runEval as jest.Mock;
       mockGetCurrentExperimentContext = experimentModule.getCurrentExperimentContext as jest.Mock;
       mockGetClient = clientInstanceModule._getClient as jest.Mock;
 
-      mockRunTest.mockImplementation(async () => {
+      mockEvalTest.mockImplementation(async () => {
         return undefined;
       });
 
@@ -76,38 +76,38 @@ describe('testDataset', () => {
   it('should throw error if called outside experiment context', async () => {
     mockGetCurrentExperimentContext.mockReturnValue(undefined);
     await expect(
-      testDatasetLib.testDataset({
+      evalDatasetLib.evalDataset({
         data: () => datasetSimple,
         interaction: mockInteraction,
         schema: InputSchema,
       }),
-    ).rejects.toThrow('testDataset must be called within the context of an experiment block.');
+    ).rejects.toThrow('evalDataset must be called within the context of an experiment block.');
   });
 
-  it('should run tests for each item in a simple dataset using _runTest', async () => {
+  it('should run tests for each item in a simple dataset using _runEval', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-1', pipelineId: 'pipe-1' });
-    await testDatasetLib.testDataset({
+    await evalDatasetLib.evalDataset({
       data: () => datasetSimple,
       interaction: mockInteraction,
       schema: InputSchema,
     });
 
-    expect(mockRunTest).toHaveBeenCalledTimes(3);
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledTimes(3);
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
       inputs: { input: 1 },
       schema: InputSchema,
       callback: mockInteraction,
     });
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 2',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 2' },
       inputs: { input: 2 },
       schema: InputSchema,
       callback: mockInteraction,
     });
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 3',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 3' },
       inputs: { input: 3 },
@@ -116,17 +116,17 @@ describe('testDataset', () => {
     });
   });
 
-  it('should run tests for each item in a structured dataset using _runTest', async () => {
+  it('should run tests for each item in a structured dataset using _runEval', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-2', pipelineId: 'pipe-2' });
-    await testDatasetLib.testDataset({
+    await evalDatasetLib.evalDataset({
       data: () => datasetStructured,
       interaction: mockInteraction,
       schema: InputSchema,
     });
 
-    expect(mockRunTest).toHaveBeenCalledTimes(4);
+    expect(mockEvalTest).toHaveBeenCalledTimes(4);
 
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Case 1' },
       inputs: { input: 10 },
@@ -134,7 +134,7 @@ describe('testDataset', () => {
       callback: mockInteraction,
     });
 
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case (ID: case-id-20)',
       spanAttributes: { 'gentrace.test_case_id': 'case-id-20' },
       inputs: { input: 20 },
@@ -142,7 +142,7 @@ describe('testDataset', () => {
       callback: mockInteraction,
     });
 
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Case 30',
       spanAttributes: { 'gentrace.test_case_id': 'case-id-30' },
       inputs: { input: 30 },
@@ -150,7 +150,7 @@ describe('testDataset', () => {
       callback: mockInteraction,
     });
 
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 4',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 4' },
       inputs: { input: 40 },
@@ -165,12 +165,12 @@ describe('testDataset', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
       return datasetSimple;
     };
-    await testDatasetLib.testDataset({
+    await evalDatasetLib.evalDataset({
       data: asyncDataset,
       interaction: mockInteraction,
       schema: InputSchema,
     });
-    expect(mockRunTest).toHaveBeenCalledTimes(3);
+    expect(mockEvalTest).toHaveBeenCalledTimes(3);
   });
 
   it('should throw error if dataset function fails', async () => {
@@ -180,7 +180,7 @@ describe('testDataset', () => {
       throw error;
     };
     await expect(
-      testDatasetLib.testDataset({
+      evalDatasetLib.evalDataset({
         data: failingDataset,
         interaction: mockInteraction,
         schema: InputSchema,
@@ -192,7 +192,7 @@ describe('testDataset', () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-6', pipelineId: 'pipe-6' });
     const nonArrayDataset = () => ({ not: 'an array' }) as any;
     await expect(
-      testDatasetLib.testDataset({
+      evalDatasetLib.evalDataset({
         data: nonArrayDataset,
         interaction: mockInteraction,
         schema: InputSchema,
@@ -203,7 +203,7 @@ describe('testDataset', () => {
   it('should warn and skip null/undefined items in dataset', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-7', pipelineId: 'pipe-7' });
     const datasetWithNull = [datasetSimple[0], null, datasetSimple[1], undefined];
-    await testDatasetLib.testDataset({
+    await evalDatasetLib.evalDataset({
       data: () => datasetWithNull as any[],
       interaction: mockInteraction,
       schema: InputSchema,
@@ -216,18 +216,18 @@ describe('testDataset', () => {
     expect((mockGetClient() as typeof mockGentraceClient).logger.warn).toHaveBeenCalledWith(
       'Skipping undefined or null test case at index 3',
     );
-    expect(mockRunTest).toHaveBeenCalledTimes(2);
+    expect(mockEvalTest).toHaveBeenCalledTimes(2);
   });
 
   it('should correctly handle dataset function returning a promise', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-9', pipelineId: 'pipe-9' });
     const promiseDataset = () => Promise.resolve(datasetSimple);
-    await testDatasetLib.testDataset({
+    await evalDatasetLib.evalDataset({
       data: promiseDataset,
       interaction: mockInteraction,
       schema: InputSchema,
     });
-    expect(mockRunTest).toHaveBeenCalledTimes(3);
+    expect(mockEvalTest).toHaveBeenCalledTimes(3);
   });
 
   // --- Tests for Custom Schemas ---
@@ -255,14 +255,14 @@ describe('testDataset', () => {
 
     const customDataset: TestInput<{ input: number }>[] = [{ inputs: { input: 5 } }];
 
-    await testDatasetLib.testDataset({
+    await evalDatasetLib.evalDataset({
       data: () => customDataset,
       interaction: customInteraction,
       schema: CustomSchema,
     });
 
-    expect(mockRunTest).toHaveBeenCalledTimes(1);
-    expect(mockRunTest).toHaveBeenCalledWith({
+    expect(mockEvalTest).toHaveBeenCalledTimes(1);
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
       inputs: { input: 5 },
@@ -271,7 +271,7 @@ describe('testDataset', () => {
     });
   });
 
-  it('should not throw if a custom schema parse fails (error handled by _runTest)', async () => {
+  it('should not throw if a custom schema parse fails (error handled by _runEval)', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-fail', pipelineId: 'pipe-fail' });
 
     const errorMsg = 'Intentionally failing parse';
@@ -281,23 +281,23 @@ describe('testDataset', () => {
       },
     };
 
-    const failingInteraction = jest.fn(); // Won't be called if parse fails within _runTest
+    const failingInteraction = jest.fn(); // Won't be called if parse fails within _runEval
 
     const failingDataset: TestInput<{ input: number }>[] = [{ inputs: { input: 99 } }];
 
-    // We expect testDataset to complete without throwing here, because the error
-    // occurs inside the callback passed to _runTest, which catches it.
+    // We expect evalDataset to complete without throwing here, because the error
+    // occurs inside the callback passed to _runEval, which catches it.
     await expect(
-      testDatasetLib.testDataset({
+      evalDatasetLib.evalDataset({
         data: () => failingDataset,
         interaction: failingInteraction,
         schema: FailingSchema,
       }),
     ).resolves.toBeUndefined(); // Check that the function itself doesn't throw
 
-    // Verify _runTest was still called (it handles the error internally)
-    expect(mockRunTest).toHaveBeenCalledTimes(1);
-    expect(mockRunTest).toHaveBeenCalledWith({
+    // Verify _runEval was still called (it handles the error internally)
+    expect(mockEvalTest).toHaveBeenCalledTimes(1);
+    expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
       spanAttributes: { 'gentrace.test_case_name': 'Test Case 1' },
       inputs: { input: 99 },

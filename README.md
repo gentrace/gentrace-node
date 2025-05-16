@@ -21,10 +21,10 @@ The Gentrace SDK provides several key functions to help you instrument and evalu
 - **`interaction`**: Wraps your core AI logic (like calls to OpenAI, Anthropic, etc.) to capture traces and metadata. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`experiment`**: Defines a testing context for grouping related tests. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`test`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
-- **`testDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
+- **`evalDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
 
 > [!NOTE]
-> The instrumentation features (`interaction`, `test`, `testDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
+> The instrumentation features (`interaction`, `test`, `evalDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
 
 ## Basic Usage
 
@@ -115,15 +115,15 @@ GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-n
 
 Gentrace provides powerful tools for testing your AI applications.
 
-### Running Single Tests (`test`)
+### Running Single Tests (`evalOnce`)
 
-Use `experiment` to group tests and `test` to define individual test cases.
+Use `experiment` to group tests and `evalOnce` to define individual test cases.
 
 **`src/tests/simple.ts`**:
 
 <!-- prettier-ignore -->
 ```typescript
-import { init, experiment, test } from 'gentrace';
+import { init, experiment, evalOnce } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
 
 init();
@@ -133,7 +133,7 @@ const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
-  test('simple-query-test', async () => {
+  evalOnce('simple-query-test', async () => {
     const capital = await instrumentedQueryAi({ query: 'What is the capital of France?' });
     // You can add assertions here if needed, exceptions will get captured and recorded on the
     // test span.
@@ -141,7 +141,7 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
     return result; // Return value is captured in the span
   });
 
-  test('another-query-test', async () => {
+  evalOnce('another-query-test', async () => {
     const result = await instrumentedQueryAi({ query: 'Summarize the plot of Hamlet.' });
     console.log('Test Result:', result);
     return result;
@@ -160,7 +160,7 @@ Results will be available in the experiment section corresponding to that partic
 > [!WARNING]  
 > This testing example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section, since we're using an instrumented function call that uses the OTEL SDK.
 
-### Testing with Datasets (`testDataset`)
+### Testing with Datasets (`evalDataset`)
 
 You can run your instrumented functions against datasets defined in Gentrace. This is useful for regression testing and evaluating performance across many examples.
 
@@ -168,7 +168,7 @@ You can run your instrumented functions against datasets defined in Gentrace. Th
 
 <!-- prettier-ignore -->
 ```typescript
-import { init, experiment, testDataset, testCases } from 'gentrace';
+import { init, experiment, evalDataset, testCases } from 'gentrace';
 import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented function
 import { z } from 'zod'; // For defining input schema
 
@@ -185,7 +185,7 @@ const InputSchema = z.object({
 });
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
-  await testDataset({
+  await evalDataset({
     // Fetch test cases from your Gentrace dataset
     data: async () => {
       const testCaseList = await testCases.list({ datasetId: GENTRACE_DATASET_ID });
@@ -200,7 +200,7 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
 ```
 
 > [!NOTE]  
-> While `zod` is used in the example, any schema validation library that conforms to the [Standard Schema](https://github.com/standard-schema/standard-schema) interface (like `zod`, `valibot`, `arktype`, etc.) can be used for the `schema` parameter. This interface requires the library to expose a `parse()` function, which `testDataset` uses internally.
+> While `zod` is used in the example, any schema validation library that conforms to the [Standard Schema](https://github.com/standard-schema/standard-schema) interface (like `zod`, `valibot`, `arktype`, etc.) can be used for the `schema` parameter. This interface requires the library to expose a `parse()` function, which `evalDataset` uses internally.
 
 Run the dataset test:
 
@@ -212,7 +212,7 @@ Gentrace will execute `instrumentedQueryAi` for each test case in your dataset a
 
 ## OpenTelemetry Integration
 
-OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation features (`interaction`, `test`, `testDataset`) to function correctly. You must set up the OpenTelemetry SDK to capture and export traces to Gentrace.
+OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation features (`interaction`, `test`, `evalDataset`) to function correctly. You must set up the OpenTelemetry SDK to capture and export traces to Gentrace.
 
 > [!NOTE]  
 > Modern package managers (like `pnpm` 8+, `yarn` 2+, and `npm` 7+) should automatically install the OTEL dependencies when you install `gentrace`. If the packages weren't already installed, you might need to install them manually.
@@ -293,7 +293,7 @@ The `GentraceSampler` filters spans based on the presence of a `gentrace.sample`
 
 ```typescript
 // Import the GentraceSampler
-import { GentraceSampler } from "gentrace";
+import { GentraceSampler } from 'gentrace';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 
@@ -418,7 +418,7 @@ In this model, your application might send a broader set of traces (or all trace
                           └─────────────────────────────┘
 ```
 
-In both scenarios, the Gentrace SDK helper functions (like `interaction()` and `test()`) typically handle setting the `gentrace.sample` value in the OpenTelemetry Baggage for the operations they trace.
+In both scenarios, the Gentrace SDK helper functions (like `interaction()` and `evalOnce()`) typically handle setting the `gentrace.sample` value in the OpenTelemetry Baggage for the operations they trace.
 
 See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry.
 
@@ -438,4 +438,3 @@ If you are interested in other runtime environments, please open an issue on Git
 ## Support
 
 For questions or support, please reach out to us at [support@gentrace.ai](mailto:support@gentrace.ai).
-
