@@ -37,7 +37,7 @@ First, initialize the SDK with your Gentrace API key. You typically do this once
 import { init } from 'gentrace';
 
 init({
-  bearerToken: process.env.GENTRACE_API_KEY,
+  apiKey: process.env.GENTRACE_API_KEY,
   // Optional: Specify base URL if using self-hosted or enterprise Gentrace
   // The format should be: http(s)://<hostname>/api
   // baseURL: process.env.GENTRACE_BASE_URL,
