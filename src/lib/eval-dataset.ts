@@ -1,15 +1,15 @@
 import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
-import { _runTest } from './test-single';
+import { _runEval } from './eval-once';
 
 /**
- * Runs a series of tests against a dataset using a provided interaction function.
+ * Runs a series of evals  against a dataset using a provided interaction function.
  * Must be called within the context of `experiment()`.
  *
  * @template TSchema Optional schema object with a `.parse` method.
  * @template TInput The type of the single object argument the interaction function accepts (inferred from TSchema if provided).
  * @template Fn The type of the interaction function being tested.
- * @param {TestDatasetOptions<TSchema, TInput, Fn>} options An object containing the interaction function, dataset provider, and optional schema.
+ * @param {EvalDatasetOptions<TSchema, TInput, Fn>} options An object containing the interaction function, dataset provider, and optional schema.
  * @returns {Promise<void>} A promise that resolves when all tests have been run.
  * @throws If called outside of an `experiment` context or if dataset retrieval fails.
  *
@@ -21,7 +21,7 @@ import { _runTest } from './test-single';
  * });
  *
  * experiment('your-pipeline-id', async () => {
- *   await testDataset({
+ *   await evalDataset({
  *     data: async () => {
  *       const testCasesList = await testCases.list({ datasetId: 'your-dataset-id' });
  *       return testCasesList.data;
@@ -33,16 +33,16 @@ import { _runTest } from './test-single';
  *     }
  *   });
  */
-export async function testDataset<
+export async function evalDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
   TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
->(options: TestDatasetOptions<TSchema>): Promise<void> {
+>(options: EvalDatasetOptions<TSchema>): Promise<void> {
   const { interaction, data, schema } = options;
 
   const client = _getClient();
   const experimentContext = getCurrentExperimentContext();
   if (!experimentContext) {
-    throw new Error('testDataset must be called within the context of an experiment block.');
+    throw new Error('evalDataset must be called within the context of an experiment block.');
   }
 
   let rawTestInputs: TestInput<Record<string, any>>[];
@@ -91,7 +91,7 @@ export async function testDataset<
     }
 
     promises.push(
-      _runTest<any, TInput>({
+      _runEval<any, TInput>({
         spanName: finalName,
         spanAttributes,
         inputs,
@@ -130,13 +130,13 @@ export type TestInput<TInput extends Record<string, any>> = {
 };
 
 /**
- * Options for configuring a dataset test run.
+ * Options for configuring a dataset eval run.
  * The interaction function's argument type is constrained by the presence and type of the schema.
  *
  * @template TSchema Optional schema object with a `.parse` method.
  * @template TInput The type derived from the schema, or Record<string, any> if no schema.
  */
-export type TestDatasetOptions<TSchema extends ParseableSchema<any> | undefined> = {
+export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined> = {
   data: () => Promise<TestInput<Record<string, any>>[]> | TestInput<Record<string, any>>[];
   schema?: TSchema;
   /**

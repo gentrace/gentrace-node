@@ -34,11 +34,11 @@ const mockGentraceClient = {
   },
 };
 
-describe('test() function', () => {
+describe('evalOnce() function', () => {
   const mockExperimentContext = { experimentId: 'exp-test-123', pipelineId: 'pipe-test-456' };
 
   let api: typeof import('@opentelemetry/api');
-  let testLib: typeof import('../../src/lib/test-single');
+  let evalOnceLib: typeof import('../../src/lib/eval-once');
   let mockedStartActiveSpan: jest.Mock;
   let getStoreSpy: jest.SpiedFunction<any>;
 
@@ -62,7 +62,7 @@ describe('test() function', () => {
       }));
 
       api = require('@opentelemetry/api');
-      testLib = require('../../src/lib/test-single');
+      evalOnceLib = require('../../src/lib/eval-once');
       const { experimentContextStorage } = require('gentrace/lib/experiment');
 
       jest.clearAllMocks();
@@ -118,7 +118,7 @@ describe('test() function', () => {
     const testName = 'test outside context';
     const callback = jest.fn(async () => {});
 
-    await expect(testLib.test(testName, callback)).rejects.toThrow(
+    await expect(evalOnceLib.evalOnce(testName, callback)).rejects.toThrow(
       `${testName} must be called within the context of an experiment() function.`,
     );
 
@@ -130,7 +130,7 @@ describe('test() function', () => {
     const testName = 'My Test Name';
     const callback = jest.fn(async () => 'result');
 
-    await testLib.test(testName, callback);
+    await evalOnceLib.evalOnce(testName, callback);
 
     expect(mockedStartActiveSpan).toHaveBeenCalledTimes(1);
     expect(mockedStartActiveSpan).toHaveBeenCalledWith(testName, expect.any(Function));
@@ -148,7 +148,7 @@ describe('test() function', () => {
     const expectedResult = 'async success';
     const callback = jest.fn(async () => expectedResult);
 
-    const result = await testLib.test(testName, callback);
+    const result = await evalOnceLib.evalOnce(testName, callback);
 
     expect(result).toBe(expectedResult);
     expect(callback).toHaveBeenCalledTimes(1);
@@ -168,7 +168,7 @@ describe('test() function', () => {
       throw error;
     });
 
-    const result = await testLib.test(testName, callback);
+    const result = await evalOnceLib.evalOnce(testName, callback);
     expect(result).toBeNull();
 
     expect(callback).toHaveBeenCalledTimes(1);
@@ -186,7 +186,7 @@ describe('test() function', () => {
     const expectedResult = 'sync success';
     const callback = jest.fn(() => expectedResult);
 
-    const result = await testLib.test(testName, callback);
+    const result = await evalOnceLib.evalOnce(testName, callback);
 
     expect(result).toBe(expectedResult);
     expect(callback).toHaveBeenCalledTimes(1);
@@ -205,7 +205,7 @@ describe('test() function', () => {
       throw error;
     });
 
-    await testLib.test(testName, callback);
+    await evalOnceLib.evalOnce(testName, callback);
 
     expect(callback).toHaveBeenCalledTimes(1);
     expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
