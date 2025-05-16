@@ -7,7 +7,7 @@ import { readEnv } from '../internal/utils';
  * This instance is used throughout the SDK for making API calls to Gentrace.
  */
 let _client = new Gentrace({
-  bearerToken: readEnv('GENTRACE_API_KEY') ?? 'placeholder',
+  apiKey: readEnv('GENTRACE_API_KEY') ?? 'placeholder',
 });
 
 export function _getClient() {
