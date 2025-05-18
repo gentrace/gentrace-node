@@ -1,5 +1,6 @@
 import { TestInput } from '../../src/lib/eval-dataset';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { ATTR_GENTRACE_TEST_CASE_ID } from 'gentrace/lib/otel/constants';
 import { z } from 'zod';
 
 const mockGentraceClient: {
@@ -136,7 +137,7 @@ describe('evalDataset', () => {
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case (ID: case-id-20)',
-      spanAttributes: { 'gentrace.test_case_id': 'case-id-20' },
+      spanAttributes: { [ATTR_GENTRACE_TEST_CASE_ID]: 'case-id-20' },
       inputs: { input: 20 },
       schema: InputSchema,
       callback: mockInteraction,
@@ -144,7 +145,7 @@ describe('evalDataset', () => {
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Case 30',
-      spanAttributes: { 'gentrace.test_case_id': 'case-id-30' },
+      spanAttributes: { [ATTR_GENTRACE_TEST_CASE_ID]: 'case-id-30' },
       inputs: { input: 30 },
       schema: InputSchema,
       callback: mockInteraction,

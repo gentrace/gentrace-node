@@ -1,7 +1,7 @@
 import { Context, propagation } from '@opentelemetry/api';
 import { Sampler, SamplingDecision, SamplingResult } from '@opentelemetry/sdk-trace-base';
 import { Attributes, Link, SpanKind } from '@opentelemetry/api';
-import { GENTRACE_SAMPLE_KEY } from './constants';
+import { ATTR_GENTRACE_SAMPLE } from './constants';
 
 /**
  * A sampler that samples spans based on the presence of a 'gentrace.sample' baggage entry
@@ -29,11 +29,11 @@ export class GentraceSampler implements Sampler {
     links: Link[],
   ): SamplingResult {
     const currentMomentBaggage = propagation.getBaggage(context);
-    const sampleEntry = currentMomentBaggage?.getEntry(GENTRACE_SAMPLE_KEY);
+    const sampleEntry = currentMomentBaggage?.getEntry(ATTR_GENTRACE_SAMPLE);
 
     if (
       (currentMomentBaggage && sampleEntry?.value === 'true') ||
-      attributes[GENTRACE_SAMPLE_KEY] === 'true'
+      attributes[ATTR_GENTRACE_SAMPLE] === 'true'
     ) {
       return { decision: SamplingDecision.RECORD_AND_SAMPLED };
     } else {

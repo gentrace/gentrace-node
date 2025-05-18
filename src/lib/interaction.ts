@@ -1,5 +1,7 @@
 import { context, propagation } from '@opentelemetry/api';
 import { ANONYMOUS_SPAN_NAME } from './constants';
+
+import { ATTR_GENTRACE_PIPELINE_ID, ATTR_GENTRACE_SAMPLE } from './otel/constants';
 import { TracedOptions, traced } from './traced';
 
 /**
@@ -19,7 +21,7 @@ export function interaction<F extends (...args: any[]) => any>(
   options: TracedOptions = {
     name: fn.name || ANONYMOUS_SPAN_NAME,
     attributes: {
-      'gentrace.pipeline_id': pipelineId,
+      [ATTR_GENTRACE_PIPELINE_ID]: pipelineId,
     },
   },
 ): F {
@@ -30,7 +32,7 @@ export function interaction<F extends (...args: any[]) => any>(
     name: interactionName,
     attributes: {
       ...options.attributes,
-      'gentrace.pipeline_id': pipelineId,
+      [ATTR_GENTRACE_PIPELINE_ID]: pipelineId,
     },
   });
 
@@ -38,7 +40,7 @@ export function interaction<F extends (...args: any[]) => any>(
     const currentContext = context.active();
     const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
 
-    const newBaggage = currentBaggage.setEntry('gentrace.sample', {
+    const newBaggage = currentBaggage.setEntry(ATTR_GENTRACE_SAMPLE, {
       value: 'true',
     });
     const newContext = propagation.setBaggage(currentContext, newBaggage);

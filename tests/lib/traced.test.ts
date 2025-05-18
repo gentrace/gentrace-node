@@ -2,6 +2,7 @@ import { SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { ANONYMOUS_SPAN_NAME } from '../../src/lib/constants';
 import { traced } from '../../src/lib/traced';
+import { ATTR_GENTRACE_FN_ARGS, ATTR_GENTRACE_FN_OUTPUT } from 'gentrace/lib/otel/constants';
 
 // Mock OpenTelemetry API
 const mockSpan = {
@@ -76,8 +77,8 @@ describe('traced decorator', () => {
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
     expect(mockTracer.startActiveSpan).toHaveBeenCalledWith('syncAdd', expect.any(Function));
     expect(mockSpan.addEvent).toHaveBeenCalledTimes(2);
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([2, 3]) });
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.output', { output: stringify(5) });
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([2, 3]) });
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, { output: stringify(5) });
     expect(mockSpan.recordException).not.toHaveBeenCalled();
     expect(mockSpan.setStatus).not.toHaveBeenCalledWith(
       expect.objectContaining({ code: SpanStatusCode.ERROR }),
@@ -97,8 +98,8 @@ describe('traced decorator', () => {
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
     expect(mockTracer.startActiveSpan).toHaveBeenCalledWith('asyncMultiply', expect.any(Function));
     expect(mockSpan.addEvent).toHaveBeenCalledTimes(2);
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([4, 5]) });
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.output', { output: stringify(20) });
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([4, 5]) });
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, { output: stringify(20) });
     expect(mockSpan.recordException).not.toHaveBeenCalled();
     expect(mockSpan.setStatus).not.toHaveBeenCalledWith(
       expect.objectContaining({ code: SpanStatusCode.ERROR }),
@@ -118,7 +119,7 @@ describe('traced decorator', () => {
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
     expect(mockTracer.startActiveSpan).toHaveBeenCalledWith('syncError', expect.any(Function));
     expect(mockSpan.addEvent).toHaveBeenCalledTimes(1); // Only args event
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([]) });
     expect(mockSpan.recordException).toHaveBeenCalledTimes(1);
     expect(mockSpan.recordException).toHaveBeenCalledWith(expect.any(Error));
     expect(mockSpan.setStatus).toHaveBeenCalledTimes(1);
@@ -139,7 +140,7 @@ describe('traced decorator', () => {
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
     expect(mockTracer.startActiveSpan).toHaveBeenCalledWith('asyncReject', expect.any(Function));
     expect(mockSpan.addEvent).toHaveBeenCalledTimes(1); // Only args event
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([]) });
     expect(mockSpan.recordException).toHaveBeenCalledTimes(1);
     expect(mockSpan.recordException).toHaveBeenCalledWith(expect.any(Error));
     expect(mockSpan.setStatus).toHaveBeenCalledTimes(1);
@@ -201,8 +202,10 @@ describe('traced decorator', () => {
     // Function name might be empty string or specific depending on env, check default
     expect(mockTracer.startActiveSpan).toHaveBeenCalledWith(ANONYMOUS_SPAN_NAME, expect.any(Function));
     expect(mockSpan.addEvent).toHaveBeenCalledTimes(2);
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([argObj, argArr]) });
-    expect(mockSpan.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, {
+      args: stringify([argObj, argArr]),
+    });
+    expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, {
       output: stringify(expectedResult),
     });
     expect(mockSpan.end).toHaveBeenCalledTimes(1);
