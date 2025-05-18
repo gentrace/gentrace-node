@@ -17,13 +17,13 @@ yarn add gentrace
 The Gentrace SDK provides several key functions to help you instrument and evaluate your AI pipelines:
 
 - **`init`**: Initializes the Gentrace SDK with your API key and other configuration.
-- **`interaction`**: Wraps your core AI logic (like calls to OpenAI, Anthropic, etc.) to capture traces and metadata. ([Requires OpenTelemetry](#opentelemetry-integration))
+- **`interaction`** / **`traced`**: Wraps your core AI logic (like calls to OpenAI, Anthropic, etc.) to capture traces and metadata. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`experiment`**: Defines a testing context for grouping related tests. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`test`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`evalDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
 
 > [!NOTE]
-> The instrumentation features (`interaction`, `test`, `evalDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
+> The instrumentation features (`interaction`, `traced`, `test`, `evalDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
 
 ## Basic Usage
 
@@ -108,6 +108,52 @@ run();
 ```sh
 GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/run.ts
 ```
+
+### Lower-Level Tracing (`traced`)
+
+Use the `traced` decorator to wrap any given function with OpenTelemetry tracing, creating a span for its execution. This is useful for instrumenting helper functions or specific blocks of code within a larger `interaction`.
+
+<!-- prettier-ignore -->
+```typescript
+import { traced, interaction } from 'gentrace';
+import OpenAI from 'openai';
+import { dbCall } from './db';
+
+const openai = new OpenAI();
+
+const summarizeUser = traced(async (userInfo: string) => {
+  const res = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [{ role: 'user', content: `Summarize the following user info: ${userInfo}` }]
+  });
+  return res.choices[0]?.message?.content || '';
+}, { name: 'OpenAI Call' });
+
+const tracedGetUserInfo = traced(
+  async (userId: string) => {
+    return dbCall(userId);
+  },
+  { name: 'Get User Info DB Call' }
+);
+
+const instrumentedMainTask = interaction(
+  '<pipeline UUID>',
+  async ({ input }: { input: string }) => {
+    const userInfo = await tracedGetUserInfo(input);
+    return summarizeUser(userInfo);
+  },
+  { name: 'Main Task' }
+);
+
+async function run() {
+  const result = await instrumentedMainTask({ input: "test data" });
+  console.log(result);
+}
+
+run();
+```
+
+The `traced` function requires an explicit `name` option for the span it creates. You can also provide additional `attributes` to be added to the span. Like `interaction`, this also requires OpenTelemetry to be set up.
 
 > [!WARNING]  
 > This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. The `interaction` function requires this setup to capture and send traces.

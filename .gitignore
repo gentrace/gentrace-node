@@ -12,3 +12,4 @@ dist-deno
 INSTRUCTIONS.md
 .cursor
 .env
+.venv
