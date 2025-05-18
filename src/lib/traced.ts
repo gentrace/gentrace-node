@@ -1,6 +1,5 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import { ANONYMOUS_SPAN_NAME } from './constants';
 import { ATTR_GENTRACE_FN_ARGS, ATTR_GENTRACE_FN_OUTPUT } from './otel/constants';
 
 /**
@@ -8,8 +7,9 @@ import { ATTR_GENTRACE_FN_ARGS, ATTR_GENTRACE_FN_OUTPUT } from './otel/constants
  */
 export type TracedOptions = {
   /**
-   * Optional custom name for the span.
-   * Defaults to the function's name or 'anonymousFunction'.
+   * Required name for the span. While function names could be used, build tools may
+   * transpile and change function names, making spans harder to track. Therefore
+   * we require an explicit name.
    */
   name: string;
 
@@ -28,13 +28,7 @@ export type TracedOptions = {
  * @param {TracedOptions} [options] - Optional configuration for tracing.
  * @returns A new function that has the same parameters and return type as fn.
  */
-export function traced<F extends (...args: any[]) => any>(
-  fn: F,
-  options: TracedOptions = {
-    name: fn.name || ANONYMOUS_SPAN_NAME,
-    attributes: {},
-  },
-): F {
+export function traced<F extends (...args: any[]) => any>(fn: F, options: TracedOptions): F {
   const tracer = trace.getTracer('gentrace');
   const fnName = fn.name;
   const spanName = options.name;

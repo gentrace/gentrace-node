@@ -51,7 +51,9 @@ process.on('SIGTERM', async () => {
 });
 // End OpenTelemetry SDK setup
 
-const compose = interaction(GENTRACE_PIPELINE_ID, composeEmail);
+const compose = interaction('Compose Email', composeEmail, {
+  pipelineId: GENTRACE_PIPELINE_ID,
+});
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
   await evalOnce('Simplified Test Case', async () => {

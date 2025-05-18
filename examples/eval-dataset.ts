@@ -59,7 +59,9 @@ const InputSchema = z.object({
   query: z.string(),
 });
 
-const queryAiInteraction = interaction(GENTRACE_PIPELINE_ID, queryAi);
+const queryAiInteraction = interaction('Query AI', queryAi, {
+  pipelineId: GENTRACE_PIPELINE_ID,
+});
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
   await evalDataset({

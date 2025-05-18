@@ -108,7 +108,9 @@ process.on('SIGTERM', async () => {
 });
 // End OpenTelemetry SDK setup
 
-const compose = interaction(GENTRACE_PIPELINE_ID, composeEmail);
+const compose = interaction('Compose Email', composeEmail, {
+  pipelineId: GENTRACE_PIPELINE_ID,
+});
 
 async function main() {
   const draft = await compose('Alice', 'Project Phoenix Update', 'John Doe');

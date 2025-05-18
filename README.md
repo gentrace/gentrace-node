@@ -9,8 +9,7 @@ The API reference documentation, auto-generated from our Stainless client code, 
 ## Installation
 
 ```sh
-# OR yarn add/pnpm install
-npm install gentrace
+yarn add gentrace
 ```
 
 ## Core Concepts
@@ -84,8 +83,11 @@ async function queryAi({ query }: { query: string }): Promise<string | null> {
 
 // Create an instrumented version of the function
 export const instrumentedQueryAi = interaction(
-  GENTRACE_PIPELINE_ID,
-  queryAi // Pass the original function
+  'Query AI', // Explicitly set the name of the interaction
+  queryAi, // Pass the original function
+  {
+    pipelineId: GENTRACE_PIPELINE_ID,
+  }
 );
 
 // Example of calling the instrumented function
@@ -221,8 +223,7 @@ OpenTelemetry integration is **required** for the Gentrace SDK's instrumentation
 <summary>Click here to view the command for installing OpenTelemetry peer dependencies manually</summary>
 
 ```sh
-# OR use yarn or pnpm
-npm i @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.200.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.200.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0 @opentelemetry/baggage-span-processor@^0.4.0
+yarn add @opentelemetry/api@^1.9.0 @opentelemetry/context-async-hooks@^2.0.0 @opentelemetry/core@^2.0.0 @opentelemetry/exporter-trace-otlp-http@^0.200.0 @opentelemetry/resources@^2.0.0 @opentelemetry/sdk-node@^0.200.0 @opentelemetry/sdk-trace-node@^2.0.0 @opentelemetry/semantic-conventions@^1.25.0 @opentelemetry/baggage-span-processor@^0.4.0
 ```
 
 </details>

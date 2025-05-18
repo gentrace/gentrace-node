@@ -6,7 +6,7 @@ export {
   StartExperimentParams,
   FinishExperimentParams,
 } from './experiment-control';
-export { interaction } from './interaction';
+export { interaction, InteractionOptions } from './interaction';
 export { evalDataset as evalDataset } from './eval-dataset';
 export { traced } from './traced';
 export { evalOnce } from './eval-once';

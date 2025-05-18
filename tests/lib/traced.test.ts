@@ -1,6 +1,5 @@
 import { SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import { ANONYMOUS_SPAN_NAME } from '../../src/lib/constants';
 import { traced } from '../../src/lib/traced';
 import { ATTR_GENTRACE_FN_ARGS, ATTR_GENTRACE_FN_OUTPUT } from 'gentrace/lib/otel/constants';
 
@@ -70,7 +69,7 @@ describe('traced decorator', () => {
       return a + b;
     }
 
-    const tracedAdd = traced(syncAdd);
+    const tracedAdd = traced(syncAdd, { name: 'syncAdd' });
     const result = await tracedAdd(2, 3);
 
     expect(result).toBe(5);
@@ -91,7 +90,7 @@ describe('traced decorator', () => {
       return Promise.resolve(a * b);
     }
 
-    const tracedMultiply = traced(asyncMultiply);
+    const tracedMultiply = traced(asyncMultiply, { name: 'asyncMultiply' });
     const result = await tracedMultiply(4, 5);
 
     expect(result).toBe(20);
@@ -112,7 +111,7 @@ describe('traced decorator', () => {
       throw new Error('Sync fail');
     }
 
-    const tracedError = traced(syncError);
+    const tracedError = traced(syncError, { name: 'syncError' });
 
     expect(() => tracedError()).toThrow('Sync fail');
 
@@ -133,7 +132,7 @@ describe('traced decorator', () => {
       return Promise.reject(new Error('Async fail'));
     }
 
-    const tracedReject = traced(asyncReject);
+    const tracedReject = traced(asyncReject, { name: 'asyncReject' });
 
     await expect(tracedReject()).rejects.toThrow('Async fail');
 
@@ -167,7 +166,7 @@ describe('traced decorator', () => {
       return 'result';
     }
 
-    const tracedFn = traced(functionWithName);
+    const tracedFn = traced(functionWithName, { name: 'functionWithName' });
     await tracedFn();
 
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
@@ -175,21 +174,13 @@ describe('traced decorator', () => {
     expect(mockSpan.end).toHaveBeenCalledTimes(1);
   });
 
-  it('should use the default name for anonymous functions', async () => {
-    const tracedFn = traced(async () => {
-      return 'anon result';
-    });
-    await tracedFn();
-
-    expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
-    expect(mockTracer.startActiveSpan).toHaveBeenCalledWith(ANONYMOUS_SPAN_NAME, expect.any(Function));
-    expect(mockSpan.end).toHaveBeenCalledTimes(1);
-  });
-
   it('should handle functions with complex arguments and return values', async () => {
-    const tracedComplex = traced(async (obj: object, arr: any[]) => {
-      return { ...obj, newProp: arr.length };
-    });
+    const tracedComplex = traced(
+      async (obj: object, arr: any[]) => {
+        return { ...obj, newProp: arr.length };
+      },
+      { name: 'complexFunction' },
+    );
 
     const argObj = { a: 1, b: 'hello' };
     const argArr = [true, null, 123];
@@ -200,7 +191,7 @@ describe('traced decorator', () => {
     expect(result).toEqual(expectedResult);
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
     // Function name might be empty string or specific depending on env, check default
-    expect(mockTracer.startActiveSpan).toHaveBeenCalledWith(ANONYMOUS_SPAN_NAME, expect.any(Function));
+    expect(mockTracer.startActiveSpan).toHaveBeenCalledWith('complexFunction', expect.any(Function));
     expect(mockSpan.addEvent).toHaveBeenCalledTimes(2);
     expect(mockSpan.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, {
       args: stringify([argObj, argArr]),
