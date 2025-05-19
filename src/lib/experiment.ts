@@ -4,61 +4,77 @@ import { checkOtelConfigAndWarn } from './otel';
 
 /**
  * Represents the context for an experiment run. This context is stored in
- * AsyncLocalStorage to make the experiment ID and pipeline ID available throughout
- * the asynchronous execution flow.
+ * AsyncLocalStorage to be accessible throughout the experiment's execution.
  */
-export type ExperimentContext = {
-  /**
-   * The unique identifier for the current experiment.
-   */
+export interface ExperimentContext {
   experimentId: string;
-
-  /**
-   * The ID of the pipeline associated with the experiment.
-   */
-  pipelineId: string;
-};
+  pipelineId?: string | undefined;
+  pipelineRunId?: string | undefined;
+}
 
 // Create an AsyncLocalStorage instance for experiment context
 // Export for testing purposes
 export const experimentContextStorage = new AsyncLocalStorage<ExperimentContext>();
 
 /**
- * Retrieves the experiment ID from the current asynchronous context, if any.
- * @returns The current experiment ID or undefined if not within an experiment() context.
+ * Gets the current experiment context from AsyncLocalStorage.
+ * Returns undefined if called outside of an experiment.
+ *
+ * @returns The current experiment context or undefined if not in an experiment.
  */
 export function getCurrentExperimentContext(): ExperimentContext | undefined {
   return experimentContextStorage.getStore();
 }
 
 /**
- * Optional parameters for running an experiment.
- *
- * @typedef {Object} ExperimentOptions
- * @property {Record<string, any>} [metadata] - Optional metadata to associate with the experiment.
- * @property {any} [key: string] - Allows for additional arbitrary properties.
+ * Options for configuring an experiment run.
  */
-export type ExperimentOptions = {
-  metadata?: Record<string, any>;
-};
+export interface ExperimentOptions {
+  /**
+   * Optional metadata to associate with the experiment.
+   */
+  metadata?: Record<string, unknown> | undefined;
+
+  /**
+   * The ID of the pipeline to associate with the experiment.
+   */
+  pipelineId?: string | undefined;
+}
 
 /**
  * Runs an experiment: starts it, executes the callback within an async context
  * containing the experiment ID, and finishes the experiment.
  *
- * @param {string} pipelineId - The ID of the pipeline to associate with the experiment.
- * @param {() => T | Promise<T>} callback - The function containing the experiment logic, returning type T.
- * @param {ExperimentOptions} [options] - Optional parameters for the experiment run, including metadata.
- * @returns A promise that resolves with the result of the callback function (type T).
+ * @param pipelineIdOrCallback - Either the pipeline ID or the callback function
+ * @param callbackOrOptions - Either the callback function or options
+ * @param optionsOrUndefined - Optional parameters for the experiment run
+ * @returns A promise that resolves with the result of the callback function
  */
 export async function experiment<T>(
-  pipelineId: string,
-  callback: () => T | Promise<T>,
-  options?: ExperimentOptions,
+  pipelineIdOrCallback: string | (() => T | Promise<T>),
+  callbackOrOptions?: (() => T | Promise<T>) | ExperimentOptions,
+  optionsOrUndefined?: ExperimentOptions,
 ): Promise<T> {
+  // Handle different parameter combinations for backward compatibility
+  let pipelineId: string | undefined;
+  let callback: () => T | Promise<T>;
+  let options: ExperimentOptions | undefined;
+
+  if (typeof pipelineIdOrCallback === 'string') {
+    // Old signature: experiment(pipelineId, callback, options?)
+    pipelineId = pipelineIdOrCallback;
+    callback = callbackOrOptions as () => T | Promise<T>;
+    options = optionsOrUndefined;
+  } else {
+    // New signature: experiment(callback, options?)
+    callback = pipelineIdOrCallback;
+    options = callbackOrOptions as ExperimentOptions | undefined;
+    pipelineId = options?.pipelineId;
+  }
+
   // Check if OpenTelemetry is properly configured
   checkOtelConfigAndWarn();
-  
+
   let callbackResult: T | undefined;
 
   const metadata = options?.metadata;
@@ -66,11 +82,30 @@ export async function experiment<T>(
 
   const experimentId = await startExperiment(startParams);
 
-  await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
-    callbackResult = await callback();
-  });
+  try {
+    // Create the experiment context
+    const experimentContext: ExperimentContext = {
+      experimentId,
+      pipelineId,
+    };
 
-  await finishExperiment({ id: experimentId });
+    // Run the callback within the experiment context
+    callbackResult = await experimentContextStorage.run(experimentContext, async () => {
+      return await Promise.resolve(callback());
+    });
+
+    // Finish the experiment with success
+    await finishExperiment({ id: experimentId });
+  } catch (error) {
+    // If an error occurs, finish the experiment with the error
+    try {
+      await finishExperiment({ id: experimentId, error: error as Error });
+    } catch (finishError) {
+      // Ignore errors from finishExperiment to ensure the original error is thrown
+      console.error('Failed to finish experiment:', finishError);
+    }
+    throw error;
+  }
 
   return callbackResult as T;
 }

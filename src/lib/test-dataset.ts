@@ -5,34 +5,8 @@ import { checkOtelConfigAndWarn } from './otel';
 
 /**
  * Runs a series of tests against a dataset using a provided interaction function.
- * Must be called within the context of `experiment()`.
  *
- * @template TSchema Optional schema object with a `.parse` method.
- * @template TInput The type of the single object argument the interaction function accepts (inferred from TSchema if provided).
- * @template Fn The type of the interaction function being tested.
- * @param {TestDatasetOptions<TSchema, TInput, Fn>} options An object containing the interaction function, dataset provider, and optional schema.
- * @returns {Promise<void>} A promise that resolves when all tests have been run.
- * @throws If called outside of an `experiment` context or if dataset retrieval fails.
- *
- * @example
- * const InputSchema = z.object({
- *   prompt: z.string(),
- *   temperature: z.number().optional().default(0.7),
- *   maxTokens: z.number().optional().default(100)
- * });
- *
- * experiment('your-pipeline-id', async () => {
- *   await testDataset({
- *     data: async () => {
- *       const testCasesList = await testCases.list({ datasetId: 'your-dataset-id' });
- *       return testCasesList.data;
- *     },
- *     // Optional schema to validate the 'inputs' property of each data item.
- *     schema: InputSchema,
- *     interaction: async ({ prompt, temperature, maxTokens }) => {
- *       return generateCompletion(prompt, temperature, maxTokens);
- *     }
- *   });
+ * @param options - Configuration for the test dataset
  */
 export async function testDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
@@ -40,7 +14,7 @@ export async function testDataset<
 >(options: TestDatasetOptions<TSchema>): Promise<void> {
   // Check if OpenTelemetry is properly configured
   checkOtelConfigAndWarn();
-  
+
   const { interaction, data, schema } = options;
 
   const client = _getClient();

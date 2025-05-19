@@ -27,14 +27,13 @@ export function checkOtelConfigAndWarn(): void {
   }
 
   const client = _getClient();
-  const provider = trace.getTracerProvider();
-  
+
   // Check if the provider is the NoopTracerProvider (default when no SDK is configured)
   // We can't directly check the type as it's internal to OpenTelemetry
   // Instead, we check if a tracer from this provider creates spans with context
-  const tracer = provider.getTracer('gentrace-check');
+  const tracer = trace.getTracer('gentrace-check');
   let isConfigured = false;
-  
+
   try {
     // Try to create a span and see if it has expected SDK methods
     // This is a heuristic approach since we can't directly check the provider type
@@ -47,7 +46,7 @@ export function checkOtelConfigAndWarn(): void {
 
   if (!isConfigured) {
     const otelSetupUrl = 'https://github.com/gentrace/gentrace-node#opentelemetry-integration';
-    
+
     try {
       // Format the warning message with ANSI colors and hyperlink
       const message = [
@@ -63,22 +62,21 @@ export function checkOtelConfigAndWarn(): void {
         `) may not record data.`,
         `Please ensure OpenTelemetry is set up as per the `,
         `${colors.underline}\x1b]8;;${otelSetupUrl}\x1b\\Gentrace OpenTelemetry Setup Guide\x1b]8;;\x1b\\${colors.reset}`,
-        `.`
+        `.`,
       ].join('');
 
       // Log the warning to the console
       client.logger?.warn(message);
     } catch (error) {
       // Fallback if fancy formatting fails
-      const fallbackMessage = 
+      const fallbackMessage =
         `Gentrace: OpenTelemetry SDK (TracerProvider) does not appear to be configured. ` +
         `Gentrace tracing features (e.g., @interaction, @traced, experiment(), and testDataset()) may not record data. ` +
         `Please ensure OpenTelemetry is set up as per the ${otelSetupUrl}.`;
-      
+
       client.logger?.warn(fallbackMessage);
     }
 
     _otelConfigWarningIssued = true;
   }
 }
-

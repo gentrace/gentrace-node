@@ -14,8 +14,8 @@ const activeExperiments = new Map<string, ActiveExperiment>();
  * Input parameters for starting an experiment.
  */
 export type StartExperimentParams = {
-  pipelineId: string;
-  metadata?: ExperimentMetadata;
+  pipelineId: string | undefined;
+  metadata?: ExperimentMetadata | undefined;
 };
 
 /**
@@ -31,8 +31,11 @@ export type StartExperimentParams = {
 export async function startExperiment({ pipelineId, metadata }: StartExperimentParams): Promise<string> {
   const client = _getClient();
 
+  // Ensure pipelineId is a string for the API call
+  const finalPipelineId = pipelineId || 'default-pipeline';
+
   const experiment = await client.experiments.create({
-    pipelineId,
+    pipelineId: finalPipelineId,
     ...(metadata && { metadata }),
   });
 
@@ -48,14 +51,14 @@ export async function startExperiment({ pipelineId, metadata }: StartExperimentP
   // Store experiment info and listener
   activeExperiments.set(experimentId, {
     id: experimentId,
-    pipelineId: pipelineId,
+    pipelineId: finalPipelineId,
     shutdownListener: shutdownListener,
   });
 
   process.on('SIGINT', shutdownListener);
   process.on('SIGTERM', shutdownListener);
 
-  client.logger?.info(`Started experiment ${experimentId} for pipeline ${pipelineId}`);
+  client.logger?.info(`Started experiment ${experimentId} for pipeline ${finalPipelineId}`);
   return experimentId;
 }
 

@@ -6,44 +6,39 @@ import { checkOtelConfigAndWarn } from './otel';
 /**
  * Options for configuring the behavior of the traced function.
  */
-export type TracedOptions = {
+export interface TracedOptions {
   /**
-   * Optional custom name for the span.
-   * Defaults to the function's name or 'anonymousFunction'.
+   * The name to use for the span. Defaults to the function name or 'anonymous-span'.
    */
-  name: string;
+  name?: string | undefined;
 
   /**
-   * Additional attributes to set on the span.
+   * Additional attributes to add to the span.
    */
-  attributes?: Record<string, any>;
-};
+  attributes?: Record<string, string> | undefined;
+
+  /**
+   * The ID of the pipeline this function is part of.
+   */
+  pipelineId?: string | undefined;
+}
 
 /**
- * Wraps a function with OpenTelemetry tracing to track its execution.
- * Creates a span for the function execution and records its success or failure.
+ * Wraps a function with OpenTelemetry tracing.
  *
- * @template F - The type of the function to wrap with tracing.
- * @param {F} fn - The function to wrap with tracing.
- * @param {TracedOptions} [options] - Optional configuration for tracing.
- * @returns A new function that has the same parameters and return type as fn.
+ * @param fn - The function to wrap with tracing
+ * @param options - Optional configuration for the traced function
+ * @returns The wrapped function with the same signature as the original
  */
-export function traced<F extends (...args: any[]) => any>(
-  fn: F,
-  options: TracedOptions = {
-    name: fn.name || ANONYMOUS_SPAN_NAME,
-    attributes: {},
-  },
-): F {
-  const tracer = trace.getTracer('gentrace');
-  const fnName = fn.name;
-  const spanName = options.name;
+export function traced<F extends (...args: any[]) => any>(fn: F, options: TracedOptions = {}): F {
+  const tracer = trace.getTracer('gentrace-sdk');
+  const spanName = options.name || fn.name || ANONYMOUS_SPAN_NAME;
   const attributes = options.attributes;
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
     // Check if OpenTelemetry is properly configured
     checkOtelConfigAndWarn();
-    
+
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {
       Object.entries(attributes ?? {}).forEach(([key, value]) => {
         span.setAttribute(key, value);
@@ -88,8 +83,8 @@ export function traced<F extends (...args: any[]) => any>(
   };
 
   // Preserve the original function's name if possible
-  if (fnName) {
-    Object.defineProperty(wrappedFn, 'name', { value: fnName, configurable: true });
+  if (fn.name) {
+    Object.defineProperty(wrappedFn, 'name', { value: fn.name, configurable: true });
   }
 
   return wrappedFn as F;

@@ -39,6 +39,11 @@ const mockTracer = {
   }),
 };
 
+// Mock the checkOtelConfigAndWarn function
+jest.mock('../../src/lib/otel', () => ({
+  checkOtelConfigAndWarn: jest.fn(),
+}));
+
 // Use jest.mock to replace the actual module with our mock implementation
 jest.mock('@opentelemetry/api', () => {
   // Capture the actual SpanStatusCode enum values if possible, otherwise use mocks
@@ -48,6 +53,16 @@ jest.mock('@opentelemetry/api', () => {
       getTracer: jest.fn(() => mockTracer),
     },
     SpanStatusCode: originalApi.SpanStatusCode || { ERROR: 'ERROR_STATUS_CODE', OK: 'OK_STATUS_CODE' }, // Fallback if needed
+    context: {
+      active: jest.fn(() => ({})),
+    },
+    propagation: {
+      getBaggage: jest.fn(() => null),
+      createBaggage: jest.fn(() => ({
+        setEntry: jest.fn(() => ({})),
+      })),
+      setBaggage: jest.fn(() => ({})),
+    },
   };
 });
 
