@@ -38,11 +38,9 @@ export async function testDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
   TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
 >(options: TestDatasetOptions<TSchema>): Promise<void> {
-  // Check if OpenTelemetry is properly configured
   checkOtelConfigAndWarn();
 
   const { interaction, data, schema } = options;
-
   const client = _getClient();
   const experimentContext = getCurrentExperimentContext();
   if (!experimentContext) {

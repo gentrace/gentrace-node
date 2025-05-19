@@ -36,7 +36,6 @@ export function interaction<F extends (...args: any[]) => any>(
   });
 
   const finalWrappedFn = (...args: Parameters<F>): ReturnType<F> => {
-    // Check if OpenTelemetry is properly configured
     checkOtelConfigAndWarn();
 
     const currentContext = context.active();

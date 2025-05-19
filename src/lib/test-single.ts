@@ -23,7 +23,6 @@ export async function test<TResult>(
   spanName: string,
   callback: () => TResult | null | Promise<TResult | null>,
 ): Promise<TResult | null> {
-  // Check if OpenTelemetry is properly configured
   checkOtelConfigAndWarn();
 
   return _runTest<TResult, any>({

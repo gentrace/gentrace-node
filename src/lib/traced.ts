@@ -41,7 +41,6 @@ export function traced<F extends (...args: any[]) => any>(
   const attributes = options.attributes;
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
-    // Check if OpenTelemetry is properly configured
     checkOtelConfigAndWarn();
 
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {

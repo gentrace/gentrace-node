@@ -56,7 +56,6 @@ export async function experiment<T>(
   callback: () => T | Promise<T>,
   options?: ExperimentOptions,
 ): Promise<T> {
-  // Check if OpenTelemetry is properly configured
   checkOtelConfigAndWarn();
 
   let callbackResult: T | undefined;
