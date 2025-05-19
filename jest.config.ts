@@ -9,8 +9,8 @@ const config: JestConfigWithTsJest = {
   transform: {
     '^.+\\.(t|j)sx?$': ['@swc/jest', { sourceMaps: 'inline' }],
   },
-  // Ensure packages like superjson are transformed
-  transformIgnorePatterns: ['/node_modules/(?!superjson/.*)'],
+  // Ensure packages like superjson and yoctocolors are transformed
+  transformIgnorePatterns: ['/node_modules/(?!(superjson|yoctocolors)/.*)'],
   // ts-jest will handle transformation via the preset
   moduleNameMapper: {
     '^gentrace$': '<rootDir>/src/index.ts',
