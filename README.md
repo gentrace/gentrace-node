@@ -280,6 +280,37 @@ The `GentraceSpanProcessor` is a specialized OpenTelemetry span processor. It sp
 
 Gentrace also provides a `GentraceSampler`. You can add this to your OpenTelemetry SDK configuration (as shown in the example above). The `GentraceSampler` will ensure that only spans containing the `gentrace.sample` baggage key (either in the context or as a span attribute with a value of `'true'`) are sampled and exported. This is useful for filtering out spans that are not relevant to Gentrace tracing, reducing noise and data volume.
 
+### How GentraceSampler Works
+
+The `GentraceSampler` filters spans based on the presence of a `gentrace.sample` attribute with a value of `'true'`. Here's a simple example of how it works:
+
+```typescript
+// Import the GentraceSampler
+import { GentraceSampler } from "gentrace";
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+
+// Initialize the OpenTelemetry SDK with GentraceSampler
+const sdk = new NodeSDK({
+  // ... other configuration options
+  traceExporter: new OTLPTraceExporter({
+    url: 'https://gentrace.ai/api/otel/v1/traces',
+    headers: { Authorization: `Bearer ${GENTRACE_API_KEY}` },
+  }),
+  // Add the GentraceSampler to filter spans
+  sampler: new GentraceSampler(),
+});
+
+// Start the SDK
+sdk.start();
+
+// Create spans in your application
+// Only spans with gentrace.sample='true' will be exported
+// For example:
+// - Spans created by Gentrace SDK helpers (like interaction()) will have this attribute set
+// - Spans without this attribute will be filtered out by the GentraceSampler
+```
+
 To ensure only relevant traces are sent to Gentrace, you have two main approaches for sampling and filtering, both of which use Gentrace-specific OpenTelemetry components:
 
 **1. In-Process Sampling (Recommended for most use cases)**
