@@ -1,6 +1,7 @@
 import { context, propagation } from '@opentelemetry/api';
 import { ANONYMOUS_SPAN_NAME } from './constants';
 import { TracedOptions, traced } from './traced';
+import { checkOtelConfigAndWarn } from './otel';
 
 /**
  * Wraps a function with OpenTelemetry tracing to track interactions within a pipeline.
@@ -35,6 +36,9 @@ export function interaction<F extends (...args: any[]) => any>(
   });
 
   const finalWrappedFn = (...args: Parameters<F>): ReturnType<F> => {
+    // Check if OpenTelemetry is properly configured
+    checkOtelConfigAndWarn();
+    
     const currentContext = context.active();
     const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
 

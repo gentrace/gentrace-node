@@ -1,5 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { finishExperiment, startExperiment, StartExperimentParams } from './experiment-control';
+import { checkOtelConfigAndWarn } from './otel';
 
 /**
  * Represents the context for an experiment run. This context is stored in
@@ -55,6 +56,9 @@ export async function experiment<T>(
   callback: () => T | Promise<T>,
   options?: ExperimentOptions,
 ): Promise<T> {
+  // Check if OpenTelemetry is properly configured
+  checkOtelConfigAndWarn();
+  
   let callbackResult: T | undefined;
 
   const metadata = options?.metadata;

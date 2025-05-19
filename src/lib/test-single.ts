@@ -3,6 +3,7 @@ import stringify from 'json-stringify-safe';
 import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
 import { ParseableSchema } from './test-dataset'; // Import the interface
 import { _getClient } from './client-instance';
+import { checkOtelConfigAndWarn } from './otel';
 
 /**
  * Runs a single named test case within the context of an active experiment.
@@ -26,6 +27,9 @@ export async function test<TResult>(
   spanName: string,
   callback: () => TResult | null | Promise<TResult | null>,
 ): Promise<TResult | null> {
+  // Check if OpenTelemetry is properly configured
+  checkOtelConfigAndWarn();
+  
   return _runTest<TResult, any>({
     spanName,
     spanAttributes: { 'gentrace.test_case_name': spanName },

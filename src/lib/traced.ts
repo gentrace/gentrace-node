@@ -1,6 +1,7 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { ANONYMOUS_SPAN_NAME } from './constants';
+import { checkOtelConfigAndWarn } from './otel';
 
 /**
  * Options for configuring the behavior of the traced function.
@@ -40,6 +41,9 @@ export function traced<F extends (...args: any[]) => any>(
   const attributes = options.attributes;
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
+    // Check if OpenTelemetry is properly configured
+    checkOtelConfigAndWarn();
+    
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {
       Object.entries(attributes ?? {}).forEach(([key, value]) => {
         span.setAttribute(key, value);
