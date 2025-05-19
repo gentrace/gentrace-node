@@ -4,6 +4,11 @@ import stringify from 'json-stringify-safe';
 import { ANONYMOUS_SPAN_NAME } from 'gentrace/lib/constants';
 import { TracedOptions } from 'gentrace/lib/traced';
 
+// Mock the checkOtelConfigAndWarn function
+jest.mock('../../src/lib/otel', () => ({
+  checkOtelConfigAndWarn: jest.fn(),
+}));
+
 let lastMockSpan: Partial<Span> | null = null;
 
 const storedMockStartActiveSpan = jest.fn();
@@ -65,6 +70,16 @@ jest.mock('@opentelemetry/api', () => {
       })),
     },
     SpanStatusCode: originalApi.SpanStatusCode,
+    context: {
+      active: jest.fn(() => ({})),
+    },
+    propagation: {
+      getBaggage: jest.fn(() => null),
+      createBaggage: jest.fn(() => ({
+        setEntry: jest.fn(() => ({})),
+      })),
+      setBaggage: jest.fn(() => ({})),
+    },
   };
 });
 
