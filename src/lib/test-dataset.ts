@@ -40,7 +40,7 @@ export async function testDataset<
 >(options: TestDatasetOptions<TSchema>): Promise<void> {
   // Check if OpenTelemetry is properly configured
   checkOtelConfigAndWarn();
-  
+
   const { interaction, data, schema } = options;
 
   const client = _getClient();

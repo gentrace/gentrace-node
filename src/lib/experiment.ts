@@ -58,7 +58,7 @@ export async function experiment<T>(
 ): Promise<T> {
   // Check if OpenTelemetry is properly configured
   checkOtelConfigAndWarn();
-  
+
   let callbackResult: T | undefined;
 
   const metadata = options?.metadata;
