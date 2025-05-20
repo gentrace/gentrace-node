@@ -32,6 +32,9 @@ The Gentrace SDK provides several key functions to help you instrument and evalu
 
 First, initialize the SDK with your Gentrace API key. You typically do this once when your application starts.
 
+> [!TIP]
+> You can create your Gentrace API key at [https://gentrace.ai/s/api-keys](https://gentrace.ai/s/api-keys)
+
 <!-- prettier-ignore -->
 ```typescript
 import { init } from 'gentrace';
