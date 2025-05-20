@@ -341,7 +341,7 @@ In this model, your application might send a broader set of traces (or all trace
 
 ### Information Flow Visualizations
 
-#### In-Process Span Processor Flow
+#### In-Process Sampling Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -349,10 +349,11 @@ In this model, your application might send a broader set of traces (or all trace
 │                                                                 │
 │  ┌───────────────┐     ┌───────────────────────────────────┐    │
 │  │               │     │                                   │    │
-│  │  Application  │────▶│  GentraceSpanProcessor           │    │
+│  │  Application  │────▶│  GentraceSampler                 │    │
 │  │  Code         │     │  - Reads gentrace.sample         │    │
-│  │               │     │  - Adds gentrace.sample="true"   │    │
-│  └───────────────┘     │    to spans                      │    │
+│  │               │     │    from Baggage                  │    │
+│  └───────────────┘     │  - Filters spans with            │    │
+│                        │    gentrace.sample="true"        │    │
 │                        │                                   │    │
 │                        └───────────────┬───────────────────┘    │
 │                                        │                        │
@@ -376,8 +377,9 @@ In this model, your application might send a broader set of traces (or all trace
 │  │               │     │                                   │    │
 │  │  Application  │────▶│  GentraceSpanProcessor           │    │
 │  │  Code         │     │  - Reads gentrace.sample         │    │
-│  │               │     │  - Adds gentrace.sample="true"   │    │
-│  └───────────────┘     │    to spans                      │    │
+│  │               │     │    from Baggage                  │    │
+│  └───────────────┘     │  - Adds gentrace.sample="true"   │    │
+│                        │    to spans                      │    │
 │                        │                                   │    │
 │                        └───────────────┬───────────────────┘    │
 │                                        │                        │
@@ -424,3 +426,4 @@ If you are interested in other runtime environments, please open an issue on Git
 ## Support
 
 For questions or support, please reach out to us at [support@gentrace.ai](mailto:support@gentrace.ai).
+
