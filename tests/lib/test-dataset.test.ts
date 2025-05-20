@@ -116,7 +116,7 @@ describe('testDataset', () => {
     });
   });
 
-  it('should run tests for each item in a structured dataset using _runTest', async () => {
+  it('should run tests for every item in a structured dataset using _runTest', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-2', pipelineId: 'pipe-2' });
     await testDatasetLib.testDataset({
       data: () => datasetStructured,
