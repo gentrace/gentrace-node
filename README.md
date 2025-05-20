@@ -339,6 +339,71 @@ In this model, your application might send a broader set of traces (or all trace
     - **Role**: You configure the Collector with a pipeline that includes a filter processor. This processor is set up to look for spans with the `gentrace.sample="true"` attribute. Only these spans are then exported from the Collector to Gentrace.
     - For detailed instructions on this setup, refer to the [Gentrace OpenTelemetry Setup Guide](https://gentrace.ai/docs/opentelemetry/setup-with-open-telemetry#2-collector-based-filtering) and the official [OpenTelemetry Collector documentation](https://opentelemetry.io/docs/collector/).
 
+### Information Flow Visualizations
+
+#### In-Process Span Processor Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Your Application                           │
+│                                                                 │
+│  ┌───────────────┐     ┌───────────────────────────────────┐    │
+│  │               │     │                                   │    │
+│  │  Application  │────▶│  GentraceSpanProcessor           │    │
+│  │  Code         │     │  - Reads gentrace.sample         │    │
+│  │               │     │  - Adds gentrace.sample="true"   │    │
+│  └───────────────┘     │    to spans                      │    │
+│                        │                                   │    │
+│                        └───────────────┬───────────────────┘    │
+│                                        │                        │
+└────────────────────────────────────────┼────────────────────────┘
+                                         │
+                                         ▼
+                          ┌─────────────────────────────┐
+                          │                             │
+                          │  Gentrace Backend           │
+                          │                             │
+                          └─────────────────────────────┘
+```
+
+#### OpenTelemetry Collector Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Your Application                           │
+│                                                                 │
+│  ┌───────────────┐     ┌───────────────────────────────────┐    │
+│  │               │     │                                   │    │
+│  │  Application  │────▶│  GentraceSpanProcessor           │    │
+│  │  Code         │     │  - Reads gentrace.sample         │    │
+│  │               │     │  - Adds gentrace.sample="true"   │    │
+│  └───────────────┘     │    to spans                      │    │
+│                        │                                   │    │
+│                        └───────────────┬───────────────────┘    │
+│                                        │                        │
+└────────────────────────────────────────┼────────────────────────┘
+                                         │
+                                         ▼
+                          ┌─────────────────────────────┐
+                          │                             │
+                          │  OpenTelemetry Collector    │
+                          │  ┌─────────────────────┐    │
+                          │  │ Filter Processor    │    │
+                          │  │ - Filters spans with│    │
+                          │  │   gentrace.sample   │    │
+                          │  │   ="true" attribute │    │
+                          │  └──────────┬──────────┘    │
+                          │             │               │
+                          └─────────────┼───────────────┘
+                                        │
+                                        ▼
+                          ┌─────────────────────────────┐
+                          │                             │
+                          │  Gentrace Backend           │
+                          │                             │
+                          └─────────────────────────────┘
+```
+
 In both scenarios, the Gentrace SDK helper functions (like `interaction()` and `test()`) typically handle setting the `gentrace.sample` value in the OpenTelemetry Baggage for the operations they trace.
 
 See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry.
