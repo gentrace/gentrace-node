@@ -239,11 +239,15 @@ import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-ho
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 // 📋 End copying imports
 
-const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
+// Define the API key at the top
+const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY || '';
 
-init();
+// Optional: Add validation to ensure the API key is set
+if (!GENTRACE_API_KEY) {
+  throw new Error('GENTRACE_API_KEY must be set');
+}
 
-// 📋 Start copying OTEL setup
+// Initialize the OpenTelemetry SDK with GentraceSampler
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'your-generative-ai-product',
@@ -289,6 +293,14 @@ The `GentraceSampler` filters spans based on the presence of a `gentrace.sample`
 import { GentraceSampler } from "gentrace";
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+
+// Define the API key at the top
+const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY || '';
+
+// Optional: Add validation to ensure the API key is set
+if (!GENTRACE_API_KEY) {
+  throw new Error('GENTRACE_API_KEY must be set');
+}
 
 // Initialize the OpenTelemetry SDK with GentraceSampler
 const sdk = new NodeSDK({
