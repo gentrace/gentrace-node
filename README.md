@@ -361,11 +361,11 @@ In this model, your application might send a broader set of traces (or all trace
 │                                                                 │
 │  ┌───────────────┐     ┌───────────────────────────────────┐    │
 │  │               │     │                                   │    │
-│  │  Application  │────▶│  GentraceSampler                 │    │
-│  │  Code         │     │  - Reads gentrace.sample         │    │
-│  │               │     │    from Baggage                  │    │
-│  └───────────────┘     │  - Filters spans with            │    │
-│                        │    gentrace.sample="true"        │    │
+│  │  Application  │────▶│  GentraceSampler                  │    │
+│  │  Code         │     │  - Reads gentrace.sample          │    │
+│  │               │     │    from Baggage                   │    │
+│  └───────────────┘     │  - Filters spans with             │    │
+│                        │    gentrace.sample="true"         │    │
 │                        │                                   │    │
 │                        └───────────────┬───────────────────┘    │
 │                                        │                        │
@@ -387,11 +387,11 @@ In this model, your application might send a broader set of traces (or all trace
 │                                                                 │
 │  ┌───────────────┐     ┌───────────────────────────────────┐    │
 │  │               │     │                                   │    │
-│  │  Application  │────▶│  GentraceSpanProcessor           │    │
-│  │  Code         │     │  - Reads gentrace.sample         │    │
-│  │               │     │    from Baggage                  │    │
-│  └───────────────┘     │  - Adds gentrace.sample="true"   │    │
-│                        │    to spans                      │    │
+│  │  Application  │────▶│  GentraceSpanProcessor            │    │
+│  │  Code         │     │  - Reads gentrace.sample          │    │
+│  │               │     │    from Baggage                   │    │
+│  └───────────────┘     │  - Adds gentrace.sample="true"    │    │
+│                        │    to spans                       │    │
 │                        │                                   │    │
 │                        └───────────────┬───────────────────┘    │
 │                                        │                        │
