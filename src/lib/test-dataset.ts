@@ -1,6 +1,7 @@
 import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
 import { _runTest } from './test-single';
+import { checkOtelConfigAndWarn } from './otel';
 
 /**
  * Runs a series of tests against a dataset using a provided interaction function.
@@ -37,8 +38,9 @@ export async function testDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
   TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
 >(options: TestDatasetOptions<TSchema>): Promise<void> {
-  const { interaction, data, schema } = options;
+  checkOtelConfigAndWarn();
 
+  const { interaction, data, schema } = options;
   const client = _getClient();
   const experimentContext = getCurrentExperimentContext();
   if (!experimentContext) {
