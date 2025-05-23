@@ -3,16 +3,10 @@ import stringify from 'json-stringify-safe';
 import { ATTR_GENTRACE_FN_ARGS, ATTR_GENTRACE_FN_OUTPUT } from './otel/constants';
 
 /**
- * Options for configuring the behavior of the traced function.
+ * Configuration options for the behavior of the traced function.
+ * (Excludes name, as it's a top-level parameter for `traced`)
  */
-export type TracedOptions = {
-  /**
-   * Required name for the span. While function names could be used, build tools may
-   * transpile and change function names, making spans harder to track. Therefore
-   * we require an explicit name.
-   */
-  name: string;
-
+export type TracedConfig = {
   /**
    * Additional attributes to set on the span.
    */
@@ -24,15 +18,16 @@ export type TracedOptions = {
  * Creates a span for the function execution and records its success or failure.
  *
  * @template {function} F - The type of the function to wrap with tracing.
+ * @param {string} name - Required name for the span.
  * @param {F} fn - The function to wrap with tracing.
- * @param {TracedOptions} options - Configuration for tracing.
+ * @param {TracedConfig} [config] - Optional configuration for tracing.
  * @returns {F} A new function that has the same parameters and return type as fn.
  */
-export function traced<F extends (...args: any[]) => any>(fn: F, options: TracedOptions): F {
+export function traced<F extends (...args: any[]) => any>(name: string, fn: F, config?: TracedConfig): F {
   const tracer = trace.getTracer('gentrace');
   const fnName = fn.name;
-  const spanName = options.name;
-  const attributes = options.attributes;
+  const spanName = name;
+  const attributes = config?.attributes;
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {

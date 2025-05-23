@@ -69,7 +69,7 @@ describe('traced decorator', () => {
       return a + b;
     }
 
-    const tracedAdd = traced(syncAdd, { name: 'syncAdd' });
+    const tracedAdd = traced('syncAdd', syncAdd);
     const result = await tracedAdd(2, 3);
 
     expect(result).toBe(5);
@@ -90,7 +90,7 @@ describe('traced decorator', () => {
       return Promise.resolve(a * b);
     }
 
-    const tracedMultiply = traced(asyncMultiply, { name: 'asyncMultiply' });
+    const tracedMultiply = traced('asyncMultiply', asyncMultiply);
     const result = await tracedMultiply(4, 5);
 
     expect(result).toBe(20);
@@ -111,7 +111,7 @@ describe('traced decorator', () => {
       throw new Error('Sync fail');
     }
 
-    const tracedError = traced(syncError, { name: 'syncError' });
+    const tracedError = traced('syncError', syncError);
 
     expect(() => tracedError()).toThrow('Sync fail');
 
@@ -132,7 +132,7 @@ describe('traced decorator', () => {
       return Promise.reject(new Error('Async fail'));
     }
 
-    const tracedReject = traced(asyncReject, { name: 'asyncReject' });
+    const tracedReject = traced('asyncReject', asyncReject);
 
     await expect(tracedReject()).rejects.toThrow('Async fail');
 
@@ -148,12 +148,12 @@ describe('traced decorator', () => {
     expect(mockSpan.end).toHaveBeenCalledTimes(1);
   });
 
-  it('should use the provided name in options', async () => {
+  it('should use the provided name parameter', async () => {
     async function originalName() {
       return 'result';
     }
 
-    const tracedFn = traced(originalName, { name: 'customSpanName', attributes: {} });
+    const tracedFn = traced('customSpanName', originalName, { attributes: {} });
     await tracedFn();
 
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
@@ -161,12 +161,12 @@ describe('traced decorator', () => {
     expect(mockSpan.end).toHaveBeenCalledTimes(1);
   });
 
-  it('should use the function name if no options name is provided', async () => {
+  it('should correctly use function name when name parameter is the same', async () => {
     async function functionWithName() {
       return 'result';
     }
 
-    const tracedFn = traced(functionWithName, { name: 'functionWithName' });
+    const tracedFn = traced('functionWithName', functionWithName);
     await tracedFn();
 
     expect(mockTracer.startActiveSpan).toHaveBeenCalledTimes(1);
@@ -175,12 +175,9 @@ describe('traced decorator', () => {
   });
 
   it('should handle functions with complex arguments and return values', async () => {
-    const tracedComplex = traced(
-      async (obj: object, arr: any[]) => {
-        return { ...obj, newProp: arr.length };
-      },
-      { name: 'complexFunction' },
-    );
+    const tracedComplex = traced('complexFunction', async (obj: object, arr: any[]) => {
+      return { ...obj, newProp: arr.length };
+    });
 
     const argObj = { a: 1, b: 'hello' };
     const argArr = [true, null, 123];

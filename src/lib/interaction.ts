@@ -37,8 +37,7 @@ export function interaction<F extends (...args: any[]) => any>(
 ): F {
   const { pipelineId, attributes } = options;
 
-  const wrappedFn = traced(fn, {
-    name: name,
+  const wrappedFn = traced(name, fn, {
     attributes: {
       ...attributes,
       [ATTR_GENTRACE_PIPELINE_ID]: pipelineId,
