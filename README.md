@@ -19,11 +19,11 @@ The Gentrace SDK provides several key functions to help you instrument and evalu
 - **`init`**: Initializes the Gentrace SDK with your API key and other configuration.
 - **`interaction`** / **`traced`**: Wraps your core AI logic (like calls to OpenAI, Anthropic, etc.) to capture traces and metadata. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`experiment`**: Defines a testing context for grouping related tests. ([Requires OpenTelemetry](#opentelemetry-integration))
-- **`test`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
+- **`evalOnce`**: Runs a single test case within an experiment. ([Requires OpenTelemetry](#opentelemetry-integration))
 - **`evalDataset`**: Runs tests based on a dataset defined in Gentrace. ([Requires OpenTelemetry](#opentelemetry-integration))
 
 > [!NOTE]
-> The instrumentation features (`interaction`, `traced`, `test`, `evalDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
+> The instrumentation features (`interaction`, `traced`, `evalOnce`, `evalDataset`) rely on OpenTelemetry being configured. Please see the [OpenTelemetry Integration](#opentelemetry-integration) section for setup instructions before using these features.
 
 ## Basic Usage
 

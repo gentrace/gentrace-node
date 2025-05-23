@@ -18,7 +18,7 @@ export const ATTR_GENTRACE_TEST_CASE_ID = 'gentrace.test_case_id';
 
 /**
  * Key used to identify which Gentrace experiment a test span(s) invoked with evalOnce
- * or testDataset belongs to.
+ * or evalDataset belongs to.
  */
 export const ATTR_GENTRACE_EXPERIMENT_ID = 'gentrace.experiment_id';
 
