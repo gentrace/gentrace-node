@@ -28,7 +28,6 @@ export async function evalOnce<TResult>(
 ): Promise<TResult | null> {
   return _runEval<TResult, any>({
     spanName,
-    spanAttributes: { 'gentrace.test_case_name': spanName },
     callback,
   });
 }
@@ -56,7 +55,7 @@ export type RunEvalParams<T> = {
  */
 export type RunEvalInternalOptions<TResult, TInput> = {
   spanName: string;
-  spanAttributes: Record<string, string>;
+  spanAttributes?: Record<string, string>;
   inputs?: unknown | undefined;
   schema?: ParseableSchema<TInput> | undefined;
   callback: (parsedData: TInput) => TResult | null | Promise<TResult | null>;
@@ -90,7 +89,7 @@ export async function _runEval<TResult, TInput = any>(
   return new Promise<TResult | null>((resolve) => {
     tracer.startActiveSpan(spanName, async (span: Span) => {
       span.setAttribute('gentrace.experiment_id', experimentId);
-      Object.entries(spanAttributes).forEach(([key, value]) => {
+      Object.entries(spanAttributes ?? {}).forEach(([key, value]) => {
         span.setAttribute(key, value);
       });
 

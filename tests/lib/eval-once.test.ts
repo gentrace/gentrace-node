@@ -139,7 +139,6 @@ describe('evalOnce() function', () => {
       'gentrace.experiment_id',
       mockExperimentContext.experimentId,
     );
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.test_case_name', testName);
     expect(callback).toHaveBeenCalledTimes(1);
   });
 

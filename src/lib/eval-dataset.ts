@@ -86,8 +86,6 @@ export async function evalDataset<
     const spanAttributes: Record<string, string> = {};
     if (typeof finalId === 'string') {
       spanAttributes['gentrace.test_case_id'] = finalId;
-    } else {
-      spanAttributes['gentrace.test_case_name'] = finalName;
     }
 
     promises.push(
