@@ -7,7 +7,7 @@ import { readEnv } from 'gentrace/internal/utils';
 import { experiment } from '../src/lib/experiment';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
-import { test } from '../src/lib/test-single';
+import { evalOnce } from '../src/lib/eval-once';
 import { composeEmail } from './functions/composition';
 
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
@@ -54,7 +54,7 @@ process.on('SIGTERM', async () => {
 const compose = interaction(GENTRACE_PIPELINE_ID, composeEmail);
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
-  await test('Simplified Test Case', async () => {
+  await evalOnce('Simplified Test Case', async () => {
     return await compose('TestRecipient', 'TestTopic', 'TestSender');
   });
 });
