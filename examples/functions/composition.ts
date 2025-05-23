@@ -136,4 +136,4 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
   });
 }
 
-export const composeEmail = traced(_composeEmailLogic, { name: 'composeEmail' });
+export const composeEmail = traced('composeEmail', _composeEmailLogic);

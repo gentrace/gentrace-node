@@ -53,7 +53,9 @@ const simpleTask = () => {
   return 'Simple task completed!';
 };
 
-const simpleInteraction = interaction(GENTRACE_PIPELINE_ID, simpleTask);
+const simpleInteraction = interaction('Simple Interaction', simpleTask, {
+  pipelineId: GENTRACE_PIPELINE_ID,
+});
 
 experiment(GENTRACE_PIPELINE_ID, async () => {
   await evalOnce('No Params Test Case', async () => {
