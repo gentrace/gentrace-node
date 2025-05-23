@@ -121,19 +121,19 @@ import { dbCall } from './db';
 
 const openai = new OpenAI();
 
-const summarizeUser = traced(async (userInfo: string) => {
+const summarizeUser = traced('OpenAI Call', async (userInfo: string) => {
   const res = await openai.chat.completions.create({
     model: 'gpt-4o',
     messages: [{ role: 'user', content: `Summarize the following user info: ${userInfo}` }]
   });
   return res.choices[0]?.message?.content || '';
-}, { name: 'OpenAI Call' });
+});
 
 const tracedGetUserInfo = traced(
+  'Get User Info DB Call',
   async (userId: string) => {
     return dbCall(userId);
-  },
-  { name: 'Get User Info DB Call' }
+  }
 );
 
 const instrumentedMainTask = interaction(
@@ -155,9 +155,9 @@ run();
 
 The `traced` function requires an explicit `name` option for the span it creates. You can also provide additional `attributes` to be added to the span. Like `interaction`, this also requires OpenTelemetry to be set up.
 
-> [!WARNING]  
-> This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. The `interaction` function requires this setup to capture and send traces.
-> Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
+ > [!WARNING]  
+ > This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. Both the `interaction` and `traced` functions require this setup to capture and send traces.
+ > Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
 
 ## Testing and Evaluation
 
