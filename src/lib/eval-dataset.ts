@@ -1,6 +1,7 @@
 import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
 import { _runEval } from './eval-once';
+import { ATTR_GENTRACE_TEST_CASE_ID } from './otel/constants';
 
 /**
  * Runs a series of evals  against a dataset using a provided interaction function.
@@ -85,7 +86,7 @@ export async function evalDataset<
 
     const spanAttributes: Record<string, string> = {};
     if (typeof finalId === 'string') {
-      spanAttributes['gentrace.test_case_id'] = finalId;
+      spanAttributes[ATTR_GENTRACE_TEST_CASE_ID] = finalId;
     }
 
     promises.push(

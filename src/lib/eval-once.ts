@@ -3,6 +3,11 @@ import stringify from 'json-stringify-safe';
 import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
 import { ParseableSchema } from './eval-dataset'; // Import the interface
 import { _getClient } from './client-instance';
+import {
+  ATTR_GENTRACE_EXPERIMENT_ID,
+  ATTR_GENTRACE_FN_ARGS,
+  ATTR_GENTRACE_FN_OUTPUT,
+} from './otel/constants';
 
 /**
  * Runs a single named test case within the context of an active experiment.
@@ -88,7 +93,7 @@ export async function _runEval<TResult, TInput = any>(
 
   return new Promise<TResult | null>((resolve) => {
     tracer.startActiveSpan(spanName, async (span: Span) => {
-      span.setAttribute('gentrace.experiment_id', experimentId);
+      span.setAttribute(ATTR_GENTRACE_EXPERIMENT_ID, experimentId);
       Object.entries(spanAttributes ?? {}).forEach(([key, value]) => {
         span.setAttribute(key, value);
       });
@@ -109,7 +114,7 @@ export async function _runEval<TResult, TInput = any>(
         }
 
         if (parsedInputs) {
-          span.addEvent('gentrace.fn.args', {
+          span.addEvent(ATTR_GENTRACE_FN_ARGS, {
             args: stringify([parsedInputs]),
           });
         }
@@ -119,7 +124,7 @@ export async function _runEval<TResult, TInput = any>(
         if (result instanceof Promise) {
           result.then(
             (resolvedResult) => {
-              span.addEvent('gentrace.fn.output', {
+              span.addEvent(ATTR_GENTRACE_FN_OUTPUT, {
                 output: stringify(resolvedResult),
               });
               span.end();
@@ -137,7 +142,7 @@ export async function _runEval<TResult, TInput = any>(
             },
           );
         } else {
-          span.addEvent('gentrace.fn.output', {
+          span.addEvent(ATTR_GENTRACE_FN_OUTPUT, {
             output: stringify(result),
           });
           span.end();

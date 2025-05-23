@@ -3,6 +3,11 @@ import { Span, SpanStatusCode } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { ANONYMOUS_SPAN_NAME } from 'gentrace/lib/constants';
 import { TracedOptions } from 'gentrace/lib/traced';
+import {
+  ATTR_GENTRACE_FN_ARGS,
+  ATTR_GENTRACE_FN_OUTPUT,
+  ATTR_GENTRACE_PIPELINE_ID,
+} from 'gentrace/lib/otel/constants';
 
 let lastMockSpan: Partial<Span> | null = null;
 
@@ -94,9 +99,11 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledWith('originalFn', expect.any(Function));
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([{ a: 5 }]) });
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', { output: stringify(10) });
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, {
+      args: stringify([{ a: 5 }]),
+    });
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, { output: stringify(10) });
     expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
     expect(lastMockSpan?.end).toHaveBeenCalledTimes(2);
   });
@@ -115,11 +122,11 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledWith('originalFn', expect.any(Function));
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, {
       args: stringify([{ b: 'World' }]),
     });
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, {
       output: stringify('Hello World'),
     });
     expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
@@ -139,8 +146,8 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledTimes(1);
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, {
       args: stringify([{ c: true }]),
     });
     expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
@@ -165,8 +172,8 @@ describe('interaction wrapper', () => {
     expect(mockStartActiveSpan).toHaveBeenCalledTimes(1);
 
     expect(lastMockSpan).not.toBeNull();
-    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
+    expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, {
       args: stringify([{ d: [1, 2] }]),
     });
     expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
@@ -204,10 +211,10 @@ describe('interaction wrapper', () => {
     const wrappedFn = interaction(pipelineId, originalFn);
     wrappedFn(complexArg);
 
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', {
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, {
       args: stringify([complexArg]),
     });
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, {
       output: stringify(complexOutput),
     });
   });
@@ -223,9 +230,9 @@ describe('interaction wrapper', () => {
       expect(mockStartActiveSpan).toHaveBeenCalledWith(syncNoParamsFn.name, expect.any(Function));
 
       expect(lastMockSpan).not.toBeNull();
-      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
-      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([]) });
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, {
         output: stringify('sync success'),
       });
       expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
@@ -245,9 +252,9 @@ describe('interaction wrapper', () => {
       expect(mockStartActiveSpan).toHaveBeenCalledWith(asyncNoParamsFn.name, expect.any(Function));
 
       expect(lastMockSpan).not.toBeNull();
-      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
-      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([]) });
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, {
         output: stringify('async success'),
       });
       expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
@@ -266,8 +273,8 @@ describe('interaction wrapper', () => {
       expect(mockStartActiveSpan).toHaveBeenCalledWith(syncErrorFn.name, expect.any(Function));
 
       expect(lastMockSpan).not.toBeNull();
-      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([]) });
       expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
       expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
         code: SpanStatusCode.ERROR,
@@ -290,8 +297,8 @@ describe('interaction wrapper', () => {
       expect(mockStartActiveSpan).toHaveBeenCalledWith(asyncRejectFn.name, expect.any(Function));
 
       expect(lastMockSpan).not.toBeNull();
-      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('gentrace.pipeline_id', pipelineId);
-      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.args', { args: stringify([]) });
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, pipelineId);
+      expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_ARGS, { args: stringify([]) });
       expect(lastMockSpan?.recordException).toHaveBeenCalledWith(error);
       expect(lastMockSpan?.setStatus).toHaveBeenCalledWith({
         code: SpanStatusCode.ERROR,

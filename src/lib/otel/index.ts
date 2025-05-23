@@ -1,3 +1,3 @@
 export { GentraceSpanProcessor } from './span-processor';
 export { GentraceSampler } from './sampler';
-export { GENTRACE_SAMPLE_KEY } from './constants';
+export { ATTR_GENTRACE_SAMPLE as GENTRACE_SAMPLE_KEY } from './constants';

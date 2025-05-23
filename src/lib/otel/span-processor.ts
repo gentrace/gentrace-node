@@ -1,6 +1,6 @@
 import { Context, propagation } from '@opentelemetry/api';
 import { ReadableSpan, Span, SpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { GENTRACE_SAMPLE_KEY } from './constants';
+import { ATTR_GENTRACE_SAMPLE } from './constants';
 
 /**
  * A function that determines whether a baggage key-value pair should be added to new
@@ -32,7 +32,7 @@ export class GentraceSpanProcessor implements SpanProcessor {
    */
   onStart(span: Span, parentContext: Context): void {
     (propagation.getBaggage(parentContext)?.getAllEntries() ?? [])
-      .filter((entry) => entry[0] === GENTRACE_SAMPLE_KEY)
+      .filter((entry) => entry[0] === ATTR_GENTRACE_SAMPLE)
       .forEach((entry) => span.setAttribute(entry[0], entry[1].value));
   }
 

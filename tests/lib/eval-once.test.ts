@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import type { Span } from '@opentelemetry/api';
 import { init } from 'gentrace/lib/init';
+import { ATTR_GENTRACE_EXPERIMENT_ID, ATTR_GENTRACE_FN_OUTPUT } from 'gentrace/lib/otel/constants';
 import stringify from 'json-stringify-safe';
 
 let lastMockSpan: Partial<Span> | null = null;
@@ -86,7 +87,7 @@ describe('evalOnce() function', () => {
 
         try {
           const result = await fn(mockSpan as unknown as Span);
-          mockSpan.addEvent('gentrace.fn.output', { output: stringify(result) });
+          mockSpan.addEvent(ATTR_GENTRACE_FN_OUTPUT, { output: stringify(result) });
           return result;
         } catch (error: any) {
           mockSpan.recordException(error);
@@ -136,7 +137,7 @@ describe('evalOnce() function', () => {
     expect(mockedStartActiveSpan).toHaveBeenCalledWith(testName, expect.any(Function));
 
     expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(
-      'gentrace.experiment_id',
+      ATTR_GENTRACE_EXPERIMENT_ID,
       mockExperimentContext.experimentId,
     );
     expect(callback).toHaveBeenCalledTimes(1);
@@ -152,7 +153,7 @@ describe('evalOnce() function', () => {
     expect(result).toBe(expectedResult);
     expect(callback).toHaveBeenCalledTimes(1);
 
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, {
       output: stringify(expectedResult),
     });
     expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();
@@ -189,7 +190,7 @@ describe('evalOnce() function', () => {
 
     expect(result).toBe(expectedResult);
     expect(callback).toHaveBeenCalledTimes(1);
-    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith('gentrace.fn.output', {
+    expect(lastMockSpan?.addEvent).toHaveBeenCalledWith(ATTR_GENTRACE_FN_OUTPUT, {
       output: stringify(expectedResult),
     });
     expect(lastMockSpan?.setStatus).not.toHaveBeenCalled();

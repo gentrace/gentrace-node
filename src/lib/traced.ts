@@ -1,6 +1,7 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { ANONYMOUS_SPAN_NAME } from './constants';
+import { ATTR_GENTRACE_FN_ARGS, ATTR_GENTRACE_FN_OUTPUT } from './otel/constants';
 
 /**
  * Options for configuring the behavior of the traced function.
@@ -47,7 +48,7 @@ export function traced<F extends (...args: any[]) => any>(
 
       try {
         const argsString = stringify(args);
-        span.addEvent('gentrace.fn.args', { args: argsString });
+        span.addEvent(ATTR_GENTRACE_FN_ARGS, { args: argsString });
 
         const result = fn(...args);
 
@@ -55,7 +56,7 @@ export function traced<F extends (...args: any[]) => any>(
           return result
             .then((finalOutput) => {
               const outputString = stringify(finalOutput);
-              span.addEvent('gentrace.fn.output', { output: outputString });
+              span.addEvent(ATTR_GENTRACE_FN_OUTPUT, { output: outputString });
               span.end();
               return finalOutput;
             })
@@ -68,7 +69,7 @@ export function traced<F extends (...args: any[]) => any>(
             });
         } else {
           const outputString = stringify(result);
-          span.addEvent('gentrace.fn.output', { output: outputString });
+          span.addEvent(ATTR_GENTRACE_FN_OUTPUT, { output: outputString });
           span.end();
           return result;
         }
