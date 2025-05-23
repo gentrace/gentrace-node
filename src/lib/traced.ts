@@ -23,10 +23,10 @@ export type TracedOptions = {
  * Wraps a function with OpenTelemetry tracing to track its execution.
  * Creates a span for the function execution and records its success or failure.
  *
- * @template F - The type of the function to wrap with tracing.
+ * @template {function} F - The type of the function to wrap with tracing.
  * @param {F} fn - The function to wrap with tracing.
- * @param {TracedOptions} [options] - Optional configuration for tracing.
- * @returns A new function that has the same parameters and return type as fn.
+ * @param {TracedOptions} options - Configuration for tracing.
+ * @returns {F} A new function that has the same parameters and return type as fn.
  */
 export function traced<F extends (...args: any[]) => any>(fn: F, options: TracedOptions): F {
   const tracer = trace.getTracer('gentrace');

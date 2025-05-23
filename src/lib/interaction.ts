@@ -24,10 +24,11 @@ export type InteractionOptions = {
  * Handles functions that take either zero arguments or one argument which is a record.
  * Preserves the exact type signature (including sync/async return type) of the original function.
  *
- * @param name The name for the span.
- * @param fn The function to wrap. Must take zero args or a single record argument.
- * @param options Configuration options including pipelineId and additional attributes.
- * @returns The wrapped function with the identical type signature as fn.
+ * @template {function} F - The type of the function to wrap.
+ * @param {string} name - The name for the span.
+ * @param {F} fn - The function to wrap. Must take zero args or a single record argument.
+ * @param {InteractionOptions} options - Configuration options including pipelineId and additional attributes.
+ * @returns {F} The wrapped function with the identical type signature as fn.
  */
 export function interaction<F extends (...args: any[]) => any>(
   name: string,
