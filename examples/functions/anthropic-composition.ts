@@ -31,13 +31,12 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
 
       let messages: any[];
       await tracer.startActiveSpan('constructPrompt', (promptSpan) => {
-        const systemPrompt = 'You are a professional email assistant. Write clear, concise, and professional emails.';
+        const systemPrompt =
+          'You are a professional email assistant. Write clear, concise, and professional emails.';
         const userPrompt = `Write a professional email to ${recipient} about ${topic}. The email should be signed by ${sender}.`;
-        
-        messages = [
-          { role: 'user', content: userPrompt },
-        ];
-        
+
+        messages = [{ role: 'user', content: userPrompt }];
+
         promptSpan.setAttribute('prompt.system', systemPrompt);
         promptSpan.setAttribute('prompt.user', userPrompt);
 
@@ -76,7 +75,7 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
           apiSpan.setAttributes({
             'gen_ai.response.id': completion.id,
             'gen_ai.response.model': completion.model,
-            'gen_ai.response.finish_reason': completion.stop_reason,
+            'gen_ai.response.finish_reason': completion.stop_reason || undefined,
             'gen_ai.usage.input_tokens': completion.usage.input_tokens,
             'gen_ai.usage.output_tokens': completion.usage.output_tokens,
           });
@@ -107,9 +106,9 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
 
       let emailContent: string | null = null;
       await tracer.startActiveSpan('parseAnthropicResponse', (parseSpan) => {
-        const textContent = completion?.content.find(c => c.type === 'text');
+        const textContent = completion?.content.find((c) => c.type === 'text');
         emailContent = textContent?.type === 'text' ? textContent.text : null;
-        
+
         if (emailContent) {
           parseSpan.setAttribute('parsing.output_length', emailContent.length);
         } else {
@@ -141,4 +140,3 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
 }
 
 export const composeEmail = traced('composeEmail', _composeEmailLogic);
-
