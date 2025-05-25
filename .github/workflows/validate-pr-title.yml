@@ -5,7 +5,7 @@ on:
     types: [opened, edited, synchronize, reopened]
 
 permissions:
-  pull-requests: read   # Access to pull request data
+  pull-requests: read # Access to pull request data
 
 jobs:
   main:
@@ -21,4 +21,4 @@ jobs:
             fix
             chore
             release
-          requireScope: false  # Optional: enforce scopes like feat(ui)
+          requireScope: false # Optional: enforce scopes like feat(ui)

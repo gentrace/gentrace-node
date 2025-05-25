@@ -23,10 +23,17 @@ const OPENAI_API_KEY = readEnv('OPENAI_API_KEY');
 const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID');
 const GENTRACE_DATASET_ID = readEnv('GENTRACE_DATASET_ID');
 
-if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY || !OPENAI_API_KEY || !GENTRACE_DATASET_ID) {
-  throw new Error(
-    'GENTRACE_PIPELINE_ID, GENTRACE_API_KEY, OPENAI_API_KEY and GENTRACE_DATASET_ID must be set',
-  );
+if (!GENTRACE_PIPELINE_ID) {
+  throw new Error('GENTRACE_PIPELINE_ID environment variable must be set');
+}
+if (!GENTRACE_API_KEY) {
+  throw new Error('GENTRACE_API_KEY environment variable must be set');
+}
+if (!OPENAI_API_KEY) {
+  throw new Error('OPENAI_API_KEY environment variable must be set');
+}
+if (!GENTRACE_DATASET_ID) {
+  throw new Error('GENTRACE_DATASET_ID environment variable must be set');
 }
 
 init({

@@ -12,15 +12,21 @@ import { evalOnce } from '../src/lib/eval-once';
 import { experiment } from '../src/lib/experiment';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
-import { composeEmail } from './functions/composition';
+import { composeEmail } from './functions/openai-composition';
 
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
 const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
 const GENTRACE_API_KEY = readEnv('GENTRACE_API_KEY')!;
 const OPENAI_API_KEY = readEnv('OPENAI_API_KEY')!;
 
-if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY || !OPENAI_API_KEY) {
-  throw new Error('GENTRACE_PIPELINE_ID, GENTRACE_API_KEY, and OPENAI_API_KEY must be set');
+if (!GENTRACE_PIPELINE_ID) {
+  throw new Error('GENTRACE_PIPELINE_ID environment variable must be set');
+}
+if (!GENTRACE_API_KEY) {
+  throw new Error('GENTRACE_API_KEY environment variable must be set');
+}
+if (!OPENAI_API_KEY) {
+  throw new Error('OPENAI_API_KEY environment variable must be set');
 }
 
 dotenv.config();

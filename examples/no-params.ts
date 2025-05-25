@@ -19,8 +19,11 @@ const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
 const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID');
 const GENTRACE_API_KEY = readEnv('GENTRACE_API_KEY');
 
-if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY) {
-  throw new Error('GENTRACE_PIPELINE_ID and GENTRACE_API_KEY must be set');
+if (!GENTRACE_PIPELINE_ID) {
+  throw new Error('GENTRACE_PIPELINE_ID environment variable must be set');
+}
+if (!GENTRACE_API_KEY) {
+  throw new Error('GENTRACE_API_KEY environment variable must be set');
 }
 
 init({

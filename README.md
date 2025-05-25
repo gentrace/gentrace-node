@@ -155,9 +155,9 @@ run();
 
 The `traced` function requires an explicit `name` option for the span it creates. You can also provide additional `attributes` to be added to the span. Like `interaction`, this also requires OpenTelemetry to be set up.
 
- > [!WARNING]  
- > This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. Both the `interaction` and `traced` functions require this setup to capture and send traces.
- > Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
+> [!WARNING]  
+> This example assumes you have already set up OpenTelemetry as described in the [OpenTelemetry Integration](#opentelemetry-integration) section. Both the `interaction` and `traced` functions require this setup to capture and send traces.
+> Now, every time `instrumentedQueryAi` is called, Gentrace will record a trace associated with your `GENTRACE_PIPELINE_ID`.
 
 ## Testing and Evaluation
 

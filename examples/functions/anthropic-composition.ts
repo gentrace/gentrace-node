@@ -1,6 +1,6 @@
 import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import Anthropic from '@anthropic-ai/sdk';
-import { readEnv } from 'gentrace/internal/utils';
+import { readEnv } from '../../src/internal/utils';
 import { traced } from '../../src/lib/traced';
 
 const anthropic = new Anthropic({
@@ -31,13 +31,12 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
 
       let messages: any[];
       await tracer.startActiveSpan('constructPrompt', (promptSpan) => {
-        const systemPrompt = 'You are a professional email assistant. Write clear, concise, and professional emails.';
+        const systemPrompt =
+          'You are a professional email assistant. Write clear, concise, and professional emails.';
         const userPrompt = `Write a professional email to ${recipient} about ${topic}. The email should be signed by ${sender}.`;
-        
-        messages = [
-          { role: 'user', content: userPrompt },
-        ];
-        
+
+        messages = [{ role: 'user', content: userPrompt }];
+
         promptSpan.setAttribute('prompt.system', systemPrompt);
         promptSpan.setAttribute('prompt.user', userPrompt);
 
@@ -65,6 +64,22 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
           'server.port': 443,
         });
 
+        // Add system prompt as event
+        apiSpan.addEvent('gen_ai.system.message', {
+          'gen_ai.message.role': 'system',
+          'gen_ai.message.content':
+            'You are a professional email assistant. Write clear, concise, and professional emails.',
+        });
+
+        // Add user messages as events
+        messages.forEach((msg, index) => {
+          apiSpan.addEvent(`gen_ai.${msg.role}.message`, {
+            'gen_ai.message.index': index,
+            'gen_ai.message.role': msg.role,
+            'gen_ai.message.content': msg.content,
+          });
+        });
+
         try {
           completion = await anthropic.messages.create({
             model: model,
@@ -76,10 +91,16 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
           apiSpan.setAttributes({
             'gen_ai.response.id': completion.id,
             'gen_ai.response.model': completion.model,
-            'gen_ai.response.finish_reason': completion.stop_reason,
+            'gen_ai.response.finish_reason': completion.stop_reason || undefined,
             'gen_ai.usage.input_tokens': completion.usage.input_tokens,
             'gen_ai.usage.output_tokens': completion.usage.output_tokens,
           });
+
+          // Add response content as attribute
+          const textContent = completion.content.find((c) => c.type === 'text');
+          if (textContent?.type === 'text') {
+            apiSpan.setAttribute('gen_ai.response.content', textContent.text);
+          }
 
           completion.content.forEach((content, index) => {
             if (content.type === 'text') {
@@ -89,6 +110,14 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
                 'gen_ai.content.text': content.text,
               });
             }
+          });
+
+          completion.content.forEach((content, index) => {
+            apiSpan.addEvent('gen_ai.choice', {
+              'gen_ai.choice.index': index,
+              'gen_ai.choice.message.role': 'assistant',
+              'gen_ai.choice.message.content': content.type === 'text' ? content.text : '',
+            });
           });
 
           apiSpan.setStatus({ code: SpanStatusCode.OK });
@@ -107,9 +136,9 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
 
       let emailContent: string | null = null;
       await tracer.startActiveSpan('parseAnthropicResponse', (parseSpan) => {
-        const textContent = completion?.content.find(c => c.type === 'text');
+        const textContent = completion?.content.find((c) => c.type === 'text');
         emailContent = textContent?.type === 'text' ? textContent.text : null;
-        
+
         if (emailContent) {
           parseSpan.setAttribute('parsing.output_length', emailContent.length);
         } else {
@@ -128,6 +157,9 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
       });
 
       finalResult = emailContent;
+      if (finalResult) {
+        processSpan.setAttribute('email.content', finalResult);
+      }
       return finalResult;
     } catch (error: any) {
       processSpan.recordException(error);
@@ -141,4 +173,3 @@ async function _composeEmailLogic(recipient: string, topic: string, sender: stri
 }
 
 export const composeEmail = traced('composeEmail', _composeEmailLogic);
-
