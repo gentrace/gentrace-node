@@ -5,22 +5,29 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import * as dotenv from 'dotenv';
-import { evalOnce, experiment, init } from '../src';
 import { readEnv } from '../src/internal/utils';
 import { GentraceSpanProcessor } from '../src/lib';
-
-dotenv.config();
+import { init } from '../src/lib/init';
+import { interaction } from '../src/lib/interaction';
+import { composeEmail } from './functions/anthropic-composition';
 
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
-const GENTRACE_API_KEY = readEnv('GENTRACE_API_KEY');
-const PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
+const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
+const GENTRACE_API_KEY = readEnv('GENTRACE_API_KEY')!;
+const ANTHROPIC_API_KEY = readEnv('ANTHROPIC_API_KEY')!;
 
-if (!PIPELINE_ID) {
+if (!GENTRACE_PIPELINE_ID) {
   throw new Error('GENTRACE_PIPELINE_ID environment variable must be set');
 }
 if (!GENTRACE_API_KEY) {
   throw new Error('GENTRACE_API_KEY environment variable must be set');
 }
+
+if (!ANTHROPIC_API_KEY) {
+  throw new Error('ANTHROPIC_API_KEY environment variable must be set');
+}
+
+dotenv.config();
 
 init({
   baseURL: GENTRACE_BASE_URL,
@@ -29,7 +36,7 @@ init({
 // Begin OpenTelemetry SDK setup
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: 'eval-once-test',
+    [ATTR_SERVICE_NAME]: 'anthropic-email-composition-simplified',
   }),
   instrumentations: [],
   spanProcessors: [
@@ -67,8 +74,13 @@ process.on('SIGTERM', async () => {
 });
 // End OpenTelemetry SDK setup
 
-experiment(PIPELINE_ID, async () => {
-  evalOnce('simple-addition-test', () => {
-    return 1 + 1;
-  });
+const compose = interaction('Compose Email', composeEmail, {
+  pipelineId: GENTRACE_PIPELINE_ID,
 });
+
+async function main() {
+  const draft = await compose('Alice', 'Project Phoenix Update', 'John Doe');
+  console.log('Draft:', draft);
+}
+
+main();
