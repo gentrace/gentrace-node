@@ -1,5 +1,5 @@
 import { SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
-import { readEnv } from 'gentrace/internal/utils';
+import { readEnv } from '../../src/internal/utils';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({

@@ -1,13 +1,17 @@
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import dotenv from 'dotenv';
-import { readEnv } from 'gentrace/internal/utils';
+import { OpenAIInstrumentation } from '@traceloop/instrumentation-openai';
+import * as dotenv from 'dotenv';
+import { readEnv } from '../src/internal/utils';
+import { GentraceSpanProcessor } from '../src/lib';
+import { evalOnce } from '../src/lib/eval-once';
 import { experiment } from '../src/lib/experiment';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
-import { evalOnce } from '../src/lib/eval-once';
 import { composeEmail } from './functions/composition';
 
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
@@ -26,28 +30,49 @@ init({
 });
 
 // Begin OpenTelemetry SDK setup
-const resource = resourceFromAttributes({
-  [ATTR_SERVICE_NAME]: 'openai-email-composition-simplified-test',
-});
-
 const sdk = new NodeSDK({
-  resource,
-  traceExporter: new OTLPTraceExporter({
-    url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-    headers: {
-      Authorization: `Bearer ${GENTRACE_API_KEY}`,
-    },
+  resource: resourceFromAttributes({
+    [ATTR_SERVICE_NAME]: 'openai-email-composition-simplified-test',
   }),
+  instrumentations: [
+    new OpenAIInstrumentation({
+      exceptionLogger: (e: Error) => {
+        console.error('Error logging OpenAI exception', e);
+      },
+    }),
+  ],
+  spanProcessors: [
+    new GentraceSpanProcessor(),
+    new SimpleSpanProcessor(
+      new OTLPTraceExporter({
+        url: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${readEnv('GENTRACE_API_KEY')}`,
+        },
+      }),
+    ),
+    new SimpleSpanProcessor(new ConsoleSpanExporter()),
+  ],
+  contextManager: new AsyncLocalStorageContextManager().enable(),
 });
 
 sdk.start();
 
 process.on('beforeExit', async () => {
-  await sdk.shutdown();
+  await sdk
+    .shutdown()
+    .then(() => console.log('Tracing terminated.'))
+    .catch((error) => console.log('Error terminating tracing', error))
+    .finally(() => process.exit(0));
 });
 
 process.on('SIGTERM', async () => {
-  await sdk.shutdown();
+  await sdk
+    .shutdown()
+    .then(() => console.log('Tracing terminated.'))
+    .catch((error) => console.log('Error terminating tracing', error))
+    .finally(() => process.exit(0));
 });
 // End OpenTelemetry SDK setup
 
