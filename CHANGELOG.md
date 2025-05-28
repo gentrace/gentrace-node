@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.2.0 (2025-05-28)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/gentrace/gentrace-node/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* Add ASCII visualizations for OpenTelemetry information flow ([#562](https://github.com/gentrace/gentrace-node/issues/562)) ([bfffd60](https://github.com/gentrace/gentrace-node/commit/bfffd6072b39f95bc57ac8c064319718fdb084a8))
+* Add Claude Assistant GitHub Action workflow ([#558](https://github.com/gentrace/gentrace-node/issues/558)) ([952c9dd](https://github.com/gentrace/gentrace-node/commit/952c9dde4a94154df3e8cdcb409176c1a8716a5a))
+* add PR title validation workflow ([#554](https://github.com/gentrace/gentrace-node/issues/554)) ([fb8636d](https://github.com/gentrace/gentrace-node/commit/fb8636de562ec218164de77dfff3cd24111c9abb))
+* add release type to PR title validation ([#567](https://github.com/gentrace/gentrace-node/issues/567)) ([9404fb9](https://github.com/gentrace/gentrace-node/commit/9404fb92c2fe56944a52619166265ac8c4e116f3))
+
+
+### Bug Fixes
+
+* Refactor attributes into constants ([#550](https://github.com/gentrace/gentrace-node/issues/550)) ([6a7e8d4](https://github.com/gentrace/gentrace-node/commit/6a7e8d41cace89a59691b26ee17e112b69152a43))
+* update Jest config to transform yoctocolors package ([5a0323b](https://github.com/gentrace/gentrace-node/commit/5a0323b2f137afd678fb1b0fbaf07fdfe914b2a4))
+
+
+### Chores
+
+* Add interaction name for simplicity ([#551](https://github.com/gentrace/gentrace-node/issues/551)) ([a866e5a](https://github.com/gentrace/gentrace-node/commit/a866e5a038c786a8619ff91438e42c98daa3e4e6))
+* Detail `traced()` in the docs ([#552](https://github.com/gentrace/gentrace-node/issues/552)) ([3bf57ca](https://github.com/gentrace/gentrace-node/commit/3bf57ca0072778c9f14c7eabdbcbfed53b8dca5b))
+* **docs:** grammar improvements ([09c4cff](https://github.com/gentrace/gentrace-node/commit/09c4cff16edc9495ca2320c4440f8d413116e420))
+* improve publish-npm script --latest tag logic ([31956fe](https://github.com/gentrace/gentrace-node/commit/31956fec02eda630db73bfedf2556f55ad6f86f4))
+* Remove test_case_name attribute ([#548](https://github.com/gentrace/gentrace-node/issues/548)) ([29d01e7](https://github.com/gentrace/gentrace-node/commit/29d01e7d89d568014b524a8502a531cad9ed7a97))
+* Rename to evalOnce() and evalDataset() ([#549](https://github.com/gentrace/gentrace-node/issues/549)) ([8301950](https://github.com/gentrace/gentrace-node/commit/8301950c4219c6b70f7ab774dacc9cccd6995f42))
+* Update README.md ([86a8888](https://github.com/gentrace/gentrace-node/commit/86a8888d6f024f8060d96c99fe625935f51eb7ae))
+
 ## 0.1.0 (2025-05-16)
 
 Full Changelog: [v0.1.0-alpha.8...v0.1.0](https://github.com/gentrace/gentrace-node/compare/v0.1.0-alpha.8...v0.1.0)
