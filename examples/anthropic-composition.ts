@@ -34,6 +34,7 @@ init({
 });
 
 // Begin OpenTelemetry SDK setup
+console.log('Starting OTEL SDK setup...');
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'anthropic-email-composition-simplified',
