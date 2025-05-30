@@ -4,6 +4,7 @@
   "compilerOptions": {
     "target": "es2020",
     "lib": ["es2020"],
+    "types": ["node"],
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,

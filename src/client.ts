@@ -179,7 +179,7 @@ export class Gentrace {
 
     this.baseURL = options.baseURL!;
     this.timeout = options.timeout ?? Gentrace.DEFAULT_TIMEOUT /* 1 minute */;
-    this.logger = options.logger ?? console;
+    this.logger = options.logger ?? globalThis.console;
     const defaultLogLevel = 'warn';
     // Set default logLevel early so that we can log a warning in parseLogLevel.
     this.logLevel = defaultLogLevel;
