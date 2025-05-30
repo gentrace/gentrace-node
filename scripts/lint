@@ -11,7 +11,7 @@ echo "==> Building"
 ./scripts/build
 
 echo "==> Checking types"
-./node_modules/typescript/bin/tsc
+./node_modules/typescript/bin/tsc --project tsconfig.typecheck.json
 
 echo "==> Running Are The Types Wrong?"
 ./node_modules/.bin/attw --pack dist -f json >.attw.json || true
