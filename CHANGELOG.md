@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.1 (2025-05-31)
+
+Full Changelog: [v0.2.0...v0.2.1](https://github.com/gentrace/gentrace-node/compare/v0.2.0...v0.2.1)
+
+### Bug Fixes
+
+* compat with more runtimes ([b6a812b](https://github.com/gentrace/gentrace-node/commit/b6a812b4cceec32e761d5696076c60a6248889b5))
+
+
+### Chores
+
+* Add console log for OTEL SDK setup ([#570](https://github.com/gentrace/gentrace-node/issues/570)) ([dab6145](https://github.com/gentrace/gentrace-node/commit/dab6145850a94179cab50e1b3fa4679e00e780e9))
+* **deps:** bump eslint-plugin-prettier ([c19a249](https://github.com/gentrace/gentrace-node/commit/c19a24913d60c34532b4aa027a146257beaec38d))
+* **internal:** update jest config ([9b01e65](https://github.com/gentrace/gentrace-node/commit/9b01e65866a5bb39921ddc493acb215ab93e442d))
+
 ## 0.2.0 (2025-05-28)
 
 Full Changelog: [v0.1.0...v0.2.0](https://github.com/gentrace/gentrace-node/compare/v0.1.0...v0.2.0)
