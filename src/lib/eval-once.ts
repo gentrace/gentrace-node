@@ -1,4 +1,4 @@
-import { Span, SpanStatusCode, trace } from '@opentelemetry/api';
+import { Span, SpanStatusCode, trace, context, propagation } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
 import { ParseableSchema } from './eval-dataset'; // Import the interface
@@ -7,6 +7,7 @@ import {
   ATTR_GENTRACE_EXPERIMENT_ID,
   ATTR_GENTRACE_FN_ARGS,
   ATTR_GENTRACE_FN_OUTPUT,
+  ATTR_GENTRACE_SAMPLE,
 } from './otel/constants';
 
 /**
@@ -78,7 +79,7 @@ export type RunEvalInternalOptions<TResult, TInput> = {
  * @throws If called outside of a `experiment()` context or if the callback throws.
  */
 export async function _runEval<TResult, TInput = any>(
-  options: RunEvalInternalOptions<TResult, TInput>, // Single options parameter
+  options: RunEvalInternalOptions<TResult, TInput>,
 ): Promise<TResult | null> {
   const { spanName, spanAttributes, inputs, schema, callback } = options;
 
@@ -92,72 +93,83 @@ export async function _runEval<TResult, TInput = any>(
   const tracer = trace.getTracer('gentrace-sdk');
 
   return new Promise<TResult | null>((resolve) => {
-    tracer.startActiveSpan(spanName, async (span: Span) => {
-      span.setAttribute(ATTR_GENTRACE_EXPERIMENT_ID, experimentId);
-      Object.entries(spanAttributes ?? {}).forEach(([key, value]) => {
-        span.setAttribute(key, value);
-      });
+    const currentContext = context.active();
+    const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
 
-      try {
-        let parsedInputs: TInput;
+    const newBaggage = currentBaggage.setEntry(ATTR_GENTRACE_SAMPLE, {
+      value: 'true',
+    });
+    const newContext = propagation.setBaggage(currentContext, newBaggage);
 
-        if (schema) {
-          try {
-            parsedInputs = schema.parse(inputs);
-          } catch (parsingError: any) {
-            span.recordException(parsingError);
-            span.setAttribute('error.type', parsingError.name);
-            throw parsingError;
+    context.with(newContext, () => {
+      tracer.startActiveSpan(spanName, async (span: Span) => {
+        span.setAttribute(ATTR_GENTRACE_EXPERIMENT_ID, experimentId);
+        Object.entries(spanAttributes ?? {}).forEach(([key, value]) => {
+          span.setAttribute(key, value);
+        });
+
+        try {
+          let parsedInputs: TInput;
+
+          if (schema) {
+            try {
+              parsedInputs = schema.parse(inputs);
+            } catch (parsingError: any) {
+              span.recordException(parsingError);
+              span.setAttribute('error.type', parsingError.name);
+              throw parsingError;
+            }
+          } else {
+            parsedInputs = inputs as TInput;
           }
-        } else {
-          parsedInputs = inputs as TInput;
-        }
 
-        if (parsedInputs) {
-          span.addEvent(ATTR_GENTRACE_FN_ARGS, {
-            args: stringify([parsedInputs]),
-          });
-        }
+          if (parsedInputs) {
+            span.addEvent(ATTR_GENTRACE_FN_ARGS, {
+              args: stringify([parsedInputs]),
+            });
+          }
 
-        const result = callback(parsedInputs);
+          const boundCallback = context.bind(context.active(), callback);
+          const result = boundCallback(parsedInputs);
 
-        if (result instanceof Promise) {
-          result.then(
-            (resolvedResult) => {
+          if (result instanceof Promise) {
+            const successHandler = context.bind(context.active(), (resolvedResult: TResult | null) => {
               span.addEvent(ATTR_GENTRACE_FN_OUTPUT, {
                 output: stringify(resolvedResult),
               });
               span.end();
               resolve(resolvedResult);
-            },
-            (error) => {
+            });
+
+            const errorHandler = context.bind(context.active(), (error: any) => {
               span.recordException(error);
               span.setStatus({
                 code: SpanStatusCode.ERROR,
-                message: (error as any)?.message,
+                message: error?.message,
               });
-              span.setAttribute('error.type', (error as any).name);
+              span.setAttribute('error.type', error.name);
               span.end();
               resolve(null);
-            },
-          );
-        } else {
-          span.addEvent(ATTR_GENTRACE_FN_OUTPUT, {
-            output: stringify(result),
-          });
-          span.end();
-          resolve(result);
-        }
-      } catch (error: any) {
-        span.recordException(error);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: error?.message });
-        span.setAttribute('error.type', error.name);
-        span.end();
+            });
 
-        // Don't reject here, just log the error. The span will record the error.
-        _getClient().logger?.error(`Failed to run test case "${spanName}":`, error);
-        resolve(null);
-      }
+            result.then(successHandler, errorHandler);
+          } else {
+            span.addEvent(ATTR_GENTRACE_FN_OUTPUT, {
+              output: stringify(result),
+            });
+            span.end();
+            resolve(result);
+          }
+        } catch (error: any) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error?.message });
+          span.setAttribute('error.type', error.name);
+          span.end();
+
+          _getClient().logger?.error(`Failed to run test case "${spanName}":`, error);
+          resolve(null);
+        }
+      });
     });
   });
 }
