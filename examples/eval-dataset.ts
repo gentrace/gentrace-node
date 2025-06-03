@@ -8,7 +8,7 @@ import { OpenAIInstrumentation } from '@traceloop/instrumentation-openai';
 import * as dotenv from 'dotenv';
 import { z } from 'zod';
 import { readEnv } from '../src/internal/utils';
-import { GentraceSpanProcessor } from '../src/lib';
+import { GentraceSampler, GentraceSpanProcessor } from '../src/lib';
 import { evalDataset } from '../src/lib/eval-dataset';
 import { experiment } from '../src/lib/experiment';
 import { init, testCases } from '../src/lib/init';
@@ -52,6 +52,7 @@ const sdk = new NodeSDK({
       },
     }),
   ],
+  sampler: new GentraceSampler(),
   spanProcessors: [
     new GentraceSpanProcessor(),
     new SimpleSpanProcessor(

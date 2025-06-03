@@ -6,7 +6,7 @@ import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-tra
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import * as dotenv from 'dotenv';
 import { readEnv } from '../src/internal/utils';
-import { GentraceSpanProcessor } from '../src/lib';
+import { GentraceSampler, GentraceSpanProcessor } from '../src/lib';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
 import { composeEmail } from './functions/anthropic-composition';
@@ -39,6 +39,7 @@ const sdk = new NodeSDK({
     [ATTR_SERVICE_NAME]: 'anthropic-email-composition-simplified',
   }),
   instrumentations: [],
+  sampler: new GentraceSampler(),
   spanProcessors: [
     new GentraceSpanProcessor(),
     new SimpleSpanProcessor(
