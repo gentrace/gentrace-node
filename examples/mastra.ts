@@ -1,20 +1,20 @@
+import { openai } from '@ai-sdk/openai';
+import { Mastra } from '@mastra/core';
+import { Agent } from '@mastra/core/agent';
+import { createTool } from '@mastra/core/tools';
+import { createStep, createWorkflow } from '@mastra/core/workflows';
+import { Memory } from '@mastra/memory';
+import { context, propagation, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
-import { SpanKind, SpanStatusCode, trace, context, propagation } from '@opentelemetry/api';
-import { openai } from '@ai-sdk/openai';
-import { Agent } from '@mastra/core/agent';
-import { createTool } from '@mastra/core/tools';
-import { createWorkflow, createStep } from '@mastra/core/workflows';
-import { Mastra } from '@mastra/core';
-import { Memory } from '@mastra/memory';
 import * as dotenv from 'dotenv';
 import { z } from 'zod';
 import { readEnv } from '../src/internal/utils';
-import { GentraceSampler, GentraceSpanProcessor } from '../src/lib';
+import { GentraceSpanProcessor } from '../src/lib';
 import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
 
@@ -39,16 +39,13 @@ init({
   baseURL: GENTRACE_BASE_URL,
 });
 
-// Begin OpenTelemetry SDK setup with advanced configuration
+// Begin OpenTelemetry SDK setup with comprehensive configuration
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: 'mastra-advanced-example',
+    [ATTR_SERVICE_NAME]: 'mastra-comprehensive-example',
     [ATTR_SERVICE_VERSION]: '1.0.0',
     'deployment.environment': process.env.NODE_ENV || 'development',
     'service.namespace': 'mastra-examples',
-  }),
-  sampler: new GentraceSampler({
-    ratio: 1.0, // Sample all traces for this example
   }),
   instrumentations: [],
   spanProcessors: [
@@ -87,9 +84,9 @@ process.on('SIGTERM', async () => {
 // End OpenTelemetry SDK setup
 
 // Create a tracer for this module
-const tracer = trace.getTracer('mastra-advanced-example', '1.0.0');
+const tracer = trace.getTracer('mastra-comprehensive-example', '1.0.0');
 
-// Advanced tool with detailed telemetry
+// Tool 1: Advanced product search with detailed telemetry
 const searchProductsTool = createTool({
   id: 'search-products',
   description: 'Search for products in our catalog with filters',
@@ -121,12 +118,13 @@ const searchProductsTool = createTool({
           'tool.name': 'search-products',
           'search.query': context.query,
           'search.category': context.category || 'all',
-          'search.price_range': context.minPrice && context.maxPrice ? `${context.minPrice}-${context.maxPrice}` : 'any',
+          'search.price_range':
+            context.minPrice && context.maxPrice ? `${context.minPrice}-${context.maxPrice}` : 'any',
         },
       },
       async (span) => {
         try {
-          // Simulate database query with telemetry
+          // Simulate database query
           const dbSpan = tracer.startSpan('database.query', {
             kind: SpanKind.CLIENT,
             attributes: {
@@ -162,15 +160,22 @@ const searchProductsTool = createTool({
               description: 'Premium non-slip yoga mat',
               inStock: false,
             },
+            {
+              id: '4',
+              name: 'Waterproof Bluetooth Speaker',
+              price: 79.99,
+              category: 'Electronics',
+              description: 'Portable speaker with 12-hour battery life',
+              inStock: true,
+            },
           ];
 
-          // Simulate processing time
           await new Promise((resolve) => setTimeout(resolve, 100));
 
           dbSpan.setStatus({ code: SpanStatusCode.OK });
           dbSpan.end();
 
-          // Filter products based on criteria
+          // Filter products
           let filtered = mockProducts.filter((p) =>
             p.name.toLowerCase().includes(context.query.toLowerCase()),
           );
@@ -179,12 +184,12 @@ const searchProductsTool = createTool({
             filtered = filtered.filter((p) => p.category === context.category);
           }
 
-          if (context.minPrice) {
-            filtered = filtered.filter((p) => p.price >= context.minPrice);
+          if (context.minPrice !== undefined) {
+            filtered = filtered.filter((p) => p.price >= context.minPrice!);
           }
 
-          if (context.maxPrice) {
-            filtered = filtered.filter((p) => p.price <= context.maxPrice);
+          if (context.maxPrice !== undefined) {
+            filtered = filtered.filter((p) => p.price <= context.maxPrice!);
           }
 
           span.setAttributes({
@@ -215,7 +220,92 @@ const searchProductsTool = createTool({
   },
 });
 
-// Tool for order processing
+// Tool 2: Weather information for location-based recommendations
+const weatherTool = createTool({
+  id: 'get-weather',
+  description: 'Get current weather for a location',
+  inputSchema: z.object({
+    location: z.string().describe('City name'),
+  }),
+  outputSchema: z.object({
+    temperature: z.number(),
+    conditions: z.string(),
+    humidity: z.number(),
+    windSpeed: z.number(),
+  }),
+  execute: async ({ context }) => {
+    return await tracer.startActiveSpan(
+      'weather-tool-execution',
+      {
+        kind: SpanKind.CLIENT,
+        attributes: {
+          'tool.name': 'get-weather',
+          'weather.location': context.location,
+        },
+      },
+      async (span) => {
+        try {
+          // Simulate weather API call
+          const apiSpan = tracer.startSpan('weather-api-call', {
+            kind: SpanKind.CLIENT,
+            attributes: {
+              'http.method': 'GET',
+              'http.url': `https://api.weather.com/v1/locations/${context.location}`,
+            },
+          });
+
+          const mockWeatherData = {
+            'New York': { temperature: 72, conditions: 'Sunny', humidity: 45, windSpeed: 10 },
+            London: { temperature: 62, conditions: 'Cloudy', humidity: 70, windSpeed: 15 },
+            Tokyo: { temperature: 80, conditions: 'Clear', humidity: 60, windSpeed: 5 },
+            Paris: { temperature: 68, conditions: 'Partly Cloudy', humidity: 55, windSpeed: 8 },
+          } as const;
+
+          await new Promise((resolve) => setTimeout(resolve, 50 + Math.random() * 100));
+
+          const weather = mockWeatherData[context.location as keyof typeof mockWeatherData] || {
+            temperature: 70,
+            conditions: 'Unknown',
+            humidity: 50,
+            windSpeed: 10,
+          };
+
+          apiSpan.setAttributes({
+            'http.status_code': 200,
+            'weather.temperature': weather.temperature,
+            'weather.conditions': weather.conditions,
+          });
+          apiSpan.setStatus({ code: SpanStatusCode.OK });
+          apiSpan.end();
+
+          span.setAttributes({
+            'weather.temperature': weather.temperature,
+            'weather.conditions': weather.conditions,
+            'weather.humidity': weather.humidity,
+            'weather.wind_speed': weather.windSpeed,
+          });
+
+          span.addEvent('weather_data_retrieved', {
+            location: context.location,
+            temperature: weather.temperature,
+            conditions: weather.conditions,
+          });
+
+          span.setStatus({ code: SpanStatusCode.OK });
+          return weather;
+        } catch (error: any) {
+          span.recordException(error);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+          throw error;
+        } finally {
+          span.end();
+        }
+      },
+    );
+  },
+});
+
+// Tool 3: Order processing with payment simulation
 const processOrderTool = createTool({
   id: 'process-order',
   description: 'Process a customer order',
@@ -302,30 +392,33 @@ const processOrderTool = createTool({
   },
 });
 
-// Create agents with memory and advanced configuration
+// Create the main shopping assistant agent with memory
 const shoppingAssistant = new Agent({
   name: 'Shopping Assistant',
   instructions: `You are a helpful shopping assistant for an e-commerce platform. You help customers:
 1. Search for products based on their needs
-2. Provide product recommendations
+2. Check weather to recommend appropriate products
 3. Process orders when customers are ready to purchase
 4. Remember customer preferences and past interactions
 
-Always be helpful, provide detailed product information, and guide customers through their shopping journey.`,
+Always be helpful, provide detailed product information, and consider weather conditions for recommendations.`,
   model: openai('gpt-4o-mini'),
   tools: {
     searchProductsTool,
+    weatherTool,
     processOrderTool,
   },
   memory: new Memory({
-    sessionId: 'shopping-session-' + Date.now(),
     options: {
+      threads: {
+        generateTitle: false,
+      },
       lastMessages: 20,
     },
   }),
 });
 
-// Create a recommendation workflow with multiple steps
+// Create recommendation workflow with multiple steps
 const recommendationWorkflow = createWorkflow({
   id: 'recommendationWorkflow',
   inputSchema: z.object({
@@ -355,11 +448,23 @@ const recommendationWorkflow = createWorkflow({
       description: 'Fetch customer purchase history',
       inputSchema: z.object({
         customerId: z.string(),
-        preferences: z.any(),
+        preferences: z.object({
+          categories: z.array(z.string()),
+          priceRange: z.object({
+            min: z.number(),
+            max: z.number(),
+          }),
+        }),
       }),
       outputSchema: z.object({
         customerId: z.string(),
-        preferences: z.any(),
+        preferences: z.object({
+          categories: z.array(z.string()),
+          priceRange: z.object({
+            min: z.number(),
+            max: z.number(),
+          }),
+        }),
         purchaseHistory: z.array(
           z.object({
             productId: z.string(),
@@ -380,7 +485,6 @@ const recommendationWorkflow = createWorkflow({
           },
           async (span) => {
             try {
-              // Mock customer history
               const mockHistory = [
                 {
                   productId: '1',
@@ -392,7 +496,7 @@ const recommendationWorkflow = createWorkflow({
                   productId: '4',
                   productName: 'Bluetooth Speaker',
                   category: 'Electronics',
-                  price: 49.99,
+                  price: 79.99,
                 },
               ];
 
@@ -420,18 +524,31 @@ const recommendationWorkflow = createWorkflow({
   .then(
     createStep({
       id: 'analyze-preferences',
-      description: 'Analyze customer preferences and history',
+      description: 'Analyze customer preferences based on history',
       inputSchema: z.object({
         customerId: z.string(),
-        preferences: z.any(),
-        purchaseHistory: z.array(z.any()),
+        preferences: z.object({
+          categories: z.array(z.string()),
+          priceRange: z.object({
+            min: z.number(),
+            max: z.number(),
+          }),
+        }),
+        purchaseHistory: z.array(
+          z.object({
+            productId: z.string(),
+            productName: z.string(),
+            category: z.string(),
+            price: z.number(),
+          }),
+        ),
       }),
       outputSchema: z.object({
         customerId: z.string(),
         analysisResults: z.object({
           preferredCategories: z.array(z.string()),
           avgSpending: z.number(),
-          brandAffinity: z.record(z.number()),
+          brandAffinity: z.record(z.string(), z.number()),
         }),
       }),
       execute: async ({ inputData }) => {
@@ -440,47 +557,41 @@ const recommendationWorkflow = createWorkflow({
           {
             kind: SpanKind.INTERNAL,
             attributes: {
-              'analysis.history_count': inputData.purchaseHistory.length,
+              'customer.id': inputData.customerId,
+              'history.count': inputData.purchaseHistory.length,
             },
           },
           async (span) => {
             try {
-              // Simulate ML model inference
-              const mlSpan = tracer.startSpan('ml.inference', {
-                kind: SpanKind.INTERNAL,
-                attributes: {
-                  'ml.model': 'preference-analyzer-v1',
-                  'ml.task': 'classification',
-                },
-              });
+              const avgSpending =
+                inputData.purchaseHistory.reduce((sum, item) => sum + item.price, 0) /
+                inputData.purchaseHistory.length;
 
-              await new Promise((resolve) => setTimeout(resolve, 150));
+              const preferredCategories = Array.from(
+                new Set(inputData.purchaseHistory.map((item) => item.category)),
+              );
 
-              const analysisResults = {
-                preferredCategories: ['Electronics', 'Audio'],
-                avgSpending: 74.99,
-                brandAffinity: {
-                  Sony: 0.8,
-                  Bose: 0.7,
-                  Apple: 0.6,
-                },
+              const brandAffinity: Record<string, number> = {
+                'Tech Brands': 0.8,
+                'Audio Equipment': 0.9,
               };
 
-              mlSpan.setAttributes({
-                'ml.confidence': 0.85,
-                'ml.features_count': 12,
-              });
-              mlSpan.setStatus({ code: SpanStatusCode.OK });
-              mlSpan.end();
+              await new Promise((resolve) => setTimeout(resolve, 50));
 
-              span.addEvent('analysis_completed', {
-                categories_identified: analysisResults.preferredCategories.length,
+              span.setAttributes({
+                'analysis.avg_spending': avgSpending,
+                'analysis.preferred_categories': preferredCategories.join(','),
               });
+
               span.setStatus({ code: SpanStatusCode.OK });
 
               return {
                 customerId: inputData.customerId,
-                analysisResults,
+                analysisResults: {
+                  preferredCategories,
+                  avgSpending,
+                  brandAffinity,
+                },
               };
             } catch (error: any) {
               span.recordException(error);
@@ -500,7 +611,11 @@ const recommendationWorkflow = createWorkflow({
       description: 'Generate personalized product recommendations',
       inputSchema: z.object({
         customerId: z.string(),
-        analysisResults: z.any(),
+        analysisResults: z.object({
+          preferredCategories: z.array(z.string()),
+          avgSpending: z.number(),
+          brandAffinity: z.record(z.string(), z.number()),
+        }),
       }),
       outputSchema: z.object({
         recommendations: z.array(
@@ -565,7 +680,8 @@ const recommendationWorkflow = createWorkflow({
 
               span.setAttributes({
                 'recommendations.count': recommendations.length,
-                'recommendations.avg_score': recommendations.reduce((sum, r) => sum + r.score, 0) / recommendations.length,
+                'recommendations.avg_score':
+                  recommendations.reduce((sum, r) => sum + r.score, 0) / recommendations.length,
               });
 
               span.addEvent('recommendations_generated', {
@@ -596,7 +712,7 @@ const mastra = new Mastra({
   agents: { shoppingAssistant },
   workflows: { recommendationWorkflow },
   telemetry: {
-    serviceName: 'mastra-advanced-example',
+    serviceName: 'mastra-comprehensive-example',
     enabled: true,
     sampling: {
       type: 'ratio',
@@ -605,7 +721,7 @@ const mastra = new Mastra({
   },
 });
 
-// Create a single shopping session function that handles all conversations
+// Create shopping session function
 async function conductShoppingSession(customerId: string, conversations: string[]): Promise<void> {
   const sessionSpan = tracer.startSpan('shopping-session', {
     kind: SpanKind.SERVER,
@@ -660,7 +776,7 @@ async function conductShoppingSession(customerId: string, conversations: string[
   }
 }
 
-// Modified assist shopping function without creating new root spans
+// Assist shopping function with enhanced telemetry
 async function assistShopping(message: string, customerId: string): Promise<string> {
   return await tracer.startActiveSpan(
     'shopping-assistance',
@@ -675,15 +791,17 @@ async function assistShopping(message: string, customerId: string): Promise<stri
     async (span) => {
       try {
         // Add custom baggage for distributed context
-        const baggage = propagation.getBaggage(context.active());
-        if (baggage) {
-          baggage.setEntry('customer.id', { value: customerId });
-          baggage.setEntry('session.type', { value: 'shopping' });
-        }
+        const baggage = propagation.createBaggage({
+          'customer.id': { value: customerId },
+          'session.type': { value: 'shopping' },
+          'session.timestamp': { value: new Date().toISOString() },
+        });
+        const contextWithBaggage = propagation.setBaggage(context.active(), baggage);
 
-        const response = await shoppingAssistant.generate(message, {
-          maxSteps: 5,
-          stream: false,
+        const response = await context.with(contextWithBaggage, async () => {
+          return await shoppingAssistant.generate(message, {
+            maxSteps: 5,
+          });
         });
 
         span.setAttributes({
@@ -715,6 +833,7 @@ async function assistShopping(message: string, customerId: string): Promise<stri
   );
 }
 
+// Generate recommendations function
 async function generateRecommendations(customerId: string): Promise<any> {
   return await tracer.startActiveSpan(
     'recommendation-generation',
@@ -747,13 +866,20 @@ async function generateRecommendations(customerId: string): Promise<any> {
           });
           span.setStatus({ code: SpanStatusCode.OK });
           return result.result;
-        } else {
+        } else if (result.status === 'failed') {
           span.setAttributes({
             'workflow.status': 'failed',
             'workflow.error': result.error?.message || 'Unknown error',
           });
           span.setStatus({ code: SpanStatusCode.ERROR, message: 'Workflow failed' });
           throw new Error('Recommendation workflow failed');
+        } else {
+          span.setAttributes({
+            'workflow.status': 'suspended',
+            'workflow.suspended_steps': result.suspended.join(','),
+          });
+          span.setStatus({ code: SpanStatusCode.ERROR, message: 'Workflow suspended' });
+          throw new Error('Recommendation workflow suspended');
         }
       } catch (error: any) {
         span.recordException(error);
@@ -766,7 +892,7 @@ async function generateRecommendations(customerId: string): Promise<any> {
   );
 }
 
-// Wrap the entire shopping session with a single Gentrace interaction
+// Wrap functions with Gentrace interactions
 const shoppingSessionInteraction = interaction('Shopping Session', conductShoppingSession, {
   pipelineId: GENTRACE_PIPELINE_ID,
 });
@@ -775,15 +901,16 @@ const recommendationInteraction = interaction('Recommendation Workflow', generat
   pipelineId: GENTRACE_PIPELINE_ID,
 });
 
-// Main function demonstrating advanced features
+// Main function demonstrating comprehensive features
 async function main() {
-  console.log('Advanced Mastra + Gentrace OpenTelemetry Example\n');
+  console.log('🚀 Comprehensive Mastra + Gentrace Example\n');
   console.log('This example demonstrates:');
+  console.log('- Multiple tools: product search, order processing, and weather');
   console.log('- Agent memory for contextual conversations');
-  console.log('- Complex multi-step workflows');
-  console.log('- Custom OpenTelemetry spans and events');
-  console.log('- Tool execution with detailed telemetry');
-  console.log('- Distributed context propagation\n');
+  console.log('- Complex multi-step recommendation workflow');
+  console.log('- Advanced OpenTelemetry instrumentation');
+  console.log('- Distributed context propagation');
+  console.log('- Parallel tool execution and workflow steps\n');
   console.log('─'.repeat(80) + '\n');
 
   const customerId = 'CUST-' + Math.random().toString(36).substr(2, 9).toUpperCase();
@@ -793,9 +920,9 @@ async function main() {
 
   const conversations = [
     "Hi! I'm looking for some new electronics for my home office.",
+    "What's the weather like in New York? I want to know if I need weather-resistant gear.",
     'Can you show me wireless headphones under $150?',
-    "I like the second option. Can you also find a good webcam?",
-    "Actually, let's go with the headphones. Can you process an order for product ID 1?",
+    'Great! Can you process an order for the wireless headphones (product ID 1)?',
   ];
 
   await shoppingSessionInteraction(customerId, conversations);
@@ -818,7 +945,13 @@ async function main() {
   }
 
   console.log('\n' + '─'.repeat(80));
-  console.log('\n✅ Example completed! Check your Gentrace dashboard for detailed traces.');
+  console.log('\n✅ Comprehensive example completed!');
+  console.log('\n📊 Summary:');
+  console.log('- Demonstrated agent conversations with memory');
+  console.log('- Executed multiple tools (search, weather, order)');
+  console.log('- Ran complex recommendation workflow');
+  console.log('- Created detailed OpenTelemetry traces');
+  console.log('\n🔍 Check your Gentrace dashboard for detailed traces!');
 }
 
 main().catch(console.error);
