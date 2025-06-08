@@ -1,46 +1,38 @@
 /**
  * Example demonstrating the OpenTelemetry configuration warning
- * 
+ *
  * This example intentionally does NOT configure OpenTelemetry
  * to show the warning message that would appear to users who
  * forget to set it up.
  */
 
-import { Gentrace, interaction, traced, experiment, evalOnce } from 'gentrace';
+import { interaction, traced, experiment, evalOnce } from 'gentrace';
 
 async function main() {
-  // Initialize Gentrace without OpenTelemetry configuration
-  const gentrace = new Gentrace({
-    apiKey: process.env.GENTRACE_API_KEY || 'test-api-key'
-  });
-
   console.log('=== Testing Gentrace without OpenTelemetry Configuration ===\n');
 
-  console.log('1. Testing @interaction decorator:');
+  console.log('1. Testing interaction():');
   console.log('--------------------------------');
   const greet = interaction(
     'greet',
     (input: { name: string }) => {
       return `Hello, ${input.name}!`;
     },
-    { 
-      pipelineId: 'test-pipeline-id'
-    }
+    {
+      pipelineId: 'test-pipeline-id',
+    },
   );
-  
+
   // This should trigger the warning
   const greeting = greet({ name: 'World' });
   console.log('Result:', greeting);
 
   console.log('\n2. Testing @traced decorator:');
   console.log('-----------------------------');
-  const calculate = traced(
-    'calculate',
-    (a: number, b: number) => {
-      return a + b;
-    }
-  );
-  
+  const calculate = traced('calculate', (a: number, b: number) => {
+    return a + b;
+  });
+
   // This should NOT trigger the warning again (only shows once)
   const result = calculate(5, 3);
   console.log('Result:', result);
@@ -53,7 +45,7 @@ async function main() {
         return { success: true };
       });
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log('Expected error (no actual API):', error.message);
   }
 
