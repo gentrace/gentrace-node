@@ -9,6 +9,7 @@ import {
   ATTR_GENTRACE_FN_OUTPUT,
   ATTR_GENTRACE_SAMPLE,
 } from './otel/constants';
+import { checkOtelConfigAndWarn } from './utils';
 
 /**
  * Runs a single named test case within the context of an active experiment.
@@ -32,6 +33,7 @@ export async function evalOnce<TResult>(
   spanName: string,
   callback: () => TResult | null | Promise<TResult | null>,
 ): Promise<TResult | null> {
+  checkOtelConfigAndWarn();
   return _runEval<TResult, any>({
     spanName,
     callback,
