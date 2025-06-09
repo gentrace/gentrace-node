@@ -2,6 +2,7 @@ import { context, propagation } from '@opentelemetry/api';
 
 import { ATTR_GENTRACE_PIPELINE_ID, ATTR_GENTRACE_SAMPLE } from './otel/constants';
 import { traced } from './traced';
+import { checkOtelConfigAndWarn } from './utils';
 
 /**
  * Options for configuring the interaction function.
@@ -35,6 +36,7 @@ export function interaction<F extends (...args: any[]) => any>(
   fn: F,
   options: InteractionOptions,
 ): F {
+  checkOtelConfigAndWarn();
   const { pipelineId, attributes } = options;
 
   const wrappedFn = traced(name, fn, {

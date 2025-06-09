@@ -95,6 +95,9 @@
     }
   },
   "dependencies": {
+    "boxen": "^5.1.2",
+    "chalk": "^4.1.2",
+    "cli-highlight": "^2.1.11",
     "json-stringify-safe": "^5.0.1"
   },
   "engines": {

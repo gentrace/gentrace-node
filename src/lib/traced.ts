@@ -1,6 +1,7 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { ATTR_GENTRACE_FN_ARGS, ATTR_GENTRACE_FN_OUTPUT } from './otel/constants';
+import { checkOtelConfigAndWarn } from './utils';
 
 /**
  * Configuration options for the behavior of the traced function.
@@ -24,6 +25,7 @@ export type TracedConfig = {
  * @returns {F} A new function that has the same parameters and return type as fn.
  */
 export function traced<F extends (...args: any[]) => any>(name: string, fn: F, config?: TracedConfig): F {
+  checkOtelConfigAndWarn();
   const tracer = trace.getTracer('gentrace');
   const fnName = fn.name;
   const spanName = name;
