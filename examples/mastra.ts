@@ -44,7 +44,7 @@ const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'mastra-comprehensive-example',
     [ATTR_SERVICE_VERSION]: '1.0.0',
-    'deployment.environment': process.env.NODE_ENV || 'development',
+    'deployment.environment': process.env['NODE_ENV'] || 'development',
     'service.namespace': 'mastra-examples',
   }),
   instrumentations: [],
@@ -358,9 +358,8 @@ const processOrderTool = createTool({
 
           const orderId = 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
           const deliveryDays = 3 + Math.floor(Math.random() * 4);
-          const estimatedDelivery = new Date(Date.now() + deliveryDays * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0];
+          const deliveryDate = new Date(Date.now() + deliveryDays * 24 * 60 * 60 * 1000);
+          const estimatedDelivery = deliveryDate.toISOString().split('T')[0]!;
 
           span.setAttributes({
             'order.id': orderId,
@@ -378,7 +377,7 @@ const processOrderTool = createTool({
           return {
             orderId,
             status: 'confirmed',
-            estimatedDelivery,
+            estimatedDelivery: estimatedDelivery,
           };
         } catch (error: any) {
           span.recordException(error);
@@ -748,7 +747,7 @@ async function conductShoppingSession(customerId: string, conversations: string[
         });
 
         try {
-          const response = await assistShopping(message, customerId);
+          const response = await assistShopping(message || '', customerId);
           console.log(`Assistant: ${response}\n`);
 
           conversationSpan.setAttribute('conversation.response_length', response.length);
