@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.3.0 (2025-06-10)
+
+Full Changelog: [v0.2.0...v0.3.0](https://github.com/gentrace/gentrace-node/compare/v0.2.0...v0.3.0)
+
+### Features
+
+* add baggage support to eval methods ([#569](https://github.com/gentrace/gentrace-node/issues/569)) ([#569](https://github.com/gentrace/gentrace-node/issues/569)) ([95564ba](https://github.com/gentrace/gentrace-node/commit/95564ba9aa3fd912e9e6727bda451f0dc87ef4ce))
+
+
+### Bug Fixes
+
+* compat with more runtimes ([53adc04](https://github.com/gentrace/gentrace-node/commit/53adc04423b01cb8f29881731fc4361c6929c58e))
+
+
+### Chores
+
+* Add console log for OTEL SDK setup ([#570](https://github.com/gentrace/gentrace-node/issues/570)) ([8662f5f](https://github.com/gentrace/gentrace-node/commit/8662f5f6f1db2750a5edd872713c99b31d0adb0c))
+* Add Mastra example ([#573](https://github.com/gentrace/gentrace-node/issues/573)) ([dd0844f](https://github.com/gentrace/gentrace-node/commit/dd0844f0e8664e914e404a105b3750e1e02e8fe5))
+* Add OpenTelemetry configuration warning function ([#575](https://github.com/gentrace/gentrace-node/issues/575)) ([634a5c1](https://github.com/gentrace/gentrace-node/commit/634a5c1f0a3063c9074d76d7914182b62340f538))
+* adjust eslint.config.mjs ignore pattern ([b577e62](https://github.com/gentrace/gentrace-node/commit/b577e6294082a2adf9a9b3d9c1442f7e7be0a97d))
+* **deps:** bump eslint-plugin-prettier ([28241ea](https://github.com/gentrace/gentrace-node/commit/28241ea7404e0fafb0547f8cc4d13f8f64a23bdd))
+* **internal:** update jest config ([3e5f722](https://github.com/gentrace/gentrace-node/commit/3e5f7225037ab5e82ffcf7557854222830e65ea9))
+
 ## 0.2.0 (2025-05-28)
 
 Full Changelog: [v0.1.0...v0.2.0](https://github.com/gentrace/gentrace-node/compare/v0.1.0...v0.2.0)
