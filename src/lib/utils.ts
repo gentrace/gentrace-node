@@ -76,7 +76,7 @@ const sdk = new NodeSDK({
   spanProcessors: [
     new SimpleSpanProcessor(
       new OTLPTraceExporter({
-        url: 'https://api.gentrace.ai/v1/otel/traces',
+        url: 'https://gentrace.ai/api/v1/otel/traces',
         headers: {
           Authorization: \`Bearer \${process.env.GENTRACE_API_KEY}\`,
         },
