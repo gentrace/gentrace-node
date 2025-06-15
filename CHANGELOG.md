@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 (2025-06-15)
+
+Full Changelog: [v0.3.0...v0.3.1](https://github.com/gentrace/gentrace-node/compare/v0.3.0...v0.3.1)
+
+### Bug Fixes
+
+* Update OTLPTraceExporter URL ([#576](https://github.com/gentrace/gentrace-node/issues/576)) ([4253402](https://github.com/gentrace/gentrace-node/commit/4253402967b0d5d7fbb6b9169acf531ac6dc9842))
+
 ## 0.3.0 (2025-06-10)
 
 Full Changelog: [v0.2.0...v0.3.0](https://github.com/gentrace/gentrace-node/compare/v0.2.0...v0.3.0)
