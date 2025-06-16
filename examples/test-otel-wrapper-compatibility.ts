@@ -1,5 +1,4 @@
-import { setupOpenTelemetry } from '../src/lib/otel/setup';
-import { init, interaction } from '../src';
+import { init, setup, interaction } from '../src';
 
 /**
  * Test script to verify OpenTelemetry wrapper compatibility
@@ -13,12 +12,9 @@ async function testWrapper() {
     const otelApi = await import('@opentelemetry/api');
     console.log('OpenTelemetry API loaded successfully');
 
-    // Initialize OpenTelemetry with minimal config
+    // Initialize OpenTelemetry with no parameters!
     console.log('Initializing OpenTelemetry...');
-    const sdk = await setupOpenTelemetry({
-      serviceName: 'otel-compatibility-test',
-      includeConsoleExporter: true,
-    });
+    const sdk = await setup();
     console.log('✓ OpenTelemetry initialized successfully');
 
     // Initialize Gentrace

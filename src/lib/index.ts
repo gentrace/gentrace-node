@@ -1,4 +1,5 @@
 export { init } from './init';
+export { setup } from './otel/setup';
 export { experiment } from './experiment';
 export {
   startExperiment,

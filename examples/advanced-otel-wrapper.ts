@@ -1,12 +1,14 @@
-import { init, interaction, traced } from '../src';
-import { setupOpenTelemetry, createAIInstrumentations } from '../src/lib/otel/setup';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { init, setup, interaction, traced, createAIInstrumentations } from '../src';
 import { ParentBasedSampler, AlwaysOnSampler } from '@opentelemetry/sdk-trace-base';
 import { GentraceSampler } from '../src/lib/otel/sampler';
 
 async function main() {
   // Advanced configuration example
-  const sdk = await setupOpenTelemetry({
+  const sdk = await setup({
+    // Custom trace endpoint (e.g., local OTEL collector)
+    traceEndpoint: 'http://localhost:4318/v1/traces',
+
+    // Override service name detection
     serviceName: 'gentrace-advanced-example',
 
     // Custom resource attributes
@@ -25,28 +27,15 @@ async function main() {
       remoteParentNotSampled: new GentraceSampler(),
     }),
 
-    // Additional exporters (e.g., to another observability backend)
-    additionalSpanExporters: [
-      new OTLPTraceExporter({
-        url: 'http://localhost:4318/v1/traces', // Local OTEL collector
-      }),
-    ],
-
-    // Include console exporter only in development
-    includeConsoleExporter: process.env['NODE_ENV'] === 'development',
+    // Include debug output
+    debug: process.env['NODE_ENV'] === 'development',
 
     // AI library instrumentations
     instrumentations: await createAIInstrumentations(),
-
-    // Additional NodeSDK configuration
-    additionalConfig: {
-      autoDetectResources: true,
-      serviceName: 'override-if-needed', // This will be overridden by the main serviceName
-    },
   });
 
   // Initialize Gentrace
-  await init({
+  init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
   });
 

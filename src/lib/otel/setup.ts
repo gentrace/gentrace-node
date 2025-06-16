@@ -1,23 +1,25 @@
-import type { NodeSDKConfiguration } from '@opentelemetry/sdk-node';
-import type { ContextManager } from '@opentelemetry/api';
-import type { SpanExporter, SpanProcessor, Sampler } from '@opentelemetry/sdk-trace-base';
+import type { SpanProcessor, Sampler } from '@opentelemetry/sdk-trace-base';
 import type { Instrumentation } from '@opentelemetry/instrumentation';
+import { GentraceSampler } from './sampler';
+import { GentraceSpanProcessor } from './span-processor';
 
-export interface GentraceOtelConfig {
+export interface SetupConfig {
   /**
-   * Service name for the application
+   * Optional OpenTelemetry trace endpoint URL.
+   * Defaults to Gentrace's OTLP endpoint (https://gentrace.ai/api/otel/v1/traces)
    */
-  serviceName: string;
-
-  /**
-   * Optional Gentrace API key (defaults to GENTRACE_API_KEY env var)
-   */
-  apiKey?: string;
+  traceEndpoint?: string;
 
   /**
-   * Optional Gentrace base URL (defaults to https://gentrace.ai/api)
+   * Optional service name for the application.
+   * Defaults to the package name from package.json or 'unknown-service'
    */
-  baseUrl?: string;
+  serviceName?: string;
+
+  /**
+   * Optional instrumentations to include (e.g., OpenAI, Anthropic)
+   */
+  instrumentations?: Instrumentation[];
 
   /**
    * Optional additional resource attributes
@@ -30,142 +32,128 @@ export interface GentraceOtelConfig {
   sampler?: Sampler;
 
   /**
-   * Whether to include GentraceSampler (defaults to true)
-   */
-  useGentraceSampler?: boolean;
-
-  /**
-   * Additional span processors to include
-   */
-  additionalSpanProcessors?: SpanProcessor[];
-
-  /**
-   * Additional span exporters (will be wrapped in SimpleSpanProcessor)
-   */
-  additionalSpanExporters?: SpanExporter[];
-
-  /**
    * Whether to include console exporter for debugging (defaults to false)
    */
-  includeConsoleExporter?: boolean;
-
-  /**
-   * Optional instrumentations to include
-   */
-  instrumentations?: Instrumentation[];
-
-  /**
-   * Optional custom context manager
-   */
-  contextManager?: ContextManager;
-
-  /**
-   * Additional NodeSDK configuration options
-   */
-  additionalConfig?: Partial<NodeSDKConfiguration>;
+  debug?: boolean;
 }
 
 /**
- * Sets up OpenTelemetry with Gentrace configuration
+ * Sets up OpenTelemetry with Gentrace configuration.
  *
- * This function provides a convenient wrapper around OpenTelemetry setup,
- * automatically configuring the Gentrace sampler, span processor, and exporter.
- * It uses dynamic imports to support both OpenTelemetry v1 and v2.
+ * This is the simplest way to initialize OpenTelemetry for use with Gentrace.
+ * By default, it configures everything needed to send traces to Gentrace.
  *
- * @param config Configuration options for OpenTelemetry setup
+ * @param config Optional configuration options
  * @returns Promise that resolves to the initialized NodeSDK instance
  *
  * @example
  * ```typescript
- * import { setupOpenTelemetry } from '@gentrace/core';
+ * import { setup } from '@gentrace/core';
  *
- * const sdk = await setupOpenTelemetry({
- *   serviceName: 'my-service',
- *   includeConsoleExporter: process.env.NODE_ENV === 'development',
+ * // Simple usage - no parameters needed
+ * await setup();
+ *
+ * // With custom trace endpoint
+ * await setup({
+ *   traceEndpoint: 'http://localhost:4318/v1/traces'
  * });
  *
- * // Your application code here
- *
- * // Graceful shutdown
- * process.on('SIGTERM', async () => {
- *   await sdk.shutdown();
+ * // With instrumentations
+ * await setup({
+ *   instrumentations: [new OpenAIInstrumentation()]
  * });
  * ```
  */
-export async function setupOpenTelemetry(config: GentraceOtelConfig): Promise<any> {
+export async function setup(config: SetupConfig = {}): Promise<any> {
   // Dynamic imports to support both OpenTelemetry v1 and v2
   const { NodeSDK } = await import('@opentelemetry/sdk-node');
   const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http');
   const { SimpleSpanProcessor, ConsoleSpanExporter } = await import('@opentelemetry/sdk-trace-base');
   const { AsyncLocalStorageContextManager } = await import('@opentelemetry/context-async-hooks');
   const resources = await import('@opentelemetry/resources');
-  const { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION, SEMRESATTRS_SERVICE_NAMESPACE } =
-    await import('@opentelemetry/semantic-conventions');
+  const { ATTR_SERVICE_NAME } = await import('@opentelemetry/semantic-conventions');
 
-  // Import Gentrace components
-  const { GentraceSampler } = await import('./sampler');
-  const { GentraceSpanProcessor } = await import('./span-processor');
+  // Get configuration values with smart defaults
+  const apiKey = process.env['GENTRACE_API_KEY'];
+  const baseUrl = process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api';
+  const traceEndpoint = config.traceEndpoint || `${baseUrl}/otel/v1/traces`;
 
-  // Get configuration values
-  const apiKey = config.apiKey || process.env['GENTRACE_API_KEY'];
-  const baseUrl = config.baseUrl || process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api';
-
-  if (!apiKey) {
-    throw new Error(
-      'GENTRACE_API_KEY is required. Please provide it via config.apiKey or GENTRACE_API_KEY environment variable.',
-    );
+  // Try to get service name from package.json or use default
+  let serviceName: string;
+  if (config.serviceName) {
+    serviceName = config.serviceName;
+  } else {
+    try {
+      const packageJson = require(process.cwd() + '/package.json');
+      serviceName = packageJson.name || 'unknown-service';
+    } catch (e) {
+      serviceName = 'unknown-service';
+    }
   }
 
   // Build resource attributes
   const resourceAttributes: Record<string, string | number | boolean> = {
-    [SEMRESATTRS_SERVICE_NAME]: config.serviceName,
+    [ATTR_SERVICE_NAME]: serviceName,
     ...config.resourceAttributes,
   };
 
-  // Create resource
-  const Resource = 'Resource' in resources ? resources.Resource : (resources as any).default.Resource;
-  const resource = Resource.default().merge(new Resource(resourceAttributes));
+  // Create resource - handle both v1 and v2
+  let resource: any;
+  const resourcesModule = resources as any;
+
+  // Check if we have the v2 resourceFromAttributes function
+  if (resourcesModule.resourceFromAttributes) {
+    // OpenTelemetry v2 style with resourceFromAttributes
+    resource = resourcesModule.resourceFromAttributes(resourceAttributes);
+  } else if (resourcesModule.default?.resourceFromAttributes) {
+    // v2 with default export
+    resource = resourcesModule.default.resourceFromAttributes(resourceAttributes);
+  } else if (resourcesModule.Resource) {
+    // OpenTelemetry v1 style - direct Resource construction
+    const Resource = resourcesModule.Resource;
+    resource = Resource.default().merge(new Resource(resourceAttributes));
+  } else if (resourcesModule.default?.Resource) {
+    // v1 with default export
+    const Resource = resourcesModule.default.Resource;
+    resource = Resource.default().merge(new Resource(resourceAttributes));
+  } else {
+    // Last resort fallback
+    throw new Error('Unable to create OpenTelemetry Resource. Please check your OpenTelemetry version.');
+  }
 
   // Setup span processors
   const spanProcessors: SpanProcessor[] = [new GentraceSpanProcessor()];
 
-  // Add Gentrace exporter
-  const gentraceExporter = new OTLPTraceExporter({
-    url: `${baseUrl}/otel/v1/traces`,
+  // Configure trace exporter
+  const exporterConfig: any = {
+    url: traceEndpoint,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
     },
-  });
-  spanProcessors.push(new SimpleSpanProcessor(gentraceExporter));
+  };
 
-  // Add console exporter if requested
-  if (config.includeConsoleExporter) {
+  // Add authorization header if using Gentrace endpoint
+  if (traceEndpoint.includes('gentrace.ai') && apiKey) {
+    exporterConfig.headers.Authorization = `Bearer ${apiKey}`;
+  } else if (traceEndpoint.includes('gentrace.ai') && !apiKey) {
+    throw new Error(
+      'GENTRACE_API_KEY is required when using Gentrace endpoint. Please set the GENTRACE_API_KEY environment variable.',
+    );
+  }
+
+  const traceExporter = new OTLPTraceExporter(exporterConfig);
+  spanProcessors.push(new SimpleSpanProcessor(traceExporter));
+
+  // Add console exporter if debug mode
+  if (config.debug) {
     spanProcessors.push(new SimpleSpanProcessor(new ConsoleSpanExporter()));
   }
 
-  // Add additional exporters
-  if (config.additionalSpanExporters) {
-    for (const exporter of config.additionalSpanExporters) {
-      spanProcessors.push(new SimpleSpanProcessor(exporter));
-    }
-  }
-
-  // Add additional processors
-  if (config.additionalSpanProcessors) {
-    spanProcessors.push(...config.additionalSpanProcessors);
-  }
-
-  // Setup sampler
-  let sampler: Sampler | undefined;
-  if (config.sampler) {
-    sampler = config.sampler;
-  } else if (config.useGentraceSampler !== false) {
-    sampler = new GentraceSampler();
-  }
+  // Setup sampler - default to GentraceSampler
+  const sampler = config.sampler || new GentraceSampler();
 
   // Setup context manager
-  const contextManager = config.contextManager || new AsyncLocalStorageContextManager().enable();
+  const contextManager = new AsyncLocalStorageContextManager().enable();
 
   // Create NodeSDK configuration
   const sdkConfig: any = {
@@ -174,17 +162,10 @@ export async function setupOpenTelemetry(config: GentraceOtelConfig): Promise<an
     contextManager,
   };
 
-  // Add optional properties
-  if (sampler) {
-    sdkConfig.sampler = sampler;
-  }
+  // Add sampler and instrumentations
+  sdkConfig.sampler = sampler;
   if (config.instrumentations) {
     sdkConfig.instrumentations = config.instrumentations;
-  }
-
-  // Merge additional config
-  if (config.additionalConfig) {
-    Object.assign(sdkConfig, config.additionalConfig);
   }
 
   // Create and start SDK

@@ -1,77 +1,75 @@
-# OpenTelemetry Setup Wrapper
+# OpenTelemetry Setup
 
-The `setupOpenTelemetry` function provides a convenient wrapper for setting up OpenTelemetry with Gentrace. It handles the complexity of configuring the SDK with all necessary Gentrace components while supporting both OpenTelemetry v1 and v2.
+The `setup` function provides the simplest way to initialize OpenTelemetry for use with Gentrace. With zero configuration required, it automatically sets up everything needed to send traces to Gentrace.
 
-## Features
+## Key Features
 
-- **Dynamic imports**: Supports both OpenTelemetry v1 and v2 through dynamic imports
-- **Automatic Gentrace configuration**: Sets up GentraceSampler and GentraceSpanProcessor by default
-- **Flexible configuration**: Allows customization of all OpenTelemetry components
-- **Built-in error handling**: Validates required configuration like API keys
-- **TypeScript support**: Fully typed configuration options
+- **Zero Configuration**: Works out of the box with no parameters
+- **Smart Defaults**: Automatically detects service name from package.json
+- **Gentrace Integration**: Pre-configured with GentraceSampler and GentraceSpanProcessor
+- **Dynamic Imports**: Compatible with both OpenTelemetry v1 and v2
+- **TypeScript Support**: Fully typed for better developer experience
+- **Flexible**: Override any default when needed
+
+## Environment Variables
+
+- `GENTRACE_API_KEY`: Required when using Gentrace endpoint
+- `GENTRACE_BASE_URL`: Optional, defaults to `https://gentrace.ai/api`
 
 ## Basic Usage
 
 ```typescript
-import { setupOpenTelemetry } from '@gentrace/core';
+import { setup } from '@gentrace/core';
 
-const sdk = await setupOpenTelemetry({
-  serviceName: 'my-service',
-});
+// That's it! No parameters needed
+await setup();
 
 // Your application code here
-
-// Graceful shutdown
-await sdk.shutdown();
 ```
 
-## Configuration Options
+## Configuration Options (All Optional)
 
-### Required Options
-
-- `serviceName`: The name of your service
-
-### Optional Options
-
-- `apiKey`: Gentrace API key (defaults to `GENTRACE_API_KEY` env var)
-- `baseUrl`: Gentrace base URL (defaults to `https://gentrace.ai/api`)
+- `traceEndpoint`: Custom OTLP trace endpoint (defaults to Gentrace's endpoint)
+- `serviceName`: Service name (auto-detected from package.json by default)
+- `instrumentations`: Array of OpenTelemetry instrumentations
 - `resourceAttributes`: Additional resource attributes
 - `sampler`: Custom sampler (defaults to GentraceSampler)
-- `useGentraceSampler`: Whether to use GentraceSampler (defaults to true)
-- `additionalSpanProcessors`: Additional span processors
-- `additionalSpanExporters`: Additional span exporters
-- `includeConsoleExporter`: Include console exporter for debugging
-- `instrumentations`: OpenTelemetry instrumentations
-- `contextManager`: Custom context manager
-- `additionalConfig`: Additional NodeSDK configuration
+- `debug`: Enable console output for debugging (defaults to false)
 
-## Advanced Example
+## Common Use Cases
 
+### Default Setup (Recommended)
 ```typescript
-import { setupOpenTelemetry, createAIInstrumentations } from '@gentrace/core';
-import { ParentBasedSampler, AlwaysOnSampler } from '@opentelemetry/sdk-trace-base';
-import { GentraceSampler } from '@gentrace/core';
+import { setup } from '@gentrace/core';
 
-const sdk = await setupOpenTelemetry({
-  serviceName: 'my-service',
-  
-  // Custom resource attributes
-  resourceAttributes: {
-    'service.version': '1.0.0',
-    'deployment.environment': 'production',
-  },
-  
-  // Custom sampler with parent-based sampling
-  sampler: new ParentBasedSampler({
-    root: new GentraceSampler(),
-    remoteParentSampled: new AlwaysOnSampler(),
-  }),
-  
-  // Include console output in development
-  includeConsoleExporter: process.env.NODE_ENV === 'development',
-  
-  // AI library instrumentations
-  instrumentations: await createAIInstrumentations(),
+// Zero configuration required
+await setup();
+```
+
+### Custom Trace Endpoint
+```typescript
+// Send traces to a local collector
+await setup({
+  traceEndpoint: 'http://localhost:4318/v1/traces'
+});
+```
+
+### With Instrumentations
+```typescript
+// Add automatic instrumentation for AI libraries
+await setup({
+  instrumentations: [
+    new OpenAIInstrumentation(),
+    new AnthropicInstrumentation(),
+  ]
+});
+```
+
+### Debug Mode
+```typescript
+// Enable console output for debugging
+await setup({
+  debug: true
 });
 ```
 
@@ -81,7 +79,7 @@ The wrapper uses dynamic imports to ensure compatibility with both OpenTelemetry
 
 ## Migration from Manual Setup
 
-If you're currently setting up OpenTelemetry manually, you can migrate to the wrapper:
+If you're currently setting up OpenTelemetry manually, migration is simple:
 
 ### Before (Manual Setup)
 ```typescript
@@ -101,11 +99,9 @@ const sdk = new NodeSDK({
 });
 ```
 
-### After (Using Wrapper)
+### After (Using setup)
 ```typescript
-const sdk = await setupOpenTelemetry({
-  serviceName: 'my-service',
-});
+await setup();
 ```
 
-The wrapper handles all the default configuration while still allowing full customization when needed.
+That's it! The setup function handles all the configuration automatically.

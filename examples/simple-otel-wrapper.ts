@@ -1,11 +1,9 @@
-import { init, interaction } from '../src';
-import { setupOpenTelemetry } from '../src/lib/otel/setup';
+import { init, setup, interaction } from '../src';
 
 async function main() {
-  // Initialize OpenTelemetry with the wrapper
-  const sdk = await setupOpenTelemetry({
-    serviceName: 'gentrace-simple-wrapper-example',
-    includeConsoleExporter: true, // Enable console output for debugging
+  // Initialize OpenTelemetry with minimal configuration
+  const sdk = await setup({
+    debug: true, // Enable console output for debugging
     resourceAttributes: {
       'service.version': '1.0.0',
       environment: 'development',
