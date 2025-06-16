@@ -10,7 +10,7 @@ async function main() {
   // Step 2: Setup OpenTelemetry - no parameters needed!
   await setup();
 
-  // Step 3: Use Gentrace features
+  // Step 3: Use Gentrace interaction() to wrap your function
   const generateResponse = interaction(
     'chat',
     async (prompt: string) => {
@@ -24,9 +24,15 @@ async function main() {
   );
 
   // Run your function
+  console.log('Calling generateResponse...');
   const result = await generateResponse('Hello, world!');
   console.log('Response:', result);
+
+  // Wait a bit for spans to be flushed
+  console.log('Waiting for spans to be flushed...');
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  console.log('Done!');
 }
 
-// Run the example
-main().catch(console.error);
+main();

@@ -206,10 +206,12 @@ await setup();`;
     },
   };
 
-  // Add authorization header if using Gentrace endpoint
-  if (traceEndpoint.includes('gentrace.ai') && apiKey) {
+  // Add authorization header if we have an API key
+  // (Always add it for Gentrace endpoints, regardless of URL)
+  if (apiKey) {
     exporterConfig.headers.Authorization = `Bearer ${apiKey}`;
-  } else if (traceEndpoint.includes('gentrace.ai') && !apiKey) {
+  } else if (!config.traceEndpoint) {
+    // Only throw error if using default Gentrace endpoint without API key
     throw new Error(
       'GENTRACE_API_KEY is required when using Gentrace endpoint. Please set the GENTRACE_API_KEY environment variable.',
     );
