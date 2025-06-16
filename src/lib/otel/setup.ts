@@ -89,17 +89,17 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
 
   // Check if init() has been called
   const client = _getClient();
-  
+
   // Check if the client has been explicitly initialized via init()
   // We need to check if _setClient was called, which happens in init()
   // One way to check this is to see if the client options match what we expect
   const isInitialized = client && client.apiKey && client.apiKey !== 'placeholder';
-  
+
   // Additionally, we should check if init() was actually called
   // We can do this by checking a flag that we'll set in init()
   if (!isInitialized || !(globalThis as any).__gentrace_initialized) {
     const errorTitle = chalk.red.bold('⚠ Gentrace Initialization Error');
-    
+
     const errorMessage = `
 The setup() function was called before init(). Gentrace must be initialized
 with your API key before setting up OpenTelemetry.
@@ -125,10 +125,10 @@ await setup();`;
       highlightedCode = chalk.cyan(codeExample);
     }
 
-    const fullMessage = 
-      errorMessage + 
-      '\n' + 
-      highlightedCode + 
+    const fullMessage =
+      errorMessage +
+      '\n' +
+      highlightedCode +
       '\n\n' +
       chalk.gray('Make sure to call init() before setup() in your application.');
 

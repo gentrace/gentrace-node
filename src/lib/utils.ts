@@ -49,26 +49,29 @@ export function checkOtelConfigAndWarn(): void {
   } catch (requireError) {
     // If require fails (ESM environment), try dynamic import
     try {
-      import('@opentelemetry/api').then(({ trace }) => {
-        const tracerProvider = trace.getTracerProvider();
-        
-        const isSDKConfigured =
-          tracerProvider &&
-          (typeof (tracerProvider as any).register === 'function' ||
-            typeof (tracerProvider as any).forceFlush === 'function' ||
-            (tracerProvider.constructor?.name === 'ProxyTracerProvider' && (tracerProvider as any)._delegate));
+      import('@opentelemetry/api')
+        .then(({ trace }) => {
+          const tracerProvider = trace.getTracerProvider();
 
-        if (!isSDKConfigured && !_otelConfigWarningIssued) {
-          _otelConfigWarningIssued = true;
-          displayOtelWarning();
-        }
-      }).catch(() => {
-        // If dynamic import also fails, OpenTelemetry API is not installed
-        if (!_otelConfigWarningIssued) {
-          _otelConfigWarningIssued = true;
-          displayOtelWarning();
-        }
-      });
+          const isSDKConfigured =
+            tracerProvider &&
+            (typeof (tracerProvider as any).register === 'function' ||
+              typeof (tracerProvider as any).forceFlush === 'function' ||
+              (tracerProvider.constructor?.name === 'ProxyTracerProvider' &&
+                (tracerProvider as any)._delegate));
+
+          if (!isSDKConfigured && !_otelConfigWarningIssued) {
+            _otelConfigWarningIssued = true;
+            displayOtelWarning();
+          }
+        })
+        .catch(() => {
+          // If dynamic import also fails, OpenTelemetry API is not installed
+          if (!_otelConfigWarningIssued) {
+            _otelConfigWarningIssued = true;
+            displayOtelWarning();
+          }
+        });
     } catch (importError) {
       // If even trying dynamic import fails, show warning
       if (!_otelConfigWarningIssued) {
