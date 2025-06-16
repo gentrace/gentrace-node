@@ -2,10 +2,10 @@ import { init, setup, interaction } from '../src';
 
 async function main() {
   // Step 1: Initialize Gentrace first
-  init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
-    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-  });
+  // await init({
+  //   apiKey: process.env['GENTRACE_API_KEY'] || '',
+  //   baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
+  // });
 
   // Step 2: Setup OpenTelemetry - no parameters needed!
   await setup();

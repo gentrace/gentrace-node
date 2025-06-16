@@ -23,6 +23,9 @@ export function init(options: ClientOptions = {}) {
   // for creating or potentially updating the client instance.
   _setClient(options);
 
+  // Set a global flag to indicate that init() has been called
+  (globalThis as any).__gentrace_initialized = true;
+
   // Re-assign the module-scope variables based on the latest client.
   // Importers with live bindings will now see these new values.
   _updateExports();

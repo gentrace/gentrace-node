@@ -3,6 +3,9 @@ import type { Instrumentation } from '@opentelemetry/instrumentation';
 import { GentraceSampler } from './sampler';
 import { GentraceSpanProcessor } from './span-processor';
 import { _getClient } from '../client-instance';
+import boxen from 'boxen';
+import chalk from 'chalk';
+import { highlight } from 'cli-highlight';
 
 export interface SetupConfig {
   /**
@@ -86,10 +89,61 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
 
   // Check if init() has been called
   const client = _getClient();
-  if (!client || client.apiKey === 'placeholder') {
-    throw new Error(
-      'Gentrace must be initialized before calling setup(). Please call init() first with your API key.',
+  
+  // Check if the client has been explicitly initialized via init()
+  // We need to check if _setClient was called, which happens in init()
+  // One way to check this is to see if the client options match what we expect
+  const isInitialized = client && client.apiKey && client.apiKey !== 'placeholder';
+  
+  // Additionally, we should check if init() was actually called
+  // We can do this by checking a flag that we'll set in init()
+  if (!isInitialized || !(globalThis as any).__gentrace_initialized) {
+    const errorTitle = chalk.red.bold('⚠ Gentrace Initialization Error');
+    
+    const errorMessage = `
+The setup() function was called before init(). Gentrace must be initialized
+with your API key before setting up OpenTelemetry.
+
+To fix this, call init() before setup():
+`;
+
+    const codeExample = `import { init, setup } from '@gentrace/core';
+
+// First, initialize Gentrace with your API key
+await init({
+  apiKey: process.env.GENTRACE_API_KEY || 'your-api-key',
+  baseURL: 'https://gentrace.ai/api', // optional
+});
+
+// Then setup OpenTelemetry
+await setup();`;
+
+    let highlightedCode;
+    try {
+      highlightedCode = highlight(codeExample, { language: 'javascript', ignoreIllegals: true });
+    } catch (error) {
+      highlightedCode = chalk.cyan(codeExample);
+    }
+
+    const fullMessage = 
+      errorMessage + 
+      '\n' + 
+      highlightedCode + 
+      '\n\n' +
+      chalk.gray('Make sure to call init() before setup() in your application.');
+
+    console.error(
+      '\n' +
+        boxen(errorTitle + '\n' + fullMessage, {
+          padding: 1,
+          margin: 1,
+          borderStyle: 'round',
+          borderColor: 'red',
+        }) +
+        '\n',
     );
+
+    throw new Error('Gentrace must be initialized before calling setup().');
   }
 
   // Get configuration values with smart defaults
