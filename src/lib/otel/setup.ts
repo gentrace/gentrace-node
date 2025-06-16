@@ -77,14 +77,12 @@ export interface SetupConfig {
  */
 export async function setup(config: SetupConfig = {}): Promise<any> {
   // Dynamic imports to support both OpenTelemetry v1 and v2
-  console.log('Starting OpenTelemetry setup...');
   const { NodeSDK } = await import('@opentelemetry/sdk-node');
   const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http');
   const { SimpleSpanProcessor, ConsoleSpanExporter } = await import('@opentelemetry/sdk-trace-base');
   const { AsyncLocalStorageContextManager } = await import('@opentelemetry/context-async-hooks');
   const resources = await import('@opentelemetry/resources');
   const { ATTR_SERVICE_NAME } = await import('@opentelemetry/semantic-conventions');
-  console.log('Loaded OpenTelemetry dependencies');
 
   // Check if init() has been called
   const client = _getClient();
@@ -99,7 +97,6 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
   const apiKey = client.apiKey !== 'placeholder' ? client.apiKey : process.env['GENTRACE_API_KEY'];
   const baseUrl = client.baseURL || process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api';
   const traceEndpoint = config.traceEndpoint || `${baseUrl}/otel/v1/traces`;
-  console.log('Using trace endpoint:', traceEndpoint);
 
   // Try to get service name from package.json or use default
   let serviceName: string;
@@ -113,14 +110,12 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
       serviceName = 'unknown-service';
     }
   }
-  console.log('Service name:', serviceName);
 
   // Build resource attributes
   const resourceAttributes: Record<string, string | number | boolean> = {
     [ATTR_SERVICE_NAME]: serviceName,
     ...config.resourceAttributes,
   };
-  console.log('Resource attributes:', resourceAttributes);
 
   // Create resource - handle both v1 and v2
   let resource: any;
@@ -130,21 +125,17 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
   if (resourcesModule.resourceFromAttributes) {
     // OpenTelemetry v2 style with resourceFromAttributes
     resource = resourcesModule.resourceFromAttributes(resourceAttributes);
-    console.log('Created resource using v2 resourceFromAttributes');
   } else if (resourcesModule.default?.resourceFromAttributes) {
     // v2 with default export
     resource = resourcesModule.default.resourceFromAttributes(resourceAttributes);
-    console.log('Created resource using v2 default.resourceFromAttributes');
   } else if (resourcesModule.Resource) {
     // OpenTelemetry v1 style - direct Resource construction
     const Resource = resourcesModule.Resource;
     resource = Resource.default().merge(new Resource(resourceAttributes));
-    console.log('Created resource using v1 Resource');
   } else if (resourcesModule.default?.Resource) {
     // v1 with default export
     const Resource = resourcesModule.default.Resource;
     resource = Resource.default().merge(new Resource(resourceAttributes));
-    console.log('Created resource using v1 default.Resource');
   } else {
     // Last resort fallback
     throw new Error('Unable to create OpenTelemetry Resource. Please check your OpenTelemetry version.');
@@ -152,7 +143,6 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
 
   // Setup span processors
   const spanProcessors: SpanProcessor[] = [new GentraceSpanProcessor()];
-  console.log('Created GentraceSpanProcessor');
 
   // Configure trace exporter
   const exporterConfig: any = {
@@ -165,7 +155,6 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
   // Add authorization header if using Gentrace endpoint
   if (traceEndpoint.includes('gentrace.ai') && apiKey) {
     exporterConfig.headers.Authorization = `Bearer ${apiKey}`;
-    console.log('Added authorization header for Gentrace endpoint');
   } else if (traceEndpoint.includes('gentrace.ai') && !apiKey) {
     throw new Error(
       'GENTRACE_API_KEY is required when using Gentrace endpoint. Please set the GENTRACE_API_KEY environment variable.',
@@ -174,21 +163,17 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
 
   const traceExporter = new OTLPTraceExporter(exporterConfig);
   spanProcessors.push(new SimpleSpanProcessor(traceExporter));
-  console.log('Added OTLP trace exporter');
 
   // Add console exporter if debug mode
   if (config.debug) {
     spanProcessors.push(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-    console.log('Added console exporter for debug mode');
   }
 
   // Setup sampler - default to GentraceSampler
   const sampler = config.sampler || new GentraceSampler();
-  console.log('Using sampler:', sampler.constructor.name);
 
   // Setup context manager
   const contextManager = new AsyncLocalStorageContextManager().enable();
-  console.log('Enabled AsyncLocalStorageContextManager');
 
   // Create NodeSDK configuration
   const sdkConfig: any = {
@@ -201,20 +186,16 @@ export async function setup(config: SetupConfig = {}): Promise<any> {
   sdkConfig.sampler = sampler;
   if (config.instrumentations) {
     sdkConfig.instrumentations = config.instrumentations;
-    console.log('Added instrumentations:', config.instrumentations.length);
   }
 
   // Create and start SDK
   const sdk = new NodeSDK(sdkConfig);
   await sdk.start();
-  console.log('OpenTelemetry SDK started successfully');
 
   // Register exit handlers to ensure spans are flushed
   const shutdownHandler = async () => {
-    console.log('Shutting down OpenTelemetry SDK...');
     try {
       await sdk.shutdown();
-      console.log('OpenTelemetry SDK shutdown complete');
     } catch (error) {
       console.error('Error during OpenTelemetry shutdown:', error);
     }
