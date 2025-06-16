@@ -57,8 +57,6 @@ const sdk = new NodeSDK({
   contextManager: new AsyncLocalStorageContextManager().enable(),
 });
 
-sdk.start();
-
 process.on('beforeExit', async () => {
   await sdk
     .shutdown()
@@ -76,11 +74,14 @@ process.on('SIGTERM', async () => {
 });
 // End OpenTelemetry SDK setup
 
-const compose = interaction('Compose Email', composeEmail, {
-  pipelineId: GENTRACE_PIPELINE_ID,
-});
-
 async function main() {
+  await sdk.start();
+  console.log('OpenTelemetry SDK started successfully');
+
+  const compose = interaction('Compose Email', composeEmail, {
+    pipelineId: GENTRACE_PIPELINE_ID,
+  });
+
   const draft = await compose('Alice', 'Project Phoenix Update', 'John Doe');
   console.log('Draft:', draft);
 }

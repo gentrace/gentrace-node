@@ -1,6 +1,11 @@
 import { init, setup, interaction } from '../src';
 
 async function main() {
+  // Initialize Gentrace first
+  await init({
+    apiKey: process.env['GENTRACE_API_KEY'] || '',
+  });
+
   // Initialize OpenTelemetry with minimal configuration
   const sdk = await setup({
     debug: true, // Enable console output for debugging
@@ -8,11 +13,6 @@ async function main() {
       'service.version': '1.0.0',
       environment: 'development',
     },
-  });
-
-  // Initialize Gentrace
-  await init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
   });
 
   // Wrap your function with interaction for tracing
@@ -37,8 +37,7 @@ async function main() {
     console.error('Error:', error);
   }
 
-  // Graceful shutdown
-  await sdk.shutdown();
+  // Note: The SDK automatically handles graceful shutdown on process exit
 }
 
 // Run the example

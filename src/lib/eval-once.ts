@@ -33,7 +33,6 @@ export async function evalOnce<TResult>(
   spanName: string,
   callback: () => TResult | null | Promise<TResult | null>,
 ): Promise<TResult | null> {
-  checkOtelConfigAndWarn();
   return _runEval<TResult, any>({
     spanName,
     callback,
@@ -84,6 +83,8 @@ export async function _runEval<TResult, TInput = any>(
   options: RunEvalInternalOptions<TResult, TInput>,
 ): Promise<TResult | null> {
   const { spanName, spanAttributes, inputs, schema, callback } = options;
+
+  checkOtelConfigAndWarn();
 
   const experimentContext = getCurrentExperimentContext();
 

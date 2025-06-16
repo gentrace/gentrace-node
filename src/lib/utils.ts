@@ -31,12 +31,16 @@ export function checkOtelConfigAndWarn(): void {
     const trace = require('@opentelemetry/api').trace;
     const tracerProvider = trace.getTracerProvider();
 
-    // Check if the tracer provider is the SDK tracer provider
-    // In Node.js, we check for the existence of specific SDK methods
+    // Check if the tracer provider is properly configured
+    // ProxyTracerProvider with a delegate means SDK is configured
     const isSDKConfigured =
       tracerProvider &&
+      // Direct SDK tracer provider (older versions)
       (typeof tracerProvider.register === 'function' ||
-        (tracerProvider.constructor && tracerProvider.constructor.name !== 'ProxyTracerProvider'));
+        // NodeTracerProvider or similar (check for expected methods)
+        typeof tracerProvider.forceFlush === 'function' ||
+        // ProxyTracerProvider with configured delegate (newer versions)
+        (tracerProvider.constructor?.name === 'ProxyTracerProvider' && (tracerProvider as any)._delegate));
 
     if (!isSDKConfigured) {
       _otelConfigWarningIssued = true;

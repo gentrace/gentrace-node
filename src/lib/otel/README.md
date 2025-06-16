@@ -7,6 +7,7 @@ The `setup` function provides the simplest way to initialize OpenTelemetry for u
 - **Zero Configuration**: Works out of the box with no parameters
 - **Smart Defaults**: Automatically detects service name from package.json
 - **Gentrace Integration**: Pre-configured with GentraceSampler and GentraceSpanProcessor
+- **Automatic Shutdown**: Handles graceful shutdown on process exit (beforeExit, SIGTERM, SIGINT)
 - **Dynamic Imports**: Compatible with both OpenTelemetry v1 and v2
 - **TypeScript Support**: Fully typed for better developer experience
 - **Flexible**: Override any default when needed
@@ -19,9 +20,14 @@ The `setup` function provides the simplest way to initialize OpenTelemetry for u
 ## Basic Usage
 
 ```typescript
-import { setup } from '@gentrace/core';
+import { init, setup } from '@gentrace/core';
 
-// That's it! No parameters needed
+// First, initialize Gentrace with your API key
+await init({
+  apiKey: process.env.GENTRACE_API_KEY
+});
+
+// Then setup OpenTelemetry - no parameters needed!
 await setup();
 
 // Your application code here
@@ -40,9 +46,12 @@ await setup();
 
 ### Default Setup (Recommended)
 ```typescript
-import { setup } from '@gentrace/core';
+import { init, setup } from '@gentrace/core';
 
-// Zero configuration required
+// Initialize Gentrace
+await init({ apiKey: process.env.GENTRACE_API_KEY });
+
+// Setup OpenTelemetry with zero configuration
 await setup();
 ```
 
@@ -101,6 +110,7 @@ const sdk = new NodeSDK({
 
 ### After (Using setup)
 ```typescript
+await init({ apiKey: process.env.GENTRACE_API_KEY });
 await setup();
 ```
 

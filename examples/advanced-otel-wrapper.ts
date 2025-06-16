@@ -3,6 +3,11 @@ import { ParentBasedSampler, AlwaysOnSampler } from '@opentelemetry/sdk-trace-ba
 import { GentraceSampler } from '../src/lib/otel/sampler';
 
 async function main() {
+  // Initialize Gentrace first
+  await init({
+    apiKey: process.env['GENTRACE_API_KEY'] || '',
+  });
+
   // Advanced configuration example
   const sdk = await setup({
     // Custom trace endpoint (e.g., local OTEL collector)
@@ -32,11 +37,6 @@ async function main() {
 
     // AI library instrumentations
     instrumentations: await createAIInstrumentations(),
-  });
-
-  // Initialize Gentrace
-  init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
   });
 
   // Example 1: Using interaction for pipeline tracing
@@ -102,22 +102,9 @@ async function main() {
     console.error('Error:', error);
   }
 
-  // Graceful shutdown with timeout
-  console.log('\nShutting down OpenTelemetry...');
-  await sdk.shutdown();
-  console.log('Shutdown complete');
+  // Note: The SDK automatically handles graceful shutdown on process exit
+  console.log('\nExample completed successfully');
 }
-
-// Handle process termination
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, shutting down gracefully...');
-  process.exit(0);
-});
-
-process.on('SIGINT', async () => {
-  console.log('SIGINT received, shutting down gracefully...');
-  process.exit(0);
-});
 
 // Run the example
 main().catch((error) => {

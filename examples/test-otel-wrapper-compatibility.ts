@@ -12,17 +12,17 @@ async function testWrapper() {
     const otelApi = await import('@opentelemetry/api');
     console.log('OpenTelemetry API loaded successfully');
 
-    // Initialize OpenTelemetry with no parameters!
-    console.log('Initializing OpenTelemetry...');
-    const sdk = await setup();
-    console.log('✓ OpenTelemetry initialized successfully');
-
-    // Initialize Gentrace
+    // Initialize Gentrace first
     console.log('\nInitializing Gentrace...');
     await init({
       apiKey: process.env['GENTRACE_API_KEY'] || 'test-key',
     });
     console.log('✓ Gentrace initialized successfully');
+
+    // Initialize OpenTelemetry with no parameters!
+    console.log('\nInitializing OpenTelemetry...');
+    const sdk = await setup();
+    console.log('✓ OpenTelemetry initialized successfully');
 
     // Create a test function
     const testFunction = interaction(
@@ -44,10 +44,7 @@ async function testWrapper() {
     // Wait a bit for spans to be processed
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Shutdown
-    console.log('\nShutting down...');
-    await sdk.shutdown();
-    console.log('✓ Shutdown complete');
+    // Note: The SDK automatically handles shutdown on process exit
 
     console.log('\n✅ All tests passed!');
   } catch (error) {
