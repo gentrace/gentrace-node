@@ -12,9 +12,9 @@ async function main() {
   setup({
     serviceName: 'openai-advanced-example',
     resourceAttributes: {
-      'environment': process.env['NODE_ENV'] || 'development',
-      'version': '1.0.0',
-      'team': 'ai-engineering',
+      environment: process.env['NODE_ENV'] || 'development',
+      version: '1.0.0',
+      team: 'ai-engineering',
     },
   });
 
@@ -59,10 +59,10 @@ async function main() {
           function_call: 'auto',
         });
 
-        const message = response.choices[0].message;
+        const message = response.choices[0]?.message;
 
         // Check if the model wants to call a function
-        if (message.function_call) {
+        if (message?.function_call) {
           const functionName = message.function_call.name;
           const functionArgs = JSON.parse(message.function_call.arguments);
 
@@ -95,10 +95,10 @@ async function main() {
             ],
           });
 
-          return secondResponse.choices[0].message.content;
+          return secondResponse.choices[0]?.message?.content || '';
         }
 
-        return message.content;
+        return message?.content || '';
       } catch (error) {
         console.error('Error in weather function:', error);
         throw error;
@@ -114,7 +114,7 @@ async function main() {
     'robust-completion',
     async (prompt: string, maxRetries = 3) => {
       let lastError;
-      
+
       for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
           const response = await openai.chat.completions.create({
@@ -122,21 +122,21 @@ async function main() {
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.5,
           });
-          
-          return response.choices[0].message.content;
+
+          return response.choices[0]?.message?.content || '';
         } catch (error: any) {
           lastError = error;
           console.log(`Attempt ${attempt + 1} failed:`, error.message);
-          
+
           if (attempt < maxRetries - 1) {
             // Exponential backoff
             const delay = Math.pow(2, attempt) * 1000;
             console.log(`Retrying in ${delay}ms...`);
-            await new Promise(resolve => setTimeout(resolve, delay));
+            await new Promise((resolve) => setTimeout(resolve, delay));
           }
         }
       }
-      
+
       throw new Error(`Failed after ${maxRetries} attempts: ${lastError?.message}`);
     },
     {
