@@ -1,6 +1,4 @@
-import { init, setup, interaction, traced } from '../src';
-import { ParentBasedSampler, AlwaysOnSampler } from '@opentelemetry/sdk-trace-base';
-import { GentraceSampler } from '../src/lib/otel/sampler';
+import { init, setup, interaction, traced, GentraceSampler } from '../src';
 
 async function main() {
   // Initialize Gentrace first
@@ -23,12 +21,8 @@ async function main() {
       'cloud.region': 'us-east-1',
     },
 
-    // Custom sampler with parent-based sampling
-    sampler: new ParentBasedSampler({
-      root: new GentraceSampler(),
-      remoteParentSampled: new AlwaysOnSampler(),
-      remoteParentNotSampled: new GentraceSampler(),
-    }),
+    // Use GentraceSampler
+    sampler: new GentraceSampler(),
 
     // Include debug output
     debug: process.env['NODE_ENV'] === 'development',

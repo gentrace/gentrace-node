@@ -1,7 +1,7 @@
 import type { SpanProcessor, Sampler } from '@opentelemetry/sdk-trace-base';
 import type { Instrumentation } from '@opentelemetry/instrumentation';
 import { GentraceSpanProcessor } from './span-processor';
-import { _getClient } from '../client-instance';
+import { _getClient, _isClientProperlyInitialized } from '../client-instance';
 import { _isGentraceInitialized } from '../init';
 import boxen from 'boxen';
 import chalk from 'chalk';
@@ -96,14 +96,8 @@ export function setup(config: SetupConfig = {}): any {
   // Check if init() has been called
   const client = _getClient();
 
-  // Check if the client has been explicitly initialized via init()
-  // We need to check if _setClient was called, which happens in init()
-  // One way to check this is to see if the client options match what we expect
-  const isInitialized = client && client.apiKey && client.apiKey !== 'placeholder';
-
-  // Additionally, we should check if init() was actually called
-  // We can do this by checking the module-level flag from init.ts
-  if (!isInitialized || !_isGentraceInitialized()) {
+  // Check if the client has been properly initialized and init() was called
+  if (!_isClientProperlyInitialized() || !_isGentraceInitialized()) {
     const errorTitle = chalk.red.bold('⚠ Gentrace Initialization Error');
 
     const errorMessage = `
@@ -154,7 +148,7 @@ setup();`;
 
   // Get configuration values with smart defaults
   // Use API key from init() with higher priority than env variable
-  const apiKey = client.apiKey !== 'placeholder' ? client.apiKey : process.env['GENTRACE_API_KEY'];
+  const apiKey = _isClientProperlyInitialized() ? client.apiKey : process.env['GENTRACE_API_KEY'];
   const baseUrl = client.baseURL || process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api';
   const traceEndpoint = config.traceEndpoint || `${baseUrl}/otel/v1/traces`;
 
