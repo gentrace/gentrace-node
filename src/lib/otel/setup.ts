@@ -53,39 +53,39 @@ export interface SetupConfig {
  * IMPORTANT: You must call init() before setup() to initialize Gentrace with your API key.
  *
  * @param config Optional configuration options
- * @returns Promise that resolves to the initialized NodeSDK instance
+ * @returns The initialized NodeSDK instance
  *
  * @example
  * ```typescript
  * import { init, setup } from '@gentrace/core';
  *
  * // First, initialize Gentrace
- * await init({
+ * init({
  *   apiKey: 'your-api-key'
  * });
  *
  * // Then setup OpenTelemetry - no parameters needed
- * await setup();
+ * setup();
  *
  * // With custom trace endpoint
- * await setup({
+ * setup({
  *   traceEndpoint: 'http://localhost:4318/v1/traces'
  * });
  *
  * // With instrumentations
- * await setup({
+ * setup({
  *   instrumentations: [new OpenAIInstrumentation()]
  * });
  * ```
  */
-export async function setup(config: SetupConfig = {}): Promise<any> {
+export function setup(config: SetupConfig = {}): any {
   // Dynamic imports to support both OpenTelemetry v1 and v2
-  const { NodeSDK } = await import('@opentelemetry/sdk-node');
-  const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http');
-  const { SimpleSpanProcessor, ConsoleSpanExporter } = await import('@opentelemetry/sdk-trace-base');
-  const { AsyncLocalStorageContextManager } = await import('@opentelemetry/context-async-hooks');
-  const resources = await import('@opentelemetry/resources');
-  const { ATTR_SERVICE_NAME } = await import('@opentelemetry/semantic-conventions');
+  const { NodeSDK } = require('@opentelemetry/sdk-node');
+  const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
+  const { SimpleSpanProcessor, ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-base');
+  const { AsyncLocalStorageContextManager } = require('@opentelemetry/context-async-hooks');
+  const resources = require('@opentelemetry/resources');
+  const { ATTR_SERVICE_NAME } = require('@opentelemetry/semantic-conventions');
 
   // Check if init() has been called
   const client = _getClient();
@@ -110,13 +110,13 @@ To fix this, call init() before setup():
     const codeExample = `import { init, setup } from '@gentrace/core';
 
 // First, initialize Gentrace with your API key
-await init({
+init({
   apiKey: process.env.GENTRACE_API_KEY || 'your-api-key',
   baseURL: 'https://gentrace.ai/api', // optional
 });
 
 // Then setup OpenTelemetry
-await setup();`;
+setup();`;
 
     let highlightedCode;
     try {
@@ -246,12 +246,12 @@ await setup();`;
 
   // Create and start SDK
   const sdk = new NodeSDK(sdkConfig);
-  await sdk.start();
+  sdk.start();
 
   // Register exit handlers to ensure spans are flushed
-  const shutdownHandler = async () => {
+  const shutdownHandler = () => {
     try {
-      await sdk.shutdown();
+      sdk.shutdown();
     } catch (error) {
       console.error('Error during OpenTelemetry shutdown:', error);
     }
@@ -263,21 +263,4 @@ await setup();`;
   process.once('SIGINT', shutdownHandler);
 
   return sdk;
-}
-
-/**
- * Helper function to create OpenTelemetry instrumentations for common AI libraries
- *
- * @returns Array of instrumentations for OpenAI, Anthropic, etc.
- *
- * Note: This function attempts to load optional instrumentation packages.
- * These packages must be installed separately if needed.
- */
-export async function createAIInstrumentations(): Promise<Instrumentation[]> {
-  const instrumentations: Instrumentation[] = [];
-
-  // Note: These are optional packages that users can install separately
-  // Example: npm install @gentrace/openai-instrumentation
-
-  return instrumentations;
 }

@@ -1,18 +1,16 @@
-import { init, setup, interaction, traced, createAIInstrumentations } from '../src';
+import { init, setup, interaction, traced } from '../src';
 import { ParentBasedSampler, AlwaysOnSampler } from '@opentelemetry/sdk-trace-base';
 import { GentraceSampler } from '../src/lib/otel/sampler';
 
 async function main() {
   // Initialize Gentrace first
-  await init({
+  init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
+    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
   });
 
   // Advanced configuration example
-  const sdk = await setup({
-    // Custom trace endpoint (e.g., local OTEL collector)
-    traceEndpoint: 'http://localhost:4318/v1/traces',
-
+  setup({
     // Override service name detection
     serviceName: 'gentrace-advanced-example',
 
@@ -34,9 +32,6 @@ async function main() {
 
     // Include debug output
     debug: process.env['NODE_ENV'] === 'development',
-
-    // AI library instrumentations
-    instrumentations: await createAIInstrumentations(),
   });
 
   // Example 1: Using interaction for pipeline tracing
@@ -53,9 +48,9 @@ async function main() {
       return `I received your message: "${message}". This is a simulated response.`;
     },
     {
-      pipelineId: process.env['GENTRACE_PIPELINE_ID'] || 'test-pipeline',
+      pipelineId: process.env['GENTRACE_PIPELINE_ID'] || '68cee563-ee9a-4321-848f-8df99d50c48d',
       attributes: {
-        model: 'gpt-4',
+        model: 'gpt-4o',
         temperature: 0.7,
       },
     },

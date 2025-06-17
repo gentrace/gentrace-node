@@ -1,38 +1,56 @@
 import { init, setup, interaction } from '../src';
+import OpenAI from 'openai';
 
 async function main() {
   // Step 1: Initialize Gentrace first
-  await init({
+  init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
   });
 
   // Step 2: Setup OpenTelemetry - no parameters needed!
-  await setup();
+  setup();
 
-  // Step 3: Use Gentrace interaction() to wrap your function
+  // Step 3: Create OpenAI client
+  const openai = new OpenAI({
+    apiKey: process.env['OPENAI_API_KEY'],
+  });
+
+  // Step 4: Use Gentrace interaction() to wrap your OpenAI calls
   const generateResponse = interaction(
-    'chat',
-    async (prompt: string) => {
-      console.log('Processing prompt:', prompt);
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      return `Echo: ${prompt}`;
+    'generate-poem',
+    async (topic: string) => {
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant that writes short poems.',
+          },
+          {
+            role: 'user',
+            content: `Write a short poem about ${topic}`,
+          },
+        ],
+        max_tokens: 100,
+      });
+
+      return completion.choices[0]?.message.content;
     },
     {
-      pipelineId: process.env['GENTRACE_PIPELINE_ID'] || 'test-pipeline',
+      pipelineId: process.env['GENTRACE_PIPELINE_ID'] || 'poem-pipeline',
     },
   );
 
   // Run your function
-  console.log('Calling generateResponse...');
-  const result = await generateResponse('Hello, world!');
-  console.log('Response:', result);
+  console.log('Generating poem about the ocean...');
+  const poem = await generateResponse('the ocean');
+  console.log('\nPoem:', poem);
 
   // Wait a bit for spans to be flushed
-  console.log('Waiting for spans to be flushed...');
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  console.log('Done!');
+  console.log('\nDone!');
 }
 
-main();
+main().catch(console.error);

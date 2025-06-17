@@ -14,14 +14,14 @@ async function testWrapper() {
 
     // Initialize Gentrace first
     console.log('\nInitializing Gentrace...');
-    await init({
+    init({
       apiKey: process.env['GENTRACE_API_KEY'] || 'test-key',
     });
     console.log('✓ Gentrace initialized successfully');
 
     // Initialize OpenTelemetry with no parameters!
     console.log('\nInitializing OpenTelemetry...');
-    const sdk = await setup();
+    setup();
     console.log('✓ OpenTelemetry initialized successfully');
 
     // Create a test function
