@@ -37,6 +37,7 @@ if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY || !OPENAI_API_KEY) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
+  autoConfigureOtel: false,
 });
 
 // Begin OpenTelemetry SDK setup with comprehensive configuration

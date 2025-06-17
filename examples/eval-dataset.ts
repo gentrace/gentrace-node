@@ -38,6 +38,7 @@ if (!GENTRACE_DATASET_ID) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
+  autoConfigureOtel: false,
 });
 
 // Begin OpenTelemetry SDK setup

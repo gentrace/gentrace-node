@@ -1,5 +1,5 @@
-export { init } from './init';
-export { setup } from './otel/setup';
+export { init, type InitOptions } from './init';
+export { setup } from './otel/setup'; // Still exported for advanced use cases
 export { experiment } from './experiment';
 export {
   startExperiment,

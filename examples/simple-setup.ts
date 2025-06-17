@@ -1,24 +1,20 @@
-import { init, setup, interaction, GentraceSampler } from '../src';
+import { init, interaction, GentraceSampler } from '../src';
 import OpenAI from 'openai';
 
 async function main() {
-  // Step 1: Initialize Gentrace first
+  // Initialize Gentrace and automatically configure OpenTelemetry
   init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-  });
-
-  // Step 2: Setup OpenTelemetry with GentraceSampler
-  setup({
     sampler: new GentraceSampler(),
   });
 
-  // Step 3: Create OpenAI client
+  // Step 2: Create OpenAI client
   const openai = new OpenAI({
     apiKey: process.env['OPENAI_API_KEY'],
   });
 
-  // Step 4: Use Gentrace interaction() to wrap your OpenAI calls
+  // Step 3: Use Gentrace interaction() to wrap your OpenAI calls
   const generateResponse = interaction(
     'generate-poem',
     async (topic: string) => {

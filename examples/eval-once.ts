@@ -24,6 +24,7 @@ if (!GENTRACE_API_KEY) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
+  autoConfigureOtel: false,
 });
 
 // Begin OpenTelemetry SDK setup

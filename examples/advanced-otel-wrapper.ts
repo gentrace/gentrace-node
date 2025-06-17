@@ -1,17 +1,12 @@
-import { init, setup, interaction, traced, GentraceSampler } from '../src';
+import { init, interaction, traced, GentraceSampler } from '../src';
 
 async function main() {
-  // Initialize Gentrace first
+  // Initialize Gentrace with advanced OpenTelemetry configuration
   init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-  });
-
-  // Advanced configuration example
-  setup({
     // Override service name detection
     serviceName: 'gentrace-advanced-example',
-
     // Custom resource attributes
     resourceAttributes: {
       'service.version': '2.0.0',
@@ -20,10 +15,8 @@ async function main() {
       'cloud.provider': 'aws',
       'cloud.region': 'us-east-1',
     },
-
     // Use GentraceSampler
     sampler: new GentraceSampler(),
-
     // Include debug output
     debug: process.env['NODE_ENV'] === 'development',
   });

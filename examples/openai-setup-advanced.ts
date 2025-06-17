@@ -1,15 +1,11 @@
-import { init, setup, interaction, GentraceSampler } from '../src';
+import { init, interaction, GentraceSampler } from '../src';
 import OpenAI from 'openai';
 
 async function main() {
-  // Initialize Gentrace
+  // Initialize Gentrace with custom OpenTelemetry configuration
   init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-  });
-
-  // Setup OpenTelemetry with custom configuration
-  setup({
     serviceName: 'openai-advanced-example',
     resourceAttributes: {
       environment: process.env['NODE_ENV'] || 'development',
