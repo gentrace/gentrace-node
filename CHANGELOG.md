@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2 (2025-06-16)
+
+Full Changelog: [v0.3.1...v0.3.2](https://github.com/gentrace/gentrace-node/compare/v0.3.1...v0.3.2)
+
 ## 0.3.1 (2025-06-15)
 
 Full Changelog: [v0.3.0...v0.3.1](https://github.com/gentrace/gentrace-node/compare/v0.3.0...v0.3.1)
