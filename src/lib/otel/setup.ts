@@ -1,8 +1,8 @@
 import type { SpanProcessor, Sampler } from '@opentelemetry/sdk-trace-base';
 import type { Instrumentation } from '@opentelemetry/instrumentation';
-import { GentraceSampler } from './sampler';
 import { GentraceSpanProcessor } from './span-processor';
 import { _getClient } from '../client-instance';
+import { _isGentraceInitialized } from '../init';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
@@ -31,7 +31,7 @@ export interface SetupConfig {
   resourceAttributes?: Record<string, string | number | boolean>;
 
   /**
-   * Optional custom sampler (defaults to GentraceSampler)
+   * Optional custom sampler
    */
   sampler?: Sampler;
 
@@ -57,24 +57,30 @@ export interface SetupConfig {
  *
  * @example
  * ```typescript
- * import { init, setup } from '@gentrace/core';
+ * import { init, setup, GentraceSampler } from '@gentrace/core';
  *
  * // First, initialize Gentrace
  * init({
  *   apiKey: 'your-api-key'
  * });
  *
- * // Then setup OpenTelemetry - no parameters needed
+ * // Then setup OpenTelemetry
  * setup();
+ *
+ * // With GentraceSampler
+ * setup({
+ *   sampler: new GentraceSampler()
+ * });
  *
  * // With custom trace endpoint
  * setup({
  *   traceEndpoint: 'http://localhost:4318/v1/traces'
  * });
  *
- * // With instrumentations
+ * // With instrumentations and sampler
  * setup({
- *   instrumentations: [new OpenAIInstrumentation()]
+ *   instrumentations: [new OpenAIInstrumentation()],
+ *   sampler: new GentraceSampler()
  * });
  * ```
  */
@@ -96,8 +102,8 @@ export function setup(config: SetupConfig = {}): any {
   const isInitialized = client && client.apiKey && client.apiKey !== 'placeholder';
 
   // Additionally, we should check if init() was actually called
-  // We can do this by checking a flag that we'll set in init()
-  if (!isInitialized || !(globalThis as any).__gentrace_initialized) {
+  // We can do this by checking the module-level flag from init.ts
+  if (!isInitialized || !_isGentraceInitialized()) {
     const errorTitle = chalk.red.bold('⚠ Gentrace Initialization Error');
 
     const errorMessage = `
@@ -225,9 +231,6 @@ setup();`;
     spanProcessors.push(new SimpleSpanProcessor(new ConsoleSpanExporter()));
   }
 
-  // Setup sampler - default to GentraceSampler
-  const sampler = config.sampler || new GentraceSampler();
-
   // Setup context manager
   const contextManager = new AsyncLocalStorageContextManager().enable();
 
@@ -238,8 +241,10 @@ setup();`;
     contextManager,
   };
 
-  // Add sampler and instrumentations
-  sdkConfig.sampler = sampler;
+  // Add sampler if provided
+  if (config.sampler) {
+    sdkConfig.sampler = config.sampler;
+  }
   if (config.instrumentations) {
     sdkConfig.instrumentations = config.instrumentations;
   }

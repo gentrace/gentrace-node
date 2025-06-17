@@ -1,4 +1,4 @@
-import { init, setup, interaction } from '../src';
+import { init, setup, interaction, GentraceSampler } from '../src';
 import OpenAI from 'openai';
 
 async function main() {
@@ -16,6 +16,7 @@ async function main() {
       version: '1.0.0',
       team: 'ai-engineering',
     },
+    sampler: new GentraceSampler(),
   });
 
   // Create OpenAI client

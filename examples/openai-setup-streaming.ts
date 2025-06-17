@@ -1,4 +1,4 @@
-import { init, setup, interaction } from '../src';
+import { init, setup, interaction, GentraceSampler } from '../src';
 import OpenAI from 'openai';
 
 async function main() {
@@ -8,8 +8,11 @@ async function main() {
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
   });
 
-  // Setup OpenTelemetry with debug mode
-  setup({ debug: true });
+  // Setup OpenTelemetry with debug mode and GentraceSampler
+  setup({
+    debug: true,
+    sampler: new GentraceSampler(),
+  });
 
   // Create OpenAI client
   const openai = new OpenAI({

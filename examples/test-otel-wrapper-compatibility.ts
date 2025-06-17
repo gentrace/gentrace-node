@@ -1,4 +1,4 @@
-import { init, setup, interaction } from '../src';
+import { init, setup, interaction, GentraceSampler } from '../src';
 
 /**
  * Test script to verify OpenTelemetry wrapper compatibility
@@ -19,9 +19,11 @@ async function testWrapper() {
     });
     console.log('✓ Gentrace initialized successfully');
 
-    // Initialize OpenTelemetry with no parameters!
+    // Initialize OpenTelemetry with GentraceSampler
     console.log('\nInitializing OpenTelemetry...');
-    setup();
+    setup({
+      sampler: new GentraceSampler(),
+    });
     console.log('✓ OpenTelemetry initialized successfully');
 
     // Create a test function

@@ -2,6 +2,17 @@ import { ClientOptions } from '../client';
 import { Datasets, Experiments, Pipelines, TestCases } from '../resources';
 import { _getClient, _setClient } from './client-instance';
 
+// Module-level variable to track initialization state
+let _isInitialized = false;
+
+/**
+ * Returns whether init() has been called
+ * @internal
+ */
+export function _isGentraceInitialized(): boolean {
+  return _isInitialized;
+}
+
 /**
  * Initializes the global Gentrace state.
  * **Must** be called early in your application setup to configure the SDK globally
@@ -23,8 +34,8 @@ export function init(options: ClientOptions = {}) {
   // for creating or potentially updating the client instance.
   _setClient(options);
 
-  // Set a global flag to indicate that init() has been called
-  (globalThis as any).__gentrace_initialized = true;
+  // Set module-level flag to indicate that init() has been called
+  _isInitialized = true;
 
   // Re-assign the module-scope variables based on the latest client.
   // Importers with live bindings will now see these new values.
