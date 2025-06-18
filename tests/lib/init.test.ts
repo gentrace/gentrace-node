@@ -15,6 +15,12 @@ const mockClientInstance = {
 jest.mock('../../src/lib/client-instance', () => ({
   _getClient: jest.fn().mockReturnValue(mockClientInstance),
   _setClient: mock_setClient,
+  _isClientProperlyInitialized: jest.fn().mockReturnValue(true),
+}));
+
+// Mock otel/setup to prevent actual OpenTelemetry initialization during tests
+jest.mock('../../src/lib/otel/setup', () => ({
+  setup: jest.fn(),
 }));
 
 import { ClientOptions } from '../../src';

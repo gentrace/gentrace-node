@@ -60,6 +60,11 @@ describe('evalOnce() function', () => {
 
       jest.doMock('../../src/lib/client-instance', () => ({
         _getClient: jest.fn().mockReturnValue(mockGentraceClient),
+        _isClientProperlyInitialized: jest.fn().mockReturnValue(true),
+      }));
+
+      jest.doMock('../../src/lib/otel/setup', () => ({
+        setup: jest.fn(),
       }));
 
       api = require('@opentelemetry/api');
