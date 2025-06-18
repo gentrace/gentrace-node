@@ -1,6 +1,6 @@
 # Gentrace Node.js SDK
 
-[![NPM version](https://img.shields.io/npm/v/gentrace.svg)](https://npmjs.org/package/gentrace) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/gentrace)
+[![NPM version](<https://img.shields.io/npm/v/gentrace.svg?label=npm%20(stable)>)](https://npmjs.org/package/gentrace) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/gentrace)
 
 This library provides tools to instrument and test your AI applications using Gentrace.
 
