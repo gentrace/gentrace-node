@@ -14,9 +14,11 @@ if (!GENTRACE_API_KEY) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
-  serviceName: 'eval-once-test',
-  traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-  debug: true,
+  otelSetup: {
+    serviceName: 'eval-once-test',
+    traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+    debug: true,
+  },
 });
 
 experiment(PIPELINE_ID, async () => {

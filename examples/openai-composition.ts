@@ -21,10 +21,12 @@ if (!OPENAI_API_KEY) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
-  serviceName: 'openai-email-composition-simplified',
-  traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-  sampler: new GentraceSampler(),
-  debug: true,
+  otelSetup: {
+    serviceName: 'openai-email-composition-simplified',
+    traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+    sampler: new GentraceSampler(),
+    debug: true,
+  },
 });
 
 const compose = interaction('Compose Email', composeEmail, {

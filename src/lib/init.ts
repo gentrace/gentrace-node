@@ -2,8 +2,6 @@ import { ClientOptions } from '../client';
 import { Datasets, Experiments, Pipelines, TestCases } from '../resources';
 import { _getClient, _setClient } from './client-instance';
 import type { SetupConfig } from './otel/setup';
-import type { Sampler } from '@opentelemetry/sdk-trace-base';
-import type { Instrumentation } from '@opentelemetry/instrumentation';
 
 // Module-level variable to track initialization state
 let _isInitialized = false;
@@ -21,49 +19,12 @@ export function _isGentraceInitialized(): boolean {
  */
 export interface InitOptions extends ClientOptions {
   /**
-   * Whether to automatically configure OpenTelemetry. Defaults to true.
-   * Set to false if you want to manually configure OpenTelemetry.
+   * OpenTelemetry setup configuration. Defaults to true (automatic setup with defaults).
+   * - Set to false to disable automatic OpenTelemetry configuration
+   * - Set to true to use default configuration
+   * - Set to an object to provide custom configuration
    */
-  autoConfigureOtel?: boolean;
-
-  /**
-   * Optional OpenTelemetry trace endpoint URL.
-   * Only used if autoConfigureOtel is true.
-   * Defaults to Gentrace's OTLP endpoint.
-   */
-  traceEndpoint?: string;
-
-  /**
-   * Optional service name for the application.
-   * Only used if autoConfigureOtel is true.
-   * Defaults to the package name from package.json or 'unknown-service'
-   */
-  serviceName?: string;
-
-  /**
-   * Optional instrumentations to include (e.g., OpenAI, Anthropic)
-   * Only used if autoConfigureOtel is true.
-   */
-  instrumentations?: Instrumentation[];
-
-  /**
-   * Optional additional resource attributes
-   * Only used if autoConfigureOtel is true.
-   */
-  resourceAttributes?: Record<string, string | number | boolean>;
-
-  /**
-   * Optional custom sampler
-   * Only used if autoConfigureOtel is true.
-   */
-  sampler?: Sampler;
-
-  /**
-   * Whether to include console exporter for debugging
-   * Only used if autoConfigureOtel is true.
-   * Defaults to false.
-   */
-  debug?: boolean;
+  otelSetup?: boolean | SetupConfig;
 }
 
 /**
@@ -72,7 +33,7 @@ export interface InitOptions extends ClientOptions {
  * with API keys, base URLs, or other settings. Gentrace functionality depends on this initialization.
  *
  * By default, this function also automatically configures OpenTelemetry for tracing.
- * You can disable this by setting `autoConfigureOtel: false`.
+ * You can disable this by setting `otelSetup: false`.
  *
  * @param {InitOptions} [options={}] - Configuration options.
  * @example
@@ -87,32 +48,25 @@ export interface InitOptions extends ClientOptions {
  * // With custom OpenTelemetry configuration
  * init({
  *   apiKey: 'your-gentrace-api-key',
- *   sampler: new GentraceSampler(),
- *   serviceName: 'my-service',
- *   resourceAttributes: {
- *     environment: 'production'
+ *   otelSetup: {
+ *     sampler: new GentraceSampler(),
+ *     serviceName: 'my-service',
+ *     resourceAttributes: {
+ *       environment: 'production'
+ *     }
  *   }
  * });
  *
  * // Disable automatic OpenTelemetry setup
  * init({
  *   apiKey: 'your-gentrace-api-key',
- *   autoConfigureOtel: false
+ *   otelSetup: false
  * });
  * ```
  */
 export function init(options: InitOptions = {}) {
   // Extract OpenTelemetry config from options
-  const {
-    autoConfigureOtel = true,
-    traceEndpoint,
-    serviceName,
-    instrumentations,
-    resourceAttributes,
-    sampler,
-    debug,
-    ...clientOptions
-  } = options;
+  const { otelSetup = true, ...clientOptions } = options;
 
   // Always use _setClient to ensure the constructor logic is run
   // for creating or potentially updating the client instance.
@@ -125,18 +79,14 @@ export function init(options: InitOptions = {}) {
   // Importers with live bindings will now see these new values.
   _updateExports();
 
-  // Automatically configure OpenTelemetry unless disabled
-  if (autoConfigureOtel) {
+  // Handle OpenTelemetry setup based on otelSetup value
+  if (otelSetup !== false) {
     // Lazy import to avoid circular dependencies
     const { setup } = require('./otel/setup');
 
-    const setupConfig: SetupConfig = {};
-    if (traceEndpoint !== undefined) setupConfig.traceEndpoint = traceEndpoint;
-    if (serviceName !== undefined) setupConfig.serviceName = serviceName;
-    if (instrumentations !== undefined) setupConfig.instrumentations = instrumentations;
-    if (resourceAttributes !== undefined) setupConfig.resourceAttributes = resourceAttributes;
-    if (sampler !== undefined) setupConfig.sampler = sampler;
-    if (debug !== undefined) setupConfig.debug = debug;
+    // If otelSetup is true, use empty config (defaults)
+    // If otelSetup is an object, use it as the config
+    const setupConfig: SetupConfig = otelSetup === true ? {} : otelSetup;
 
     setup(setupConfig);
   }

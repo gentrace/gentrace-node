@@ -22,10 +22,12 @@ if (!ANTHROPIC_API_KEY) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
-  serviceName: 'anthropic-email-composition-simplified',
-  traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-  sampler: new GentraceSampler(),
-  debug: true,
+  otelSetup: {
+    serviceName: 'anthropic-email-composition-simplified',
+    traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+    sampler: new GentraceSampler(),
+    debug: true,
+  },
 });
 
 async function main() {

@@ -5,7 +5,7 @@ async function main() {
   init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    autoConfigureOtel: false, // Disable automatic OpenTelemetry setup
+    otelSetup: false, // Disable automatic OpenTelemetry setup
   });
 
   // Manually configure OpenTelemetry later (if needed)

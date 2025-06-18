@@ -6,7 +6,9 @@ async function main() {
   init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    sampler: new GentraceSampler(),
+    otelSetup: {
+      sampler: new GentraceSampler(),
+    },
   });
 
   // Step 2: Create OpenAI client

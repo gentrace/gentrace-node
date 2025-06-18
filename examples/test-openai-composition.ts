@@ -23,16 +23,18 @@ if (!OPENAI_API_KEY) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
-  serviceName: 'openai-email-composition-simplified-test',
-  traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-  instrumentations: [
-    new OpenAIInstrumentation({
-      exceptionLogger: (e: Error) => {
-        console.error('Error logging OpenAI exception', e);
-      },
-    }),
-  ],
-  debug: true,
+  otelSetup: {
+    serviceName: 'openai-email-composition-simplified-test',
+    traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+    instrumentations: [
+      new OpenAIInstrumentation({
+        exceptionLogger: (e: Error) => {
+          console.error('Error logging OpenAI exception', e);
+        },
+      }),
+    ],
+    debug: true,
+  },
 });
 
 const compose = interaction('Compose Email', composeEmail, {

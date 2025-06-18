@@ -5,20 +5,22 @@ async function main() {
   init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    // Override service name detection
-    serviceName: 'gentrace-advanced-example',
-    // Custom resource attributes
-    resourceAttributes: {
-      'service.version': '2.0.0',
-      'service.namespace': 'production',
-      'deployment.environment': process.env['NODE_ENV'] || 'development',
-      'cloud.provider': 'aws',
-      'cloud.region': 'us-east-1',
+    otelSetup: {
+      // Override service name detection
+      serviceName: 'gentrace-advanced-example',
+      // Custom resource attributes
+      resourceAttributes: {
+        'service.version': '2.0.0',
+        'service.namespace': 'production',
+        'deployment.environment': process.env['NODE_ENV'] || 'development',
+        'cloud.provider': 'aws',
+        'cloud.region': 'us-east-1',
+      },
+      // Use GentraceSampler
+      sampler: new GentraceSampler(),
+      // Include debug output
+      debug: process.env['NODE_ENV'] === 'development',
     },
-    // Use GentraceSampler
-    sampler: new GentraceSampler(),
-    // Include debug output
-    debug: process.env['NODE_ENV'] === 'development',
   });
 
   // Example 1: Using interaction for pipeline tracing

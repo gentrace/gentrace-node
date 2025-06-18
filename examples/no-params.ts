@@ -18,16 +18,18 @@ if (!GENTRACE_API_KEY) {
 
 init({
   baseURL: GENTRACE_BASE_URL,
-  serviceName: 'no-params-test',
-  traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
-  instrumentations: [
-    new OpenAIInstrumentation({
-      exceptionLogger: (e: Error) => {
-        console.error('Error logging OpenAI exception', e);
-      },
-    }),
-  ],
-  debug: true,
+  otelSetup: {
+    serviceName: 'no-params-test',
+    traceEndpoint: `${GENTRACE_BASE_URL}/otel/v1/traces`,
+    instrumentations: [
+      new OpenAIInstrumentation({
+        exceptionLogger: (e: Error) => {
+          console.error('Error logging OpenAI exception', e);
+        },
+      }),
+    ],
+    debug: true,
+  },
 });
 
 const simpleTask = () => {

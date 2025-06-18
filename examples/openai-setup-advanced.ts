@@ -6,13 +6,15 @@ async function main() {
   init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    serviceName: 'openai-advanced-example',
-    resourceAttributes: {
-      environment: process.env['NODE_ENV'] || 'development',
-      version: '1.0.0',
-      team: 'ai-engineering',
+    otelSetup: {
+      serviceName: 'openai-advanced-example',
+      resourceAttributes: {
+        environment: process.env['NODE_ENV'] || 'development',
+        version: '1.0.0',
+        team: 'ai-engineering',
+      },
+      sampler: new GentraceSampler(),
     },
-    sampler: new GentraceSampler(),
   });
 
   // Create OpenAI client
