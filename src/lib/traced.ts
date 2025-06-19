@@ -25,13 +25,13 @@ export type TracedConfig = {
  * @returns {F} A new function that has the same parameters and return type as fn.
  */
 export function traced<F extends (...args: any[]) => any>(name: string, fn: F, config?: TracedConfig): F {
-  checkOtelConfigAndWarn();
   const tracer = trace.getTracer('gentrace');
   const fnName = fn.name;
   const spanName = name;
   const attributes = config?.attributes;
 
   const wrappedFn = (...args: Parameters<F>): ReturnType<F> => {
+    checkOtelConfigAndWarn();
     const resultPromise = tracer.startActiveSpan(spanName, (span) => {
       Object.entries(attributes ?? {}).forEach(([key, value]) => {
         span.setAttribute(key, value);

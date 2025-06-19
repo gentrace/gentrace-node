@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 (2025-06-19)
+
+Full Changelog: [v0.3.2...v0.4.0](https://github.com/gentrace/gentrace-node/compare/v0.3.2...v0.4.0)
+
+### Features
+
+* Add `setup()` function for OpenTelemetry wrapper ([#579](https://github.com/gentrace/gentrace-node/issues/579)) ([44e2265](https://github.com/gentrace/gentrace-node/commit/44e2265fc48c11768526f9d5b6faad0da932357b))
+
 ## 0.3.2 (2025-06-16)
 
 Full Changelog: [v0.3.1...v0.3.2](https://github.com/gentrace/gentrace-node/compare/v0.3.1...v0.3.2)
