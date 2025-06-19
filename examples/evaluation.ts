@@ -1,14 +1,14 @@
 /**
  * Evaluation Example
- * 
+ *
  * This example demonstrates running simple evaluations with Gentrace.
- * 
+ *
  * How to run:
  * 1. Set environment variables:
  *    export GENTRACE_API_KEY="your-api-key"
  *    export GENTRACE_PIPELINE_ID="your-pipeline-id"  # required
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
- * 
+ *
  * 2. Run the example:
  *    yarn example examples/evaluation.ts
  */

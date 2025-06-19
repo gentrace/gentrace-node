@@ -1,15 +1,15 @@
 /**
  * Anthropic AI SDK Example
- * 
+ *
  * This example demonstrates using Gentrace with Vercel AI SDK's experimental telemetry for Anthropic models.
- * 
+ *
  * How to run:
  * 1. Set environment variables:
  *    export GENTRACE_API_KEY="your-api-key"
  *    export ANTHROPIC_API_KEY="your-anthropic-key"
  *    export GENTRACE_PIPELINE_ID="your-pipeline-id"  # optional
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
- * 
+ *
  * 2. Run the example:
  *    yarn example examples/anthropic-ai-sdk.ts
  */
@@ -53,7 +53,7 @@ async function main() {
   from healthcare to finance. Machine learning algorithms now assist doctors in diagnosing diseases, 
   help financial institutions detect fraud, and enable autonomous vehicles to navigate complex environments. 
   As these technologies continue to evolve, they promise to bring even more revolutionary changes to our daily lives.`;
-  
+
   console.log('Generating summary...');
   const summary = await generateSummary(longText);
   console.log('\nSummary:', summary);

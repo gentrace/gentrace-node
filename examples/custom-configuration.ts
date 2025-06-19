@@ -1,9 +1,9 @@
 /**
  * Custom Configuration Example
- * 
+ *
  * This example demonstrates using Gentrace with custom OpenTelemetry configuration including
  * custom service name, sampler, and resource attributes.
- * 
+ *
  * How to run:
  * 1. Set environment variables:
  *    export GENTRACE_API_KEY="your-api-key"
@@ -11,7 +11,7 @@
  *    export GENTRACE_PIPELINE_ID="your-pipeline-id"  # optional
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
  *    export NODE_ENV="development"  # optional
- * 
+ *
  * 2. Run the example:
  *    yarn example examples/custom-configuration.ts
  */

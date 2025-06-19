@@ -1,15 +1,15 @@
 /**
  * Simple AI SDK Example with OpenAI
- * 
+ *
  * This example demonstrates using Gentrace with Vercel AI SDK's experimental telemetry.
- * 
+ *
  * How to run:
  * 1. Set environment variables:
  *    export GENTRACE_API_KEY="your-api-key"
  *    export OPENAI_API_KEY="your-openai-key"
  *    export GENTRACE_PIPELINE_ID="your-pipeline-id"  # optional
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
- * 
+ *
  * 2. Run the example:
  *    yarn example examples/simple-ai-sdk.ts
  */

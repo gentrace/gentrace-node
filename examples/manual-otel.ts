@@ -1,15 +1,15 @@
 /**
  * Manual OpenTelemetry Setup Example
- * 
+ *
  * This example demonstrates manual OpenTelemetry SDK configuration with Gentrace.
  * Use this approach when you need full control over the OpenTelemetry setup.
- * 
+ *
  * How to run:
  * 1. Set environment variables:
  *    export GENTRACE_API_KEY="your-api-key"
  *    export OPENAI_API_KEY="your-openai-key"
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
- * 
+ *
  * 2. Run the example:
  *    yarn example examples/manual-otel.ts
  */
