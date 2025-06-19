@@ -11,7 +11,7 @@
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
  *
  * 2. Run the example:
- *    yarn example examples/simple-ai-sdk.ts
+ *    yarn example examples/openai-ai-sdk.ts
  */
 
 import { init, interaction } from '../src';
