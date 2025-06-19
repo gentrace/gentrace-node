@@ -2,7 +2,6 @@ import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
 import { _runEval } from './eval-once';
 import { ATTR_GENTRACE_TEST_CASE_ID } from './otel/constants';
-import { checkOtelConfigAndWarn } from './utils';
 
 /**
  * Runs a series of evals  against a dataset using a provided interaction function.
@@ -39,7 +38,6 @@ export async function evalDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
   TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
 >(options: EvalDatasetOptions<TSchema>): Promise<void> {
-  checkOtelConfigAndWarn();
   const { interaction, data, schema } = options;
 
   const client = _getClient();

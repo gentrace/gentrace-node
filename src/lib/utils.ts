@@ -27,25 +27,58 @@ export function checkOtelConfigAndWarn(): void {
   }
 
   try {
-    // Check if OpenTelemetry SDK is configured
+    // Try CommonJS require first
     const trace = require('@opentelemetry/api').trace;
     const tracerProvider = trace.getTracerProvider();
 
-    // Check if the tracer provider is the SDK tracer provider
-    // In Node.js, we check for the existence of specific SDK methods
+    // Check if the tracer provider is properly configured
+    // ProxyTracerProvider with a delegate means SDK is configured
     const isSDKConfigured =
       tracerProvider &&
+      // Direct SDK tracer provider (older versions)
       (typeof tracerProvider.register === 'function' ||
-        (tracerProvider.constructor && tracerProvider.constructor.name !== 'ProxyTracerProvider'));
+        // NodeTracerProvider or similar (check for expected methods)
+        typeof tracerProvider.forceFlush === 'function' ||
+        // ProxyTracerProvider with configured delegate (newer versions)
+        (tracerProvider.constructor?.name === 'ProxyTracerProvider' && (tracerProvider as any)._delegate));
 
     if (!isSDKConfigured) {
       _otelConfigWarningIssued = true;
       displayOtelWarning();
     }
-  } catch (error) {
-    // If OpenTelemetry API is not installed, show warning
-    _otelConfigWarningIssued = true;
-    displayOtelWarning();
+  } catch (requireError) {
+    // If require fails (ESM environment), try dynamic import
+    try {
+      import('@opentelemetry/api')
+        .then(({ trace }) => {
+          const tracerProvider = trace.getTracerProvider();
+
+          const isSDKConfigured =
+            tracerProvider &&
+            (typeof (tracerProvider as any).register === 'function' ||
+              typeof (tracerProvider as any).forceFlush === 'function' ||
+              (tracerProvider.constructor?.name === 'ProxyTracerProvider' &&
+                (tracerProvider as any)._delegate));
+
+          if (!isSDKConfigured && !_otelConfigWarningIssued) {
+            _otelConfigWarningIssued = true;
+            displayOtelWarning();
+          }
+        })
+        .catch(() => {
+          // If dynamic import also fails, OpenTelemetry API is not installed
+          if (!_otelConfigWarningIssued) {
+            _otelConfigWarningIssued = true;
+            displayOtelWarning();
+          }
+        });
+    } catch (importError) {
+      // If even trying dynamic import fails, show warning
+      if (!_otelConfigWarningIssued) {
+        _otelConfigWarningIssued = true;
+        displayOtelWarning();
+      }
+    }
   }
 }
 
