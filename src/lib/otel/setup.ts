@@ -201,6 +201,7 @@ setup();`;
   // Configure trace exporter
   const exporterConfig: any = {
     url: traceEndpoint,
+    concurrencyLimit: 200,
     headers: {
       'Content-Type': 'application/json',
     },
