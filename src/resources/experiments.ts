@@ -78,7 +78,7 @@ export interface Experiment {
   /**
    * Metadata
    */
-  metadata: Record<string, unknown> | null;
+  metadata: { [key: string]: unknown } | null;
 
   /**
    * Friendly experiment name
@@ -109,7 +109,7 @@ export interface ExperimentCreateParams {
   /**
    * Optional metadata for the experiment
    */
-  metadata?: Record<string, unknown>;
+  metadata?: { [key: string]: unknown };
 
   /**
    * Friendly experiment name
@@ -121,7 +121,7 @@ export interface ExperimentUpdateParams {
   /**
    * Metadata
    */
-  metadata?: Record<string, unknown> | null;
+  metadata?: { [key: string]: unknown } | null;
 
   /**
    * Friendly experiment name
