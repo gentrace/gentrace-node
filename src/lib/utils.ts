@@ -26,10 +26,10 @@ export function checkOtelConfigAndWarn(): void {
   if (_otelConfigWarningIssued) {
     return;
   }
-  
+
   // Check if otelSetup was configured in init()
   const otelSetupConfig = _getOtelSetupConfig();
-  
+
   // Only show warning if otelSetup was explicitly set to false
   // If undefined, the user hasn't called init() yet
   // If true or an object, OpenTelemetry setup was requested
