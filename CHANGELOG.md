@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.2 (2025-06-24)
+
+Full Changelog: [v0.4.1...v0.4.2](https://github.com/gentrace/gentrace-node/compare/v0.4.1...v0.4.2)
+
+### Bug Fixes
+
+* Make `init()` return a Promise ([#584](https://github.com/gentrace/gentrace-node/issues/584)) ([fa30fd9](https://github.com/gentrace/gentrace-node/commit/fa30fd92725ce24abbd9cd9d07090b19f5fed5eb))
+
 ## 0.4.1 (2025-06-24)
 
 Full Changelog: [v0.4.0...v0.4.1](https://github.com/gentrace/gentrace-node/compare/v0.4.0...v0.4.1)
