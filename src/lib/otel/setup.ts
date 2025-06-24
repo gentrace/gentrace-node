@@ -85,7 +85,7 @@ export interface SetupConfig {
  * });
  * ```
  */
-export async function setup(config: SetupConfig = {}): Promise<any> {
+export async function setup(config: SetupConfig = {}) {
   // Dynamic imports to support both OpenTelemetry v1 and v2
   const { NodeSDK } = await import('@opentelemetry/sdk-node');
   const { SimpleSpanProcessor, ConsoleSpanExporter } = await import('@opentelemetry/sdk-trace-base');
