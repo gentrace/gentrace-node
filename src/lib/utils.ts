@@ -1,6 +1,7 @@
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
+import { _getOtelSetupConfig } from './init';
 
 // Convert a string to snake_case
 export function toSnakeCase(str: string): string {
@@ -23,6 +24,16 @@ let _otelConfigWarningIssued = false;
 export function checkOtelConfigAndWarn(): void {
   // Only show warning once per session
   if (_otelConfigWarningIssued) {
+    return;
+  }
+
+  // Check if otelSetup was configured in init()
+  const otelSetupConfig = _getOtelSetupConfig();
+
+  // Only show warning if otelSetup was explicitly set to false
+  // If undefined, the user hasn't called init() yet
+  // If true or an object, OpenTelemetry setup was requested
+  if (otelSetupConfig !== false) {
     return;
   }
 
