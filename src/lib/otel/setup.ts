@@ -6,6 +6,7 @@ import { _isGentraceInitialized } from '../init';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
+import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
 
 export interface SetupConfig {
   /**
@@ -84,14 +85,15 @@ export interface SetupConfig {
  * });
  * ```
  */
-export function setup(config: SetupConfig = {}): any {
+export async function setup(config: SetupConfig = {}) {
   // Dynamic imports to support both OpenTelemetry v1 and v2
-  const { NodeSDK } = require('@opentelemetry/sdk-node');
-  const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http');
-  const { SimpleSpanProcessor, ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-base');
-  const { AsyncLocalStorageContextManager } = require('@opentelemetry/context-async-hooks');
-  const resources = require('@opentelemetry/resources');
-  const { ATTR_SERVICE_NAME } = require('@opentelemetry/semantic-conventions');
+  const { NodeSDK } = await import('@opentelemetry/sdk-node');
+  const { SimpleSpanProcessor, ConsoleSpanExporter } = await import('@opentelemetry/sdk-trace-base');
+  const { AsyncLocalStorageContextManager } = await import('@opentelemetry/context-async-hooks');
+  const resources = await import('@opentelemetry/resources');
+  const { ATTR_SERVICE_NAME } = await import('@opentelemetry/semantic-conventions');
+  const { setGlobalErrorHandler } = await import('@opentelemetry/core');
+  const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http');
 
   // Check if init() has been called
   const client = _getClient();
@@ -146,6 +148,11 @@ setup();`;
     throw new Error('Gentrace must be initialized before calling setup().');
   }
 
+  // Set a custom error handler for OpenTelemetry
+  setGlobalErrorHandler((error) => {
+    _getClient().logger?.error(`OpenTelemetry error:`, error);
+  });
+
   // Get configuration values with smart defaults
   // Use API key from init() with higher priority than env variable
   const apiKey = _isClientProperlyInitialized() ? client.apiKey : process.env['GENTRACE_API_KEY'];
@@ -158,7 +165,11 @@ setup();`;
     serviceName = config.serviceName;
   } else {
     try {
-      const packageJson = require(process.cwd() + '/package.json');
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const packageJsonPath = path.join(process.cwd(), 'package.json');
+      const packageJsonContent = await fs.readFile(packageJsonPath, 'utf-8');
+      const packageJson = JSON.parse(packageJsonContent);
       serviceName = packageJson.name || 'unknown-service';
     } catch (e) {
       serviceName = 'unknown-service';
@@ -198,24 +209,21 @@ setup();`;
   // Setup span processors
   const spanProcessors: SpanProcessor[] = [new GentraceSpanProcessor()];
 
-  // Configure trace exporter
-  const exporterConfig: any = {
-    url: traceEndpoint,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
-  // Add authorization header if we have an API key
-  // (Always add it for Gentrace endpoints, regardless of URL)
-  if (apiKey) {
-    exporterConfig.headers.Authorization = `Bearer ${apiKey}`;
-  } else if (!config.traceEndpoint) {
-    // Only throw error if using default Gentrace endpoint without API key
+  if (!apiKey) {
     throw new Error(
       'GENTRACE_API_KEY is required when using Gentrace endpoint. Please set the GENTRACE_API_KEY environment variable.',
     );
   }
+
+  // Configure trace exporter
+  const exporterConfig: OTLPExporterNodeConfigBase = {
+    url: traceEndpoint,
+    concurrencyLimit: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+  };
 
   const traceExporter = new OTLPTraceExporter(exporterConfig);
   spanProcessors.push(new SimpleSpanProcessor(traceExporter));
