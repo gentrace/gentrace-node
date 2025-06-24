@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1 (2025-06-24)
+
+Full Changelog: [v0.4.0...v0.4.1](https://github.com/gentrace/gentrace-node/compare/v0.4.0...v0.4.1)
+
+### Bug Fixes
+
+* Adjust concurrency limit for OTLPExporter, assorted refinements + bugs ([#583](https://github.com/gentrace/gentrace-node/issues/583)) ([3011610](https://github.com/gentrace/gentrace-node/commit/3011610ad03cd38f0fde27c16ac1ff4409bed95f))
+* Deeply simplify the examples ([#581](https://github.com/gentrace/gentrace-node/issues/581)) ([f279ce2](https://github.com/gentrace/gentrace-node/commit/f279ce209ec374f40d6f21def55d8d7e08bffb3c))
+
 ## 0.4.0 (2025-06-19)
 
 Full Changelog: [v0.3.2...v0.4.0](https://github.com/gentrace/gentrace-node/compare/v0.3.2...v0.4.0)
