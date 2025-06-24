@@ -1,7 +1,7 @@
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
-import { _getOtelSetupConfig } from './init';
+import { _getOtelSetupConfig } from './init-state';
 
 // Convert a string to snake_case
 export function toSnakeCase(str: string): string {
