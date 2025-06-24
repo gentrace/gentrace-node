@@ -64,7 +64,7 @@ export interface InitOptions extends ClientOptions {
  * });
  * ```
  */
-export function init(options: InitOptions = {}) {
+export async function init(options: InitOptions = {}) {
   // Extract OpenTelemetry config from options
   const { otelSetup = true, ...clientOptions } = options;
 
@@ -82,13 +82,13 @@ export function init(options: InitOptions = {}) {
   // Handle OpenTelemetry setup based on otelSetup value
   if (otelSetup !== false) {
     // Lazy import to avoid circular dependencies
-    const { setup } = require('./otel/setup');
+    const { setup } = await import('./otel/setup');
 
     // If otelSetup is true, use empty config (defaults)
     // If otelSetup is an object, use it as the config
     const setupConfig: SetupConfig = otelSetup === true ? {} : otelSetup;
 
-    setup(setupConfig);
+    await setup(setupConfig);
   }
 }
 
