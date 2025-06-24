@@ -1,27 +1,19 @@
 import { ClientOptions } from '../client';
 import { Datasets, Experiments, Pipelines, TestCases } from '../resources';
 import { _getClient, _setClient } from './client-instance';
-import type { SetupConfig } from './otel/setup';
+import type { SetupConfig } from './otel/types';
+import { setup } from './otel/setup';
+import {
+  _setGentraceInitialized,
+  _setOtelSetupConfig,
+  _isGentraceInitialized,
+  _getOtelSetupConfig,
+} from './init-state';
+import { NodeSDK } from '@opentelemetry/sdk-node';
 
-// Module-level variable to track initialization state
-let _isInitialized = false;
-let _otelSetupConfig: boolean | SetupConfig | undefined = undefined;
+// Re-export for backwards compatibility
+export { _isGentraceInitialized, _getOtelSetupConfig };
 
-/**
- * Returns whether init() has been called
- * @internal
- */
-export function _isGentraceInitialized(): boolean {
-  return _isInitialized;
-}
-
-/**
- * Returns the otelSetup configuration passed to init()
- * @internal
- */
-export function _getOtelSetupConfig(): boolean | SetupConfig | undefined {
-  return _otelSetupConfig;
-}
 
 /**
  * Configuration options for initializing Gentrace
@@ -50,12 +42,12 @@ export interface InitOptions extends ClientOptions {
  * import { init, GentraceSampler } from '@gentrace/core';
  *
  * // Simple usage - automatically configures OpenTelemetry
- * init({
+ * await init({
  *   apiKey: 'your-gentrace-api-key'
  * });
  *
  * // With custom OpenTelemetry configuration
- * init({
+ * await init({
  *   apiKey: 'your-gentrace-api-key',
  *   otelSetup: {
  *     sampler: new GentraceSampler(),
@@ -66,14 +58,14 @@ export interface InitOptions extends ClientOptions {
  *   }
  * });
  *
- * // Disable automatic OpenTelemetry setup
+ * // Disable automatic OpenTelemetry setup, no need to await
  * init({
  *   apiKey: 'your-gentrace-api-key',
  *   otelSetup: false
  * });
  * ```
  */
-export function init(options: InitOptions = {}) {
+export function init(options: InitOptions = {}): Promise<NodeSDK> | void {
   // Extract OpenTelemetry config from options
   const { otelSetup = true, ...clientOptions } = options;
 
@@ -82,10 +74,11 @@ export function init(options: InitOptions = {}) {
   _setClient(clientOptions);
 
   // Set module-level flag to indicate that init() has been called
-  _isInitialized = true;
+  _setGentraceInitialized(true);
 
   // Store the otelSetup configuration
-  _otelSetupConfig = otelSetup;
+  _setOtelSetupConfig(otelSetup);
+
 
   // Re-assign the module-scope variables based on the latest client.
   // Importers with live bindings will now see these new values.
@@ -93,19 +86,11 @@ export function init(options: InitOptions = {}) {
 
   // Handle OpenTelemetry setup based on otelSetup value
   if (otelSetup !== false) {
-    // Lazy import to avoid circular dependencies
-    import('./otel/setup')
-      .then(({ setup }) => {
-        // If otelSetup is true, use empty config (defaults)
-        // If otelSetup is an object, use it as the config
-        const setupConfig: SetupConfig = otelSetup === true ? {} : otelSetup;
+    // If otelSetup is true, use empty config (defaults)
+    // If otelSetup is an object, use it as the config
+    const setupConfig: SetupConfig = otelSetup === true ? {} : otelSetup;
 
-        return setup(setupConfig);
-      })
-      .catch((err) => {
-        // Log error but don't throw to keep init() synchronous
-        _getClient().logger?.error('Failed to setup OpenTelemetry:', err);
-      });
+    return setup(setupConfig);
   }
 }
 

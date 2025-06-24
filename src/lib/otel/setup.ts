@@ -1,46 +1,15 @@
-import type { SpanProcessor, Sampler } from '@opentelemetry/sdk-trace-base';
-import type { Instrumentation } from '@opentelemetry/instrumentation';
+import type { SpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { GentraceSpanProcessor } from './span-processor';
 import { _getClient, _isClientProperlyInitialized } from '../client-instance';
-import { _isGentraceInitialized } from '../init';
+import { _isGentraceInitialized } from '../init-state';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
+import type { SetupConfig } from './types';
 
-export interface SetupConfig {
-  /**
-   * Optional OpenTelemetry trace endpoint URL.
-   * Defaults to Gentrace's OTLP endpoint (https://gentrace.ai/api/otel/v1/traces)
-   */
-  traceEndpoint?: string;
-
-  /**
-   * Optional service name for the application.
-   * Defaults to the package name from package.json or 'unknown-service'
-   */
-  serviceName?: string;
-
-  /**
-   * Optional instrumentations to include (e.g., OpenAI, Anthropic)
-   */
-  instrumentations?: Instrumentation[];
-
-  /**
-   * Optional additional resource attributes
-   */
-  resourceAttributes?: Record<string, string | number | boolean>;
-
-  /**
-   * Optional custom sampler
-   */
-  sampler?: Sampler;
-
-  /**
-   * Whether to include console exporter for debugging (defaults to false)
-   */
-  debug?: boolean;
-}
+// Re-export SetupConfig for backwards compatibility
+export type { SetupConfig };
 
 /**
  * Sets up OpenTelemetry with Gentrace configuration.
@@ -87,13 +56,23 @@ export interface SetupConfig {
  */
 export async function setup(config: SetupConfig = {}) {
   // Dynamic imports to support both OpenTelemetry v1 and v2
-  const { NodeSDK } = await import('@opentelemetry/sdk-node');
-  const { SimpleSpanProcessor, ConsoleSpanExporter } = await import('@opentelemetry/sdk-trace-base');
-  const { AsyncLocalStorageContextManager } = await import('@opentelemetry/context-async-hooks');
-  const resources = await import('@opentelemetry/resources');
-  const { ATTR_SERVICE_NAME } = await import('@opentelemetry/semantic-conventions');
-  const { setGlobalErrorHandler } = await import('@opentelemetry/core');
-  const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http');
+  const [
+    { NodeSDK },
+    { SimpleSpanProcessor, ConsoleSpanExporter },
+    { AsyncLocalStorageContextManager },
+    resources,
+    { ATTR_SERVICE_NAME },
+    { setGlobalErrorHandler },
+    { OTLPTraceExporter },
+  ] = await Promise.all([
+    import('@opentelemetry/sdk-node'),
+    import('@opentelemetry/sdk-trace-base'),
+    import('@opentelemetry/context-async-hooks'),
+    import('@opentelemetry/resources'),
+    import('@opentelemetry/semantic-conventions'),
+    import('@opentelemetry/core'),
+    import('@opentelemetry/exporter-trace-otlp-http'),
+  ]);
 
   // Check if init() has been called
   const client = _getClient();
