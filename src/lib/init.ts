@@ -14,7 +14,6 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 // Re-export for backwards compatibility
 export { _isGentraceInitialized, _getOtelSetupConfig };
 
-
 /**
  * Configuration options for initializing Gentrace
  */
@@ -78,7 +77,6 @@ export function init(options: InitOptions = {}): Promise<NodeSDK> | void {
 
   // Store the otelSetup configuration
   _setOtelSetupConfig(otelSetup);
-
 
   // Re-assign the module-scope variables based on the latest client.
   // Importers with live bindings will now see these new values.

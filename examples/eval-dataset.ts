@@ -11,8 +11,8 @@ import { queryAi } from './functions/query';
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
 const GENTRACE_API_KEY = readEnv('GENTRACE_API_KEY');
 const OPENAI_API_KEY = readEnv('OPENAI_API_KEY');
-const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID');
-const GENTRACE_DATASET_ID = readEnv('GENTRACE_DATASET_ID');
+const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
+const GENTRACE_DATASET_ID = readEnv('GENTRACE_DATASET_ID')!;
 
 if (!GENTRACE_PIPELINE_ID) {
   throw new Error('GENTRACE_PIPELINE_ID environment variable must be set');

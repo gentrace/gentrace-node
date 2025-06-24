@@ -6,7 +6,7 @@ import { init } from '../src/lib/init';
 import { interaction } from '../src/lib/interaction';
 
 const GENTRACE_BASE_URL = readEnv('GENTRACE_BASE_URL');
-const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID');
+const GENTRACE_PIPELINE_ID = readEnv('GENTRACE_PIPELINE_ID')!;
 const GENTRACE_API_KEY = readEnv('GENTRACE_API_KEY');
 
 if (!GENTRACE_PIPELINE_ID) {
