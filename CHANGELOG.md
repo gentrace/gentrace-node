@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.3 (2025-06-25)
+
+Full Changelog: [v0.4.2...v0.4.3](https://github.com/gentrace/gentrace-node/compare/v0.4.2...v0.4.3)
+
+### Bug Fixes
+
+* Add await keyword before init function calls ([#586](https://github.com/gentrace/gentrace-node/issues/586)) ([37de686](https://github.com/gentrace/gentrace-node/commit/37de6865ba959d5f2c0cf4959e76add8ac90d208))
+
 ## 0.4.2 (2025-06-24)
 
 Full Changelog: [v0.4.1...v0.4.2](https://github.com/gentrace/gentrace-node/compare/v0.4.1...v0.4.2)
