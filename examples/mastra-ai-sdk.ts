@@ -21,7 +21,7 @@ import { openai } from '@ai-sdk/openai';
 
 async function main() {
   // Initialize Gentrace with automatic OpenTelemetry setup
-  init({
+  await init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
     otelSetup: true,
