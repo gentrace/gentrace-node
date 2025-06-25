@@ -22,7 +22,7 @@ import { generateText } from 'ai';
 
 async function main() {
   // Initialize Gentrace with custom OpenTelemetry configuration
-  init({
+  await init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
     otelSetup: {
