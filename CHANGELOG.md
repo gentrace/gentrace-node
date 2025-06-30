@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0 (2025-06-30)
+
+Full Changelog: [v0.4.2...v0.5.0](https://github.com/gentrace/gentrace-node/compare/v0.4.2...v0.5.0)
+
+### Features
+
+* Add more exports to 'init' module ([#588](https://github.com/gentrace/gentrace-node/issues/588)) ([4bc24a8](https://github.com/gentrace/gentrace-node/commit/4bc24a8e6479818a9a937bc007d9607843e895e5))
+
+
+### Bug Fixes
+
+* Add await keyword before init function calls ([#586](https://github.com/gentrace/gentrace-node/issues/586)) ([37de686](https://github.com/gentrace/gentrace-node/commit/37de6865ba959d5f2c0cf4959e76add8ac90d208))
+
 ## 0.4.2 (2025-06-24)
 
 Full Changelog: [v0.4.1...v0.4.2](https://github.com/gentrace/gentrace-node/compare/v0.4.1...v0.4.2)
