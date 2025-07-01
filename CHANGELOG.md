@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 (2025-07-01)
+
+Full Changelog: [v0.5.0...v0.6.0](https://github.com/gentrace/gentrace-node/compare/v0.5.0...v0.6.0)
+
+### Features
+
+* Add GenAI Semantic Conventions example code ([#590](https://github.com/gentrace/gentrace-node/issues/590)) ([eee6e84](https://github.com/gentrace/gentrace-node/commit/eee6e84a2c9182de7e42c2cfebd7fef7bc204b13))
+
 ## 0.5.0 (2025-06-30)
 
 Full Changelog: [v0.4.2...v0.5.0](https://github.com/gentrace/gentrace-node/compare/v0.4.2...v0.5.0)
