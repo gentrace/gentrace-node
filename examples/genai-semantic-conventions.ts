@@ -52,17 +52,17 @@ async function main() {
           });
 
           const systemMessage = 'You are a helpful assistant that explains complex topics simply.';
-          
+
           // Add system message as event
           span.addEvent('gen_ai.system.message', {
-            'role': 'system',
-            'content': systemMessage,
+            role: 'system',
+            content: systemMessage,
           });
 
           // Add user message as event
           span.addEvent('gen_ai.user.message', {
-            'role': 'user',
-            'content': question,
+            role: 'user',
+            content: question,
           });
 
           console.log('Sending chat completion request...');
@@ -71,7 +71,7 @@ async function main() {
             model: 'gpt-4o-mini',
             messages: [
               { role: 'system', content: systemMessage },
-              { role: 'user', content: question }
+              { role: 'user', content: question },
             ],
             temperature: 0.7,
           });
@@ -87,7 +87,7 @@ async function main() {
           });
 
           span.setStatus({ code: SpanStatusCode.OK });
-          
+
           return assistantMessage;
         } catch (error) {
           span.recordException(error as Error);
@@ -116,26 +116,28 @@ async function main() {
             'service.name': 'genai-semantic-example',
           });
 
-          const tools: OpenAI.Chat.ChatCompletionTool[] = [{
-            type: 'function',
-            function: {
-              name: 'get_weather',
-              description: 'Get the current weather in a location',
-              parameters: {
-                type: 'object',
-                properties: {
-                  location: { type: 'string', description: 'The city and state' },
-                  unit: { type: 'string', enum: ['celsius', 'fahrenheit'] },
+          const tools: OpenAI.Chat.ChatCompletionTool[] = [
+            {
+              type: 'function',
+              function: {
+                name: 'get_weather',
+                description: 'Get the current weather in a location',
+                parameters: {
+                  type: 'object',
+                  properties: {
+                    location: { type: 'string', description: 'The city and state' },
+                    unit: { type: 'string', enum: ['celsius', 'fahrenheit'] },
+                  },
+                  required: ['location'],
                 },
-                required: ['location'],
               },
             },
-          }];
+          ];
 
           // Add user message
           span.addEvent('gen_ai.user.message', {
-            'role': 'user',
-            'content': question,
+            role: 'user',
+            content: question,
           });
 
           const completion = await openai.chat.completions.create({
@@ -146,7 +148,9 @@ async function main() {
           });
 
           const choice = completion.choices[0];
-          
+
+          console.log('choice', choice);
+
           if (choice?.message.tool_calls) {
             // Add choice event with tool calls
             span.addEvent('gen_ai.choice', {
@@ -160,12 +164,12 @@ async function main() {
             // Simulate tool response
             const toolResponse = { temperature: 72, unit: 'fahrenheit', conditions: 'sunny' };
             const toolResponseString = JSON.stringify(toolResponse);
-            
+
             // Add tool message event
             span.addEvent('gen_ai.tool.message', {
-              'role': 'tool',
-              'content': toolResponseString,
-              'name': 'get_weather',
+              role: 'tool',
+              content: toolResponseString,
+              name: 'get_weather',
             });
 
             // Get final response with tool result
@@ -174,16 +178,16 @@ async function main() {
               messages: [
                 { role: 'user', content: question },
                 choice.message,
-                { 
-                  role: 'tool', 
+                {
+                  role: 'tool',
                   content: toolResponseString,
-                  tool_call_id: choice.message.tool_calls[0].id
-                }
+                  tool_call_id: choice.message.tool_calls![0]!.id,
+                },
               ],
             });
 
             const finalMessage = finalCompletion.choices[0]?.message.content || '';
-            
+
             // Add final response as choice event
             span.addEvent('gen_ai.choice', {
               index: 0,
@@ -224,7 +228,7 @@ async function main() {
   console.log('=== Example 1: Simple Chat Completion ===');
   const question = 'Explain quantum computing in one sentence.';
   console.log(`Question: ${question}`);
-  
+
   const answer = await askQuestion(question);
   console.log(`Answer: ${answer}`);
 
@@ -232,7 +236,7 @@ async function main() {
   console.log('\n=== Example 2: Function Calling ===');
   const weatherQuestion = "What's the weather like in San Francisco?";
   console.log(`Question: ${weatherQuestion}`);
-  
+
   const weatherAnswer = await askWithTools(weatherQuestion);
   console.log(`Answer: ${weatherAnswer}`);
 
