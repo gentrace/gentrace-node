@@ -3,6 +3,7 @@ name: Publish PR Preview
 on:
   pull_request:
     types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
   preview:
