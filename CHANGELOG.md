@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0 (2025-07-02)
+
+Full Changelog: [v0.6.0...v0.7.0](https://github.com/gentrace/gentrace-node/compare/v0.6.0...v0.7.0)
+
+### Features
+
+* Add workflow for publishing PR preview package ([#593](https://github.com/gentrace/gentrace-node/issues/593)) ([95d5101](https://github.com/gentrace/gentrace-node/commit/95d51014ebddc536bd03d9b2d3ec9f230b9dda8f))
+
 ## 0.6.0 (2025-07-01)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/gentrace/gentrace-node/compare/v0.5.0...v0.6.0)
