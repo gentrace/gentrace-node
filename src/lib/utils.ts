@@ -1,4 +1,4 @@
-import boxen from 'boxen';
+import boxen from './box-log';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import { _getOtelSetupConfig } from './init-state';

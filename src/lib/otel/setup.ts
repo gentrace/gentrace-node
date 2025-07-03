@@ -2,7 +2,7 @@ import type { SpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { GentraceSpanProcessor } from './span-processor';
 import { _getClient, _isClientProperlyInitialized } from '../client-instance';
 import { _isGentraceInitialized } from '../init-state';
-import boxen from 'boxen';
+import boxen from '../box-log';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
