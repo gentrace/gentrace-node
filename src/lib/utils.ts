@@ -81,30 +81,52 @@ OpenTelemetry SDK does not appear to be configured. This means that Gentrace fea
 like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
 Gentrace UI.
 
-To fix this, add this code to the beginning of your application:
+You likely disabled automatic OpenTelemetry setup by passing otelSetup: false to init().
+If so, you can fix this by either:
+
+1. Remove the otelSetup: false option from init() to enable automatic setup:
 `;
 
     // Create code with PROPER JavaScript indentation
-    const codeWithProperIndent = `import { NodeSDK } from '@opentelemetry/sdk-node';
+    const codeWithProperIndent = `import { init } from 'gentrace';
+
+// Enable automatic OpenTelemetry setup (default behavior)
+init({
+  apiKey: process.env.GENTRACE_API_KEY,
+});
+
+// 2. Or if you need manual setup, configure OpenTelemetry yourself:
+import { init } from 'gentrace';
+import { NodeSDK } from '@opentelemetry/sdk-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
-import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-node';
+import { resourceFromAttributes } from '@opentelemetry/resources';
+// For OpenTelemetry v1, use: import { Resource } from '@opentelemetry/resources';
+import { SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
-// Configure OpenTelemetry SDK
+// First initialize Gentrace with otelSetup: false
+init({
+  apiKey: process.env.GENTRACE_API_KEY,
+  otelSetup: false,
+});
+
+// Then manually configure OpenTelemetry SDK
 const sdk = new NodeSDK({
-  resource: new Resource({
+  // For OpenTelemetry v2:
+  resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'your-service-name',
   }),
+  // For OpenTelemetry v1, use: resource: new Resource({ [ATTR_SERVICE_NAME]: 'your-service-name' }),
   spanProcessors: [
     new SimpleSpanProcessor(
       new OTLPTraceExporter({
-        url: 'https://gentrace.ai/api/v1/otel/traces',
+        url: 'https://gentrace.ai/api/otel/v1/traces',
         headers: {
           Authorization: \`Bearer \${process.env.GENTRACE_API_KEY}\`,
         },
       })
     ),
+    new SimpleSpanProcessor(new ConsoleSpanExporter()), // Optional: for debugging
   ],
 });
 
@@ -125,18 +147,28 @@ sdk.start();`;
       '\n' +
       highlightedCode +
       '\n\n' +
-      chalk.gray('Tip: Copy the code above and add it to your application setup.');
+      chalk.cyan(
+        "Note: If you haven't set otelSetup: false, this could be a bundling or configuration issue.",
+      ) +
+      '\n';
 
-    console.log(
-      '\n' +
-        boxen(warningTitle + '\n' + fullMessage, {
-          padding: 1,
-          margin: 1,
-          borderStyle: 'round',
-          borderColor: 'yellow',
-        }) +
-        '\n',
-    );
+    // Use separator lines instead of boxen for easier copying
+    const separator = chalk.yellow('═'.repeat(80));
+    const padding = '  '; // 2 spaces for horizontal padding
+    
+    // Add padding to each line of the full message
+    const paddedMessage = fullMessage
+      .split('\n')
+      .map(line => padding + line)
+      .join('\n');
+    
+    console.log(`
+${separator}
+${padding}${warningTitle}
+${separator}
+${paddedMessage}
+${separator}
+`);
   } catch (error) {
     // Fallback to simple console warning if formatting libraries are not available
     console.warn(`
@@ -146,8 +178,10 @@ OpenTelemetry SDK does not appear to be configured. This means that Gentrace fea
 like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
 Gentrace UI.
 
-To fix this, add the OpenTelemetry SDK configuration code to your application.
-See the documentation for the complete setup code.
+You likely disabled automatic OpenTelemetry setup by passing otelSetup: false to init().
+To fix this, either remove the otelSetup: false option or manually configure OpenTelemetry.
+
+If you haven't set otelSetup: false, this could be a bundling or configuration issue.
 `);
   }
 }
