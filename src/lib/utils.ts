@@ -58,13 +58,7 @@ Please check your pipeline ID and ensure it matches the format shown in the Gent
         errorTitle = chalk.red.bold('Gentrace Pipeline Not Found');
         errorMessage = `Pipeline with ID '${chalk.yellow(pipelineId)}' does not exist or is not accessible.
 
-Possible causes:
-  • The pipeline ID is incorrect
-  • Your API key doesn't have access to this pipeline
-
-Please verify:
-  1. The pipeline ID matches what's shown in the Gentrace UI
-  2. Your API key has the correct permissions`;
+Please verify the pipeline ID matches what's shown in the Gentrace UI.`;
         borderColor = 'red';
         break;
 
