@@ -1,4 +1,3 @@
-import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import { trace } from '@opentelemetry/api';
@@ -155,13 +154,13 @@ sdk.start();`;
     // Use separator lines instead of boxen for easier copying
     const separator = chalk.yellow('═'.repeat(80));
     const padding = '  '; // 2 spaces for horizontal padding
-    
+
     // Add padding to each line of the full message
     const paddedMessage = fullMessage
       .split('\n')
-      .map(line => padding + line)
+      .map((line) => padding + line)
       .join('\n');
-    
+
     console.log(`
 ${separator}
 ${padding}${warningTitle}
