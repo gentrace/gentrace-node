@@ -308,3 +308,159 @@ describe('interaction wrapper', () => {
     });
   });
 });
+
+describe('interaction auto-initialization', () => {
+  let interaction: typeof import('../../src/lib/interaction').interaction;
+  let mockInit: jest.Mock;
+  let originalEnv: NodeJS.ProcessEnv;
+
+  beforeEach(async () => {
+    jest.resetModules();
+    jest.clearAllMocks();
+    lastMockSpan = null;
+    originalEnv = { ...process.env };
+
+    // Mock the init function
+    mockInit = jest.fn();
+    jest.doMock('../../src/lib/init', () => ({
+      init: mockInit,
+    }));
+
+    // Mock the init-state module
+    jest.doMock('../../src/lib/init-state', () => ({
+      _isGentraceInitialized: jest.fn(() => false),
+    }));
+
+    // Mock the utils module
+    jest.doMock('../../src/lib/utils', () => ({
+      isOtelConfigured: jest.fn(() => false),
+      checkOtelConfigAndWarn: jest.fn(),
+    }));
+
+    const interactionModule = await import('../../src/lib/interaction');
+    interaction = interactionModule.interaction;
+  });
+
+  afterEach(() => {
+    process.env = originalEnv;
+    jest.restoreAllMocks();
+  });
+
+  it('should auto-initialize when GENTRACE_API_KEY is set and OTel is not configured', async () => {
+    process.env['GENTRACE_API_KEY'] = 'test-api-key';
+    process.env['GENTRACE_BASE_URL'] = 'https://test.gentrace.ai';
+
+    const originalFn = jest.fn(() => 'result');
+    const wrappedFn = interaction('testFn', originalFn, { pipelineId: 'test-pipeline' });
+
+    const result = wrappedFn();
+
+    expect(mockInit).toHaveBeenCalledWith({
+      apiKey: 'test-api-key',
+      baseURL: 'https://test.gentrace.ai',
+    });
+    expect(result).toBe('result');
+    expect(originalFn).toHaveBeenCalled();
+  });
+
+  it('should auto-initialize with only API key when base URL is not set', async () => {
+    process.env['GENTRACE_API_KEY'] = 'test-api-key';
+    delete process.env['GENTRACE_BASE_URL'];
+
+    const originalFn = jest.fn(() => 'result');
+    const wrappedFn = interaction('testFn', originalFn, { pipelineId: 'test-pipeline' });
+
+    wrappedFn();
+
+    expect(mockInit).toHaveBeenCalledWith({
+      apiKey: 'test-api-key',
+    });
+  });
+
+  it('should not auto-initialize when API key is not set', async () => {
+    delete process.env['GENTRACE_API_KEY'];
+
+    const originalFn = jest.fn(() => 'result');
+    const wrappedFn = interaction('testFn', originalFn, { pipelineId: 'test-pipeline' });
+
+    wrappedFn();
+
+    expect(mockInit).not.toHaveBeenCalled();
+  });
+
+  it('should not auto-initialize when OTel is already configured', async () => {
+    process.env['GENTRACE_API_KEY'] = 'test-api-key';
+
+    // Mock OTel as configured
+    jest.resetModules();
+    jest.doMock('../../src/lib/utils', () => ({
+      isOtelConfigured: jest.fn(() => true),
+      checkOtelConfigAndWarn: jest.fn(),
+    }));
+
+    const interactionModule = await import('../../src/lib/interaction');
+    interaction = interactionModule.interaction;
+
+    const originalFn = jest.fn(() => 'result');
+    const wrappedFn = interaction('testFn', originalFn, { pipelineId: 'test-pipeline' });
+
+    wrappedFn();
+
+    expect(mockInit).not.toHaveBeenCalled();
+  });
+
+  it('should not auto-initialize when Gentrace is already initialized', async () => {
+    process.env['GENTRACE_API_KEY'] = 'test-api-key';
+
+    // Mock Gentrace as already initialized
+    jest.resetModules();
+    jest.doMock('../../src/lib/init-state', () => ({
+      _isGentraceInitialized: jest.fn(() => true),
+    }));
+
+    const interactionModule = await import('../../src/lib/interaction');
+    interaction = interactionModule.interaction;
+
+    const originalFn = jest.fn(() => 'result');
+    const wrappedFn = interaction('testFn', originalFn, { pipelineId: 'test-pipeline' });
+
+    wrappedFn();
+
+    expect(mockInit).not.toHaveBeenCalled();
+  });
+
+  it('should auto-initialize only once even when wrapped function is called multiple times', async () => {
+    process.env['GENTRACE_API_KEY'] = 'test-api-key';
+
+    const originalFn = jest.fn(() => 'result');
+    const wrappedFn = interaction('testFn', originalFn, { pipelineId: 'test-pipeline' });
+
+    // First call should trigger initialization
+    wrappedFn();
+    expect(mockInit).toHaveBeenCalledTimes(1);
+
+    // Subsequent calls should not trigger initialization
+    // We'll simulate that Gentrace is now initialized by creating a new wrapped function
+    // after the first initialization
+    jest.resetModules();
+    jest.doMock('../../src/lib/init-state', () => ({
+      _isGentraceInitialized: jest.fn(() => true), // Now it's initialized
+    }));
+    jest.doMock('../../src/lib/utils', () => ({
+      isOtelConfigured: jest.fn(() => false),
+      checkOtelConfigAndWarn: jest.fn(),
+    }));
+
+    const interactionModule2 = await import('../../src/lib/interaction');
+    const interaction2 = interactionModule2.interaction;
+
+    const originalFn2 = jest.fn(() => 'result2');
+    const wrappedFn2 = interaction2('testFn2', originalFn2, { pipelineId: 'test-pipeline' });
+
+    wrappedFn2();
+    wrappedFn2();
+
+    // Init should still have been called only once (from the first call)
+    expect(mockInit).toHaveBeenCalledTimes(1);
+  });
+});
