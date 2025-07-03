@@ -13,14 +13,15 @@
  *    yarn example examples/evaluation.ts
  */
 
-import { init, evalOnce, experiment } from '../src';
+import { init, evalOnce, experiment, setup } from '../src';
 
 async function main() {
+  await setup();
   // Initialize Gentrace with automatic OpenTelemetry setup
   await init({
     apiKey: process.env['GENTRACE_API_KEY'] || '',
     baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    otelSetup: true,
+    otelSetup: false,
   });
 
   const pipelineId = process.env['GENTRACE_PIPELINE_ID'];
