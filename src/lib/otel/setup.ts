@@ -7,6 +7,13 @@ import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
 import type { SetupConfig } from './types';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
+import * as resources from '@opentelemetry/resources';
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { setGlobalErrorHandler } from '@opentelemetry/core';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 
 // Re-export SetupConfig for backwards compatibility
 export type { SetupConfig };
@@ -54,26 +61,7 @@ export type { SetupConfig };
  * });
  * ```
  */
-export async function setup(config: SetupConfig = {}) {
-  // Dynamic imports to support both OpenTelemetry v1 and v2
-  const [
-    { NodeSDK },
-    { SimpleSpanProcessor, ConsoleSpanExporter },
-    { AsyncLocalStorageContextManager },
-    resources,
-    { ATTR_SERVICE_NAME },
-    { setGlobalErrorHandler },
-    { OTLPTraceExporter },
-  ] = await Promise.all([
-    import('@opentelemetry/sdk-node'),
-    import('@opentelemetry/sdk-trace-base'),
-    import('@opentelemetry/context-async-hooks'),
-    import('@opentelemetry/resources'),
-    import('@opentelemetry/semantic-conventions'),
-    import('@opentelemetry/core'),
-    import('@opentelemetry/exporter-trace-otlp-http'),
-  ]);
-
+export function setup(config: SetupConfig = {}) {
   // Check if init() has been called
   const client = _getClient();
 
@@ -138,26 +126,9 @@ setup();`;
   const baseUrl = client.baseURL || process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api';
   const traceEndpoint = config.traceEndpoint || `${baseUrl}/otel/v1/traces`;
 
-  // Try to get service name from package.json or use default
-  let serviceName: string;
-  if (config.serviceName) {
-    serviceName = config.serviceName;
-  } else {
-    try {
-      const fs = await import('fs/promises');
-      const path = await import('path');
-      const packageJsonPath = path.join(process.cwd(), 'package.json');
-      const packageJsonContent = await fs.readFile(packageJsonPath, 'utf-8');
-      const packageJson = JSON.parse(packageJsonContent);
-      serviceName = packageJson.name || 'unknown-service';
-    } catch (e) {
-      serviceName = 'unknown-service';
-    }
-  }
-
   // Build resource attributes
   const resourceAttributes: Record<string, string | number | boolean> = {
-    [ATTR_SERVICE_NAME]: serviceName,
+    [ATTR_SERVICE_NAME]: config.serviceName || 'unknown-service',
     ...config.resourceAttributes,
   };
 

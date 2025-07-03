@@ -20,22 +20,22 @@ import { init, interaction, GentraceSampler } from '../src';
 import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 
-async function main() {
-  // Initialize Gentrace with custom OpenTelemetry configuration
-  await init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
-    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    otelSetup: {
-      serviceName: 'my-custom-service',
-      sampler: new GentraceSampler(),
-      resourceAttributes: {
-        'service.version': '1.0.0',
-        'deployment.environment': process.env['NODE_ENV'] || 'development',
-      },
-      debug: true,
+// Initialize Gentrace with custom OpenTelemetry configuration
+init({
+  apiKey: process.env['GENTRACE_API_KEY'] || '',
+  baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
+  otelSetup: {
+    serviceName: 'my-custom-service',
+    sampler: new GentraceSampler(),
+    resourceAttributes: {
+      'service.version': '1.0.0',
+      'deployment.environment': process.env['NODE_ENV'] || 'development',
     },
-  });
+    debug: true,
+  },
+});
 
+async function main() {
   // Create a function to analyze text
   const analyzeText = interaction(
     'analyze-text',

@@ -2,6 +2,9 @@ import { context, propagation } from '@opentelemetry/api';
 
 import { ATTR_GENTRACE_PIPELINE_ID, ATTR_GENTRACE_SAMPLE } from './otel/constants';
 import { traced } from './traced';
+import { isOtelConfigured } from './utils';
+import { _isGentraceInitialized } from './init-state';
+import { init } from './init';
 
 /**
  * Options for configuring the interaction function.
@@ -24,6 +27,11 @@ export type InteractionOptions = {
  * Handles functions that take either zero arguments or one argument which is a record.
  * Preserves the exact type signature (including sync/async return type) of the original function.
  *
+ * If OpenTelemetry is not configured and Gentrace has not been initialized, this function
+ * will automatically initialize Gentrace using the GENTRACE_API_KEY environment variable
+ * (and optionally GENTRACE_BASE_URL if set). This enables zero-configuration usage
+ * when environment variables are properly set.
+ *
  * @template {function} F - The type of the function to wrap.
  * @param {string} name - The name for the span.
  * @param {F} fn - The function to wrap. Must take zero args or a single record argument.
@@ -45,6 +53,20 @@ export function interaction<F extends (...args: any[]) => any>(
   });
 
   const finalWrappedFn = (...args: Parameters<F>): ReturnType<F> => {
+    // Auto-initialize if OpenTelemetry hasn't been configured and Gentrace hasn't been initialized
+    if (!isOtelConfigured() && !_isGentraceInitialized()) {
+      // Check if API key is available in environment variables
+      const apiKey = process.env['GENTRACE_API_KEY'];
+      if (apiKey) {
+        // Initialize with environment variables
+        init({
+          apiKey,
+          // Use other environment variables if available
+          ...(process.env['GENTRACE_BASE_URL'] && { baseURL: process.env['GENTRACE_BASE_URL'] }),
+        });
+      }
+    }
+
     const currentContext = context.active();
     const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
 

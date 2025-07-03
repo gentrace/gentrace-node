@@ -1,6 +1,7 @@
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
+import { trace } from '@opentelemetry/api';
 import { _getOtelSetupConfig } from './init-state';
 
 // Convert a string to snake_case
@@ -16,6 +17,32 @@ export function toSnakeCase(str: string): string {
 
 // Global flag to track if the OpenTelemetry warning has been issued
 let _otelConfigWarningIssued = false;
+
+/**
+ * Checks if OpenTelemetry SDK is properly configured.
+ * @returns {boolean} True if OpenTelemetry SDK is configured, false otherwise.
+ * @internal
+ */
+export function isOtelConfigured(): boolean {
+  try {
+    const tracerProvider = trace.getTracerProvider();
+
+    // Check if the tracer provider is properly configured
+    // ProxyTracerProvider with a delegate means SDK is configured
+    return !!(
+      tracerProvider &&
+      // Direct SDK tracer provider (older versions)
+      (typeof (tracerProvider as any).register === 'function' ||
+        // NodeTracerProvider or similar (check for expected methods)
+        typeof (tracerProvider as any).forceFlush === 'function' ||
+        // ProxyTracerProvider with configured delegate (newer versions)
+        (tracerProvider.constructor?.name === 'ProxyTracerProvider' && (tracerProvider as any)._delegate))
+    );
+  } catch (error) {
+    // If trace.getTracerProvider is not available or throws, OTEL is not configured
+    return false;
+  }
+}
 
 /**
  * Checks if OpenTelemetry SDK is configured and warns if not.
@@ -37,59 +64,11 @@ export function checkOtelConfigAndWarn(): void {
     return;
   }
 
-  try {
-    // Try CommonJS require first
-    const trace = require('@opentelemetry/api').trace;
-    const tracerProvider = trace.getTracerProvider();
+  const isSDKConfigured = isOtelConfigured();
 
-    // Check if the tracer provider is properly configured
-    // ProxyTracerProvider with a delegate means SDK is configured
-    const isSDKConfigured =
-      tracerProvider &&
-      // Direct SDK tracer provider (older versions)
-      (typeof tracerProvider.register === 'function' ||
-        // NodeTracerProvider or similar (check for expected methods)
-        typeof tracerProvider.forceFlush === 'function' ||
-        // ProxyTracerProvider with configured delegate (newer versions)
-        (tracerProvider.constructor?.name === 'ProxyTracerProvider' && (tracerProvider as any)._delegate));
-
-    if (!isSDKConfigured) {
-      _otelConfigWarningIssued = true;
-      displayOtelWarning();
-    }
-  } catch (requireError) {
-    // If require fails (ESM environment), try dynamic import
-    try {
-      import('@opentelemetry/api')
-        .then(({ trace }) => {
-          const tracerProvider = trace.getTracerProvider();
-
-          const isSDKConfigured =
-            tracerProvider &&
-            (typeof (tracerProvider as any).register === 'function' ||
-              typeof (tracerProvider as any).forceFlush === 'function' ||
-              (tracerProvider.constructor?.name === 'ProxyTracerProvider' &&
-                (tracerProvider as any)._delegate));
-
-          if (!isSDKConfigured && !_otelConfigWarningIssued) {
-            _otelConfigWarningIssued = true;
-            displayOtelWarning();
-          }
-        })
-        .catch(() => {
-          // If dynamic import also fails, OpenTelemetry API is not installed
-          if (!_otelConfigWarningIssued) {
-            _otelConfigWarningIssued = true;
-            displayOtelWarning();
-          }
-        });
-    } catch (importError) {
-      // If even trying dynamic import fails, show warning
-      if (!_otelConfigWarningIssued) {
-        _otelConfigWarningIssued = true;
-        displayOtelWarning();
-      }
-    }
+  if (!isSDKConfigured) {
+    _otelConfigWarningIssued = true;
+    displayOtelWarning();
   }
 }
 

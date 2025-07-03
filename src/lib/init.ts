@@ -64,7 +64,7 @@ export interface InitOptions extends ClientOptions {
  * });
  * ```
  */
-export function init(options: InitOptions = {}): Promise<NodeSDK> | void {
+export function init(options: InitOptions = {}): NodeSDK | void {
   // Extract OpenTelemetry config from options
   const { otelSetup = true, ...clientOptions } = options;
 
