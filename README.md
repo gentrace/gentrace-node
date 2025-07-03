@@ -39,10 +39,10 @@ First, initialize the SDK with your Gentrace API key. You typically do this once
 import { init } from 'gentrace';
 
 init({
-  apiKey: process.env.GENTRACE_API_KEY,
+  apiKey: process.env['GENTRACE_API_KEY'],
   // Optional: Specify base URL if using self-hosted or enterprise Gentrace
   // The format should be: http(s)://<hostname>/api
-  // baseURL: process.env.GENTRACE_BASE_URL,
+  // baseURL: process.env['GENTRACE_BASE_URL'],
 });
 
 console.log('Gentrace initialized!');
@@ -61,8 +61,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
-const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY!;
+const GENTRACE_PIPELINE_ID = process.env['GENTRACE_PIPELINE_ID'];
+const GENTRACE_API_KEY = process.env['GENTRACE_API_KEY'];
 
 if (!GENTRACE_PIPELINE_ID || !GENTRACE_API_KEY) {
   throw new Error('GENTRACE_PIPELINE_ID and GENTRACE_API_KEY must be set');
@@ -74,7 +74,7 @@ init();
 async function queryAi({ query }: { query: string }): Promise<string | null> {
   console.log(`Received query: ${query}`);
   // Simulate an AI call with a fake response
-  await new Promise(resolve => setTimeout(resolve, 50)); // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay
   const fakeResponse = `This is a fake explanation for "${query}".`;
   return fakeResponse;
 }
@@ -176,7 +176,7 @@ import { instrumentedQueryAi } from '../instrumentedAi'; // Your instrumented fu
 
 init();
 
-const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
+const GENTRACE_PIPELINE_ID = process.env['GENTRACE_PIPELINE_ID'];
 
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
@@ -224,8 +224,8 @@ init();
 
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
-const GENTRACE_PIPELINE_ID = process.env.GENTRACE_PIPELINE_ID!;
-const GENTRACE_DATASET_ID = process.env.GENTRACE_DATASET_ID!;
+const GENTRACE_PIPELINE_ID = process.env['GENTRACE_PIPELINE_ID'];
+const GENTRACE_DATASET_ID = process.env['GENTRACE_DATASET_ID'];
 
 // Define the expected input schema for your test cases in the dataset
 const InputSchema = z.object({
@@ -290,7 +290,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 // 📋 End copying imports
 
 // Define the API key at the top
-const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY || '';
+const GENTRACE_API_KEY = process.env['GENTRACE_API_KEY'] || '';
 
 // Optional: Add validation to ensure the API key is set
 if (!GENTRACE_API_KEY) {
@@ -345,7 +345,7 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 
 // Define the API key at the top
-const GENTRACE_API_KEY = process.env.GENTRACE_API_KEY || '';
+const GENTRACE_API_KEY = process.env['GENTRACE_API_KEY'] || '';
 
 // Optional: Add validation to ensure the API key is set
 if (!GENTRACE_API_KEY) {
