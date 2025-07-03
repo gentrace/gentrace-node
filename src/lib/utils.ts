@@ -45,46 +45,34 @@ export function displayPipelineError(
 
     switch (errorType) {
       case 'invalid-format':
-        errorTitle = chalk.red.bold('Gentrace Invalid Pipeline ID Format');
-        errorMessage = `The pipeline ID '${chalk.yellow(pipelineId)}' is not a valid UUID.
+        errorTitle = chalk.red.bold('Gentrace Invalid Pipeline ID');
+        errorMessage = `Pipeline ID '${chalk.yellow(pipelineId)}' is not a valid UUID.
 
-Pipeline IDs must be in UUID format (e.g., ${chalk.green('123e4567-e89b-12d3-a456-426614174000')}).
-
-Please check your pipeline ID and ensure it matches the format shown in the Gentrace UI.`;
+Please verify the pipeline ID matches what's shown in the Gentrace UI.`;
         borderColor = 'red';
         break;
 
       case 'not-found':
         errorTitle = chalk.red.bold('Gentrace Pipeline Not Found');
-        errorMessage = `Pipeline with ID '${chalk.yellow(pipelineId)}' does not exist or is not accessible.
+        errorMessage = `Pipeline '${chalk.yellow(pipelineId)}' does not exist or is not accessible.
 
 Please verify the pipeline ID matches what's shown in the Gentrace UI.`;
         borderColor = 'red';
         break;
 
       case 'unauthorized':
-        errorTitle = chalk.red.bold('Gentrace Unauthorized Pipeline Access');
+        errorTitle = chalk.red.bold('Gentrace Pipeline Unauthorized');
         errorMessage = `Access denied to pipeline '${chalk.yellow(pipelineId)}'.
 
-Your API key does not have permission to access this pipeline.
-
-To fix this:
-  1. Check that your ${chalk.cyan('GENTRACE_API_KEY')} is set correctly
-  2. Ensure the API key has access to this pipeline
-  3. Generate a new API key if needed at ${chalk.cyan('https://gentrace.ai/settings/api-keys')}`;
+Please check your ${chalk.cyan('GENTRACE_API_KEY')} has the correct permissions.`;
         borderColor = 'red';
         break;
 
       case 'unknown':
-        errorTitle = chalk.red.bold('Gentrace Pipeline Validation Error');
-        errorMessage = `Failed to validate access to pipeline '${chalk.yellow(pipelineId)}'.
+        errorTitle = chalk.red.bold('Gentrace Pipeline Error');
+        errorMessage = `Failed to validate pipeline '${chalk.yellow(pipelineId)}'.
 
-Error: ${chalk.gray(error?.message || 'Unknown error')}
-
-This might be a temporary issue. If it persists, please check:
-  • Your internet connection
-  • The Gentrace service status
-  • Your API key configuration`;
+Error: ${chalk.gray(error?.message || 'Unknown error')}`;
         borderColor = 'red';
         break;
     }
