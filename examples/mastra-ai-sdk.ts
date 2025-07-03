@@ -14,10 +14,10 @@
  *    yarn example examples/mastra-ai-sdk.ts
  */
 
-import { init, interaction } from '../src';
+import { openai } from '@ai-sdk/openai';
 import { Mastra } from '@mastra/core';
 import { Agent } from '@mastra/core/agent';
-import { openai } from '@ai-sdk/openai';
+import { init, interaction } from '../src';
 
 // Initialize Gentrace with automatic OpenTelemetry setup
 init({
