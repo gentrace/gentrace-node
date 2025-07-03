@@ -45,7 +45,7 @@ export function displayPipelineError(
 
     switch (errorType) {
       case 'invalid-format':
-        errorTitle = chalk.red.bold('Invalid Pipeline ID Format');
+        errorTitle = chalk.red.bold('Gentrace Invalid Pipeline ID Format');
         errorMessage = `The pipeline ID '${chalk.yellow(pipelineId)}' is not a valid UUID.
 
 Pipeline IDs must be in UUID format (e.g., ${chalk.green('123e4567-e89b-12d3-a456-426614174000')}).
@@ -55,7 +55,7 @@ Please check your pipeline ID and ensure it matches the format shown in the Gent
         break;
 
       case 'not-found':
-        errorTitle = chalk.red.bold('Pipeline Not Found');
+        errorTitle = chalk.red.bold('Gentrace Pipeline Not Found');
         errorMessage = `Pipeline with ID '${chalk.yellow(pipelineId)}' does not exist or is not accessible.
 
 Possible causes:
@@ -69,7 +69,7 @@ Please verify:
         break;
 
       case 'unauthorized':
-        errorTitle = chalk.red.bold('Unauthorized Pipeline Access');
+        errorTitle = chalk.red.bold('Gentrace Unauthorized Pipeline Access');
         errorMessage = `Access denied to pipeline '${chalk.yellow(pipelineId)}'.
 
 Your API key does not have permission to access this pipeline.
@@ -82,7 +82,7 @@ To fix this:
         break;
 
       case 'unknown':
-        errorTitle = chalk.red.bold('Pipeline Validation Error');
+        errorTitle = chalk.red.bold('Gentrace Pipeline Validation Error');
         errorMessage = `Failed to validate access to pipeline '${chalk.yellow(pipelineId)}'.
 
 Error: ${chalk.gray(error?.message || 'Unknown error')}
@@ -97,7 +97,9 @@ This might be a temporary issue. If it persists, please check:
 
     console.error(
       '\n' +
-        boxen(errorTitle + '\n\n' + errorMessage, {
+        boxen(errorMessage, {
+          title: errorTitle,
+          titleAlignment: 'center',
           padding: 1,
           margin: 1,
           borderStyle: 'round',
