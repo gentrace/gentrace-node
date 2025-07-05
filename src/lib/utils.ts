@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
+import boxen from 'boxen';
 import { trace } from '@opentelemetry/api';
 import { _getOtelSetupConfig } from './init-state';
 import { _getClient } from './client-instance';
@@ -197,12 +198,14 @@ export function checkOtelConfigAndWarn(): void {
 
 function displayOtelWarning(): void {
   try {
-    const warningTitle = chalk.yellow.bold('⚠ Gentrace Configuration Warning');
+    const warningTitle = chalk.yellow.bold('⚠ Gentrace Configuration Warning [GT_OtelNotConfiguredError]');
 
     const warningMessage = `
 OpenTelemetry SDK does not appear to be configured. This means that Gentrace features
 like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
 Gentrace UI.
+
+Learn more: https://next.gentrace.ai/docs/sdk-reference/errors#gt_otelnotconfigurederror
 
 You likely disabled automatic OpenTelemetry setup by passing otelSetup: false to init().
 If so, you can fix this by either:
@@ -295,11 +298,13 @@ ${separator}
   } catch (error) {
     // Fallback to simple console warning if formatting libraries are not available
     console.warn(`
-⚠ Gentrace Configuration Warning
+⚠ Gentrace Configuration Warning [GT_OtelNotConfiguredError]
 
 OpenTelemetry SDK does not appear to be configured. This means that Gentrace features
 like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
 Gentrace UI.
+
+Learn more: https://next.gentrace.ai/docs/sdk-reference/errors#gt_otelnotconfigurederror
 
 You likely disabled automatic OpenTelemetry setup by passing otelSetup: false to init().
 To fix this, either remove the otelSetup: false option or manually configure OpenTelemetry.
