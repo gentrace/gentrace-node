@@ -25,24 +25,25 @@ async function queryAi({ query }: { query: string }): Promise<string | null> {
   return fakeResponse;
 }
 
+// Initialize Gentrace with automatic OpenTelemetry setup
+const apiKey = process.env['GENTRACE_API_KEY'];
+if (!apiKey) {
+  throw new Error('GENTRACE_API_KEY environment variable must be set');
+}
+
+init({
+  apiKey,
+  baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
+  otelSetup: true,
+});
+
 async function main() {
-  const apiKey = process.env['GENTRACE_API_KEY'];
   const pipelineId = process.env['GENTRACE_PIPELINE_ID'];
   const datasetId = process.env['GENTRACE_DATASET_ID'];
 
-  if (!apiKey) {
-    throw new Error('GENTRACE_API_KEY environment variable must be set');
-  }
   if (!pipelineId || !datasetId) {
     throw new Error('GENTRACE_PIPELINE_ID and GENTRACE_DATASET_ID environment variables must be set');
   }
-
-  // Initialize Gentrace with automatic OpenTelemetry setup
-  await init({
-    apiKey,
-    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    otelSetup: true,
-  });
 
   const InputSchema = z.object({ query: z.string() });
 

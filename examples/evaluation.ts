@@ -15,14 +15,14 @@
 
 import { init, evalOnce, experiment } from '../src';
 
-async function main() {
-  // Initialize Gentrace with automatic OpenTelemetry setup
-  await init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
-    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    otelSetup: true,
-  });
+// Initialize Gentrace with automatic OpenTelemetry setup
+init({
+  apiKey: process.env['GENTRACE_API_KEY'] || '',
+  baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
+  otelSetup: true,
+});
 
+async function main() {
   const pipelineId = process.env['GENTRACE_PIPELINE_ID'];
   if (!pipelineId) {
     throw new Error('GENTRACE_PIPELINE_ID environment variable must be set');
