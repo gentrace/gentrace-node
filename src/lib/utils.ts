@@ -219,12 +219,14 @@ export function checkOtelConfigAndWarn(): void {
 
 function displayOtelWarning(): void {
   try {
-    const warningTitle = chalk.yellow.bold('⚠ Gentrace Configuration Warning');
+    const warningTitle = chalk.yellow.bold('⚠ Gentrace Configuration Warning [GT_OtelNotConfiguredError]');
 
     const warningMessage = `
 OpenTelemetry SDK does not appear to be configured. This means that Gentrace features
 like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
 Gentrace UI.
+
+Learn more: https://next.gentrace.ai/docs/sdk-reference/errors#gt_otelnotconfigurederror
 
 To fix this, add this code to the beginning of your application:
 `;
@@ -285,11 +287,13 @@ sdk.start();`;
   } catch (error) {
     // Fallback to simple console warning if formatting libraries are not available
     console.warn(`
-⚠ Gentrace Configuration Warning
+⚠ Gentrace Configuration Warning [GT_OtelNotConfiguredError]
 
 OpenTelemetry SDK does not appear to be configured. This means that Gentrace features
 like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
 Gentrace UI.
+
+Learn more: https://next.gentrace.ai/docs/sdk-reference/errors#gt_otelnotconfigurederror
 
 To fix this, add the OpenTelemetry SDK configuration code to your application.
 See the documentation for the complete setup code.
