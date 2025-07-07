@@ -31,7 +31,7 @@ async function main() {
     'generate-summary',
     async (text: string) => {
       const { text: summary } = await generateText({
-        model: anthropic('claude-3-haiku-20240307'),
+        model: anthropic('claude-opus-4-20250514'),
         prompt: `Summarize this text in 2-3 sentences: ${text}`,
         experimental_telemetry: {
           isEnabled: true,
