@@ -6,6 +6,8 @@ This library provides tools to instrument and test your AI applications using Ge
 
 The API reference documentation, auto-generated from our Stainless client code, can be found in [api.md](api.md).
 
+For more information about Gentrace, see the [Gentrace docs](https://docs.gentrace.ai).
+
 ## Installation
 
 ```sh
@@ -467,7 +469,9 @@ In this model, your application might send a broader set of traces (or all trace
 
 In both scenarios, the Gentrace SDK helper functions (like `interaction()` and `evalOnce()`) typically handle setting the `gentrace.sample` value in the OpenTelemetry Baggage for the operations they trace.
 
-See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry.
+## Examples
+
+See the `examples/` directory for runnable examples demonstrating these concepts with OpenTelemetry. Instructions for running the examples are in the [examples/README.md](examples/README.md) file.
 
 ## Contributing
 
