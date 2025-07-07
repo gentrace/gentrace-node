@@ -18,20 +18,20 @@ import { init, interaction } from '../src';
 import { anthropic } from '@ai-sdk/anthropic';
 import { generateText } from 'ai';
 
-async function main() {
-  // Initialize Gentrace with automatic OpenTelemetry setup
-  await init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
-    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    otelSetup: true,
-  });
+// Initialize Gentrace with automatic OpenTelemetry setup
+init({
+  apiKey: process.env['GENTRACE_API_KEY'] || '',
+  baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
+  otelSetup: true,
+});
 
+async function main() {
   // Create a function that uses Anthropic via AI SDK
   const generateSummary = interaction(
     'generate-summary',
     async (text: string) => {
       const { text: summary } = await generateText({
-        model: anthropic('claude-3-haiku-20240307'),
+        model: anthropic('claude-opus-4-20250514'),
         prompt: `Summarize this text in 2-3 sentences: ${text}`,
         experimental_telemetry: {
           isEnabled: true,

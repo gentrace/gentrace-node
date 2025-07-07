@@ -14,19 +14,18 @@
  *    yarn example examples/mastra-ai-sdk.ts
  */
 
-import { init, interaction } from '../src';
+import { openai } from '@ai-sdk/openai';
 import { Mastra } from '@mastra/core';
 import { Agent } from '@mastra/core/agent';
-import { openai } from '@ai-sdk/openai';
+import { init, interaction } from '../src';
+
+// Initialize Gentrace with automatic OpenTelemetry setup
+init({
+  apiKey: process.env['GENTRACE_API_KEY'] || '',
+  baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
+});
 
 async function main() {
-  // Initialize Gentrace with automatic OpenTelemetry setup
-  await init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
-    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    otelSetup: true,
-  });
-
   // Create a simple Mastra agent
   const assistant = new Agent({
     name: 'Assistant',

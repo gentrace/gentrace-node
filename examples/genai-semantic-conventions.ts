@@ -20,14 +20,14 @@ import { SpanStatusCode, trace } from '@opentelemetry/api';
 import OpenAI from 'openai';
 import { init, interaction } from '../src';
 
-async function main() {
-  // Initialize Gentrace with OpenTelemetry setup enabled
-  await init({
-    apiKey: process.env['GENTRACE_API_KEY'] || '',
-    baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-    otelSetup: true,
-  });
+// Initialize Gentrace with OpenTelemetry setup enabled
+init({
+  apiKey: process.env['GENTRACE_API_KEY'] || '',
+  baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
+  otelSetup: true,
+});
 
+async function main() {
   // Get the tracer
   const tracer = trace.getTracer('genai-example', '1.0.0');
 
