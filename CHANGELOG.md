@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.8.0 (2025-07-07)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/gentrace/gentrace-node/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* Update anthropic model to 'claude-opus-4-20250514' ([#600](https://github.com/gentrace/gentrace-node/issues/600)) ([34a8fd3](https://github.com/gentrace/gentrace-node/commit/34a8fd3e7986f730dd4d6d948dbf1a31ad3e4c5a))
+
+
+### Bug Fixes
+
+* Better error message for OTEL configurations ([#599](https://github.com/gentrace/gentrace-node/issues/599)) ([c7b4a97](https://github.com/gentrace/gentrace-node/commit/c7b4a97a86d53eafcffa8d6e5dbae5dbcb6ace2a))
+* Initialize Gentrace if OpenTelemetry not configured in interaction() ([#597](https://github.com/gentrace/gentrace-node/issues/597)) ([1a926da](https://github.com/gentrace/gentrace-node/commit/1a926daa5e3355aa38975645b4c7674277112d6e))
+* Update init() to not be async() ([#592](https://github.com/gentrace/gentrace-node/issues/592)) ([17e290b](https://github.com/gentrace/gentrace-node/commit/17e290bce2e8a9641ad67de812c6373beaaeb9ec))
+
+
+### Chores
+
+* add evaluation dataset example ([#589](https://github.com/gentrace/gentrace-node/issues/589)) ([#589](https://github.com/gentrace/gentrace-node/issues/589)) ([e021576](https://github.com/gentrace/gentrace-node/commit/e021576d556b8ec33637c0c157ebce64f827d85b))
+
 ## 0.7.0 (2025-07-02)
 
 Full Changelog: [v0.6.0...v0.7.0](https://github.com/gentrace/gentrace-node/compare/v0.6.0...v0.7.0)
