@@ -341,13 +341,17 @@ export async function runWithConcurrency<T>(
       results[i] = result;
     });
 
-    // Track the executing promise
-    const executingPromise = promise.then(() => {
+    // Create the promise first to avoid circular reference
+    const p = promise.then(() => {
       // Remove this promise from the executing array once complete
-      executing.splice(executing.indexOf(executingPromise), 1);
+      const index = executing.indexOf(p);
+      if (index !== -1) {
+        executing.splice(index, 1);
+      }
     });
 
-    executing.push(executingPromise);
+    // Then add it to the executing array
+    executing.push(p);
 
     // If we've reached the concurrency limit, wait for one to complete
     if (executing.length >= maxConcurrency) {
