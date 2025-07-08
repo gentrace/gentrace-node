@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.9.0 (2025-07-08)
+
+Full Changelog: [v0.8.0...v0.9.0](https://github.com/gentrace/gentrace-node/compare/v0.8.0...v0.9.0)
+
+### Features
+
+* Add max concurrency ([#604](https://github.com/gentrace/gentrace-node/issues/604)) ([50dd43b](https://github.com/gentrace/gentrace-node/commit/50dd43bfa828ea89bec110433366afe4ea6737d2))
+* Add OpenAI AI SDK and Responses API examples ([#601](https://github.com/gentrace/gentrace-node/issues/601)) ([cbb4d0d](https://github.com/gentrace/gentrace-node/commit/cbb4d0ddfbfac232243563580d4d2081f28ae1c6))
+* Add pipeline ID validation and error handling ([#596](https://github.com/gentrace/gentrace-node/issues/596)) ([92ae076](https://github.com/gentrace/gentrace-node/commit/92ae076c69dd9b7fa8e25569d4c3f1f08b5227bb))
+
+
+### Chores
+
+* improve docs ([#602](https://github.com/gentrace/gentrace-node/issues/602)) ([1bec8ed](https://github.com/gentrace/gentrace-node/commit/1bec8ed45958fc36f42972df82c2d86a2faeb9ef))
+
 ## 0.8.0 (2025-07-07)
 
 Full Changelog: [v0.7.0...v0.8.0](https://github.com/gentrace/gentrace-node/compare/v0.7.0...v0.8.0)
