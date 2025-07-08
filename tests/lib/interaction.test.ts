@@ -12,6 +12,19 @@ let lastMockSpan: Partial<Span> | null = null;
 
 const storedMockStartActiveSpan = jest.fn();
 
+// Mock the utils module
+jest.mock('../../src/lib/utils', () => {
+  const actualUtils = jest.requireActual('../../src/lib/utils') as any;
+  return {
+    ...actualUtils,
+    isValidUUID: jest.fn(() => true),
+    validatePipelineAccess: jest.fn(() => Promise.resolve()),
+    displayPipelineError: jest.fn(),
+    checkOtelConfigAndWarn: jest.fn(),
+    isOtelConfigured: jest.fn(() => true),
+  };
+});
+
 jest.mock('@opentelemetry/api', () => {
   const originalApi = jest.requireActual('@opentelemetry/api') as typeof import('@opentelemetry/api');
 
@@ -335,6 +348,9 @@ describe('interaction auto-initialization', () => {
     jest.doMock('../../src/lib/utils', () => ({
       isOtelConfigured: jest.fn(() => false),
       checkOtelConfigAndWarn: jest.fn(),
+      isValidUUID: jest.fn(() => true),
+      validatePipelineAccess: jest.fn(() => Promise.resolve()),
+      displayPipelineError: jest.fn(),
     }));
 
     const interactionModule = await import('../../src/lib/interaction');
@@ -396,6 +412,9 @@ describe('interaction auto-initialization', () => {
     jest.doMock('../../src/lib/utils', () => ({
       isOtelConfigured: jest.fn(() => true),
       checkOtelConfigAndWarn: jest.fn(),
+      isValidUUID: jest.fn(() => true),
+      validatePipelineAccess: jest.fn(() => Promise.resolve()),
+      displayPipelineError: jest.fn(),
     }));
 
     const interactionModule = await import('../../src/lib/interaction');
@@ -449,6 +468,9 @@ describe('interaction auto-initialization', () => {
     jest.doMock('../../src/lib/utils', () => ({
       isOtelConfigured: jest.fn(() => false),
       checkOtelConfigAndWarn: jest.fn(),
+      isValidUUID: jest.fn(() => true),
+      validatePipelineAccess: jest.fn(() => Promise.resolve()),
+      displayPipelineError: jest.fn(),
     }));
 
     const interactionModule2 = await import('../../src/lib/interaction');

@@ -2,7 +2,7 @@ import { context, propagation } from '@opentelemetry/api';
 
 import { ATTR_GENTRACE_PIPELINE_ID, ATTR_GENTRACE_SAMPLE } from './otel/constants';
 import { traced } from './traced';
-import { isOtelConfigured } from './utils';
+import { isValidUUID, validatePipelineAccess, displayPipelineError, isOtelConfigured } from './utils';
 import { _isGentraceInitialized } from './init-state';
 import { init } from './init';
 
@@ -20,6 +20,9 @@ export type InteractionOptions = {
    */
   attributes?: Record<string, any>;
 };
+
+// Flag to track if pipeline ID format warning has been issued
+let _pipelineIdFormatWarningIssued = false;
 
 /**
  * Wraps a function with OpenTelemetry tracing to track interactions within a pipeline.
@@ -44,6 +47,19 @@ export function interaction<F extends (...args: any[]) => any>(
   options: InteractionOptions,
 ): F {
   const { pipelineId, attributes } = options;
+
+  // Validate UUID format
+  if (!isValidUUID(pipelineId)) {
+    if (!_pipelineIdFormatWarningIssued) {
+      _pipelineIdFormatWarningIssued = true;
+      displayPipelineError(pipelineId, 'invalid-format');
+    }
+  } else {
+    // Asynchronously validate pipeline access (non-blocking)
+    validatePipelineAccess(pipelineId).catch(() => {
+      // Error is already logged in validatePipelineAccess
+    });
+  }
 
   const wrappedFn = traced(name, fn, {
     attributes: {
