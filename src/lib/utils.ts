@@ -63,7 +63,10 @@ export function displayPipelineError(
  * Validates that a pipeline ID is accessible with the current API key.
  * Only checks once per pipeline ID to avoid redundant API calls.
  */
-export async function validatePipelineAccess(pipelineId: string, suppressWarnings: boolean = false): Promise<void> {
+export async function validatePipelineAccess(
+  pipelineId: string,
+  suppressWarnings: boolean = false,
+): Promise<void> {
   // Skip if already validated or invalid
   if (_validatedPipelines.has(pipelineId) || _invalidPipelines.has(pipelineId)) {
     return;

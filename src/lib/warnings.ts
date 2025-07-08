@@ -91,7 +91,8 @@ export const GentraceWarnings = {
         `Please verify the pipeline ID matches what's shown in the Gentrace UI.`,
       ],
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-pipelineinvaliderror',
-      suppressionHint: 'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
+      suppressionHint:
+        'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
       borderColor: 'red',
     }),
 
@@ -105,7 +106,8 @@ export const GentraceWarnings = {
         `Please verify the pipeline ID matches what's shown in the Gentrace UI.`,
       ],
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-pipelinenotfounderror',
-      suppressionHint: 'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
+      suppressionHint:
+        'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
       borderColor: 'red',
     }),
 
@@ -119,7 +121,8 @@ export const GentraceWarnings = {
         `Please check your GENTRACE_API_KEY has the correct permissions.`,
       ],
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-pipelineunauthorizederror',
-      suppressionHint: 'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
+      suppressionHint:
+        'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
       borderColor: 'red',
     }),
 
@@ -133,7 +136,8 @@ export const GentraceWarnings = {
         `Error: ${errorMessage || 'Unknown error'}`,
       ],
       learnMoreUrl: null,
-      suppressionHint: 'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
+      suppressionHint:
+        'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
       borderColor: 'red',
     }),
 
@@ -153,7 +157,8 @@ export const GentraceWarnings = {
         '2. Or manually configure OpenTelemetry yourself (see documentation)',
       ],
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-otelnotconfigurederror',
-      suppressionHint: 'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
+      suppressionHint:
+        'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
     }),
 
   AutoInitializationWarning: () =>
@@ -173,7 +178,8 @@ export const GentraceWarnings = {
         'Note: Each distinct process/service must call init() before using interaction decorators.',
       ],
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-autoinitializationwarning',
-      suppressionHint: 'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
+      suppressionHint:
+        'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
     }),
 
   OtelGlobalError: (error: any) =>
