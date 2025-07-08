@@ -2,6 +2,7 @@ import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
 import { _runEval } from './eval-once';
 import { ATTR_GENTRACE_TEST_CASE_ID } from './otel/constants';
+import { runWithConcurrency } from './utils';
 
 /**
  * Runs a series of evals  against a dataset using a provided interaction function.
@@ -31,14 +32,16 @@ import { ATTR_GENTRACE_TEST_CASE_ID } from './otel/constants';
  *     schema: InputSchema,
  *     interaction: async ({ prompt, temperature, maxTokens }) => {
  *       return generateCompletion(prompt, temperature, maxTokens);
- *     }
+ *     },
+ *     // Optional: limit concurrent test executions (default: unlimited)
+ *     maxConcurrency: 5
  *   });
  */
 export async function evalDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
   TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
 >(options: EvalDatasetOptions<TSchema>): Promise<void> {
-  const { interaction, data, schema } = options;
+  const { interaction, data, schema, maxConcurrency } = options;
 
   const client = _getClient();
   const experimentContext = getCurrentExperimentContext();
@@ -60,7 +63,9 @@ export async function evalDataset<
     throw new Error('Dataset function must return an array of test cases.');
   }
 
-  const promises: Promise<void>[] = [];
+  // Create array of task functions
+  const tasks: (() => Promise<void>)[] = [];
+
   for (let i = 0; i < rawTestInputs.length; i++) {
     const inputItem = rawTestInputs[i];
 
@@ -89,7 +94,8 @@ export async function evalDataset<
       spanAttributes[ATTR_GENTRACE_TEST_CASE_ID] = finalId;
     }
 
-    promises.push(
+    // Push task function instead of promise
+    tasks.push(() =>
       _runEval<any, TInput>({
         spanName: finalName,
         spanAttributes,
@@ -100,7 +106,13 @@ export async function evalDataset<
     );
   }
 
-  await Promise.all(promises);
+  // Run tasks with concurrency control
+  if (maxConcurrency && maxConcurrency > 0) {
+    await runWithConcurrency(tasks, maxConcurrency);
+  } else {
+    // No concurrency limit - run all tasks in parallel
+    await Promise.all(tasks.map((task) => task()));
+  }
 }
 
 /**
@@ -143,4 +155,9 @@ export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined>
    * is derived from the provided 'schema', or Record<string, any> if no schema is given.
    */
   interaction: (arg: TSchema extends ParseableSchema<infer O> ? O : Record<string, any>) => any;
+  /**
+   * The maximum number of concurrent test cases to run.
+   * If not specified, all test cases will run in parallel.
+   */
+  maxConcurrency?: number;
 };

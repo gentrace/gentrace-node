@@ -306,4 +306,80 @@ describe('evalDataset', () => {
       callback: failingInteraction,
     });
   });
+
+  // --- Tests for Concurrency Control ---
+
+  it('should respect maxConcurrency when set', async () => {
+    mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-conc', pipelineId: 'pipe-conc' });
+
+    // Track concurrent executions
+    let currentlyRunning = 0;
+    let maxConcurrentObserved = 0;
+
+    // Mock _runEval to simulate async work and track concurrency
+    mockEvalTest.mockImplementation(async () => {
+      currentlyRunning++;
+      maxConcurrentObserved = Math.max(maxConcurrentObserved, currentlyRunning);
+
+      // Simulate async work
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      currentlyRunning--;
+      return undefined;
+    });
+
+    // Create a larger dataset to test concurrency
+    const largeDataset: TestInput<{ input: string }>[] = Array.from({ length: 10 }, (_, i) => ({
+      inputs: { input: `test-${i}` },
+    }));
+
+    await evalDatasetLib.evalDataset({
+      data: () => largeDataset,
+      interaction: mockInteraction,
+      schema: InputSchema,
+      maxConcurrency: 3,
+    });
+
+    expect(mockEvalTest).toHaveBeenCalledTimes(10);
+    expect(maxConcurrentObserved).toBeLessThanOrEqual(3);
+    expect(maxConcurrentObserved).toBeGreaterThan(0);
+  });
+
+  it('should run all tasks in parallel when maxConcurrency is not set', async () => {
+    mockGetCurrentExperimentContext.mockReturnValue({
+      experimentId: 'exp-noconc',
+      pipelineId: 'pipe-noconc',
+    });
+
+    // Track concurrent executions
+    let currentlyRunning = 0;
+    let maxConcurrentObserved = 0;
+
+    // Mock _runEval to track concurrency without delay
+    mockEvalTest.mockImplementation(async () => {
+      currentlyRunning++;
+      maxConcurrentObserved = Math.max(maxConcurrentObserved, currentlyRunning);
+
+      // Minimal async to ensure all promises are created before any complete
+      await Promise.resolve();
+
+      currentlyRunning--;
+      return undefined;
+    });
+
+    // Create a dataset
+    const dataset: TestInput<{ input: string }>[] = Array.from({ length: 5 }, (_, i) => ({
+      inputs: { input: `test-${i}` },
+    }));
+
+    await evalDatasetLib.evalDataset({
+      data: () => dataset,
+      interaction: mockInteraction,
+      schema: InputSchema,
+      // No maxConcurrency - should run all in parallel
+    });
+
+    expect(mockEvalTest).toHaveBeenCalledTimes(5);
+    expect(maxConcurrentObserved).toBe(5); // All should run in parallel
+  });
 });

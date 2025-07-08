@@ -313,3 +313,50 @@ If you haven't set otelSetup: false, this could be a bundling or configuration i
 `);
   }
 }
+
+/**
+ * Run an array of async task functions with a concurrency limit.
+ * Similar to Python's asyncio.Semaphore but for JavaScript Promises.
+ *
+ * @param tasks Array of functions that return promises
+ * @param maxConcurrency Maximum number of tasks to run simultaneously
+ * @returns Promise that resolves with array of results in the same order as input tasks
+ */
+export async function runWithConcurrency<T>(
+  tasks: (() => Promise<T>)[],
+  maxConcurrency: number,
+): Promise<T[]> {
+  const results: T[] = [];
+  const executing: Promise<void>[] = [];
+
+  for (let i = 0; i < tasks.length; i++) {
+    const task = tasks[i];
+
+    if (!task) {
+      continue;
+    }
+
+    // Start the task and add it to results array at the correct index
+    const promise = task().then((result) => {
+      results[i] = result;
+    });
+
+    // Track the executing promise
+    const executingPromise = promise.then(() => {
+      // Remove this promise from the executing array once complete
+      executing.splice(executing.indexOf(executingPromise), 1);
+    });
+
+    executing.push(executingPromise);
+
+    // If we've reached the concurrency limit, wait for one to complete
+    if (executing.length >= maxConcurrency) {
+      await Promise.race(executing);
+    }
+  }
+
+  // Wait for all remaining tasks to complete
+  await Promise.all(executing);
+
+  return results;
+}
