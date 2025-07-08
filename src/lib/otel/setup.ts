@@ -14,9 +14,13 @@ import * as resources from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { setGlobalErrorHandler } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { GentraceWarnings } from '../warnings';
 
 // Re-export SetupConfig for backwards compatibility
 export type { SetupConfig };
+
+// Flag to track if the OpenTelemetry global error warning has been issued
+let _otelGlobalErrorWarningIssued = false;
 
 /**
  * Sets up OpenTelemetry with Gentrace configuration.
@@ -117,6 +121,14 @@ setup();`;
 
   // Set a custom error handler for OpenTelemetry
   setGlobalErrorHandler((error) => {
+    // Display the error warning only once
+    if (!_otelGlobalErrorWarningIssued) {
+      _otelGlobalErrorWarningIssued = true;
+      const warning = GentraceWarnings.OtelGlobalError(error);
+      warning.display();
+    }
+
+    // Always log to the logger if available (even after the first warning)
     _getClient().logger?.error(`OpenTelemetry error:`, error);
   });
 
