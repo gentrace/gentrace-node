@@ -16,9 +16,10 @@
  *    yarn example examples/genai-semantic-conventions.ts
  */
 
-import { SpanStatusCode, trace } from '@opentelemetry/api';
+import { SpanStatusCode, trace, context, propagation } from '@opentelemetry/api';
 import OpenAI from 'openai';
-import { init, interaction } from '../src';
+import { init } from '../src';
+import stringify from 'json-stringify-safe';
 
 // Initialize Gentrace with OpenTelemetry setup enabled
 init({
@@ -28,38 +29,44 @@ init({
 });
 
 async function main() {
-  // Get the tracer
   const tracer = trace.getTracer('genai-example', '1.0.0');
 
-  // Create OpenAI client
   const openai = new OpenAI({
     apiKey: process.env['OPENAI_API_KEY'],
   });
 
-  // Example 1: Simple chat completion with system message
-  const askQuestion = interaction(
-    'ask-question',
-    async (question: string) => {
-      // Create a child span with GenAI semantic conventions
-      return await tracer.startActiveSpan('openai-chat-completion', async (span) => {
+  const askQuestion = async (question: string) => {
+    const currentContext = context.active();
+    const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
+
+    const newBaggage = currentBaggage.setEntry('gentrace.sample', {
+      value: 'true',
+    });
+    const newContext = propagation.setBaggage(currentContext, newBaggage);
+
+    return await context.with(newContext, async () => {
+      return await tracer.startActiveSpan('ask-question', async (span) => {
         try {
-          // Set GenAI attributes according to semantic conventions
           span.setAttributes({
+            'gentrace.pipeline_id': process.env['GENTRACE_PIPELINE_ID'] || 'genai-example-pipeline',
+            'gentrace.sample': 'true',
             'gen_ai.system': 'openai',
             'gen_ai.request.model': 'gpt-4o-mini',
             'gen_ai.operation.name': 'chat',
             'service.name': 'genai-semantic-example',
           });
 
+          span.addEvent('gentrace.fn.args', {
+            args: stringify([question]),
+          });
+
           const systemMessage = 'You are a helpful assistant that explains complex topics simply.';
 
-          // Add system message as event
           span.addEvent('gen_ai.system.message', {
             role: 'system',
             content: systemMessage,
           });
 
-          // Add user message as event
           span.addEvent('gen_ai.user.message', {
             role: 'user',
             content: question,
@@ -78,12 +85,15 @@ async function main() {
 
           const assistantMessage = completion.choices[0]?.message.content || '';
 
-          // Add choice event for the completion
           span.addEvent('gen_ai.choice', {
             index: 0,
             content: assistantMessage,
             role: 'assistant',
             finish_reason: completion.choices[0]?.finish_reason || 'stop',
+          });
+
+          span.addEvent('gentrace.fn.output', {
+            output: stringify(assistantMessage),
           });
 
           span.setStatus({ code: SpanStatusCode.OK });
@@ -97,23 +107,32 @@ async function main() {
           span.end();
         }
       });
-    },
-    {
-      pipelineId: process.env['GENTRACE_PIPELINE_ID'] || 'genai-example-pipeline',
-    },
-  );
+    });
+  };
 
-  // Example 2: Function calling with tool messages
-  const askWithTools = interaction(
-    'ask-with-tools',
-    async (question: string) => {
-      return await tracer.startActiveSpan('openai-function-calling', async (span) => {
+  const askWithTools = async (question: string) => {
+    const currentContext = context.active();
+    const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
+
+    const newBaggage = currentBaggage.setEntry('gentrace.sample', {
+      value: 'true',
+    });
+    const newContext = propagation.setBaggage(currentContext, newBaggage);
+
+    return await context.with(newContext, async () => {
+      return await tracer.startActiveSpan('ask-with-tools', async (span) => {
         try {
           span.setAttributes({
+            'gentrace.pipeline_id': process.env['GENTRACE_PIPELINE_ID'] || 'genai-tools-pipeline',
+            'gentrace.sample': 'true',
             'gen_ai.system': 'openai',
             'gen_ai.request.model': 'gpt-4o-mini',
             'gen_ai.operation.name': 'chat',
             'service.name': 'genai-semantic-example',
+          });
+
+          span.addEvent('gentrace.fn.args', {
+            args: stringify([question]),
           });
 
           const tools: OpenAI.Chat.ChatCompletionTool[] = [
@@ -134,7 +153,6 @@ async function main() {
             },
           ];
 
-          // Add user message
           span.addEvent('gen_ai.user.message', {
             role: 'user',
             content: question,
@@ -152,7 +170,6 @@ async function main() {
           console.log('choice', choice);
 
           if (choice?.message.tool_calls) {
-            // Add choice event with tool calls
             span.addEvent('gen_ai.choice', {
               index: 0,
               content: choice.message.content || '',
@@ -161,18 +178,15 @@ async function main() {
               tool_calls: JSON.stringify(choice.message.tool_calls),
             });
 
-            // Simulate tool response
             const toolResponse = { temperature: 72, unit: 'fahrenheit', conditions: 'sunny' };
             const toolResponseString = JSON.stringify(toolResponse);
 
-            // Add tool message event
             span.addEvent('gen_ai.tool.message', {
               role: 'tool',
               content: toolResponseString,
               name: 'get_weather',
             });
 
-            // Get final response with tool result
             const finalCompletion = await openai.chat.completions.create({
               model: 'gpt-4o-mini',
               messages: [
@@ -188,12 +202,15 @@ async function main() {
 
             const finalMessage = finalCompletion.choices[0]?.message.content || '';
 
-            // Add final response as choice event
             span.addEvent('gen_ai.choice', {
               index: 0,
               content: finalMessage,
               role: 'assistant',
               finish_reason: finalCompletion.choices[0]?.finish_reason || 'stop',
+            });
+
+            span.addEvent('gentrace.fn.output', {
+              output: stringify(finalMessage),
             });
 
             span.setStatus({ code: SpanStatusCode.OK });
@@ -208,6 +225,10 @@ async function main() {
             finish_reason: choice?.finish_reason || 'stop',
           });
 
+          span.addEvent('gentrace.fn.output', {
+            output: stringify(assistantMessage),
+          });
+
           span.setStatus({ code: SpanStatusCode.OK });
           return assistantMessage;
         } catch (error) {
@@ -218,11 +239,8 @@ async function main() {
           span.end();
         }
       });
-    },
-    {
-      pipelineId: process.env['GENTRACE_PIPELINE_ID'] || 'genai-tools-pipeline',
-    },
-  );
+    });
+  };
 
   // Example 1: Simple question
   console.log('=== Example 1: Simple Chat Completion ===');
