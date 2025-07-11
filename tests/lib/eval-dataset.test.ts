@@ -198,7 +198,9 @@ describe('evalDataset', () => {
         interaction: mockInteraction,
         schema: InputSchema,
       }),
-    ).rejects.toThrow('Dataset function must return an array of test cases.');
+    ).rejects.toThrow(
+      'Dataset must be an array of test cases or a function that returns an array of test cases.',
+    );
   });
 
   it('should warn and skip null/undefined items in dataset', async () => {
@@ -335,6 +337,111 @@ describe('evalDataset', () => {
 
     await evalDatasetLib.evalDataset({
       data: () => largeDataset,
+      interaction: mockInteraction,
+      schema: InputSchema,
+      maxConcurrency: 3,
+    });
+
+    expect(mockEvalTest).toHaveBeenCalledTimes(10);
+    expect(maxConcurrentObserved).toBeLessThanOrEqual(3);
+    expect(maxConcurrentObserved).toBeGreaterThan(0);
+  });
+
+  // --- Tests for Plain Array Support ---
+
+  it('should accept a plain array directly as data', async () => {
+    mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-plain', pipelineId: 'pipe-plain' });
+
+    await evalDatasetLib.evalDataset({
+      data: datasetSimple,
+      interaction: mockInteraction,
+      schema: InputSchema,
+    });
+
+    expect(mockEvalTest).toHaveBeenCalledTimes(3);
+    expect(mockEvalTest).toHaveBeenCalledWith({
+      spanName: 'Test Case 1',
+      inputs: { input: 1 },
+      spanAttributes: {},
+      schema: InputSchema,
+      callback: mockInteraction,
+    });
+    expect(mockEvalTest).toHaveBeenCalledWith({
+      spanName: 'Test Case 2',
+      inputs: { input: 2 },
+      spanAttributes: {},
+      schema: InputSchema,
+      callback: mockInteraction,
+    });
+    expect(mockEvalTest).toHaveBeenCalledWith({
+      spanName: 'Test Case 3',
+      inputs: { input: 3 },
+      spanAttributes: {},
+      schema: InputSchema,
+      callback: mockInteraction,
+    });
+  });
+
+  it('should accept a plain array with structured test inputs', async () => {
+    mockGetCurrentExperimentContext.mockReturnValue({
+      experimentId: 'exp-plain-struct',
+      pipelineId: 'pipe-plain-struct',
+    });
+
+    await evalDatasetLib.evalDataset({
+      data: datasetStructured,
+      interaction: mockInteraction,
+      schema: InputSchema,
+    });
+
+    expect(mockEvalTest).toHaveBeenCalledTimes(4);
+
+    expect(mockEvalTest).toHaveBeenCalledWith({
+      spanName: 'Case 1',
+      inputs: { input: 10 },
+      spanAttributes: {},
+      schema: InputSchema,
+      callback: mockInteraction,
+    });
+
+    expect(mockEvalTest).toHaveBeenCalledWith({
+      spanName: 'Test Case (ID: case-id-20)',
+      spanAttributes: { [ATTR_GENTRACE_TEST_CASE_ID]: 'case-id-20' },
+      inputs: { input: 20 },
+      schema: InputSchema,
+      callback: mockInteraction,
+    });
+  });
+
+  it('should accept a plain array with maxConcurrency', async () => {
+    mockGetCurrentExperimentContext.mockReturnValue({
+      experimentId: 'exp-plain-conc',
+      pipelineId: 'pipe-plain-conc',
+    });
+
+    // Track concurrent executions
+    let currentlyRunning = 0;
+    let maxConcurrentObserved = 0;
+
+    // Mock _runEval to simulate async work and track concurrency
+    mockEvalTest.mockImplementation(async () => {
+      currentlyRunning++;
+      maxConcurrentObserved = Math.max(maxConcurrentObserved, currentlyRunning);
+
+      // Simulate async work
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      currentlyRunning--;
+      return undefined;
+    });
+
+    // Create a larger dataset to test concurrency
+    const largeDataset: TestInput<{ input: string }>[] = Array.from({ length: 10 }, (_, i) => ({
+      inputs: { input: `test-${i}` },
+    }));
+
+    await evalDatasetLib.evalDataset({
+      data: largeDataset,
       interaction: mockInteraction,
       schema: InputSchema,
       maxConcurrency: 3,

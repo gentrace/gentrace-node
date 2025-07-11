@@ -22,6 +22,7 @@ import { runWithConcurrency } from './utils';
  *   maxTokens: z.number().optional().default(100)
  * });
  *
+ * // Using a function that fetches data
  * experiment('your-pipeline-id', async () => {
  *   await evalDataset({
  *     data: async () => {
@@ -36,6 +37,20 @@ import { runWithConcurrency } from './utils';
  *     // Optional: limit concurrent test executions (default: unlimited)
  *     maxConcurrency: 5
  *   });
+ *
+ * // Using a plain array
+ * experiment('your-pipeline-id', async () => {
+ *   await evalDataset({
+ *     data: [
+ *       { inputs: { prompt: 'Hello', temperature: 0.7, maxTokens: 100 } },
+ *       { inputs: { prompt: 'World', temperature: 0.5, maxTokens: 50 } }
+ *     ],
+ *     schema: InputSchema,
+ *     interaction: async ({ prompt, temperature, maxTokens }) => {
+ *       return generateCompletion(prompt, temperature, maxTokens);
+ *     }
+ *   });
+ * });
  */
 export async function evalDataset<
   TSchema extends ParseableSchema<any> | undefined = undefined,
@@ -51,8 +66,12 @@ export async function evalDataset<
 
   let rawTestInputs: TestInput<Record<string, any>>[];
   try {
-    const dataResult = data();
-    rawTestInputs = dataResult instanceof Promise ? await dataResult : dataResult;
+    if (typeof data === 'function') {
+      const dataResult = data();
+      rawTestInputs = dataResult instanceof Promise ? await dataResult : dataResult;
+    } else {
+      rawTestInputs = data;
+    }
   } catch (error) {
     throw new Error(
       `Failed to retrieve or process dataset: ${error instanceof Error ? error.message : String(error)}`,
@@ -60,7 +79,9 @@ export async function evalDataset<
   }
 
   if (!Array.isArray(rawTestInputs)) {
-    throw new Error('Dataset function must return an array of test cases.');
+    throw new Error(
+      'Dataset must be an array of test cases or a function that returns an array of test cases.',
+    );
   }
 
   // Create array of task functions
@@ -148,7 +169,9 @@ export type TestInput<TInput extends Record<string, any>> = {
  * @template TInput The type derived from the schema, or Record<string, any> if no schema.
  */
 export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined> = {
-  data: () => Promise<TestInput<Record<string, any>>[]> | TestInput<Record<string, any>>[];
+  data:
+    | (() => Promise<TestInput<Record<string, any>>[]> | TestInput<Record<string, any>>[])
+    | TestInput<Record<string, any>>[];
   schema?: TSchema;
   /**
    * The function to test. It must accept a single argument whose type ('TInput')
