@@ -10,7 +10,7 @@
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
  *
  * 2. Run the example:
- *    yarn example examples/evaluation-dataset.ts
+ *    yarn example examples/evaluation-dataset-local-test-cases.ts
  */
 
 import { testCases } from 'gentrace/lib/init';
