@@ -198,7 +198,9 @@ describe('evalDataset', () => {
         interaction: mockInteraction,
         schema: InputSchema,
       }),
-    ).rejects.toThrow('Dataset must be an array of test cases or a function that returns an array of test cases.');
+    ).rejects.toThrow(
+      'Dataset must be an array of test cases or a function that returns an array of test cases.',
+    );
   });
 
   it('should warn and skip null/undefined items in dataset', async () => {
@@ -349,7 +351,7 @@ describe('evalDataset', () => {
 
   it('should accept a plain array directly as data', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-plain', pipelineId: 'pipe-plain' });
-    
+
     await evalDatasetLib.evalDataset({
       data: datasetSimple,
       interaction: mockInteraction,
@@ -381,8 +383,11 @@ describe('evalDataset', () => {
   });
 
   it('should accept a plain array with structured test inputs', async () => {
-    mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-plain-struct', pipelineId: 'pipe-plain-struct' });
-    
+    mockGetCurrentExperimentContext.mockReturnValue({
+      experimentId: 'exp-plain-struct',
+      pipelineId: 'pipe-plain-struct',
+    });
+
     await evalDatasetLib.evalDataset({
       data: datasetStructured,
       interaction: mockInteraction,
@@ -409,7 +414,10 @@ describe('evalDataset', () => {
   });
 
   it('should accept a plain array with maxConcurrency', async () => {
-    mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-plain-conc', pipelineId: 'pipe-plain-conc' });
+    mockGetCurrentExperimentContext.mockReturnValue({
+      experimentId: 'exp-plain-conc',
+      pipelineId: 'pipe-plain-conc',
+    });
 
     // Track concurrent executions
     let currentlyRunning = 0;

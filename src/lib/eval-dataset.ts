@@ -37,7 +37,7 @@ import { runWithConcurrency } from './utils';
  *     // Optional: limit concurrent test executions (default: unlimited)
  *     maxConcurrency: 5
  *   });
- * 
+ *
  * // Using a plain array
  * experiment('your-pipeline-id', async () => {
  *   await evalDataset({
@@ -79,7 +79,9 @@ export async function evalDataset<
   }
 
   if (!Array.isArray(rawTestInputs)) {
-    throw new Error('Dataset must be an array of test cases or a function that returns an array of test cases.');
+    throw new Error(
+      'Dataset must be an array of test cases or a function that returns an array of test cases.',
+    );
   }
 
   // Create array of task functions
@@ -167,7 +169,9 @@ export type TestInput<TInput extends Record<string, any>> = {
  * @template TInput The type derived from the schema, or Record<string, any> if no schema.
  */
 export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined> = {
-  data: (() => Promise<TestInput<Record<string, any>>[]> | TestInput<Record<string, any>>[]) | TestInput<Record<string, any>>[];
+  data:
+    | (() => Promise<TestInput<Record<string, any>>[]> | TestInput<Record<string, any>>[])
+    | TestInput<Record<string, any>>[];
   schema?: TSchema;
   /**
    * The function to test. It must accept a single argument whose type ('TInput')
