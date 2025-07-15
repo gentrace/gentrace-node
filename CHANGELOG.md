@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.11.0 (2025-07-15)
+
+Full Changelog: [v0.10.0...v0.11.0](https://github.com/gentrace/gentrace-node/compare/v0.10.0...v0.11.0)
+
+### Features
+
+* Add Anthropic example for Node SDK similar to OpenAI ([#566](https://github.com/gentrace/gentrace-node/issues/566)) ([886b6b7](https://github.com/gentrace/gentrace-node/commit/886b6b701d47b6491abe4cbd684b931debb8efbc))
+* Add ASCII visualizations for OpenTelemetry information flow ([#562](https://github.com/gentrace/gentrace-node/issues/562)) ([bfffd60](https://github.com/gentrace/gentrace-node/commit/bfffd6072b39f95bc57ac8c064319718fdb084a8))
+* add baggage support to eval methods ([#569](https://github.com/gentrace/gentrace-node/issues/569)) ([#569](https://github.com/gentrace/gentrace-node/issues/569)) ([95564ba](https://github.com/gentrace/gentrace-node/commit/95564ba9aa3fd912e9e6727bda451f0dc87ef4ce))
+* Add Claude Assistant GitHub Action workflow ([#558](https://github.com/gentrace/gentrace-node/issues/558)) ([952c9dd](https://github.com/gentrace/gentrace-node/commit/952c9dde4a94154df3e8cdcb409176c1a8716a5a))
+* add PR title validation workflow ([#554](https://github.com/gentrace/gentrace-node/issues/554)) ([fb8636d](https://github.com/gentrace/gentrace-node/commit/fb8636de562ec218164de77dfff3cd24111c9abb))
+* add release type to PR title validation ([#567](https://github.com/gentrace/gentrace-node/issues/567)) ([9404fb9](https://github.com/gentrace/gentrace-node/commit/9404fb92c2fe56944a52619166265ac8c4e116f3))
+* **eval-dataset:** support plain array as dataset ([#606](https://github.com/gentrace/gentrace-node/issues/606)) ([698e56b](https://github.com/gentrace/gentrace-node/commit/698e56baa051ae2e5d39cb6afb58e4ff5ba5c33c))
+* Introduce API/SDK observability wrappers ([#529](https://github.com/gentrace/gentrace-node/issues/529)) ([59cdf88](https://github.com/gentrace/gentrace-node/commit/59cdf883650ce3c1454919a97db627e00f991b35))
+
+
+### Bug Fixes
+
+* Add `Baggage` to the interaction to `gentrace.sample` ([#542](https://github.com/gentrace/gentrace-node/issues/542)) ([2b58351](https://github.com/gentrace/gentrace-node/commit/2b58351cc28aad5f4a50d19c9da4660f6e6198fc))
+* Add await keyword before init function calls ([#586](https://github.com/gentrace/gentrace-node/issues/586)) ([37de686](https://github.com/gentrace/gentrace-node/commit/37de6865ba959d5f2c0cf4959e76add8ac90d208))
+* Refactor attributes into constants ([#550](https://github.com/gentrace/gentrace-node/issues/550)) ([6a7e8d4](https://github.com/gentrace/gentrace-node/commit/6a7e8d41cace89a59691b26ee17e112b69152a43))
+* update Jest config to transform yoctocolors package ([5a0323b](https://github.com/gentrace/gentrace-node/commit/5a0323b2f137afd678fb1b0fbaf07fdfe914b2a4))
+* Update package manager instructions in README ([#533](https://github.com/gentrace/gentrace-node/issues/533)) ([c008abd](https://github.com/gentrace/gentrace-node/commit/c008abd83f343ffa5b80dbf7f4964935f3116697))
+* **utils:** fix grammar in OpenTelemetry warning ([#609](https://github.com/gentrace/gentrace-node/issues/609)) ([9ec1f8f](https://github.com/gentrace/gentrace-node/commit/9ec1f8fa8c8980df5d5fb7f0db7595e5921fd8f4))
+* Widen OTEL version range ([#536](https://github.com/gentrace/gentrace-node/issues/536)) ([64cdf97](https://github.com/gentrace/gentrace-node/commit/64cdf97f1b3d04e26e9cb883a4f16940cc4488d0))
+
+
+### Chores
+
+* add evaluation dataset example ([#589](https://github.com/gentrace/gentrace-node/issues/589)) ([#589](https://github.com/gentrace/gentrace-node/issues/589)) ([e021576](https://github.com/gentrace/gentrace-node/commit/e021576d556b8ec33637c0c157ebce64f827d85b))
+* Add interaction name for simplicity ([#551](https://github.com/gentrace/gentrace-node/issues/551)) ([a866e5a](https://github.com/gentrace/gentrace-node/commit/a866e5a038c786a8619ff91438e42c98daa3e4e6))
+* Detail `traced()` in the docs ([#552](https://github.com/gentrace/gentrace-node/issues/552)) ([3bf57ca](https://github.com/gentrace/gentrace-node/commit/3bf57ca0072778c9f14c7eabdbcbfed53b8dca5b))
+* improve docs ([#602](https://github.com/gentrace/gentrace-node/issues/602)) ([1bec8ed](https://github.com/gentrace/gentrace-node/commit/1bec8ed45958fc36f42972df82c2d86a2faeb9ef))
+* Remove test_case_name attribute ([#548](https://github.com/gentrace/gentrace-node/issues/548)) ([29d01e7](https://github.com/gentrace/gentrace-node/commit/29d01e7d89d568014b524a8502a531cad9ed7a97))
+* Rename to evalOnce() and evalDataset() ([#549](https://github.com/gentrace/gentrace-node/issues/549)) ([8301950](https://github.com/gentrace/gentrace-node/commit/8301950c4219c6b70f7ab774dacc9cccd6995f42))
+* Update OpenTelemetry SDK setup ([#568](https://github.com/gentrace/gentrace-node/issues/568)) ([ef51abd](https://github.com/gentrace/gentrace-node/commit/ef51abde3a637c6e5517d221042a3a021519d922))
+* Update README.md ([86a8888](https://github.com/gentrace/gentrace-node/commit/86a8888d6f024f8060d96c99fe625935f51eb7ae))
+
 ## 0.10.0 (2025-07-15)
 
 Full Changelog: [v0.9.0...v0.10.0](https://github.com/gentrace/gentrace-node/compare/v0.9.0...v0.10.0)
