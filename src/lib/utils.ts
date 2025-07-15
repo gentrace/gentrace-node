@@ -202,7 +202,7 @@ function displayOtelWarning(): void {
 
     const warningMessage = `
 OpenTelemetry SDK does not appear to be configured. This means that Gentrace features
-like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
+like interaction(), evalOnce(), traced() and evalDataset() will not record any data to the
 Gentrace UI.
 
 Learn more: https://next.gentrace.ai/docs/sdk-reference/errors#gt_otelnotconfigurederror
