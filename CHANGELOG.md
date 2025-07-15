@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0 (2025-07-15)
+
+Full Changelog: [v0.9.0...v0.10.0](https://github.com/gentrace/gentrace-node/compare/v0.9.0...v0.10.0)
+
+### Features
+
+* **eval-dataset:** support plain array as dataset ([#606](https://github.com/gentrace/gentrace-node/issues/606)) ([698e56b](https://github.com/gentrace/gentrace-node/commit/698e56baa051ae2e5d39cb6afb58e4ff5ba5c33c))
+
 ## 0.9.0 (2025-07-08)
 
 Full Changelog: [v0.8.0...v0.9.0](https://github.com/gentrace/gentrace-node/compare/v0.8.0...v0.9.0)
