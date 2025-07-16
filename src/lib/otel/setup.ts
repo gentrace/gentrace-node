@@ -34,7 +34,7 @@ export type { SetupConfig };
  *
  * @example
  * ```typescript
- * import { init, setup, GentraceSampler } from '@gentrace/core';
+ * import { init, setup, GentraceSampler } from 'gentrace';
  *
  * // First, initialize Gentrace
  * init({

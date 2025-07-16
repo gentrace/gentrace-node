@@ -38,7 +38,7 @@ export interface InitOptions extends ClientOptions {
  * @param {InitOptions} [options={}] - Configuration options.
  * @example
  * ```typescript
- * import { init, GentraceSampler } from '@gentrace/core';
+ * import { init, GentraceSampler } from 'gentrace';
  *
  * // Simple usage - automatically configures OpenTelemetry
  * await init({
