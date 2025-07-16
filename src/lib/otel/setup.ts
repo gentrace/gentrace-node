@@ -14,9 +14,13 @@ import * as resources from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { setGlobalErrorHandler } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { GentraceWarnings } from '../warnings';
 
 // Re-export SetupConfig for backwards compatibility
 export type { SetupConfig };
+
+// Flag to track if the OpenTelemetry global error warning has been issued
+let _otelGlobalErrorWarningIssued = false;
 
 /**
  * Sets up OpenTelemetry with Gentrace configuration.
@@ -65,8 +69,8 @@ export function setup(config: SetupConfig = {}) {
   // Check if init() has been called
   const client = _getClient();
 
-  // Check if the client has been properly initialized and init() was called
-  if (!_isClientProperlyInitialized() || !_isGentraceInitialized()) {
+  // Check if init() was called first
+  if (!_isGentraceInitialized()) {
     const errorTitle = chalk.red.bold('⚠ Gentrace Initialization Error');
 
     const errorMessage = `
@@ -115,8 +119,23 @@ setup();`;
     throw new Error('Gentrace must be initialized before calling setup().');
   }
 
+  // Check if API key is missing or invalid
+  if (!_isClientProperlyInitialized()) {
+    const warning = GentraceWarnings.MissingApiKeyError();
+    warning.display();
+    throw new Error('Gentrace API key is missing or invalid.');
+  }
+
   // Set a custom error handler for OpenTelemetry
   setGlobalErrorHandler((error) => {
+    // Display the error warning only once
+    if (!_otelGlobalErrorWarningIssued) {
+      _otelGlobalErrorWarningIssued = true;
+      const warning = GentraceWarnings.OtelGlobalError(error);
+      warning.display();
+    }
+
+    // Always log to the logger if available (even after the first warning)
     _getClient().logger?.error(`OpenTelemetry error:`, error);
   });
 

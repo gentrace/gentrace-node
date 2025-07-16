@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
-import boxen from 'boxen';
 import { trace } from '@opentelemetry/api';
 import { _getOtelSetupConfig } from './init-state';
 import { _getClient } from './client-instance';
+import { GentraceWarnings } from './warnings';
 
 // Convert a string to snake_case
 export function toSnakeCase(str: string): string {
@@ -39,77 +39,34 @@ export function displayPipelineError(
   errorType: 'invalid-format' | 'not-found' | 'unauthorized' | 'unknown',
   error?: any,
 ): void {
-  try {
-    let errorTitle: string;
-    let errorMessage: string;
-    let borderColor: string;
+  let warning;
 
-    switch (errorType) {
-      case 'invalid-format':
-        errorTitle = chalk.red.bold('Gentrace Invalid Pipeline ID');
-        errorMessage = `Pipeline ID '${chalk.yellow(pipelineId)}' is not a valid UUID.
-
-Please verify the pipeline ID matches what's shown in the Gentrace UI.`;
-        borderColor = 'red';
-        break;
-
-      case 'not-found':
-        errorTitle = chalk.red.bold('Gentrace Pipeline Not Found');
-        errorMessage = `Pipeline '${chalk.yellow(pipelineId)}' does not exist or is not accessible.
-
-Please verify the pipeline ID matches what's shown in the Gentrace UI.`;
-        borderColor = 'red';
-        break;
-
-      case 'unauthorized':
-        errorTitle = chalk.red.bold('Gentrace Pipeline Unauthorized');
-        errorMessage = `Access denied to pipeline '${chalk.yellow(pipelineId)}'.
-
-Please check your ${chalk.cyan('GENTRACE_API_KEY')} has the correct permissions.`;
-        borderColor = 'red';
-        break;
-
-      case 'unknown':
-        errorTitle = chalk.red.bold('Gentrace Pipeline Error');
-        errorMessage = `Failed to validate pipeline '${chalk.yellow(pipelineId)}'.
-
-Error: ${chalk.gray(error?.message || 'Unknown error')}`;
-        borderColor = 'red';
-        break;
-    }
-
-    console.error(
-      '\n' +
-        boxen(errorMessage, {
-          title: errorTitle,
-          titleAlignment: 'center',
-          padding: 1,
-          margin: 1,
-          borderStyle: 'round',
-          borderColor,
-        }) +
-        '\n',
-    );
-  } catch (formatError) {
-    // Fallback to simple console error if formatting fails
-    console.error(
-      chalk.red(
-        `Gentrace Pipeline Error: ${
-          errorType === 'invalid-format' ? `Invalid pipeline ID format '${pipelineId}'`
-          : errorType === 'not-found' ? `Pipeline '${pipelineId}' not found`
-          : errorType === 'unauthorized' ? `Unauthorized access to pipeline '${pipelineId}'`
-          : `Failed to validate pipeline '${pipelineId}': ${error?.message || 'Unknown error'}`
-        }`,
-      ),
-    );
+  switch (errorType) {
+    case 'invalid-format':
+      warning = GentraceWarnings.PipelineInvalidError(pipelineId);
+      break;
+    case 'not-found':
+      warning = GentraceWarnings.PipelineNotFoundError(pipelineId);
+      break;
+    case 'unauthorized':
+      warning = GentraceWarnings.PipelineUnauthorizedError(pipelineId);
+      break;
+    case 'unknown':
+      warning = GentraceWarnings.PipelineError(pipelineId, error?.message);
+      break;
   }
+
+  warning.display();
 }
 
 /**
  * Validates that a pipeline ID is accessible with the current API key.
  * Only checks once per pipeline ID to avoid redundant API calls.
  */
-export async function validatePipelineAccess(pipelineId: string): Promise<void> {
+export async function validatePipelineAccess(
+  pipelineId: string,
+  suppressWarnings: boolean = false,
+): Promise<void> {
   // Skip if already validated or invalid
   if (_validatedPipelines.has(pipelineId) || _invalidPipelines.has(pipelineId)) {
     return;
@@ -124,8 +81,8 @@ export async function validatePipelineAccess(pipelineId: string): Promise<void> 
   } catch (error: any) {
     _invalidPipelines.add(pipelineId);
 
-    // Only show warning once per pipeline
-    if (!_pipelineWarningIssued.has(pipelineId)) {
+    // Only show warning once per pipeline (and only if not suppressed)
+    if (!suppressWarnings && !_pipelineWarningIssued.has(pipelineId)) {
       _pipelineWarningIssued.add(pipelineId);
 
       if (error?.status === 404) {
@@ -197,32 +154,21 @@ export function checkOtelConfigAndWarn(): void {
 }
 
 function displayOtelWarning(): void {
+  const warning = GentraceWarnings.OtelNotConfiguredError();
+  warning.display();
+
+  // Show code examples
   try {
-    const warningTitle = chalk.yellow.bold('⚠ Gentrace Configuration Warning [GT_OtelNotConfiguredError]');
-
-    const warningMessage = `
-OpenTelemetry SDK does not appear to be configured. This means that Gentrace features
-like interaction(), evalOnce(), traced() and evalDataset() will not record any data to the
-Gentrace UI.
-
-Learn more: https://next.gentrace.ai/docs/sdk-reference/errors#gt_otelnotconfigurederror
-
-You likely disabled automatic OpenTelemetry setup by passing otelSetup: false to init().
-If so, you can fix this by either:
-
-1. Remove the otelSetup: false option from init() to enable automatic setup:
-`;
-
-    // Create code with PROPER JavaScript indentation
-    const codeWithProperIndent = `import { init } from 'gentrace';
+    // Option 1: Automatic setup
+    const autoSetupCode = `import { init } from 'gentrace';
 
 // Enable automatic OpenTelemetry setup (default behavior)
 init({
   apiKey: process.env.GENTRACE_API_KEY,
-});
+});`;
 
-// 2. Or if you need manual setup, configure OpenTelemetry yourself:
-import { init } from 'gentrace';
+    // Option 2: Manual setup
+    const manualSetupCode = `import { init } from 'gentrace';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
@@ -259,58 +205,39 @@ const sdk = new NodeSDK({
 // Start the SDK
 sdk.start();`;
 
-    // Try syntax highlighting with the properly indented code
-    let highlightedCode;
+    console.log(
+      chalk.green.bold("\n⭐ Option 1: Use Gentrace's automatic OpenTelemetry setup (recommended):\n"),
+    );
+
+    let highlightedAutoCode;
     try {
-      highlightedCode = highlight(codeWithProperIndent, { language: 'javascript', ignoreIllegals: true });
+      highlightedAutoCode = highlight(autoSetupCode, { language: 'javascript', ignoreIllegals: true });
     } catch (error) {
-      // Fallback to cyan if highlighting fails
-      highlightedCode = chalk.cyan(codeWithProperIndent);
+      highlightedAutoCode = chalk.cyan(autoSetupCode);
     }
+    console.log(highlightedAutoCode);
 
-    const fullMessage =
-      warningMessage +
-      '\n' +
-      highlightedCode +
-      '\n\n' +
-      chalk.cyan(
-        "Note: If you haven't set otelSetup: false, this could be a bundling or configuration issue.",
-      ) +
-      '\n';
+    console.log(
+      chalk.gray('\n\nOption 2: If you have otelSetup: false, manually configure OpenTelemetry:\n'),
+    );
 
-    // Use separator lines instead of boxen for easier copying
-    const separator = chalk.yellow('═'.repeat(80));
-    const padding = '  '; // 2 spaces for horizontal padding
+    let highlightedManualCode;
+    try {
+      highlightedManualCode = highlight(manualSetupCode, { language: 'javascript', ignoreIllegals: true });
+    } catch (error) {
+      highlightedManualCode = chalk.cyan(manualSetupCode);
+    }
+    console.log(highlightedManualCode);
 
-    // Add padding to each line of the full message
-    const paddedMessage = fullMessage
-      .split('\n')
-      .map((line) => padding + line)
-      .join('\n');
+    console.log('\n' + chalk.gray('Tip: Copy the code above and add it to your application setup.\n'));
 
-    console.log(`
-${separator}
-${padding}${warningTitle}
-${separator}
-${paddedMessage}
-${separator}
-`);
+    if (!warning.suppressionHint) {
+      console.log(
+        chalk.dim('To suppress this warning: Set suppressWarnings: true in your Gentrace configuration\n'),
+      );
+    }
   } catch (error) {
-    // Fallback to simple console warning if formatting libraries are not available
-    console.warn(`
-⚠ Gentrace Configuration Warning [GT_OtelNotConfiguredError]
-
-OpenTelemetry SDK does not appear to be configured. This means that Gentrace features
-like interaction(), evalOnce(), traced(), and evalDataset() will not record any data to the
-Gentrace UI.
-
-Learn more: https://next.gentrace.ai/docs/sdk-reference/errors#gt_otelnotconfigurederror
-
-You likely disabled automatic OpenTelemetry setup by passing otelSetup: false to init().
-To fix this, either remove the otelSetup: false option or manually configure OpenTelemetry.
-
-If you haven't set otelSetup: false, this could be a bundling or configuration issue.
-`);
+    // Code examples failed to display, but warning was already shown
   }
 }
 
