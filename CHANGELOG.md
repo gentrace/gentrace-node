@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.1 (2025-07-16)
+
+Full Changelog: [v0.11.0...v0.11.1](https://github.com/gentrace/gentrace-node/compare/v0.11.0...v0.11.1)
+
+### Bug Fixes
+
+* Create structured GentraceWarning that encapsulates a lot of the shared logic of issuing warnings ([#605](https://github.com/gentrace/gentrace-node/issues/605)) ([f9045ef](https://github.com/gentrace/gentrace-node/commit/f9045ef2331f5be96f77b916b25b5d0e089198c0))
+
 ## 0.11.0 (2025-07-15)
 
 Full Changelog: [v0.10.0...v0.11.0](https://github.com/gentrace/gentrace-node/compare/v0.10.0...v0.11.0)
