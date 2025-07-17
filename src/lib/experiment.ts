@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { finishExperiment, startExperiment, StartExperimentParams } from './experiment-control';
 import type { Experiment } from '../resources/experiments';
+import { _getClient } from './client-instance';
 
 /**
  * Represents the context for an experiment run. This context is stored in
@@ -43,6 +44,11 @@ export type ExperimentOptions = {
 };
 
 /**
+ * The result of an experiment run.
+ */
+export type ExperimentResult = Experiment & { url: string };
+
+/**
  * Runs an experiment: starts it, executes the callback within an async context
  * containing the experiment ID, and finishes the experiment.
  *
@@ -55,12 +61,12 @@ export async function experiment<T>(
   pipelineId: string,
   callback: () => T | Promise<T>,
   options?: ExperimentOptions,
-): Promise<Experiment> {
+): Promise<Experiment & { url: string }> {
   const metadata = options?.metadata;
   const startParams: StartExperimentParams = metadata ? { pipelineId, metadata } : { pipelineId };
 
-  const experimentObj = await startExperiment(startParams);
-  const experimentId = experimentObj.id;
+  const result = await startExperiment(startParams);
+  const experimentId = result.id;
 
   await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
     await callback();
@@ -68,5 +74,8 @@ export async function experiment<T>(
 
   await finishExperiment({ id: experimentId });
 
-  return experimentObj;
+  const client = _getClient();
+  const url = new URL(client.baseURL);
+  const hostname = `${url.protocol}//${url.host}`;
+  return { ...result, url: `${hostname}${result.resourcePath}` };
 }

@@ -34,7 +34,6 @@ if (!apiKey) {
 init({
   apiKey,
   baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-  otelSetup: true,
 });
 
 async function main() {
@@ -67,9 +66,6 @@ async function main() {
       interaction: instrumentedQueryAi,
     });
   });
-
-  // Wait for spans to flush
-  await new Promise((resolve) => setTimeout(resolve, 2000));
 }
 
 main().catch(console.error);
