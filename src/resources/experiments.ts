@@ -91,6 +91,11 @@ export interface Experiment {
   pipelineId: string;
 
   /**
+   * Resource path to navigate to the experiment
+   */
+  resourcePath: string | null;
+
+  /**
    * Last update timestamp (ISO 8601)
    */
   updatedAt: string;
