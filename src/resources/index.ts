@@ -16,6 +16,7 @@ export {
   type ExperimentUpdateParams,
   type ExperimentListParams,
 } from './experiments';
+export { Organizations, type Organization } from './organizations';
 export {
   Pipelines,
   type CreatePipelineBody,

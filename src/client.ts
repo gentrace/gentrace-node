@@ -33,6 +33,7 @@ import {
   ExperimentUpdateParams,
   Experiments,
 } from './resources/experiments';
+import { Organization, Organizations } from './resources/organizations';
 import {
   CreatePipelineBody,
   Pipeline,
@@ -732,11 +733,13 @@ export class Gentrace {
 
   pipelines: API.Pipelines = new API.Pipelines(this);
   experiments: API.Experiments = new API.Experiments(this);
+  organizations: API.Organizations = new API.Organizations(this);
   datasets: API.Datasets = new API.Datasets(this);
   testCases: API.TestCases = new API.TestCases(this);
 }
 Gentrace.Pipelines = Pipelines;
 Gentrace.Experiments = Experiments;
+Gentrace.Organizations = Organizations;
 Gentrace.Datasets = Datasets;
 Gentrace.TestCases = TestCases;
 export declare namespace Gentrace {
@@ -760,6 +763,8 @@ export declare namespace Gentrace {
     type ExperimentUpdateParams as ExperimentUpdateParams,
     type ExperimentListParams as ExperimentListParams,
   };
+
+  export { Organizations as Organizations, type Organization as Organization };
 
   export {
     Datasets as Datasets,
