@@ -35,7 +35,7 @@ Types:
 
 Methods:
 
-- <code title="get /v4/experiments/{id}">client.organizations.<a href="./src/resources/organizations.ts">retrieve</a>(id) -> Experiment</code>
+- <code title="get /v4/organizations/{id}">client.organizations.<a href="./src/resources/organizations.ts">retrieve</a>(id) -> Organization</code>
 
 # Datasets
 
