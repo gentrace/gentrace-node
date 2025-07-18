@@ -27,6 +27,16 @@ Methods:
 - <code title="post /v4/experiments/{id}">client.experiments.<a href="./src/resources/experiments.ts">update</a>(id, { ...params }) -> Experiment</code>
 - <code title="get /v4/experiments">client.experiments.<a href="./src/resources/experiments.ts">list</a>({ ...params }) -> ExperimentList</code>
 
+# Organizations
+
+Types:
+
+- <code><a href="./src/resources/organizations.ts">Organization</a></code>
+
+Methods:
+
+- <code title="get /v4/experiments/{id}">client.organizations.<a href="./src/resources/organizations.ts">retrieve</a>(id) -> Experiment</code>
+
 # Datasets
 
 Types:
