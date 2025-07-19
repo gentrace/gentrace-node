@@ -1,5 +1,5 @@
 import { ClientOptions } from '../client';
-import { Datasets, Experiments, Pipelines, TestCases } from '../resources';
+import { Datasets, Experiments, Organizations, Pipelines, TestCases } from '../resources';
 import { _getClient, _setClient } from './client-instance';
 import type { SetupConfig } from './otel/types';
 import { setup } from './otel/setup';
@@ -38,7 +38,7 @@ export interface InitOptions extends ClientOptions {
  * @param {InitOptions} [options={}] - Configuration options.
  * @example
  * ```typescript
- * import { init, GentraceSampler } from '@gentrace/core';
+ * import { init, GentraceSampler } from 'gentrace';
  *
  * // Simple usage - automatically configures OpenTelemetry
  * await init({
@@ -97,6 +97,7 @@ let pipelines: Pipelines = client.pipelines;
 let experiments: Experiments = client.experiments;
 let datasets: Datasets = client.datasets;
 let testCases: TestCases = client.testCases;
+let organizations: Organizations = client.organizations;
 
 /**
  * Updates the exported namespace variables to point to the current client's namespaces.
@@ -108,7 +109,8 @@ function _updateExports() {
   experiments = client.experiments;
   datasets = client.datasets;
   testCases = client.testCases;
+  organizations = client.organizations;
 }
 
 // Export the module-scope variables. Importers get live bindings to these.
-export { datasets, experiments, pipelines, testCases };
+export { datasets, experiments, pipelines, testCases, organizations };

@@ -99,12 +99,12 @@ export interface TestCase {
   /**
    * Expected output data for the test case
    */
-  expectedOutputs: Record<string, unknown> | null;
+  expectedOutputs: { [key: string]: unknown } | null;
 
   /**
    * Input data for the test case
    */
-  inputs: Record<string, unknown>;
+  inputs: { [key: string]: unknown };
 
   /**
    * Test Case name
@@ -135,7 +135,7 @@ export interface TestCaseCreateParams {
   /**
    * Test case inputs as a JSON object
    */
-  inputs: Record<string, unknown>;
+  inputs: { [key: string]: unknown };
 
   /**
    * Test case name
@@ -145,7 +145,7 @@ export interface TestCaseCreateParams {
   /**
    * Optional expected outputs as a JSON object
    */
-  expectedOutputs?: Record<string, unknown>;
+  expectedOutputs?: { [key: string]: unknown };
 }
 
 export interface TestCaseListParams {
