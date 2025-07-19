@@ -87,6 +87,7 @@ export function interaction<F extends (...args: any[]) => any>(
     if (!isOtelConfigured() && !_isGentraceInitialized()) {
       // Check if API key is available in environment variables
       const apiKey = process.env['GENTRACE_API_KEY'];
+
       if (apiKey) {
         // Show auto-initialization warning once (unless suppressed)
         if (!suppressWarnings && !_autoInitWarningIssued) {

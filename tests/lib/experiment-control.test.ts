@@ -67,10 +67,10 @@ describe('experiment-control', () => {
       });
     });
 
-    it('should return the experiment ID on successful creation', async () => {
+    it('should return the experiment object on successful creation', async () => {
       mockGentraceClient.experiments.create.mockResolvedValue(mockExperiment);
-      const experimentId = await experimentControlLib.startExperiment(params);
-      expect(experimentId).toBe(mockExperiment.id);
+      const experiment = await experimentControlLib.startExperiment(params);
+      expect(experiment).toEqual(mockExperiment);
     });
 
     it('should register shutdown listeners for SIGINT and SIGTERM', async () => {
