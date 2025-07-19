@@ -1,4 +1,4 @@
-export { init, type InitOptions, testCases, datasets, experiments, pipelines } from './init';
+export { init, type InitOptions, testCases, datasets, experiments, pipelines, organizations } from './init';
 export { setup } from './otel/setup'; // Still exported for advanced use cases
 export { experiment } from './experiment';
 export {
