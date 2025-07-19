@@ -53,7 +53,7 @@ async function main() {
   );
 
   // Run an experiment with a simple evaluation
-  await experiment(pipelineId, async () => {
+  const result = await experiment(pipelineId, async () => {
     await evalDataset({
       // Fetch test cases from your Gentrace dataset
       data: async () => {
@@ -66,6 +66,8 @@ async function main() {
       interaction: instrumentedQueryAi,
     });
   });
+
+  console.log('Experiment URL:', result.url);
 }
 
 main().catch(console.error);
