@@ -37,7 +37,10 @@ describe('experiment', () => {
 
     const result = await experiment(mockPipelineId, callback, options);
 
-    expect(result).toBe('Callback Result');
+    expect(result).toMatchObject({
+      id: mockExperimentId,
+      url: expect.stringContaining(mockExperimentId),
+    });
     expect(callback).toHaveBeenCalledTimes(1);
 
     expect(runSpy).toHaveBeenCalledWith(

@@ -18,6 +18,12 @@ export const handlers = [
     return HttpResponse.json(
       {
         id: MOCKED_EXPERIMENT_ID,
+        createdAt: new Date().toISOString(),
+        metadata: null,
+        name: null,
+        pipelineId: 'pipe-123',
+        resourcePath: '/experiments/exp-msw-123',
+        updatedAt: new Date().toISOString(),
       },
       { status: 200 },
     );
