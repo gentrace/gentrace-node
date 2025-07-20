@@ -103,11 +103,11 @@ async function main() {
     },
   );
 
-  // Example 2: Function calling with tool messages
-  const askWithTools = interaction(
-    'ask-with-tools',
-    async (question: string) => {
-      return await tracer.startActiveSpan('openai-function-calling', async (span) => {
+  // Example 2: Function calling with real API invocation
+  const simulateToolCall = interaction(
+    'function-calling-with-api',
+    async () => {
+      return await tracer.startActiveSpan('openai-function-calling-simulation', async (span) => {
         try {
           span.setAttributes({
             'gen_ai.system': 'openai',
@@ -116,100 +116,82 @@ async function main() {
             'service.name': 'genai-semantic-example',
           });
 
-          const tools: OpenAI.Chat.ChatCompletionTool[] = [
-            {
-              type: 'function',
-              function: {
-                name: 'get_weather',
-                description: 'Get the current weather in a location',
-                parameters: {
-                  type: 'object',
-                  properties: {
-                    location: { type: 'string', description: 'The city and state' },
-                    unit: { type: 'string', enum: ['celsius', 'fahrenheit'] },
-                  },
-                  required: ['location'],
+          // Simulate a conversation that's already in progress with tool usage
+          const userQuestion = "What's the weather like in San Francisco?";
+
+          // Previous assistant response that decided to use a tool
+          const assistantToolCallMessage = {
+            content: '',
+            tool_calls: [
+              {
+                id: 'call_abc123',
+                type: 'function' as const,
+                function: {
+                  name: 'get_weather',
+                  arguments: '{"location": "San Francisco, CA", "unit": "fahrenheit"}',
                 },
               },
-            },
-          ];
+            ],
+          };
 
-          // Add user message
+          // Tool execution result
+          const toolResponse = { temperature: 72, unit: 'fahrenheit', conditions: 'sunny' };
+          const toolResponseString = JSON.stringify(toolResponse);
+
+          // Add all input messages to represent the conversation history
           span.addEvent('gen_ai.user.message', {
             role: 'user',
-            content: question,
+            content: userQuestion,
           });
+
+          span.addEvent('gen_ai.assistant.message', {
+            role: 'assistant',
+            content: assistantToolCallMessage.content,
+            tool_calls: JSON.stringify(assistantToolCallMessage.tool_calls),
+          });
+
+          span.addEvent('gen_ai.tool.message', {
+            role: 'tool',
+            content: toolResponseString,
+            name: 'get_weather',
+          });
+
+          // Make the actual OpenAI API call with the full conversation
+          console.log('Making OpenAI API call with tool context (requesting 2 choices)...');
 
           const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
-            messages: [{ role: 'user', content: question }],
-            tools,
-            tool_choice: 'auto',
+            messages: [
+              { role: 'user', content: userQuestion },
+              {
+                role: 'assistant',
+                content: assistantToolCallMessage.content,
+                tool_calls: assistantToolCallMessage.tool_calls,
+              },
+              {
+                role: 'tool',
+                content: toolResponseString,
+                tool_call_id: 'call_abc123',
+              },
+            ],
+            n: 2, // Request 2 different choices
+            temperature: 1, // Add some variation between choices
           });
 
-          const choice = completion.choices[0];
-
-          console.log('choice', choice);
-
-          if (choice?.message.tool_calls) {
-            // Add choice event with tool calls
+          // Dynamically add choice events based on the API response
+          completion.choices.forEach((choice, index) => {
             span.addEvent('gen_ai.choice', {
-              index: 0,
+              index: index,
               content: choice.message.content || '',
               role: 'assistant',
-              finish_reason: choice.finish_reason || 'tool_calls',
-              tool_calls: JSON.stringify(choice.message.tool_calls),
+              finish_reason: choice.finish_reason || 'stop',
             });
-
-            // Simulate tool response
-            const toolResponse = { temperature: 72, unit: 'fahrenheit', conditions: 'sunny' };
-            const toolResponseString = JSON.stringify(toolResponse);
-
-            // Add tool message event
-            span.addEvent('gen_ai.tool.message', {
-              role: 'tool',
-              content: toolResponseString,
-              name: 'get_weather',
-            });
-
-            // Get final response with tool result
-            const finalCompletion = await openai.chat.completions.create({
-              model: 'gpt-4o-mini',
-              messages: [
-                { role: 'user', content: question },
-                choice.message,
-                {
-                  role: 'tool',
-                  content: toolResponseString,
-                  tool_call_id: choice.message.tool_calls![0]!.id,
-                },
-              ],
-            });
-
-            const finalMessage = finalCompletion.choices[0]?.message.content || '';
-
-            // Add final response as choice event
-            span.addEvent('gen_ai.choice', {
-              index: 0,
-              content: finalMessage,
-              role: 'assistant',
-              finish_reason: finalCompletion.choices[0]?.finish_reason || 'stop',
-            });
-
-            span.setStatus({ code: SpanStatusCode.OK });
-            return finalMessage;
-          }
-
-          const assistantMessage = choice?.message.content || '';
-          span.addEvent('gen_ai.choice', {
-            index: 0,
-            content: assistantMessage,
-            role: 'assistant',
-            finish_reason: choice?.finish_reason || 'stop',
           });
 
           span.setStatus({ code: SpanStatusCode.OK });
-          return assistantMessage;
+
+          // Return the first choice as the primary response
+          return completion.choices[0]?.message.content || '';
         } catch (error) {
           span.recordException(error as Error);
           span.setStatus({ code: SpanStatusCode.ERROR, message: (error as Error).message });
@@ -232,12 +214,11 @@ async function main() {
   const answer = await askQuestion(question);
   console.log(`Answer: ${answer}`);
 
-  // Example 2: Function calling
-  console.log('\n=== Example 2: Function Calling ===');
-  const weatherQuestion = "What's the weather like in San Francisco?";
-  console.log(`Question: ${weatherQuestion}`);
+  // Example 2: Simulated function calling
+  console.log('\n=== Example 2: Simulated Function Calling ===');
+  console.log('Simulating a conversation with tool usage...');
 
-  const weatherAnswer = await askWithTools(weatherQuestion);
+  const weatherAnswer = await simulateToolCall();
   console.log(`Answer: ${weatherAnswer}`);
 
   // Wait for spans to flush
