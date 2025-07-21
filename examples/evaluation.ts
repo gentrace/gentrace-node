@@ -29,7 +29,7 @@ async function main() {
   }
 
   // Run an experiment with a simple evaluation
-  await experiment(pipelineId, async () => {
+  const result = await experiment(pipelineId, async () => {
     // Evaluate a simple function
     await evalOnce('math-addition', async () => {
       const result = 2 + 2;
@@ -45,6 +45,8 @@ async function main() {
       return result;
     });
   });
+
+  console.log('Experiment URL: ' + result.url);
 
   // Wait for spans to flush
   await new Promise((resolve) => setTimeout(resolve, 2000));

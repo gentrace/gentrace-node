@@ -7,28 +7,26 @@
  * 1. Set environment variables:
  *    export GENTRACE_API_KEY="your-api-key"
  *    export GENTRACE_PIPELINE_ID="your-pipeline-id"  # required
+ *    export GENTRACE_DATASET_ID="your-dataset-id"  # required
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
  *
  * 2. Run the example:
  *    yarn example examples/evaluation-dataset.ts
  */
 
-import { testCases } from 'gentrace/lib/init';
 import z from 'zod';
-import { evalDataset, experiment, init, interaction } from '../src';
-
-async function queryAi({ query }: { query: string }): Promise<string | null> {
-  console.log(`Received query: ${query}`);
-  // Simulate an AI call with a fake response
-  await new Promise((resolve) => setTimeout(resolve, 50)); // Simulate network delay
-  const fakeResponse = `This is a fake explanation for "${query}".`;
-  return fakeResponse;
-}
+import { evalDataset, experiment, init, testCases } from 'gentrace';
+import { OpenAI } from 'openai';
 
 // Initialize Gentrace with automatic OpenTelemetry setup
 const apiKey = process.env['GENTRACE_API_KEY'];
 if (!apiKey) {
   throw new Error('GENTRACE_API_KEY environment variable must be set');
+}
+
+const pipelineId = process.env['GENTRACE_PIPELINE_ID'];
+if (!pipelineId) {
+  throw new Error('GENTRACE_PIPELINE_ID environment variable must be set');
 }
 
 init({
@@ -37,7 +35,6 @@ init({
 });
 
 async function main() {
-  const pipelineId = process.env['GENTRACE_PIPELINE_ID'];
   const datasetId = process.env['GENTRACE_DATASET_ID'];
 
   if (!pipelineId || !datasetId) {
@@ -46,24 +43,30 @@ async function main() {
 
   const InputSchema = z.object({ query: z.string() });
 
-  const instrumentedQueryAi = interaction(
-    'Query AI', // Explicitly set the name of the interaction
-    queryAi, // Pass the original function
-    { pipelineId },
-  );
+  const openai = new OpenAI({
+    apiKey: process.env['OPENAI_API_KEY'],
+  });
 
   // Run an experiment with a simple evaluation
   const result = await experiment(pipelineId, async () => {
     await evalDataset({
       // Fetch test cases from your Gentrace dataset
       data: async () => {
-        const testCaseList = await testCases.list({ datasetId });
-        return testCaseList.data;
+        const testCasesList = await testCases.list({ datasetId });
+        return testCasesList.data;
       },
       // Provide the schema to validate the inputs for each test case in the dataset
       schema: InputSchema,
-      // Provide the instrumented function to run against each test case
-      interaction: instrumentedQueryAi,
+      interaction: async (testCase) => {
+        const { query } = testCase.inputs;
+
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4.1-nano',
+          messages: [{ role: 'user', content: query }],
+        });
+
+        return completion.choices[0]?.message?.content || 'No response';
+      },
     });
   });
 

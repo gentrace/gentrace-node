@@ -8,7 +8,7 @@ export {
   FinishExperimentParams,
 } from './experiment-control';
 export { interaction, InteractionOptions } from './interaction';
-export { evalDataset as evalDataset } from './eval-dataset';
+export { evalDataset, type TestInput } from './eval-dataset';
 export { traced, TracedConfig } from './traced';
 export { evalOnce } from './eval-once';
 export * from './otel';
