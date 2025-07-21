@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import { trace } from '@opentelemetry/api';
+import { isDeepStrictEqual } from 'util';
 import { _getOtelSetupConfig } from './init-state';
 import { _getClient } from './client-instance';
 import { GentraceWarnings } from './warnings';
@@ -318,7 +319,7 @@ export function generateConfigDiff(previousConfig: any, currentConfig: any): str
       // Removed
       diffLines.push(`  ${key}:`);
       diffLines.push(`    - ${formatValue(displayPrev)}`);
-    } else if (!deepEqual(prevValue, currValue)) {
+    } else if (!isDeepStrictEqual(prevValue, currValue)) {
       // Changed
       diffLines.push(`  ${key}:`);
       diffLines.push(`    - ${formatValue(displayPrev)} → ${formatValue(displayCurr)}`);
@@ -372,42 +373,4 @@ export function maskSensitiveValue(key: string, value: any): any {
   }
 
   return value;
-}
-
-/**
- * Deep equality check for configuration values
- */
-function deepEqual(a: any, b: any): boolean {
-  if (a === b) return true;
-
-  if (a === null || b === null) return false;
-  if (a === undefined || b === undefined) return false;
-
-  if (typeof a !== typeof b) return false;
-
-  if (typeof a === 'object') {
-    if (Array.isArray(a) && Array.isArray(b)) {
-      if (a.length !== b.length) return false;
-      for (let i = 0; i < a.length; i++) {
-        if (!deepEqual(a[i], b[i])) return false;
-      }
-      return true;
-    }
-
-    if (Array.isArray(a) || Array.isArray(b)) return false;
-
-    const aKeys = Object.keys(a);
-    const bKeys = Object.keys(b);
-
-    if (aKeys.length !== bKeys.length) return false;
-
-    for (const key of aKeys) {
-      if (!bKeys.includes(key)) return false;
-      if (!deepEqual(a[key], b[key])) return false;
-    }
-
-    return true;
-  }
-
-  return false;
 }
