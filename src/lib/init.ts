@@ -8,8 +8,12 @@ import {
   _setOtelSetupConfig,
   _isGentraceInitialized,
   _getOtelSetupConfig,
+  _getInitHistory,
+  _addInitCall,
 } from './init-state';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import { generateConfigDiff } from './utils';
+import { GentraceWarnings } from './warnings';
 
 // Re-export for backwards compatibility
 export { _isGentraceInitialized, _getOtelSetupConfig };
@@ -65,6 +69,33 @@ export interface InitOptions extends ClientOptions {
  * ```
  */
 export function init(options: InitOptions = {}): NodeSDK | void {
+  // Check for multiple initializations
+  const initHistory = _getInitHistory();
+  if (initHistory.length > 0) {
+    const previousCall = initHistory[initHistory.length - 1];
+    if (!previousCall) {
+      throw new Error('Previous init call not found in history');
+    }
+    const diffLines = generateConfigDiff(previousCall.options, options);
+
+    // Only show warning if there are actual changes
+    if (diffLines.length > 0) {
+      const warning = GentraceWarnings.MultipleInitWarning({
+        callNumber: initHistory.length + 1,
+        diffLines,
+        initHistory: initHistory.map((call) => ({
+          timestamp: call.timestamp,
+          callNumber: call.callNumber,
+        })),
+      });
+
+      warning.display();
+    }
+  }
+
+  // Store this init call in history
+  _addInitCall(options);
+
   // Extract OpenTelemetry config from options
   const { otelSetup = true, ...clientOptions } = options;
 

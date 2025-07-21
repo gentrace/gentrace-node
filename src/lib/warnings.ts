@@ -223,4 +223,30 @@ export const GentraceWarnings = {
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-missingapikeyerror',
       borderColor: 'red',
     }),
+
+  MultipleInitWarning: (params: {
+    callNumber: number;
+    diffLines: string[];
+    initHistory: Array<{ timestamp: Date; callNumber: number }>;
+  }) =>
+    new GentraceWarning({
+      warningId: 'GT_MultipleInitWarning',
+      title: 'Multiple Initialization Detected',
+      message: [
+        `Gentrace init() has been called ${params.callNumber} times. The new configuration is`,
+        'overriding the previous one.',
+        '',
+        'Configuration changes:',
+        '',
+        ...params.diffLines,
+        '',
+        'This may cause unexpected behavior if different parts of your',
+        'application expect different configurations.',
+        '',
+        'Previous init() calls:',
+        ...params.initHistory.map((call) => `  - Call #${call.callNumber}: ${call.timestamp.toISOString()}`),
+      ],
+      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-multipleinitwarning',
+      suppressionHint: 'To suppress this warning: init({ ..., suppressWarnings: true })',
+    }),
 };
