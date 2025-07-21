@@ -73,7 +73,7 @@ describe('Multiple init() warning tests', () => {
       init({
         apiKey: 'test-key-123',
         otelSetup: false,
-        baseURL: 'https://api.gentrace.ai',
+        baseURL: 'https://gentrace.ai/api',
         timeout: 5000,
       });
 
@@ -81,7 +81,7 @@ describe('Multiple init() warning tests', () => {
 
       // Check for added options
       expect(warningOutput).toContain('baseURL:');
-      expect(warningOutput).toContain('+ "https://api.gentrace.ai"');
+      expect(warningOutput).toContain('+ "https://gentrace.ai/api"');
       expect(warningOutput).toContain('timeout:');
       expect(warningOutput).toContain('+ 5000');
     });
@@ -90,7 +90,7 @@ describe('Multiple init() warning tests', () => {
       init({
         apiKey: 'test-key-123',
         otelSetup: false,
-        baseURL: 'https://api.gentrace.ai',
+        baseURL: 'https://gentrace.ai/api',
       });
       init({ apiKey: 'test-key-123', otelSetup: false });
 
@@ -98,7 +98,7 @@ describe('Multiple init() warning tests', () => {
 
       // Check for removed options
       expect(warningOutput).toContain('baseURL:');
-      expect(warningOutput).toContain('- "https://api.gentrace.ai"');
+      expect(warningOutput).toContain('- "https://gentrace.ai/api"');
     });
 
     test('should show correct diff for changed boolean values', () => {
