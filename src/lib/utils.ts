@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import { trace } from '@opentelemetry/api';
+import { isDeepStrictEqual } from 'util';
 import { _getOtelSetupConfig } from './init-state';
 import { _getClient } from './client-instance';
 import { GentraceWarnings } from './warnings';
@@ -290,4 +291,86 @@ export async function runWithConcurrency<T>(
   await Promise.all(executing);
 
   return results;
+}
+
+/**
+ * Generates a diff between two configuration objects
+ * @param previousConfig The previous configuration
+ * @param currentConfig The current configuration
+ * @returns Array of formatted diff lines
+ */
+export function generateConfigDiff(previousConfig: any, currentConfig: any): string[] {
+  const diffLines: string[] = [];
+  const allKeys = new Set([...Object.keys(previousConfig || {}), ...Object.keys(currentConfig || {})]);
+
+  for (const key of allKeys) {
+    const prevValue = previousConfig?.[key];
+    const currValue = currentConfig?.[key];
+
+    // Handle sensitive keys generically
+    const displayPrev = maskSensitiveValue(key, prevValue);
+    const displayCurr = maskSensitiveValue(key, currValue);
+
+    if (prevValue === undefined && currValue !== undefined) {
+      // Added
+      diffLines.push(`  ${key}:`);
+      diffLines.push(`    + ${formatValue(displayCurr)}`);
+    } else if (prevValue !== undefined && currValue === undefined) {
+      // Removed
+      diffLines.push(`  ${key}:`);
+      diffLines.push(`    - ${formatValue(displayPrev)}`);
+    } else if (!isDeepStrictEqual(prevValue, currValue)) {
+      // Changed
+      diffLines.push(`  ${key}:`);
+      diffLines.push(`    - ${formatValue(displayPrev)} → ${formatValue(displayCurr)}`);
+    }
+  }
+
+  return diffLines;
+}
+
+/**
+ * Formats a value for display in the diff
+ */
+function formatValue(value: any): string {
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+  if (typeof value === 'string') return `"${value}"`;
+  if (typeof value === 'boolean' || typeof value === 'number') return String(value);
+  if (typeof value === 'function') return '<function>';
+  if (typeof value === 'object') {
+    // For objects, show a summary
+    if (Array.isArray(value)) return `[Array(${value.length})]`;
+    const keys = Object.keys(value);
+    if (keys.length === 0) return '{}';
+    if (keys.length <= 3) return `{ ${keys.join(', ')} }`;
+    return `{ ${keys.slice(0, 3).join(', ')}, ... }`;
+  }
+  return String(value);
+}
+
+/**
+ * Masks sensitive values based on key patterns
+ */
+export function maskSensitiveValue(key: string, value: any): any {
+  const sensitivePatterns = [
+    /key/i,
+    /token/i,
+    /secret/i,
+    /password/i,
+    /auth/i,
+    /credential/i,
+    /apikey/i,
+    /api_key/i,
+  ];
+
+  if (typeof value === 'string' && sensitivePatterns.some((pattern) => pattern.test(key))) {
+    // Show first 6 chars and mask the rest
+    if (value.length > 10) {
+      return `${value.substring(0, 6)}***`;
+    }
+    return '***';
+  }
+
+  return value;
 }
