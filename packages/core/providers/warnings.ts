@@ -49,7 +49,7 @@ export class DeprecationWarning {
 export const GentraceDeprecationWarning = () =>
   new DeprecationWarning("PACKAGE DEPRECATED", [
     chalk.red.bold(
-      "This package (@gentrace/core) is deprecated and no longer maintained.",
+      "This package (@gentrace/core) is deprecated. We will still be maintaining fixes for this package but encourage users to move to our next-generation library.",
     ),
     "",
     "You need to install the new package:",
