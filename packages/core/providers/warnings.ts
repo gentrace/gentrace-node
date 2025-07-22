@@ -49,16 +49,12 @@ export class DeprecationWarning {
 export const GentraceDeprecationWarning = () =>
   new DeprecationWarning("PACKAGE DEPRECATED", [
     chalk.red.bold(
-      "This package (@gentrace/core) is deprecated. We will still be maintaining fixes for this package but encourage users to move to our next-generation library.",
+      "@gentrace/core is deprecated but will continue to receive fixes",
     ),
     "",
-    "You need to install the new package:",
-    "",
+    "Install the new package:",
     chalk.green("  npm install gentrace"),
     "",
-    "The new package provides improved functionality and continued support.",
-    "Please migrate to the new package as soon as possible.",
-    "",
-    "For more information about using the new package, visit:",
+    "Learn more:",
     chalk.cyan("  https://gentrace.ai/docs"),
   ]);
