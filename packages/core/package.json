@@ -27,6 +27,8 @@
     "@web-std/file": "^3.0.3",
     "acorn": "^8.11.3",
     "axios": "^1.4.0",
+    "boxen": "^5.1.2",
+    "chalk": "^4.1.2",
     "form-data": "^4.0.0",
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",

@@ -34,3 +34,4 @@ export {
 } from "./models";
 
 export * from "./providers/index";
+export { interaction } from "./providers/interaction";
