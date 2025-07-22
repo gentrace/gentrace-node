@@ -58,4 +58,7 @@ export const GentraceDeprecationWarning = () =>
     "",
     "The new package provides improved functionality and continued support.",
     "Please migrate to the new package as soon as possible.",
+    "",
+    "For more information about using the new package, visit:",
+    chalk.cyan("  https://gentrace.ai/docs"),
   ]);
