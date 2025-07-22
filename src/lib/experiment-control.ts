@@ -1,4 +1,5 @@
 import { _getClient } from './client-instance';
+import type { Experiment } from '../resources/experiments';
 
 export type ExperimentMetadata = Record<string, unknown>;
 
@@ -26,9 +27,9 @@ export type StartExperimentParams = {
  * @param {StartExperimentParams} params - The parameters for starting the experiment.
  * @param {string} params.pipelineId - The ID of the pipeline the experiment belongs to.
  * @param {ExperimentMetadata} [params.metadata] - Optional metadata to associate with the experiment run.
- * @returns A promise that resolves with the unique ID of the created experiment run.
+ * @returns A promise that resolves with the created experiment object.
  */
-export async function startExperiment({ pipelineId, metadata }: StartExperimentParams): Promise<string> {
+export async function startExperiment({ pipelineId, metadata }: StartExperimentParams): Promise<Experiment> {
   const client = _getClient();
 
   const experiment = await client.experiments.create({
@@ -56,7 +57,7 @@ export async function startExperiment({ pipelineId, metadata }: StartExperimentP
   process.on('SIGTERM', shutdownListener);
 
   client.logger?.info(`Started experiment ${experimentId} for pipeline ${pipelineId}`);
-  return experimentId;
+  return experiment;
 }
 
 /**

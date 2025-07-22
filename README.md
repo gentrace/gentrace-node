@@ -1,6 +1,6 @@
 # Gentrace Node.js SDK
 
-[![NPM version](https://img.shields.io/npm/v/gentrace.svg)](https://npmjs.org/package/gentrace) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/gentrace)
+[![NPM version](<https://img.shields.io/npm/v/gentrace.svg?label=npm%20(stable)>)](https://npmjs.org/package/gentrace) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/gentrace)
 
 This library provides tools to instrument and test your AI applications using Gentrace.
 
@@ -110,6 +110,29 @@ run();
 ```sh
 GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/run.ts
 ```
+
+#### Simplified Usage (Default Pipeline)
+
+If your organization has a default pipeline configured, you can use `interaction` without specifying a pipeline ID:
+
+<!-- prettier-ignore -->
+```typescript
+// Simplest usage - no pipeline ID required
+const instrumentedFn = interaction('My AI Function', myAiFunction);
+
+// With custom attributes but no pipeline ID
+const instrumentedFn = interaction('My AI Function', myAiFunction, {
+  attributes: { model: 'gpt-4', temperature: 0.7 }
+});
+
+// Explicit pipeline ID (when you need a specific pipeline)
+const instrumentedFn = interaction('My AI Function', myAiFunction, {
+  pipelineId: 'abc-123-def-456',
+  attributes: { model: 'gpt-4' }
+});
+```
+
+When no `pipelineId` is provided, the SDK automatically uses your organization's default pipeline.
 
 ### Lower-Level Tracing (`traced`)
 

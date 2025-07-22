@@ -38,7 +38,7 @@ let _otelGlobalErrorWarningIssued = false;
  *
  * @example
  * ```typescript
- * import { init, setup, GentraceSampler } from '@gentrace/core';
+ * import { init, setup, GentraceSampler } from 'gentrace';
  *
  * // First, initialize Gentrace
  * init({

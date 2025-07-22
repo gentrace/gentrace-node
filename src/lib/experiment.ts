@@ -1,5 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { finishExperiment, startExperiment, StartExperimentParams } from './experiment-control';
+import type { Experiment } from '../resources/experiments';
+import { _getClient } from './client-instance';
 
 /**
  * Represents the context for an experiment run. This context is stored in
@@ -42,31 +44,38 @@ export type ExperimentOptions = {
 };
 
 /**
+ * The result of an experiment run.
+ */
+export type ExperimentResult = Experiment & { url: string };
+
+/**
  * Runs an experiment: starts it, executes the callback within an async context
  * containing the experiment ID, and finishes the experiment.
  *
  * @param {string} pipelineId - The ID of the pipeline to associate with the experiment.
  * @param {() => T | Promise<T>} callback - The function containing the experiment logic, returning type T.
  * @param {ExperimentOptions} [options] - Optional parameters for the experiment run, including metadata.
- * @returns A promise that resolves with the result of the callback function (type T).
+ * @returns A promise that resolves with the experiment object.
  */
 export async function experiment<T>(
   pipelineId: string,
   callback: () => T | Promise<T>,
   options?: ExperimentOptions,
-): Promise<T> {
-  let callbackResult: T | undefined;
-
+): Promise<Experiment & { url: string }> {
   const metadata = options?.metadata;
   const startParams: StartExperimentParams = metadata ? { pipelineId, metadata } : { pipelineId };
 
-  const experimentId = await startExperiment(startParams);
+  const result = await startExperiment(startParams);
+  const experimentId = result.id;
 
   await experimentContextStorage.run({ experimentId, pipelineId }, async () => {
-    callbackResult = await callback();
+    await callback();
   });
 
   await finishExperiment({ id: experimentId });
 
-  return callbackResult as T;
+  const client = _getClient();
+  const url = new URL(client.baseURL);
+  const hostname = `${url.protocol}//${url.host}`;
+  return { ...result, url: `${hostname}${result.resourcePath}` };
 }
