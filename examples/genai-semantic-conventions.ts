@@ -154,6 +154,7 @@ async function main() {
             role: 'tool',
             content: toolResponseString,
             name: 'get_weather',
+            id: 'call_abc123',
           });
 
           // Make the actual OpenAI API call with the full conversation

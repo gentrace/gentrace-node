@@ -1,5 +1,65 @@
 # Changelog
 
+## 0.11.1 (2025-07-22)
+
+Full Changelog: [v0.11.1...v0.11.1](https://github.com/gentrace/gentrace-node/compare/v0.11.1...v0.11.1)
+
+### Features
+
+* add id to tool response message ([#619](https://github.com/gentrace/gentrace-node/issues/619)) ([520be14](https://github.com/gentrace/gentrace-node/commit/520be140cf9074a9be737ebfb4e5f07ea68c85eb))
+* **api:** api update ([7c11157](https://github.com/gentrace/gentrace-node/commit/7c11157b8f805ea4309540bc44f2bdb0fd026592))
+* **api:** correct the organization structure ([9289472](https://github.com/gentrace/gentrace-node/commit/92894723b6c0b9bd475959894cb332d3c0f58c9a))
+* **api:** create organization methods ([1e8d425](https://github.com/gentrace/gentrace-node/commit/1e8d425981b3fd44453d777dd4e31cc92b99f0d6))
+* **client:** add support for endpoint-specific base URLs ([6f9497d](https://github.com/gentrace/gentrace-node/commit/6f9497deeee86c83fd5a6a479e97401234a57db0))
+* **experiment:** return experiment object metadata from `experiment()` invocation ([#614](https://github.com/gentrace/gentrace-node/issues/614)) ([e339cc7](https://github.com/gentrace/gentrace-node/commit/e339cc7e5e09307daf20db2c2f58c8eef815233b))
+* **init:** warn on multiple init() with config diff ([#618](https://github.com/gentrace/gentrace-node/issues/618)) ([7dac470](https://github.com/gentrace/gentrace-node/commit/7dac470e60b91bb05b4a938091cfc643af9d4a80))
+* **lib:** export organizations from init module ([#615](https://github.com/gentrace/gentrace-node/issues/615)) ([73b7666](https://github.com/gentrace/gentrace-node/commit/73b7666368685d19285a1da68859e52fc31dea26))
+* simulate tool calls in function calling example ([#616](https://github.com/gentrace/gentrace-node/issues/616)) ([fef7a11](https://github.com/gentrace/gentrace-node/commit/fef7a11a5fd896f26e75006b8d4dc0e56bc539dc))
+
+
+### Bug Fixes
+
+* **ci:** release-doctor — report correct token name ([9dfae3a](https://github.com/gentrace/gentrace-node/commit/9dfae3a8f12879224f588077b2660deb9dfddbe5))
+* **client:** explicitly copy fetch in withOptions ([0c0ccf7](https://github.com/gentrace/gentrace-node/commit/0c0ccf75d0560396ca56e0143e9b94592138058b))
+* **client:** get fetchOptions type more reliably ([57c9858](https://github.com/gentrace/gentrace-node/commit/57c985824923f9b39c4d2a89e38c18c3b2102189))
+* publish script — handle NPM errors correctly ([19fa166](https://github.com/gentrace/gentrace-node/commit/19fa1666cf2924faf75fce2d4610ade37a580739))
+
+
+### Chores
+
+* add docs to RequestOptions type ([8700520](https://github.com/gentrace/gentrace-node/commit/87005204b22b4faab91e26867c616f1d724f26a7))
+* avoid type error in certain environments ([0cb5d3b](https://github.com/gentrace/gentrace-node/commit/0cb5d3bec53731fdadfe4b6e5d76e7207578da53))
+* **ci:** enable for pull requests ([de2d55c](https://github.com/gentrace/gentrace-node/commit/de2d55cdfdf2bfe471bfa8a757c79b2fb47ccaf6))
+* **ci:** only run for pushes and fork pull requests ([a0997e6](https://github.com/gentrace/gentrace-node/commit/a0997e675984d1752c9e332328177711b94ecea3))
+* **client:** improve path param validation ([f4f7457](https://github.com/gentrace/gentrace-node/commit/f4f7457dfc67687da34216147e7fa4b544515d5e))
+* **client:** refactor imports ([4ac48f4](https://github.com/gentrace/gentrace-node/commit/4ac48f40e2a958af5acf8b559c0ee660e23b10fb))
+* **docs:** update import paths in examples ([#612](https://github.com/gentrace/gentrace-node/issues/612)) ([105b024](https://github.com/gentrace/gentrace-node/commit/105b02409b8782578d14689e5d3ea627b72d6e42))
+* **internal:** add pure annotations, make base APIResource abstract ([db3c0cf](https://github.com/gentrace/gentrace-node/commit/db3c0cfcc68644d7fb481c5cc3158c07fe76cbb7))
+* **internal:** fix readablestream types in node 20 ([ee564f1](https://github.com/gentrace/gentrace-node/commit/ee564f195b62a78ba2b3b6ec9df406d4e15ea095))
+* **internal:** version bump ([dbf615d](https://github.com/gentrace/gentrace-node/commit/dbf615d40e4a76813ef21b6ea3546bd3c1a93b3c))
+* **internal:** version bump ([d2ae6a6](https://github.com/gentrace/gentrace-node/commit/d2ae6a631db7c32dcd4a5058f416bec0c0403e36))
+* **internal:** version bump ([17809b5](https://github.com/gentrace/gentrace-node/commit/17809b550337bd081f6e1f34e78c0874bd15b915))
+* **internal:** version bump ([9a57d75](https://github.com/gentrace/gentrace-node/commit/9a57d751fdb3ae62b4cbe8dd1159dcbeb26af38c))
+* **internal:** version bump ([734f58c](https://github.com/gentrace/gentrace-node/commit/734f58cd45a3acff765c30ee024d6b4d990c4d53))
+* **internal:** version bump ([5891e37](https://github.com/gentrace/gentrace-node/commit/5891e37928dbd54985642f29042825521ce9e402))
+* **internal:** version bump ([ab56d6d](https://github.com/gentrace/gentrace-node/commit/ab56d6d6f37ba73c8fdffa9857bfe37665e6c829))
+* **internal:** version bump ([9ddd5e9](https://github.com/gentrace/gentrace-node/commit/9ddd5e9274479763e8258ec40b39211cae06def1))
+* **internal:** version bump ([140aefe](https://github.com/gentrace/gentrace-node/commit/140aefefc2242274f1c1df73ca3be81d52a07e4e))
+* **internal:** version bump ([80c6a0e](https://github.com/gentrace/gentrace-node/commit/80c6a0ee91a89979e71f1b3e0b6b73ef5db63c44))
+* **internal:** version bump ([d5ebabd](https://github.com/gentrace/gentrace-node/commit/d5ebabdcc9ef0aa988096ce31cef6f8115b44aff))
+* **internal:** version bump ([ac342f6](https://github.com/gentrace/gentrace-node/commit/ac342f66fc84c3eba4e305451e5e55dcc17fb68d))
+* **internal:** version bump ([830e182](https://github.com/gentrace/gentrace-node/commit/830e182e66aded88c5fa3ce3eec11a518b40f7b3))
+* make some internal functions async ([79c30e2](https://github.com/gentrace/gentrace-node/commit/79c30e23878a9fef61200f591616a7b896d4a240))
+* **mcp:** rework imports in tools ([acc9c33](https://github.com/gentrace/gentrace-node/commit/acc9c3347e1bc0468dc63af99464e246a2f3a1dd))
+* **readme:** update badges ([1077b3e](https://github.com/gentrace/gentrace-node/commit/1077b3e3b1eef0e3c1a0debfe422e59f9239ac36))
+* **readme:** use better example snippet for undocumented params ([b16cbb4](https://github.com/gentrace/gentrace-node/commit/b16cbb4ff6d9c337f463fe41ec058215d0d0130e))
+* **ts:** reorder package.json imports ([917c82f](https://github.com/gentrace/gentrace-node/commit/917c82feccf022706e9389c9f03ce2b881fd75ea))
+
+
+### Refactors
+
+* **types:** replace Record with mapped types ([cdedfcf](https://github.com/gentrace/gentrace-node/commit/cdedfcf249d60c0ba07055dde00b06a7a6bd1091))
+
 ## 0.11.1 (2025-07-16)
 
 Full Changelog: [v0.11.0...v0.11.1](https://github.com/gentrace/gentrace-node/compare/v0.11.0...v0.11.1)
