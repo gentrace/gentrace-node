@@ -111,6 +111,29 @@ run();
 GENTRACE_PIPELINE_ID=<your-pipeline-id> GENTRACE_API_KEY=<your-api-key> npx ts-node src/run.ts
 ```
 
+#### Simplified Usage (Default Pipeline)
+
+If your organization has a default pipeline configured, you can use `interaction` without specifying a pipeline ID:
+
+<!-- prettier-ignore -->
+```typescript
+// Simplest usage - no pipeline ID required
+const instrumentedFn = interaction('My AI Function', myAiFunction);
+
+// With custom attributes but no pipeline ID
+const instrumentedFn = interaction('My AI Function', myAiFunction, {
+  attributes: { model: 'gpt-4', temperature: 0.7 }
+});
+
+// Explicit pipeline ID (when you need a specific pipeline)
+const instrumentedFn = interaction('My AI Function', myAiFunction, {
+  pipelineId: 'abc-123-def-456',
+  attributes: { model: 'gpt-4' }
+});
+```
+
+When no `pipelineId` is provided, the SDK automatically uses your organization's default pipeline.
+
 ### Lower-Level Tracing (`traced`)
 
 Use the `traced` decorator to wrap any given function with OpenTelemetry tracing, creating a span for its execution. This is useful for instrumenting helper functions or specific blocks of code within a larger `interaction`.

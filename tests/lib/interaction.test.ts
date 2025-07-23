@@ -320,6 +320,87 @@ describe('interaction wrapper', () => {
       expect(lastMockSpan?.end).toHaveBeenCalled();
     });
   });
+
+  describe('optional options parameter', () => {
+    it('should work without options parameter and use default pipeline ID', () => {
+      const originalFn = jest.fn(() => 'no options result');
+      const wrappedFn = interaction('noOptionsTest', originalFn);
+      const result = wrappedFn();
+
+      expect(result).toBe('no options result');
+      expect(originalFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith('noOptionsTest', expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, 'default');
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should work with empty options object and use default pipeline ID', () => {
+      const originalFn = jest.fn(() => 'empty options result');
+      const wrappedFn = interaction('emptyOptionsTest', originalFn, {});
+      const result = wrappedFn();
+
+      expect(result).toBe('empty options result');
+      expect(originalFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith('emptyOptionsTest', expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, 'default');
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should work with only attributes in options and use default pipeline ID', () => {
+      const originalFn = jest.fn(() => 'attributes only result');
+      const wrappedFn = interaction('attributesOnlyTest', originalFn, {
+        attributes: { custom: 'value' },
+      });
+      const result = wrappedFn();
+
+      expect(result).toBe('attributes only result');
+      expect(originalFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith('attributesOnlyTest', expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, 'default');
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith('custom', 'value');
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should handle async functions without options parameter', async () => {
+      const originalFn = jest.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        return 'async no options result';
+      });
+      const wrappedFn = interaction('asyncNoOptionsTest', originalFn);
+      const result = await wrappedFn();
+
+      expect(result).toBe('async no options result');
+      expect(originalFn).toHaveBeenCalledTimes(1);
+      expect(mockStartActiveSpan).toHaveBeenCalledWith('asyncNoOptionsTest', expect.any(Function));
+
+      expect(lastMockSpan).not.toBeNull();
+      expect(lastMockSpan?.setAttribute).toHaveBeenCalledWith(ATTR_GENTRACE_PIPELINE_ID, 'default');
+      expect(lastMockSpan?.end).toHaveBeenCalled();
+    });
+
+    it('should not validate UUID for default pipeline ID', () => {
+      const utils = require('../../src/lib/utils');
+      const originalFn = jest.fn(() => 'result');
+
+      // Reset the mock to track calls
+      utils.isValidUUID.mockClear();
+      utils.validatePipelineAccess.mockClear();
+
+      const wrappedFn = interaction('defaultPipelineTest', originalFn);
+      wrappedFn();
+
+      // isValidUUID should not be called when pipeline ID is 'default'
+      expect(utils.isValidUUID).not.toHaveBeenCalledWith('default');
+      // validatePipelineAccess should not be called for 'default'
+      expect(utils.validatePipelineAccess).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe('interaction auto-initialization', () => {

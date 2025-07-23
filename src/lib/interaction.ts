@@ -14,8 +14,9 @@ import { _isClientProperlyInitialized } from './client-instance';
 export type InteractionOptions = {
   /**
    * The ID of the pipeline this interaction belongs to.
+   * If not provided, defaults to "default" which will use the organization's default pipeline.
    */
-  pipelineId: string;
+  pipelineId?: string;
 
   /**
    * Additional attributes to set on the span.
@@ -49,24 +50,25 @@ let _autoInitWarningIssued = false;
  * @template {function} F - The type of the function to wrap.
  * @param {string} name - The name for the span.
  * @param {F} fn - The function to wrap. Must take zero args or a single record argument.
- * @param {InteractionOptions} options - Configuration options including pipelineId and additional attributes.
+ * @param {InteractionOptions} [options] - Optional configuration options including pipelineId and additional attributes.
+ *                                         If not provided, uses default pipeline with no additional attributes.
  * @returns {F} The wrapped function with the identical type signature as fn.
  */
 export function interaction<F extends (...args: any[]) => any>(
   name: string,
   fn: F,
-  options: InteractionOptions,
+  options?: InteractionOptions,
 ): F {
-  const { pipelineId, attributes, suppressWarnings = false } = options;
+  const { pipelineId = 'default', attributes, suppressWarnings = false } = options || {};
 
-  // Validate UUID format
-  if (!isValidUUID(pipelineId)) {
+  // Validate UUID format (skip validation for 'default')
+  if (pipelineId !== 'default' && !isValidUUID(pipelineId)) {
     if (!suppressWarnings && !_pipelineIdFormatWarningIssued) {
       _pipelineIdFormatWarningIssued = true;
       displayPipelineError(pipelineId, 'invalid-format');
     }
-  } else {
-    // Only validate pipeline access if client is properly initialized
+  } else if (pipelineId !== 'default') {
+    // Only validate pipeline access if client is properly initialized and not using 'default'
     if (_isClientProperlyInitialized()) {
       // Asynchronously validate pipeline access (non-blocking)
       validatePipelineAccess(pipelineId, suppressWarnings).catch(() => {
