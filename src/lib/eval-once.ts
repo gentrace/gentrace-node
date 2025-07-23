@@ -1,7 +1,7 @@
 import { Span, SpanStatusCode, trace, context, propagation } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
 import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
-import { ParseableSchema } from './eval-dataset'; // Import the interface
+import { type ParseableSchema, type TestInput } from './eval-dataset'; // Import the interface
 import { _getClient } from './client-instance';
 import {
   ATTR_GENTRACE_EXPERIMENT_ID,
@@ -33,9 +33,12 @@ export async function evalOnce<TResult>(
   spanName: string,
   callback: () => TResult | null | Promise<TResult | null>,
 ): Promise<TResult | null> {
-  return _runEval<TResult, any>({
+  // For evalOnce, we don't have a test case, so we create a minimal one
+  return _runEval<TResult, { inputs: undefined }, undefined>({
     spanName,
-    callback,
+    testCase: { inputs: undefined },
+    schema: undefined,
+    callback: () => callback(),
   });
 }
 
@@ -58,14 +61,21 @@ export type RunEvalParams<T> = {
  * Options for the internal _runEval function.
  *
  * @template TResult The expected return type of the eval callback.
- * @template TInput The expected input type of the eval callback (after potential parsing).
+ * @template TTestCase The test case type, which must have an inputs property.
+ * @template TSchema The schema type for validation, if any.
  */
-export type RunEvalInternalOptions<TResult, TInput> = {
+export type RunEvalInternalOptions<
+  TResult,
+  TTestCase extends { inputs: any },
+  TSchema extends ParseableSchema<any> | undefined,
+> = {
   spanName: string;
   spanAttributes?: Record<string, string>;
-  inputs?: unknown | undefined;
-  schema?: ParseableSchema<TInput> | undefined;
-  callback: (parsedData: TInput) => TResult | null | Promise<TResult | null>;
+  testCase: TTestCase;
+  schema: TSchema;
+  callback: (
+    arg: TSchema extends ParseableSchema<infer O> ? TestInput<O> : TTestCase,
+  ) => TResult | null | Promise<TResult | null>;
 };
 
 /**
@@ -79,10 +89,12 @@ export type RunEvalInternalOptions<TResult, TInput> = {
  * @returns The result of the callback function.
  * @throws If called outside of a `experiment()` context or if the callback throws.
  */
-export async function _runEval<TResult, TInput = any>(
-  options: RunEvalInternalOptions<TResult, TInput>,
-): Promise<TResult | null> {
-  const { spanName, spanAttributes, inputs, schema, callback } = options;
+export async function _runEval<
+  TResult,
+  TTestCase extends { inputs: any },
+  TSchema extends ParseableSchema<any> | undefined,
+>(options: RunEvalInternalOptions<TResult, TTestCase, TSchema>): Promise<TResult | null> {
+  const { spanName, spanAttributes, testCase, schema, callback } = options;
 
   checkOtelConfigAndWarn();
 
@@ -112,28 +124,32 @@ export async function _runEval<TResult, TInput = any>(
         });
 
         try {
-          let parsedInputs: TInput;
+          let validatedTestCase: TTestCase | TestInput<any> = testCase;
 
+          // If schema provided, validate just the inputs and create a new test case
           if (schema) {
             try {
-              parsedInputs = schema.parse(inputs);
+              const validatedInputs = schema.parse(testCase.inputs);
+              validatedTestCase = { ...testCase, inputs: validatedInputs };
             } catch (parsingError: any) {
               span.recordException(parsingError);
               span.setAttribute('error.type', parsingError.name);
               throw parsingError;
             }
-          } else {
-            parsedInputs = inputs as TInput;
           }
 
-          if (parsedInputs) {
+          // Log the inputs for tracing
+          if (validatedTestCase.inputs) {
             span.addEvent(ATTR_GENTRACE_FN_ARGS, {
-              args: stringify([parsedInputs]),
+              args: stringify([validatedTestCase.inputs]),
             });
           }
 
-          const boundCallback = context.bind(context.active(), callback);
-          const result = boundCallback(parsedInputs);
+          const boundCallback = context.bind(
+            context.active(),
+            callback as (arg: TTestCase | TestInput<any>) => TResult | null | Promise<TResult | null>,
+          );
+          const result = boundCallback(validatedTestCase);
 
           if (result instanceof Promise) {
             const successHandler = context.bind(context.active(), (resolvedResult: TResult | null) => {
