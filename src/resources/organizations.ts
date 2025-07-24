@@ -26,6 +26,11 @@ export interface Organization {
   createdAt: string;
 
   /**
+   * Default pipeline ID for the organization
+   */
+  defaultPipelineId: string | null;
+
+  /**
    * Organization name
    */
   name: string;
