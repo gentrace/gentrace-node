@@ -29,22 +29,27 @@ async function main() {
   }
 
   // Run an experiment with a simple evaluation
-  await experiment(pipelineId, async () => {
-    // Evaluate a simple function
-    await evalOnce('math-addition', async () => {
-      const result = 2 + 2;
-      console.log('Math result:', result);
-      return result;
-    });
+  const result = await experiment(
+    async () => {
+      // Evaluate a simple function
+      await evalOnce('math-addition', async () => {
+        const result = 2 + 2;
+        console.log('Math result:', result);
+        return result;
+      });
 
-    // Evaluate a more complex function
-    await evalOnce('string-manipulation', async () => {
-      const input = 'hello world';
-      const result = input.toUpperCase().split(' ').reverse().join(' ');
-      console.log('String result:', result);
-      return result;
-    });
-  });
+      // Evaluate a more complex function
+      await evalOnce('string-manipulation', async () => {
+        const input = 'hello world';
+        const result = input.toUpperCase().split(' ').reverse().join(' ');
+        console.log('String result:', result);
+        return result;
+      });
+    },
+    { pipelineId },
+  );
+
+  console.log('Experiment URL: ' + result.url);
 
   // Wait for spans to flush
   await new Promise((resolve) => setTimeout(resolve, 2000));

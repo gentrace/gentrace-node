@@ -58,7 +58,7 @@ describe('evalDataset', () => {
   const InputSchema = z.object({ input: z.number() });
   type InteractionInput = z.infer<typeof InputSchema>;
   const mockInteraction = jest.fn(
-    async (params: InteractionInput): Promise<string> => `output: ${params.input}`,
+    async (testCase: TestInput<InteractionInput>): Promise<string> => `output: ${testCase.inputs.input}`,
   );
 
   const datasetSimple: TestInput<InteractionInput>[] = [
@@ -87,6 +87,19 @@ describe('evalDataset', () => {
 
   it('should run tests for each item in a simple dataset using _runEval', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-1', pipelineId: 'pipe-1' });
+
+    // Mock _runEval to simulate calling the callback with validated test case
+    mockEvalTest.mockImplementation(async ({ callback, testCase, schema }: any) => {
+      // If schema is provided, validate the inputs and create new test case
+      if (schema) {
+        const validatedInputs = schema.parse(testCase.inputs);
+        const testCaseWithValidatedInputs = { ...testCase, inputs: validatedInputs };
+        return callback(testCaseWithValidatedInputs);
+      }
+      // Otherwise just pass the test case as is
+      return callback(testCase);
+    });
+
     await evalDatasetLib.evalDataset({
       data: () => datasetSimple,
       interaction: mockInteraction,
@@ -96,29 +109,48 @@ describe('evalDataset', () => {
     expect(mockEvalTest).toHaveBeenCalledTimes(3);
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
-      inputs: { input: 1 },
+      testCase: { inputs: { input: 1 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 2',
-      inputs: { input: 2 },
+      testCase: { inputs: { input: 2 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 3',
-      inputs: { input: 3 },
+      testCase: { inputs: { input: 3 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
+
+    // Verify the interaction was called with full test case objects
+    expect(mockInteraction).toHaveBeenCalledTimes(3);
+    expect(mockInteraction).toHaveBeenCalledWith({ inputs: { input: 1 } });
+    expect(mockInteraction).toHaveBeenCalledWith({ inputs: { input: 2 } });
+    expect(mockInteraction).toHaveBeenCalledWith({ inputs: { input: 3 } });
   });
 
   it('should run tests for each item in a structured dataset using _runEval', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-2', pipelineId: 'pipe-2' });
+
+    // Mock _runEval to simulate calling the callback with validated test case
+    mockEvalTest.mockImplementation(async ({ callback, testCase, schema }: any) => {
+      // If schema is provided, validate the inputs and create new test case
+      if (schema) {
+        const validatedInputs = schema.parse(testCase.inputs);
+        const testCaseWithValidatedInputs = { ...testCase, inputs: validatedInputs };
+        return callback(testCaseWithValidatedInputs);
+      }
+      // Otherwise just pass the test case as is
+      return callback(testCase);
+    });
+
     await evalDatasetLib.evalDataset({
       data: () => datasetStructured,
       interaction: mockInteraction,
@@ -129,35 +161,46 @@ describe('evalDataset', () => {
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Case 1',
-      inputs: { input: 10 },
+      testCase: { name: 'Case 1', inputs: { input: 10 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case (ID: case-id-20)',
       spanAttributes: { [ATTR_GENTRACE_TEST_CASE_ID]: 'case-id-20' },
-      inputs: { input: 20 },
+      testCase: { id: 'case-id-20', inputs: { input: 20 } },
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Case 30',
       spanAttributes: { [ATTR_GENTRACE_TEST_CASE_ID]: 'case-id-30' },
-      inputs: { input: 30 },
+      testCase: { name: 'Case 30', id: 'case-id-30', inputs: { input: 30 } },
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 4',
-      inputs: { input: 40 },
+      testCase: { inputs: { input: 40 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
+
+    // Verify the interaction was called with full test case objects
+    expect(mockInteraction).toHaveBeenCalledTimes(4);
+    expect(mockInteraction).toHaveBeenCalledWith({ name: 'Case 1', inputs: { input: 10 } });
+    expect(mockInteraction).toHaveBeenCalledWith({ id: 'case-id-20', inputs: { input: 20 } });
+    expect(mockInteraction).toHaveBeenCalledWith({
+      name: 'Case 30',
+      id: 'case-id-30',
+      inputs: { input: 30 },
+    });
+    expect(mockInteraction).toHaveBeenCalledWith({ inputs: { input: 40 } });
   });
 
   it('should handle async dataset function', async () => {
@@ -251,12 +294,25 @@ describe('evalDataset', () => {
       },
     };
 
-    // Define interaction expecting the custom schema's output type
+    // Define interaction expecting the full test case with custom schema parsed inputs
     const customInteraction = jest.fn(
-      async (params: { parsedInput: number }): Promise<string> => `custom output: ${params.parsedInput}`,
+      async (testCase: TestInput<{ parsedInput: number }>): Promise<string> =>
+        `custom output: ${testCase.inputs.parsedInput}`,
     );
 
     const customDataset: TestInput<{ input: number }>[] = [{ inputs: { input: 5 } }];
+
+    // Mock _runEval to simulate calling the callback with validated test case
+    mockEvalTest.mockImplementation(async ({ callback, testCase, schema }: any) => {
+      // If schema is provided, validate the inputs and create new test case
+      if (schema) {
+        const validatedInputs = schema.parse(testCase.inputs);
+        const testCaseWithValidatedInputs = { ...testCase, inputs: validatedInputs };
+        return callback(testCaseWithValidatedInputs);
+      }
+      // Otherwise just pass the test case as is
+      return callback(testCase);
+    });
 
     await evalDatasetLib.evalDataset({
       data: () => customDataset,
@@ -267,11 +323,14 @@ describe('evalDataset', () => {
     expect(mockEvalTest).toHaveBeenCalledTimes(1);
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
-      inputs: { input: 5 },
+      testCase: { inputs: { input: 5 } },
       spanAttributes: {},
       schema: CustomSchema, // Check that the custom schema object is passed
-      callback: customInteraction,
+      callback: expect.any(Function),
     });
+
+    // Verify the interaction was called with full test case containing parsed inputs
+    expect(customInteraction).toHaveBeenCalledWith({ inputs: { parsedInput: 50 } });
   });
 
   it('should not throw if a custom schema parse fails (error handled by _runEval)', async () => {
@@ -302,10 +361,10 @@ describe('evalDataset', () => {
     expect(mockEvalTest).toHaveBeenCalledTimes(1);
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
-      inputs: { input: 99 },
+      testCase: { inputs: { input: 99 } },
       spanAttributes: {},
       schema: FailingSchema, // The failing schema is passed
-      callback: failingInteraction,
+      callback: expect.any(Function),
     });
   });
 
@@ -352,6 +411,18 @@ describe('evalDataset', () => {
   it('should accept a plain array directly as data', async () => {
     mockGetCurrentExperimentContext.mockReturnValue({ experimentId: 'exp-plain', pipelineId: 'pipe-plain' });
 
+    // Mock _runEval to simulate calling the callback with validated test case
+    mockEvalTest.mockImplementation(async ({ callback, testCase, schema }: any) => {
+      // If schema is provided, validate the inputs and create new test case
+      if (schema) {
+        const validatedInputs = schema.parse(testCase.inputs);
+        const testCaseWithValidatedInputs = { ...testCase, inputs: validatedInputs };
+        return callback(testCaseWithValidatedInputs);
+      }
+      // Otherwise just pass the test case as is
+      return callback(testCase);
+    });
+
     await evalDatasetLib.evalDataset({
       data: datasetSimple,
       interaction: mockInteraction,
@@ -361,24 +432,24 @@ describe('evalDataset', () => {
     expect(mockEvalTest).toHaveBeenCalledTimes(3);
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 1',
-      inputs: { input: 1 },
+      testCase: { inputs: { input: 1 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 2',
-      inputs: { input: 2 },
+      testCase: { inputs: { input: 2 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case 3',
-      inputs: { input: 3 },
+      testCase: { inputs: { input: 3 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
   });
 
@@ -386,6 +457,18 @@ describe('evalDataset', () => {
     mockGetCurrentExperimentContext.mockReturnValue({
       experimentId: 'exp-plain-struct',
       pipelineId: 'pipe-plain-struct',
+    });
+
+    // Mock _runEval to simulate calling the callback with validated test case
+    mockEvalTest.mockImplementation(async ({ callback, testCase, schema }: any) => {
+      // If schema is provided, validate the inputs and create new test case
+      if (schema) {
+        const validatedInputs = schema.parse(testCase.inputs);
+        const testCaseWithValidatedInputs = { ...testCase, inputs: validatedInputs };
+        return callback(testCaseWithValidatedInputs);
+      }
+      // Otherwise just pass the test case as is
+      return callback(testCase);
     });
 
     await evalDatasetLib.evalDataset({
@@ -398,18 +481,18 @@ describe('evalDataset', () => {
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Case 1',
-      inputs: { input: 10 },
+      testCase: { name: 'Case 1', inputs: { input: 10 } },
       spanAttributes: {},
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
 
     expect(mockEvalTest).toHaveBeenCalledWith({
       spanName: 'Test Case (ID: case-id-20)',
       spanAttributes: { [ATTR_GENTRACE_TEST_CASE_ID]: 'case-id-20' },
-      inputs: { input: 20 },
+      testCase: { id: 'case-id-20', inputs: { input: 20 } },
       schema: InputSchema,
-      callback: mockInteraction,
+      callback: expect.any(Function),
     });
   });
 
@@ -488,5 +571,47 @@ describe('evalDataset', () => {
 
     expect(mockEvalTest).toHaveBeenCalledTimes(5);
     expect(maxConcurrentObserved).toBe(5); // All should run in parallel
+  });
+
+  it('should work without schema - interaction receives raw test case', async () => {
+    mockGetCurrentExperimentContext.mockReturnValue({
+      experimentId: 'exp-no-schema',
+      pipelineId: 'pipe-no-schema',
+    });
+
+    const mockInteractionNoSchema = jest.fn(
+      async (testCase: TestInput<Record<string, any>>): Promise<string> => {
+        // Access all properties of the test case
+        const name = testCase.name || 'unnamed';
+        const id = testCase.id || 'no-id';
+        const input = testCase.inputs['input'] as number;
+        return `${name}-${id}-${input}`;
+      },
+    );
+
+    // Mock _runEval to simulate calling the callback without schema validation
+    mockEvalTest.mockImplementation(async ({ callback, testCase }: any) => {
+      // No schema validation, just pass test case through
+      return callback(testCase);
+    });
+
+    await evalDatasetLib.evalDataset({
+      data: () => datasetStructured,
+      interaction: mockInteractionNoSchema,
+      // No schema provided
+    });
+
+    expect(mockEvalTest).toHaveBeenCalledTimes(4);
+
+    // Verify the interaction was called with full test case objects
+    expect(mockInteractionNoSchema).toHaveBeenCalledTimes(4);
+    expect(mockInteractionNoSchema).toHaveBeenCalledWith({ name: 'Case 1', inputs: { input: 10 } });
+    expect(mockInteractionNoSchema).toHaveBeenCalledWith({ id: 'case-id-20', inputs: { input: 20 } });
+    expect(mockInteractionNoSchema).toHaveBeenCalledWith({
+      name: 'Case 30',
+      id: 'case-id-30',
+      inputs: { input: 30 },
+    });
+    expect(mockInteractionNoSchema).toHaveBeenCalledWith({ inputs: { input: 40 } });
   });
 });

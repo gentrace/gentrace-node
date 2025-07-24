@@ -22,40 +22,44 @@ import { runWithConcurrency } from './utils';
  *   maxTokens: z.number().optional().default(100)
  * });
  *
- * // Using a function that fetches data
+ * // Using a function that fetches data with schema validation
  * experiment('your-pipeline-id', async () => {
  *   await evalDataset({
  *     data: async () => {
  *       const testCasesList = await testCases.list({ datasetId: 'your-dataset-id' });
  *       return testCasesList.data;
  *     },
- *     // Optional schema to validate the 'inputs' property of each data item.
+ *     // Optional schema to validate the 'inputs' property of each test case.
  *     schema: InputSchema,
- *     interaction: async ({ prompt, temperature, maxTokens }) => {
+ *     interaction: async (testCase) => {
+ *       // testCase is the full TestInput object with validated inputs
+ *       // testCase.inputs will be validated against InputSchema
+ *       const { prompt, temperature, maxTokens } = testCase.inputs;
  *       return generateCompletion(prompt, temperature, maxTokens);
  *     },
  *     // Optional: limit concurrent test executions (default: unlimited)
  *     maxConcurrency: 5
  *   });
  *
- * // Using a plain array
+ * // Without schema - interaction receives the full TestInput object
  * experiment('your-pipeline-id', async () => {
  *   await evalDataset({
  *     data: [
- *       { inputs: { prompt: 'Hello', temperature: 0.7, maxTokens: 100 } },
- *       { inputs: { prompt: 'World', temperature: 0.5, maxTokens: 50 } }
+ *       { name: 'Test 1', inputs: { prompt: 'Hello', temperature: 0.7, maxTokens: 100 } },
+ *       { name: 'Test 2', inputs: { prompt: 'World', temperature: 0.5, maxTokens: 50 } }
  *     ],
- *     schema: InputSchema,
- *     interaction: async ({ prompt, temperature, maxTokens }) => {
+ *     interaction: async (testCase) => {
+ *       // testCase has properties: id, name, inputs
+ *       console.log(`Running test: ${testCase.name} (${testCase.id})`);
+ *       const { prompt, temperature, maxTokens } = testCase.inputs;
  *       return generateCompletion(prompt, temperature, maxTokens);
  *     }
  *   });
  * });
  */
-export async function evalDataset<
-  TSchema extends ParseableSchema<any> | undefined = undefined,
-  TInput = TSchema extends ParseableSchema<infer TOutput> ? TOutput : Record<string, any>,
->(options: EvalDatasetOptions<TSchema>): Promise<void> {
+export async function evalDataset<TSchema extends ParseableSchema<any> | undefined = undefined>(
+  options: EvalDatasetOptions<TSchema>,
+): Promise<void> {
   const { interaction, data, schema, maxConcurrency } = options;
 
   const client = _getClient();
@@ -95,7 +99,6 @@ export async function evalDataset<
       continue;
     }
 
-    const inputs = inputItem.inputs;
     const extractedName: string | undefined = inputItem.name;
     const extractedId: string | undefined = inputItem.id;
 
@@ -116,15 +119,15 @@ export async function evalDataset<
     }
 
     // Push task function instead of promise
-    tasks.push(() =>
-      _runEval<any, TInput>({
+    tasks.push(() => {
+      return _runEval({
         spanName: finalName,
         spanAttributes,
-        inputs,
-        schema: schema,
-        callback: interaction as (arg: TInput) => any,
-      }),
-    );
+        testCase: inputItem,
+        schema: schema as TSchema,
+        callback: interaction,
+      });
+    });
   }
 
   // Run tasks with concurrency control
@@ -155,7 +158,7 @@ export interface ParseableSchema<TOutput> {
 }
 
 /** Represents a structured test case with explicit inputs, name, and id. */
-export type TestInput<TInput extends Record<string, any>> = {
+export type TestInput<TInput> = {
   name?: string | undefined;
   id?: string | undefined;
   inputs: TInput;
@@ -166,7 +169,7 @@ export type TestInput<TInput extends Record<string, any>> = {
  * The interaction function's argument type is constrained by the presence and type of the schema.
  *
  * @template TSchema Optional schema object with a `.parse` method.
- * @template TInput The type derived from the schema, or Record<string, any> if no schema.
+ * @template TInput The type derived from the schema, or TestInput<Record<string, any>> if no schema.
  */
 export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined> = {
   data:
@@ -175,9 +178,11 @@ export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined>
   schema?: TSchema;
   /**
    * The function to test. It must accept a single argument whose type ('TInput')
-   * is derived from the provided 'schema', or Record<string, any> if no schema is given.
+   * is a TestInput where the inputs property is validated by the schema (if provided).
    */
-  interaction: (arg: TSchema extends ParseableSchema<infer O> ? O : Record<string, any>) => any;
+  interaction: (
+    arg: TSchema extends ParseableSchema<infer O> ? TestInput<O> : TestInput<Record<string, any>>,
+  ) => any;
   /**
    * The maximum number of concurrent test cases to run.
    * If not specified, all test cases will run in parallel.

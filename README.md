@@ -205,7 +205,7 @@ const GENTRACE_PIPELINE_ID = process.env['GENTRACE_PIPELINE_ID'];
 
 // 🚧 Add OpenTelemetry setup (view the OTEL section below)
 
-experiment(GENTRACE_PIPELINE_ID, async () => {
+experiment(async () => {
   evalOnce('simple-query-test', async () => {
     const capital = await instrumentedQueryAi({ query: 'What is the capital of France?' });
     // You can add assertions here if needed, exceptions will get captured and recorded on the
@@ -219,7 +219,7 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
     console.log('Test Result:', result);
     return result;
   });
-});
+}, { pipelineId: GENTRACE_PIPELINE_ID });
 ```
 
 To run these tests, simply execute the file:
@@ -257,7 +257,7 @@ const InputSchema = z.object({
   query: z.string(),
 });
 
-experiment(GENTRACE_PIPELINE_ID, async () => {
+experiment(async () => {
   await evalDataset({
     // Fetch test cases from your Gentrace dataset
     data: async () => {
@@ -269,7 +269,7 @@ experiment(GENTRACE_PIPELINE_ID, async () => {
     // Provide the instrumented function to run against each test case
     interaction: instrumentedQueryAi,
   });
-});
+}, { pipelineId: GENTRACE_PIPELINE_ID });
 ```
 
 > [!NOTE]  

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.12.0 (2025-07-24)
+
+Full Changelog: [v0.11.2...v0.12.0](https://github.com/gentrace/gentrace-node/compare/v0.11.2...v0.12.0)
+
+### Features
+
+* **api:** api update ([c91f943](https://github.com/gentrace/gentrace-node/commit/c91f943833aa599396df23e8bebd2da7ca9868e3))
+* **experiment:** support options-based pipelineId ([#623](https://github.com/gentrace/gentrace-node/issues/623)) ([7f655e0](https://github.com/gentrace/gentrace-node/commit/7f655e059217025e8cf9d85c1ac0b8b02f56104b))
+* Make evalDataset() pass in the test case directly to the interaction ([#620](https://github.com/gentrace/gentrace-node/issues/620)) ([5220d29](https://github.com/gentrace/gentrace-node/commit/5220d290152986b721df73cc03b2b1c65cd860e2))
+
 ## 0.11.2 (2025-07-23)
 
 Full Changelog: [v0.11.1...v0.11.2](https://github.com/gentrace/gentrace-node/compare/v0.11.1...v0.11.2)

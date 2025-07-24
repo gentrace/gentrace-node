@@ -8,7 +8,7 @@ import { init } from '../../src/lib/init';
 
 describe('experiment', () => {
   const mockExperimentId = 'exp-msw-123';
-  const mockPipelineId = 'pipe-123';
+  const mockPipelineId = '123e4567-e89b-12d3-a456-426614174000';
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -35,7 +35,7 @@ describe('experiment', () => {
       return 'Callback Result';
     });
 
-    const result = await experiment(mockPipelineId, callback, options);
+    const result = await experiment(callback, { ...options, pipelineId: mockPipelineId });
 
     expect(result).toMatchObject({
       id: mockExperimentId,
@@ -53,7 +53,7 @@ describe('experiment', () => {
 
   it('should work without metadata', async () => {
     const callback = jest.fn<() => void>();
-    await experiment(mockPipelineId, callback);
+    await experiment(callback, { pipelineId: mockPipelineId });
     expect(callback).toHaveBeenCalledTimes(1);
   });
 
@@ -62,7 +62,7 @@ describe('experiment', () => {
     const callback = jest.fn<() => Promise<void>>(async () => {
       throw error;
     });
-    await expect(experiment(mockPipelineId, callback)).rejects.toThrow(error);
+    await expect(experiment(callback, { pipelineId: mockPipelineId })).rejects.toThrow(error);
   });
 
   it('should finish experiment even if callback throws (sync)', async () => {
@@ -70,7 +70,7 @@ describe('experiment', () => {
     const callback = jest.fn<() => void>(() => {
       throw error;
     });
-    await expect(experiment(mockPipelineId, callback)).rejects.toThrow(error);
+    await expect(experiment(callback, { pipelineId: mockPipelineId })).rejects.toThrow(error);
   });
 
   // TODO: temporarily disabled
@@ -98,7 +98,7 @@ describe('experiment', () => {
       }),
     );
 
-    await expect(experiment(mockPipelineId, callback)).rejects.toThrow(callbackError);
+    await expect(experiment(callback, { pipelineId: mockPipelineId })).rejects.toThrow(callbackError);
   });
 
   describe('getCurrentExperimentContext', () => {
@@ -112,7 +112,7 @@ describe('experiment', () => {
         expect(getCurrentExperimentContext()).toEqual(context);
       });
 
-      await experiment(mockPipelineId, callback);
+      await experiment(callback, { pipelineId: mockPipelineId });
 
       expect(callback).toHaveBeenCalled();
       expect(getCurrentExperimentContext()).toBeUndefined();

@@ -107,7 +107,8 @@ export interface ExperimentList {
 
 export interface ExperimentCreateParams {
   /**
-   * The ID of the pipeline to create the experiment for
+   * The ID of the pipeline to create the experiment for, or "default" to use the
+   * organization's default pipeline
    */
   pipelineId: string;
 
