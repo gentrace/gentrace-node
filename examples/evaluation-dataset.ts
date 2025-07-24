@@ -48,27 +48,30 @@ async function main() {
   });
 
   // Run an experiment with a simple evaluation
-  const result = await experiment(pipelineId, async () => {
-    await evalDataset({
-      // Fetch test cases from your Gentrace dataset
-      data: async () => {
-        const testCasesList = await testCases.list({ datasetId });
-        return testCasesList.data;
-      },
-      // Provide the schema to validate the inputs for each test case in the dataset
-      schema: InputSchema,
-      interaction: async (testCase) => {
-        const { query } = testCase.inputs;
+  const result = await experiment(
+    async () => {
+      await evalDataset({
+        // Fetch test cases from your Gentrace dataset
+        data: async () => {
+          const testCasesList = await testCases.list({ datasetId });
+          return testCasesList.data;
+        },
+        // Provide the schema to validate the inputs for each test case in the dataset
+        schema: InputSchema,
+        interaction: async (testCase) => {
+          const { query } = testCase.inputs;
 
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-4.1-nano',
-          messages: [{ role: 'user', content: query }],
-        });
+          const completion = await openai.chat.completions.create({
+            model: 'gpt-4.1-nano',
+            messages: [{ role: 'user', content: query }],
+          });
 
-        return completion.choices[0]?.message?.content || 'No response';
-      },
-    });
-  });
+          return completion.choices[0]?.message?.content || 'No response';
+        },
+      });
+    },
+    { pipelineId },
+  );
 
   console.log('Experiment URL:', result.url);
 }
