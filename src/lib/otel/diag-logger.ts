@@ -1,5 +1,5 @@
 import { DiagLogger } from '@opentelemetry/api';
-import { GentraceWarnings, GentraceWarning } from '../warnings';
+import { GentraceWarnings } from '../warnings';
 import { _getClient } from '../client-instance';
 import { loggerFor } from '../../internal/utils/log';
 

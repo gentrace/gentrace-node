@@ -133,7 +133,7 @@ describe('Multiple init() warning tests', () => {
       // First sequence
       init({ apiKey: 'key1', otelSetup: false });
       init({ apiKey: 'key2', otelSetup: false });
-      
+
       expect(consoleWarnMock).toHaveBeenCalledTimes(1);
       const firstWarning = consoleWarnMock.mock.calls[0]?.[0] || '';
       expect(firstWarning).toContain('2 times');
@@ -144,7 +144,7 @@ describe('Multiple init() warning tests', () => {
 
       // Second sequence - should show warning again
       init({ apiKey: 'key3', otelSetup: false });
-      
+
       expect(consoleWarnMock).toHaveBeenCalledTimes(1);
       const secondWarning = consoleWarnMock.mock.calls[0]?.[0] || '';
       expect(secondWarning).toContain('3 times');
