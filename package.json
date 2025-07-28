@@ -1,6 +1,6 @@
 {
   "name": "gentrace",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "The official TypeScript library for the Gentrace API",
   "author": "Gentrace <support@gentrace.ai>",
   "types": "dist/index.d.ts",
