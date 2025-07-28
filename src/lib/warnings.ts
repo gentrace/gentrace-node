@@ -249,4 +249,23 @@ export const GentraceWarnings = {
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-multipleinitwarning',
       suppressionHint: 'To suppress this warning: init({ ..., suppressWarnings: true })',
     }),
+
+  OtelPartialFailureWarning: (rejectedCount: number, errorMessage?: string) =>
+    new GentraceWarning({
+      warningId: 'GT_OtelPartialFailureWarning',
+      title: 'OpenTelemetry Partial Export Failure',
+      message: [
+        `Failed to export ${rejectedCount} spans to Gentrace.`,
+        '',
+        `Error: ${errorMessage || 'Some spans were rejected by the server'}`,
+        '',
+        'This may indicate:',
+        '• Invalid span data or attributes',
+        '• Rate limiting or quota issues',
+        '• Server-side validation failures',
+      ],
+      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-otelpartialfailurewarning',
+      suppressionHint: 'Partial failures are logged but do not stop span export',
+      borderColor: 'yellow',
+    }),
 };

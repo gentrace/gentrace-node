@@ -5,7 +5,6 @@ import { _isGentraceInitialized } from '../init-state';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
-import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
 import type { SetupConfig } from './types';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
@@ -15,6 +14,9 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { setGlobalErrorHandler } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { GentraceWarnings } from '../warnings';
+import { diag, DiagLogLevel } from '@opentelemetry/api';
+import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
+import { GentraceDiagLogger } from './diag-logger';
 
 // Re-export SetupConfig for backwards compatibility
 export type { SetupConfig };
@@ -125,6 +127,10 @@ setup();`;
     warning.display();
     throw new Error('Gentrace API key is missing or invalid.');
   }
+
+  // Configure the diagnostic logger to intercept OpenTelemetry warnings
+  // This allows us to display partial success warnings using Gentrace's warning system
+  diag.setLogger(new GentraceDiagLogger(config.debug), DiagLogLevel.WARN);
 
   // Set a custom error handler for OpenTelemetry
   setGlobalErrorHandler((error) => {
