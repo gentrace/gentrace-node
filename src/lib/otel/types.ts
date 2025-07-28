@@ -28,9 +28,4 @@ export interface SetupConfig {
    * Optional custom sampler
    */
   sampler?: Sampler;
-
-  /**
-   * Whether to include console exporter for debugging (defaults to false)
-   */
-  debug?: boolean;
 }
