@@ -23,30 +23,24 @@ export class GentraceDiagLogger implements DiagLogger {
   warn(message: string, ...args: unknown[]): void {
     // Intercept partial success warnings from OTLP exporter
     if (message.includes('Received Partial Success response:')) {
-      // Check if we've already displayed a partial success warning
-      const warningKey = 'GT_OtelPartialFailureWarning';
-      if (!GentraceWarning.hasBeenDisplayed(warningKey)) {
-        // The partial success data is passed as the first argument
-        const partialSuccessJson = args[0] as string;
-        try {
-          const partialSuccess = JSON.parse(partialSuccessJson);
+      // The partial success data is passed as the first argument
+      const partialSuccessJson = args[0] as string;
+      try {
+        const partialSuccess = JSON.parse(partialSuccessJson);
 
-          // Mark this warning as displayed
-          GentraceWarning.markAsDisplayed(warningKey);
+        // Convert rejectedSpans to number (it comes as a string from the server)
+        const rejectedCount = partialSuccess.rejectedSpans ? Number(partialSuccess.rejectedSpans) : 0;
 
-          // Convert rejectedSpans to number (it comes as a string from the server)
-          const rejectedCount = partialSuccess.rejectedSpans ? Number(partialSuccess.rejectedSpans) : 0;
-
-          // Use Gentrace's warning system to display the partial failure
-          const warning = GentraceWarnings.OtelPartialFailureWarning(
-            rejectedCount,
-            partialSuccess.errorMessage,
-          );
-          warning.display();
-        } catch (e) {
-          // If we can't parse the partial success, fall back to regular logging
-          this.logger.warn(message, ...args);
-        }
+        // Use Gentrace's warning system to display the partial failure
+        // The warning.display() method will handle deduplication
+        const warning = GentraceWarnings.OtelPartialFailureWarning(
+          rejectedCount,
+          partialSuccess.errorMessage,
+        );
+        warning.display();
+      } catch (e) {
+        // If we can't parse the partial success, fall back to regular logging
+        this.logger.warn(message, ...args);
       }
       // Log raw message at debug level for programmatic access
       this.logger.debug(message, ...args);
