@@ -253,11 +253,11 @@ export const GentraceWarnings = {
   OtelPartialFailureWarning: (rejectedCount: number, errorMessage?: string) =>
     new GentraceWarning({
       warningId: 'GT_OtelPartialFailureWarning',
-      title: 'OpenTelemetry Partial Export Failure',
+      title: 'Some spans were not ingested',
       message: [
-        `Failed to export ${rejectedCount} spans to Gentrace.`,
+        `Gentrace could not ingest ${rejectedCount} ${rejectedCount === 1 ? 'span' : 'spans'}.`,
         '',
-        `Error: ${errorMessage || 'Some spans were rejected by the server'}`,
+        `Reason: ${errorMessage || `The server rejected ${rejectedCount === 1 ? 'this span' : 'these spans'}`}`,
         '',
         'This may indicate:',
         '• Invalid span data or attributes',
@@ -265,7 +265,7 @@ export const GentraceWarnings = {
         '• Server-side validation failures',
       ],
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-otelpartialfailurewarning',
-      suppressionHint: 'Partial failures are logged but do not stop span export',
-      borderColor: 'yellow',
+      suppressionHint: 'This warning will only be shown once per session',
+      borderColor: 'red',
     }),
 };

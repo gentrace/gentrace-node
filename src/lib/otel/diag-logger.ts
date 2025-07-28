@@ -9,6 +9,8 @@ import { GentraceWarnings } from '../warnings';
  * OTLP exporter and displays them using the GT_OtelPartialFailureWarning.
  */
 export class GentraceDiagLogger implements DiagLogger {
+  private displayedWarnings = new Set<string>();
+
   constructor(private debugMode: boolean = false) {}
 
   error(message: string, ...args: unknown[]): void {
@@ -18,14 +20,30 @@ export class GentraceDiagLogger implements DiagLogger {
   warn(message: string, ...args: unknown[]): void {
     // Intercept partial success warnings from OTLP exporter
     if (message.includes('Received Partial Success response:')) {
+      // Check if we've already displayed a partial success warning
+      const warningKey = 'partial-success';
+      if (this.displayedWarnings.has(warningKey)) {
+        // Log to console in debug mode but don't display the warning again
+        if (this.debugMode) {
+          console.warn(`[OpenTelemetry Warning] ${message}`, ...args);
+        }
+        return;
+      }
+
       // The partial success data is passed as the first argument
       const partialSuccessJson = args[0] as string;
       try {
         const partialSuccess = JSON.parse(partialSuccessJson);
 
+        // Mark this warning as displayed
+        this.displayedWarnings.add(warningKey);
+
+        // Convert rejectedSpans to number (it comes as a string from the server)
+        const rejectedCount = partialSuccess.rejectedSpans ? Number(partialSuccess.rejectedSpans) : 0;
+
         // Use Gentrace's warning system to display the partial failure
         const warning = GentraceWarnings.OtelPartialFailureWarning(
-          partialSuccess.rejectedSpans || 0,
+          rejectedCount,
           partialSuccess.errorMessage,
         );
         warning.display();
