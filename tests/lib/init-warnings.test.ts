@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import { init } from 'gentrace';
 import { _getInitHistory } from 'gentrace/lib/init-state';
+import { GentraceWarning } from 'gentrace/lib/warnings';
 
 describe('Multiple init() warning tests', () => {
   let originalConsoleWarn: typeof console.warn;
@@ -15,6 +16,9 @@ describe('Multiple init() warning tests', () => {
     // Clear init history before each test
     const history = _getInitHistory();
     history.length = 0;
+
+    // Clear displayed warnings before each test
+    GentraceWarning._clearDisplayedWarnings();
   });
 
   afterEach(() => {
@@ -111,16 +115,38 @@ describe('Multiple init() warning tests', () => {
       expect(warningOutput).toContain('- true → false');
     });
 
-    test('should track multiple init calls in history', () => {
+    test('should show warning only once with deduplication', () => {
       init({ apiKey: 'key1', otelSetup: false });
       init({ apiKey: 'key2', otelSetup: false });
       init({ apiKey: 'key3', otelSetup: false });
 
-      // Should have shown warnings for the 2nd and 3rd calls
-      expect(consoleWarnMock).toHaveBeenCalledTimes(2);
+      // Due to warning deduplication, should only show warning once (on the 2nd call)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1);
 
-      // Check the second warning (3rd init call)
-      const secondWarning = consoleWarnMock.mock.calls[1]?.[0] || '';
+      // Check the warning shows it was the 2nd call
+      const warningOutput = consoleWarnMock.mock.calls[0]?.[0] || '';
+      expect(warningOutput).toContain('2 times');
+      expect(warningOutput).toContain('Call #1:');
+    });
+
+    test('should track correct call count after clearing warnings', () => {
+      // First sequence
+      init({ apiKey: 'key1', otelSetup: false });
+      init({ apiKey: 'key2', otelSetup: false });
+
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1);
+      const firstWarning = consoleWarnMock.mock.calls[0]?.[0] || '';
+      expect(firstWarning).toContain('2 times');
+
+      // Clear warnings and console mock
+      GentraceWarning._clearDisplayedWarnings();
+      consoleWarnMock.mockClear();
+
+      // Second sequence - should show warning again
+      init({ apiKey: 'key3', otelSetup: false });
+
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1);
+      const secondWarning = consoleWarnMock.mock.calls[0]?.[0] || '';
       expect(secondWarning).toContain('3 times');
       expect(secondWarning).toContain('Call #1:');
       expect(secondWarning).toContain('Call #2:');
@@ -189,7 +215,7 @@ describe('Multiple init() warning tests', () => {
       });
       init({
         apiKey: 'test',
-        otelSetup: { serviceName: 'prod-service', debug: true },
+        otelSetup: { serviceName: 'prod-service' },
       });
 
       const warningOutput = consoleWarnMock.mock.calls[0]?.[0] || '';
@@ -197,7 +223,6 @@ describe('Multiple init() warning tests', () => {
       // Should show object summary
       expect(warningOutput).toContain('otelSetup:');
       expect(warningOutput).toContain('{ serviceName }');
-      expect(warningOutput).toContain('{ serviceName, debug }');
     });
 
     test('should handle array values in config', () => {

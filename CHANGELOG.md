@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.1 (2025-07-28)
+
+Full Changelog: [v0.12.0...v0.12.1](https://github.com/gentrace/gentrace-node/compare/v0.12.0...v0.12.1)
+
+### Bug Fixes
+
+* add an error for partial ingestion, unify logging with Stainless' logging system ([#625](https://github.com/gentrace/gentrace-node/issues/625)) ([127ccb2](https://github.com/gentrace/gentrace-node/commit/127ccb2e174a4d9d422e9329d9b1ff73724183f7))
+
 ## 0.12.0 (2025-07-24)
 
 Full Changelog: [v0.11.2...v0.12.0](https://github.com/gentrace/gentrace-node/compare/v0.11.2...v0.12.0)

@@ -5,16 +5,25 @@ import { _isGentraceInitialized } from '../init-state';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
-import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
 import type { SetupConfig } from './types';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import * as resources from '@opentelemetry/resources';
-import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import { setGlobalErrorHandler } from '@opentelemetry/core';
+import {
+  ATTR_SERVICE_NAME,
+  ATTR_TELEMETRY_SDK_LANGUAGE,
+  ATTR_TELEMETRY_SDK_NAME,
+  ATTR_TELEMETRY_SDK_VERSION,
+} from '@opentelemetry/semantic-conventions';
+import { setGlobalErrorHandler, SDK_INFO } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { GentraceWarnings } from '../warnings';
+import { diag } from '@opentelemetry/api';
+import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
+import { GentraceDiagLogger } from './diag-logger';
+import { loggerFor } from '../../internal/utils/log';
+import { mapStainlessLogLevelToOTelDiagLevel } from './utils';
 
 // Re-export SetupConfig for backwards compatibility
 export type { SetupConfig };
@@ -105,7 +114,8 @@ setup();`;
       '\n\n' +
       chalk.gray('Make sure to call init() before setup() in your application.');
 
-    console.error(
+    // Display the error box to stderr regardless of log level since this is a critical setup error
+    process.stderr.write(
       '\n' +
         boxen(errorTitle + '\n' + fullMessage, {
           padding: 1,
@@ -126,6 +136,11 @@ setup();`;
     throw new Error('Gentrace API key is missing or invalid.');
   }
 
+  // Configure the diagnostic logger to intercept OpenTelemetry warnings
+  // This allows us to display partial success warnings using Gentrace's warning system
+  const diagLogLevel = mapStainlessLogLevelToOTelDiagLevel(client.logLevel);
+  diag.setLogger(new GentraceDiagLogger(), diagLogLevel);
+
   // Set a custom error handler for OpenTelemetry
   setGlobalErrorHandler((error) => {
     // Display the error warning only once
@@ -136,7 +151,10 @@ setup();`;
     }
 
     // Always log to the logger if available (even after the first warning)
-    _getClient().logger?.error(`OpenTelemetry error:`, error);
+    const client = _getClient();
+    if (client.logger) {
+      loggerFor(client).error('OpenTelemetry instrumentation error:', error);
+    }
   });
 
   // Get configuration values with smart defaults
@@ -145,9 +163,14 @@ setup();`;
   const baseUrl = client.baseURL || process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api';
   const traceEndpoint = config.traceEndpoint || `${baseUrl}/otel/v1/traces`;
 
-  // Build resource attributes
+  // Build resource attributes including default SDK attributes
   const resourceAttributes: Record<string, string | number | boolean> = {
-    [ATTR_SERVICE_NAME]: config.serviceName || 'unknown-service',
+    // Default SDK attributes that would normally come from Resource.default()
+    [ATTR_SERVICE_NAME]: config.serviceName || `unknown_service:${process.argv0}`,
+    [ATTR_TELEMETRY_SDK_LANGUAGE]: SDK_INFO[ATTR_TELEMETRY_SDK_LANGUAGE],
+    [ATTR_TELEMETRY_SDK_NAME]: SDK_INFO[ATTR_TELEMETRY_SDK_NAME],
+    [ATTR_TELEMETRY_SDK_VERSION]: SDK_INFO[ATTR_TELEMETRY_SDK_VERSION],
+    // User-provided attributes override defaults
     ...config.resourceAttributes,
   };
 
@@ -165,11 +188,13 @@ setup();`;
   } else if (resourcesModule.Resource) {
     // OpenTelemetry v1 style - direct Resource construction
     const Resource = resourcesModule.Resource;
-    resource = Resource.default().merge(new Resource(resourceAttributes));
+    // Create resource directly without using default() to avoid async attributes warning
+    resource = new Resource(resourceAttributes);
   } else if (resourcesModule.default?.Resource) {
     // v1 with default export
     const Resource = resourcesModule.default.Resource;
-    resource = Resource.default().merge(new Resource(resourceAttributes));
+    // Create resource directly without using default() to avoid async attributes warning
+    resource = new Resource(resourceAttributes);
   } else {
     // Last resort fallback
     throw new Error('Unable to create OpenTelemetry Resource. Please check your OpenTelemetry version.');
@@ -198,7 +223,7 @@ setup();`;
   spanProcessors.push(new SimpleSpanProcessor(traceExporter));
 
   // Add console exporter if debug mode
-  if (config.debug) {
+  if (client.logLevel === 'debug') {
     spanProcessors.push(new SimpleSpanProcessor(new ConsoleSpanExporter()));
   }
 
@@ -210,6 +235,8 @@ setup();`;
     resource,
     spanProcessors,
     contextManager,
+    // Disable auto resource detection to prevent async attributes warning
+    autoDetectResources: false,
   };
 
   // Add sampler if provided
@@ -229,7 +256,11 @@ setup();`;
     try {
       sdk.shutdown();
     } catch (error) {
-      console.error('Error during OpenTelemetry shutdown:', error);
+      // Log shutdown errors at error level
+      const client = _getClient();
+      if (client.logger) {
+        loggerFor(client).error('Error during OpenTelemetry shutdown:', error);
+      }
     }
   };
 

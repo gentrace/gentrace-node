@@ -1,6 +1,9 @@
 import chalk from 'chalk';
 import boxen from 'boxen';
 
+// Global tracking of displayed warnings
+const displayedWarnings = new Set<string>();
+
 export interface GentraceWarningOptions {
   warningId: string;
   title: string;
@@ -31,7 +34,37 @@ export class GentraceWarning {
     return this.message.join(' ');
   }
 
+  /**
+   * Check if a warning has already been displayed
+   */
+  static hasBeenDisplayed(warningKey: string): boolean {
+    return displayedWarnings.has(warningKey);
+  }
+
+  /**
+   * Mark a warning as displayed
+   */
+  static markAsDisplayed(warningKey: string): void {
+    displayedWarnings.add(warningKey);
+  }
+
+  /**
+   * Clear all displayed warnings (used for testing)
+   * @internal
+   */
+  static _clearDisplayedWarnings(): void {
+    displayedWarnings.clear();
+  }
+
   display(): void {
+    // Check if this warning has already been displayed
+    if (GentraceWarning.hasBeenDisplayed(this.warningId)) {
+      return;
+    }
+
+    // Mark as displayed
+    GentraceWarning.markAsDisplayed(this.warningId);
+
     try {
       // Build the formatted message
       const messageLines: string[] = [];
@@ -248,5 +281,24 @@ export const GentraceWarnings = {
       ],
       learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-multipleinitwarning',
       suppressionHint: 'To suppress this warning: init({ ..., suppressWarnings: true })',
+    }),
+
+  OtelPartialFailureWarning: (rejectedCount: number, errorMessage?: string) =>
+    new GentraceWarning({
+      warningId: 'GT_OtelPartialFailureWarning',
+      title: 'Some spans were not ingested',
+      message: [
+        `Gentrace could not ingest ${rejectedCount} ${rejectedCount === 1 ? 'span' : 'spans'}.`,
+        '',
+        `Reason: ${errorMessage || `The server rejected ${rejectedCount === 1 ? 'this span' : 'these spans'}`}`,
+        '',
+        'This may indicate:',
+        '• Invalid span data or attributes',
+        '• Rate limiting or quota issues',
+        '• Server-side validation failures',
+      ],
+      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-otelpartialfailurewarning',
+      suppressionHint: 'This warning will only be shown once per session',
+      borderColor: 'red',
     }),
 };
