@@ -1,6 +1,9 @@
 import chalk from 'chalk';
 import boxen from 'boxen';
 
+// Global tracking of displayed warnings
+const displayedWarnings = new Set<string>();
+
 export interface GentraceWarningOptions {
   warningId: string;
   title: string;
@@ -31,7 +34,37 @@ export class GentraceWarning {
     return this.message.join(' ');
   }
 
+  /**
+   * Check if a warning has already been displayed
+   */
+  static hasBeenDisplayed(warningKey: string): boolean {
+    return displayedWarnings.has(warningKey);
+  }
+
+  /**
+   * Mark a warning as displayed
+   */
+  static markAsDisplayed(warningKey: string): void {
+    displayedWarnings.add(warningKey);
+  }
+
+  /**
+   * Clear all displayed warnings (used for testing)
+   * @internal
+   */
+  static _clearDisplayedWarnings(): void {
+    displayedWarnings.clear();
+  }
+
   display(): void {
+    // Check if this warning has already been displayed
+    if (GentraceWarning.hasBeenDisplayed(this.warningId)) {
+      return;
+    }
+
+    // Mark as displayed
+    GentraceWarning.markAsDisplayed(this.warningId);
+
     try {
       // Build the formatted message
       const messageLines: string[] = [];

@@ -1,5 +1,5 @@
 import { DiagLogger } from '@opentelemetry/api';
-import { GentraceWarnings } from '../warnings';
+import { GentraceWarnings, GentraceWarning } from '../warnings';
 import { _getClient } from '../client-instance';
 import { loggerFor } from '../../internal/utils/log';
 
@@ -11,7 +11,6 @@ import { loggerFor } from '../../internal/utils/log';
  * OTLP exporter and displays them using the GT_OtelPartialFailureWarning.
  */
 export class GentraceDiagLogger implements DiagLogger {
-  private displayedWarnings = new Set<string>();
   private client = _getClient();
   private logger = loggerFor(this.client);
 
@@ -25,15 +24,15 @@ export class GentraceDiagLogger implements DiagLogger {
     // Intercept partial success warnings from OTLP exporter
     if (message.includes('Received Partial Success response:')) {
       // Check if we've already displayed a partial success warning
-      const warningKey = 'partial-success';
-      if (!this.displayedWarnings.has(warningKey)) {
+      const warningKey = 'GT_OtelPartialFailureWarning';
+      if (!GentraceWarning.hasBeenDisplayed(warningKey)) {
         // The partial success data is passed as the first argument
         const partialSuccessJson = args[0] as string;
         try {
           const partialSuccess = JSON.parse(partialSuccessJson);
 
           // Mark this warning as displayed
-          this.displayedWarnings.add(warningKey);
+          GentraceWarning.markAsDisplayed(warningKey);
 
           // Convert rejectedSpans to number (it comes as a string from the server)
           const rejectedCount = partialSuccess.rejectedSpans ? Number(partialSuccess.rejectedSpans) : 0;

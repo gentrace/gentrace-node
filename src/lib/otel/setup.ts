@@ -10,19 +10,20 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import * as resources from '@opentelemetry/resources';
-import { 
+import {
   ATTR_SERVICE_NAME,
   ATTR_TELEMETRY_SDK_LANGUAGE,
   ATTR_TELEMETRY_SDK_NAME,
-  ATTR_TELEMETRY_SDK_VERSION
+  ATTR_TELEMETRY_SDK_VERSION,
 } from '@opentelemetry/semantic-conventions';
 import { setGlobalErrorHandler, SDK_INFO } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { GentraceWarnings } from '../warnings';
-import { diag, DiagLogLevel } from '@opentelemetry/api';
+import { diag } from '@opentelemetry/api';
 import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
 import { GentraceDiagLogger } from './diag-logger';
 import { loggerFor } from '../../internal/utils/log';
+import { mapStainlessLogLevelToOTelDiagLevel } from './utils';
 
 // Re-export SetupConfig for backwards compatibility
 export type { SetupConfig };
@@ -137,7 +138,8 @@ setup();`;
 
   // Configure the diagnostic logger to intercept OpenTelemetry warnings
   // This allows us to display partial success warnings using Gentrace's warning system
-  diag.setLogger(new GentraceDiagLogger(), DiagLogLevel.WARN);
+  const diagLogLevel = mapStainlessLogLevelToOTelDiagLevel(client.logLevel);
+  diag.setLogger(new GentraceDiagLogger(), diagLogLevel);
 
   // Set a custom error handler for OpenTelemetry
   setGlobalErrorHandler((error) => {
