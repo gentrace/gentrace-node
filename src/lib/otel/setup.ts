@@ -17,6 +17,7 @@ import { GentraceWarnings } from '../warnings';
 import { diag, DiagLogLevel } from '@opentelemetry/api';
 import type { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
 import { GentraceDiagLogger } from './diag-logger';
+import { loggerFor } from '../../internal/utils/log';
 
 // Re-export SetupConfig for backwards compatibility
 export type { SetupConfig };
@@ -107,7 +108,8 @@ setup();`;
       '\n\n' +
       chalk.gray('Make sure to call init() before setup() in your application.');
 
-    console.error(
+    // Display the error box to stderr regardless of log level since this is a critical setup error
+    process.stderr.write(
       '\n' +
         boxen(errorTitle + '\n' + fullMessage, {
           padding: 1,
@@ -130,7 +132,7 @@ setup();`;
 
   // Configure the diagnostic logger to intercept OpenTelemetry warnings
   // This allows us to display partial success warnings using Gentrace's warning system
-  diag.setLogger(new GentraceDiagLogger(config.debug), DiagLogLevel.WARN);
+  diag.setLogger(new GentraceDiagLogger(), DiagLogLevel.WARN);
 
   // Set a custom error handler for OpenTelemetry
   setGlobalErrorHandler((error) => {
@@ -142,7 +144,10 @@ setup();`;
     }
 
     // Always log to the logger if available (even after the first warning)
-    _getClient().logger?.error(`OpenTelemetry error:`, error);
+    const client = _getClient();
+    if (client.logger) {
+      loggerFor(client).error('OpenTelemetry instrumentation error:', error);
+    }
   });
 
   // Get configuration values with smart defaults
@@ -204,7 +209,7 @@ setup();`;
   spanProcessors.push(new SimpleSpanProcessor(traceExporter));
 
   // Add console exporter if debug mode
-  if (config.debug) {
+  if (client.logLevel === 'debug') {
     spanProcessors.push(new SimpleSpanProcessor(new ConsoleSpanExporter()));
   }
 
@@ -235,7 +240,11 @@ setup();`;
     try {
       sdk.shutdown();
     } catch (error) {
-      console.error('Error during OpenTelemetry shutdown:', error);
+      // Log shutdown errors at error level
+      const client = _getClient();
+      if (client.logger) {
+        loggerFor(client).error('Error during OpenTelemetry shutdown:', error);
+      }
     }
   };
 

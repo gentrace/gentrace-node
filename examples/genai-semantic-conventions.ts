@@ -24,7 +24,7 @@ import { init, interaction } from '../src';
 init({
   apiKey: process.env['GENTRACE_API_KEY'] || '',
   baseURL: process.env['GENTRACE_BASE_URL'] || 'https://gentrace.ai/api',
-  otelSetup: true,
+  logLevel: 'warn',
 });
 
 async function main() {

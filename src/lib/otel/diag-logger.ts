@@ -1,5 +1,7 @@
 import { DiagLogger } from '@opentelemetry/api';
 import { GentraceWarnings } from '../warnings';
+import { _getClient } from '../client-instance';
+import { loggerFor } from '../../internal/utils/log';
 
 /**
  * Custom diagnostic logger for OpenTelemetry that intercepts warnings
@@ -10,11 +12,13 @@ import { GentraceWarnings } from '../warnings';
  */
 export class GentraceDiagLogger implements DiagLogger {
   private displayedWarnings = new Set<string>();
+  private client = _getClient();
+  private logger = loggerFor(this.client);
 
-  constructor(private debugMode: boolean = false) {}
+  constructor() {}
 
   error(message: string, ...args: unknown[]): void {
-    console.error(`[OpenTelemetry Error] ${message}`, ...args);
+    this.logger.error(message, ...args);
   }
 
   warn(message: string, ...args: unknown[]): void {
@@ -22,56 +26,47 @@ export class GentraceDiagLogger implements DiagLogger {
     if (message.includes('Received Partial Success response:')) {
       // Check if we've already displayed a partial success warning
       const warningKey = 'partial-success';
-      if (this.displayedWarnings.has(warningKey)) {
-        // Log to console in debug mode but don't display the warning again
-        if (this.debugMode) {
-          console.warn(`[OpenTelemetry Warning] ${message}`, ...args);
+      if (!this.displayedWarnings.has(warningKey)) {
+        // The partial success data is passed as the first argument
+        const partialSuccessJson = args[0] as string;
+        try {
+          const partialSuccess = JSON.parse(partialSuccessJson);
+
+          // Mark this warning as displayed
+          this.displayedWarnings.add(warningKey);
+
+          // Convert rejectedSpans to number (it comes as a string from the server)
+          const rejectedCount = partialSuccess.rejectedSpans ? Number(partialSuccess.rejectedSpans) : 0;
+
+          // Use Gentrace's warning system to display the partial failure
+          const warning = GentraceWarnings.OtelPartialFailureWarning(
+            rejectedCount,
+            partialSuccess.errorMessage,
+          );
+          warning.display();
+        } catch (e) {
+          // If we can't parse the partial success, fall back to regular logging
+          this.logger.warn(message, ...args);
         }
-        return;
       }
-
-      // The partial success data is passed as the first argument
-      const partialSuccessJson = args[0] as string;
-      try {
-        const partialSuccess = JSON.parse(partialSuccessJson);
-
-        // Mark this warning as displayed
-        this.displayedWarnings.add(warningKey);
-
-        // Convert rejectedSpans to number (it comes as a string from the server)
-        const rejectedCount = partialSuccess.rejectedSpans ? Number(partialSuccess.rejectedSpans) : 0;
-
-        // Use Gentrace's warning system to display the partial failure
-        const warning = GentraceWarnings.OtelPartialFailureWarning(
-          rejectedCount,
-          partialSuccess.errorMessage,
-        );
-        warning.display();
-      } catch (e) {
-        // If we can't parse the partial success, fall back to console
-        console.warn(`[OpenTelemetry Warning] ${message}`, ...args);
-      }
+      // Log raw message at debug level for programmatic access
+      this.logger.debug(message, ...args);
     } else {
-      // Other warnings go to console
-      console.warn(`[OpenTelemetry Warning] ${message}`, ...args);
+      // Other warnings go directly to logger
+      this.logger.warn(message, ...args);
     }
   }
 
   info(message: string, ...args: unknown[]): void {
-    if (this.debugMode) {
-      console.info(`[OpenTelemetry Info] ${message}`, ...args);
-    }
+    this.logger.info(message, ...args);
   }
 
   debug(message: string, ...args: unknown[]): void {
-    if (this.debugMode) {
-      console.debug(`[OpenTelemetry Debug] ${message}`, ...args);
-    }
+    this.logger.debug(message, ...args);
   }
 
   verbose(message: string, ...args: unknown[]): void {
-    if (this.debugMode) {
-      console.debug(`[OpenTelemetry Verbose] ${message}`, ...args);
-    }
+    // Map verbose to debug as Stainless has no verbose level
+    this.logger.debug(message, ...args);
   }
 }
