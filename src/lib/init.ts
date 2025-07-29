@@ -23,7 +23,7 @@ export { _isGentraceInitialized, _getOtelSetupConfig };
  */
 export interface InitOptions extends ClientOptions {
   /**
-   * OpenTelemetry setup configuration. Defaults to true (automatic setup with defaults).
+   * OpenTelemetry setup configuration. Defaults to true (automatic setup with defaults)
    * - Set to false to disable automatic OpenTelemetry configuration
    * - Set to true to use default configuration
    * - Set to an object to provide custom configuration
