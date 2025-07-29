@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.12.2 (2025-07-29)
+
+Full Changelog: [v0.12.1...v0.12.2](https://github.com/gentrace/gentrace-node/compare/v0.12.1...v0.12.2)
+
+### Bug Fixes
+
+* Fix warnings links to point to the new docs URL structure ([#630](https://github.com/gentrace/gentrace-node/issues/630)) ([b3920b0](https://github.com/gentrace/gentrace-node/commit/b3920b045f6c110ac3414e32edbbe11711e52a4f))
+* force release of a new Node version ([7a0b839](https://github.com/gentrace/gentrace-node/commit/7a0b8399295561176aea12bc1616b5ef00076849))
+* force release of a new Node version ([2eda66c](https://github.com/gentrace/gentrace-node/commit/2eda66c52583d347b25e00f730ea42cf217f5c6b))
+* remove unused otelSetup option in init config ([8003978](https://github.com/gentrace/gentrace-node/commit/800397803a2d8157879954e6452e76d9618ce1f8))
+
 ## 0.12.1 (2025-07-28)
 
 Full Changelog: [v0.12.0...v0.12.1](https://github.com/gentrace/gentrace-node/compare/v0.12.0...v0.12.1)
