@@ -27,7 +27,7 @@ init({
 });
 
 async function main() {
-  // Get the tracer
+  // Get the tracer.
   const tracer = trace.getTracer('genai-example', '1.0.0');
 
   // Create OpenAI client

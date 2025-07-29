@@ -123,7 +123,7 @@ export const GentraceWarnings = {
         '',
         `Please verify the pipeline ID matches what's shown in the Gentrace UI.`,
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-pipelineinvaliderror',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-pipelineinvaliderror',
       suppressionHint:
         'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
       borderColor: 'red',
@@ -138,7 +138,7 @@ export const GentraceWarnings = {
         '',
         `Please verify the pipeline ID matches what's shown in the Gentrace UI.`,
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-pipelinenotfounderror',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-pipelinenotfounderror',
       suppressionHint:
         'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
       borderColor: 'red',
@@ -153,7 +153,7 @@ export const GentraceWarnings = {
         '',
         `Please check your GENTRACE_API_KEY has the correct permissions.`,
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-pipelineunauthorizederror',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-pipelineunauthorizederror',
       suppressionHint:
         'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
       borderColor: 'red',
@@ -189,7 +189,7 @@ export const GentraceWarnings = {
         '1. Remove the otelSetup: false option from init() to enable automatic setup',
         '2. Or manually configure OpenTelemetry yourself (see documentation)',
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-otelnotconfigurederror',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-otelnotconfigurederror',
       suppressionHint:
         'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
     }),
@@ -210,7 +210,7 @@ export const GentraceWarnings = {
         '',
         'Note: Each **distinct** process/service must call init() before using Gentrace functions.',
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-autoinitializationwarning',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-autoinitializationwarning',
       suppressionHint:
         'To suppress this warning: interaction(name, fn, { pipelineId, suppressWarnings: true })',
     }),
@@ -230,7 +230,7 @@ export const GentraceWarnings = {
         '• Invalid configuration or credentials',
         '• Resource limits or memory constraints',
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-otelglobalerror',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-otelglobalerror',
       suppressionHint: 'To suppress OpenTelemetry errors: Use a custom error handler in setup()',
       borderColor: 'red',
     }),
@@ -253,7 +253,7 @@ export const GentraceWarnings = {
         '',
         'Get your API key from: https://gentrace.ai/settings',
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-missingapikeyerror',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-missingapikeyerror',
       borderColor: 'red',
     }),
 
@@ -279,7 +279,7 @@ export const GentraceWarnings = {
         'Previous init() calls:',
         ...params.initHistory.map((call) => `  - Call #${call.callNumber}: ${call.timestamp.toISOString()}`),
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-multipleinitwarning',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-multipleinitwarning',
       suppressionHint: 'To suppress this warning: init({ ..., suppressWarnings: true })',
     }),
 
@@ -297,7 +297,7 @@ export const GentraceWarnings = {
         '• Rate limiting or quota issues',
         '• Server-side validation failures',
       ],
-      learnMoreUrl: 'https://next.gentrace.ai/docs/sdk-reference/errors#gt-otelpartialfailurewarning',
+      learnMoreUrl: 'https://gentrace.ai/docs/reference/sdk-errors#gt-otelpartialfailurewarning',
       suppressionHint: 'This warning will only be shown once per session',
       borderColor: 'red',
     }),
