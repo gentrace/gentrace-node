@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.3 (2025-07-30)
+
+Full Changelog: [v0.12.2...v0.12.3](https://github.com/gentrace/gentrace-node/compare/v0.12.2...v0.12.3)
+
+### Chores
+
+* **internal:** remove redundant imports config ([d8cbd57](https://github.com/gentrace/gentrace-node/commit/d8cbd57fc93eaf808874100d846d4d83a8671ccd))
+
 ## 0.12.2 (2025-07-29)
 
 Full Changelog: [v0.12.1...v0.12.2](https://github.com/gentrace/gentrace-node/compare/v0.12.1...v0.12.2)
