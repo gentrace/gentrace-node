@@ -175,7 +175,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 // For OpenTelemetry v1, use: import { Resource } from '@opentelemetry/resources';
 import { SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
-import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 // First initialize Gentrace with otelSetup: false
 init({
@@ -187,9 +187,9 @@ init({
 const sdk = new NodeSDK({
   // For OpenTelemetry v2:
   resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: 'your-service-name',
+    [SEMRESATTRS_SERVICE_NAME]: 'your-service-name',
   }),
-  // For OpenTelemetry v1, use: resource: new Resource({ [ATTR_SERVICE_NAME]: 'your-service-name' }),
+  // For OpenTelemetry v1, use: resource: new Resource({ [SEMRESATTRS_SERVICE_NAME]: 'your-service-name' }),
   spanProcessors: [
     new SimpleSpanProcessor(
       new OTLPTraceExporter({

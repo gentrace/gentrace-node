@@ -311,7 +311,7 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
-import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 // 📋 End copying imports
 
 // Define the API key at the top
@@ -325,7 +325,7 @@ if (!GENTRACE_API_KEY) {
 // Initialize the OpenTelemetry SDK with GentraceSampler
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
-    [ATTR_SERVICE_NAME]: 'your-generative-ai-product',
+    [SEMRESATTRS_SERVICE_NAME]: 'your-generative-ai-product',
   }),
   traceExporter: new OTLPTraceExporter({
     url: 'https://gentrace.ai/api/otel/v1/traces',

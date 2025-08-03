@@ -11,10 +11,10 @@ import { SimpleSpanProcessor, ConsoleSpanExporter } from '@opentelemetry/sdk-tra
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import * as resources from '@opentelemetry/resources';
 import {
-  ATTR_SERVICE_NAME,
-  ATTR_TELEMETRY_SDK_LANGUAGE,
-  ATTR_TELEMETRY_SDK_NAME,
-  ATTR_TELEMETRY_SDK_VERSION,
+  SEMRESATTRS_SERVICE_NAME,
+  SEMRESATTRS_TELEMETRY_SDK_LANGUAGE,
+  SEMRESATTRS_TELEMETRY_SDK_NAME,
+  SEMRESATTRS_TELEMETRY_SDK_VERSION,
 } from '@opentelemetry/semantic-conventions';
 import { setGlobalErrorHandler, SDK_INFO } from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
@@ -166,10 +166,10 @@ setup();`;
   // Build resource attributes including default SDK attributes
   const resourceAttributes: Record<string, string | number | boolean> = {
     // Default SDK attributes that would normally come from Resource.default()
-    [ATTR_SERVICE_NAME]: config.serviceName || `unknown_service:${process.argv0}`,
-    [ATTR_TELEMETRY_SDK_LANGUAGE]: SDK_INFO[ATTR_TELEMETRY_SDK_LANGUAGE],
-    [ATTR_TELEMETRY_SDK_NAME]: SDK_INFO[ATTR_TELEMETRY_SDK_NAME],
-    [ATTR_TELEMETRY_SDK_VERSION]: SDK_INFO[ATTR_TELEMETRY_SDK_VERSION],
+    [SEMRESATTRS_SERVICE_NAME]: config.serviceName || `unknown_service:${process.argv0}`,
+    [SEMRESATTRS_TELEMETRY_SDK_LANGUAGE]: SDK_INFO[SEMRESATTRS_TELEMETRY_SDK_LANGUAGE],
+    [SEMRESATTRS_TELEMETRY_SDK_NAME]: SDK_INFO[SEMRESATTRS_TELEMETRY_SDK_NAME],
+    [SEMRESATTRS_TELEMETRY_SDK_VERSION]: SDK_INFO[SEMRESATTRS_TELEMETRY_SDK_VERSION],
     // User-provided attributes override defaults
     ...config.resourceAttributes,
   };
