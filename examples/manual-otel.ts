@@ -19,7 +19,7 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { resourceFromAttributes } from '@opentelemetry/resources';
-import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
@@ -35,8 +35,8 @@ async function main() {
   // Manually configure OpenTelemetry SDK
   const sdk = new NodeSDK({
     resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: 'manual-otel-example',
-      [ATTR_SERVICE_VERSION]: '1.0.0',
+      [SEMRESATTRS_SERVICE_NAME]: 'manual-otel-example',
+      [SEMRESATTRS_SERVICE_VERSION]: '1.0.0',
     }),
     spanProcessors: [
       new GentraceSpanProcessor(),
