@@ -1,6 +1,6 @@
 {
   "name": "gentrace",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "The official TypeScript library for the Gentrace API",
   "author": "Gentrace <support@gentrace.ai>",
   "types": "dist/index.d.ts",
@@ -78,10 +78,6 @@
     "@opentelemetry/sdk-node": ">=0.49.0 <0.300.0",
     "@opentelemetry/sdk-trace-node": ">=1.0.0 <3.0.0",
     "@opentelemetry/semantic-conventions": ">=1.0.0 <2.0.0"
-  },
-  "imports": {
-    "gentrace": ".",
-    "gentrace/*": "./src/*"
   },
   "exports": {
     ".": {
