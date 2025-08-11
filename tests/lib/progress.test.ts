@@ -209,4 +209,46 @@ describe('Progress Reporters', () => {
       });
     });
   });
+
+  describe('SimpleProgressReporter with logger', () => {
+    it('should use logger when provided', () => {
+      const mockLogger = {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+        debug: jest.fn()
+      };
+      
+      const reporter = new SimpleProgressReporter(mockLogger);
+      
+      reporter.start('test-pipeline', 2);
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '\nRunning evaluation "test-pipeline" with 2 test cases...'
+      );
+      
+      reporter.increment('Test 1');
+      expect(mockLogger.info).toHaveBeenCalledWith('[1/2] Running test case: "Test 1"');
+      
+      reporter.stop();
+      expect(mockLogger.info).toHaveBeenCalledWith('Evaluation complete.');
+      
+      // Console should not be called when logger is provided
+      expect(consoleLogSpy).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to console when logger is not provided', () => {
+      const reporter = new SimpleProgressReporter();
+      
+      reporter.start('test-pipeline', 1);
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        '\nRunning evaluation "test-pipeline" with 1 test cases...'
+      );
+      
+      reporter.increment('Test');
+      expect(consoleLogSpy).toHaveBeenCalledWith('[1/1] Running test case: "Test"');
+      
+      reporter.stop();
+      expect(consoleLogSpy).toHaveBeenCalledWith('Evaluation complete.');
+    });
+  });
 });

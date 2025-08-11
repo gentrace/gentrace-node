@@ -1,4 +1,5 @@
 import * as cliProgress from 'cli-progress';
+import type { Logger } from '../client';
 
 /**
  * Helper function to fit a name into a fixed number of spaces.
@@ -83,7 +84,7 @@ export interface ProgressReporter {
  * 
  * @example Usage:
  * ```typescript
- * const reporter = new SimpleProgressReporter();
+ * const reporter = new SimpleProgressReporter(logger);
  * reporter.start('my-pipeline', 10);
  * reporter.increment('Test 1');
  * reporter.increment('Test 2');
@@ -93,6 +94,16 @@ export interface ProgressReporter {
 export class SimpleProgressReporter implements ProgressReporter {
   private total = 0;
   private count = 0;
+  private logger: Logger | undefined;
+  
+  /**
+   * Creates a new SimpleProgressReporter instance.
+   * 
+   * @param logger - Optional logger instance. If not provided, falls back to console.
+   */
+  constructor(logger?: Logger) {
+    this.logger = logger;
+  }
   
   /**
    * Initialize a new evaluation run with line-by-line output.
@@ -102,7 +113,12 @@ export class SimpleProgressReporter implements ProgressReporter {
    */
   public start(name: string, total: number): void {
     this.total = total;
-    console.log(`\nRunning evaluation "${name}" with ${total} test cases...`);
+    const message = `\nRunning evaluation "${name}" with ${total} test cases...`;
+    if (this.logger) {
+      this.logger.info(message);
+    } else {
+      console.log(message);
+    }
   }
 
   /**
@@ -112,14 +128,24 @@ export class SimpleProgressReporter implements ProgressReporter {
    */
   public increment(testCaseName: string): void {
     this.count++;
-    console.log(`[${this.count}/${this.total}] Running test case: "${testCaseName}"`);
+    const message = `[${this.count}/${this.total}] Running test case: "${testCaseName}"`;
+    if (this.logger) {
+      this.logger.info(message);
+    } else {
+      console.log(message);
+    }
   }
 
   /**
    * Log the completion message for the evaluation run.
    */
   public stop(): void {
-    console.log('Evaluation complete.');
+    const message = 'Evaluation complete.';
+    if (this.logger) {
+      this.logger.info(message);
+    } else {
+      console.log(message);
+    }
   }
 }
 

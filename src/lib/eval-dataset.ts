@@ -96,7 +96,7 @@ export async function evalDataset<TSchema extends ParseableSchema<any> | undefin
   // Initialize progress reporter (bar or line-by-line based on preference or CI detection)
   const reporter: ProgressReporter = useProgressBar 
     ? new BarProgressReporter() 
-    : new SimpleProgressReporter();
+    : new SimpleProgressReporter(client.logger);
   
   // Start progress reporting with pipeline ID and total count
   reporter.start(experimentContext.pipelineId, rawTestInputs.length);
