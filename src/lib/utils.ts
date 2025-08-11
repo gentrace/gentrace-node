@@ -2,9 +2,20 @@ import chalk from 'chalk';
 import { highlight } from 'cli-highlight';
 import { trace } from '@opentelemetry/api';
 import { isDeepStrictEqual } from 'util';
+import * as ciInfo from 'ci-info';
 import { _getOtelSetupConfig } from './init-state';
 import { _getClient } from './client-instance';
 import { GentraceWarnings } from './warnings';
+
+/**
+ * Detects if the code is running in a CI/CD environment.
+ * Uses the industry-standard ci-info package which supports 40+ CI platforms.
+ *
+ * @returns true if running in a CI environment, false otherwise
+ */
+export function isCI(): boolean {
+  return ciInfo.isCI;
+}
 
 // Convert a string to snake_case
 export function toSnakeCase(str: string): string {
