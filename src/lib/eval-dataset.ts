@@ -63,7 +63,7 @@ export async function evalDataset<TSchema extends ParseableSchema<any> | undefin
   options: EvalDatasetOptions<TSchema>,
 ): Promise<void> {
   const { interaction, data, schema, maxConcurrency, showProgressBar } = options;
-  
+
   // Auto-detect CI environment if showProgressBar is not explicitly set
   const useProgressBar = showProgressBar !== undefined ? showProgressBar : !isCI();
 
@@ -94,10 +94,9 @@ export async function evalDataset<TSchema extends ParseableSchema<any> | undefin
   }
 
   // Initialize progress reporter (bar or line-by-line based on preference or CI detection)
-  const reporter: ProgressReporter = useProgressBar 
-    ? new BarProgressReporter() 
-    : new SimpleProgressReporter(client.logger);
-  
+  const reporter: ProgressReporter =
+    useProgressBar ? new BarProgressReporter() : new SimpleProgressReporter(client.logger);
+
   // Start progress reporting with pipeline ID and total count
   reporter.start(experimentContext.pipelineId, rawTestInputs.length);
 
@@ -141,7 +140,7 @@ export async function evalDataset<TSchema extends ParseableSchema<any> | undefin
             if (reporter.updateCurrentTest) {
               reporter.updateCurrentTest(finalName);
             }
-            
+
             await _runEval({
               spanName: finalName,
               spanAttributes,
@@ -159,10 +158,13 @@ export async function evalDataset<TSchema extends ParseableSchema<any> | undefin
 
     // Run tasks with concurrency control
     if (maxConcurrency && maxConcurrency > 0) {
-      await runWithConcurrency(tasks.map(t => t.task), maxConcurrency);
+      await runWithConcurrency(
+        tasks.map((t) => t.task),
+        maxConcurrency,
+      );
     } else {
       // No concurrency limit - run all tasks in parallel
-      await Promise.all(tasks.map(t => t.task()));
+      await Promise.all(tasks.map((t) => t.task()));
     }
   } finally {
     // Always stop the reporter, even if tests fail
@@ -224,17 +226,17 @@ export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined>
    * - `true`: Shows an interactive progress bar in the terminal
    * - `false`: Outputs line-by-line progress, suitable for CI/CD environments
    * - `undefined` (default): Auto-detects CI environment (bar for local, line-by-line for CI)
-   * 
+   *
    * Note: Progress is always reported; this only controls the display format.
-   * 
+   *
    * When not specified, automatically detects common CI environments including:
    * GitHub Actions, GitLab CI, CircleCI, Jenkins, Azure DevOps, and more.
-   * 
+   *
    * @example
    * ```typescript
    * // Let the SDK auto-detect (recommended)
    * // No need to set showProgressBar
-   * 
+   *
    * // Or explicitly override
    * showProgressBar: true  // Force progress bar even in CI
    * showProgressBar: false // Force line-by-line even locally

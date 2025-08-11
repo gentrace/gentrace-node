@@ -10,7 +10,7 @@ import { GentraceWarnings } from './warnings';
 /**
  * Detects if the code is running in a CI/CD environment.
  * Uses the industry-standard ci-info package which supports 40+ CI platforms.
- * 
+ *
  * @returns true if running in a CI environment, false otherwise
  */
 export function isCI(): boolean {

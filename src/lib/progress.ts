@@ -5,7 +5,7 @@ import type { Logger } from '../client';
  * Helper function to fit a name into a fixed number of spaces.
  * If the name is shorter than the length, it pads with spaces.
  * If the name is longer, it truncates with ellipsis.
- * 
+ *
  * @internal
  * @param name - The name to fit
  * @param length - The target length (default: 40)
@@ -22,13 +22,13 @@ function fitNameToSpaces(name: string, length: number = 40): string {
  * Interface for progress reporting during evaluation runs.
  * Implementations can provide different visualization strategies
  * for tracking the progress of test case execution.
- * 
+ *
  * @example
  * ```typescript
- * const reporter: ProgressReporter = showProgress 
- *   ? new BarProgressReporter() 
+ * const reporter: ProgressReporter = showProgress
+ *   ? new BarProgressReporter()
  *   : new SimpleProgressReporter();
- * 
+ *
  * reporter.start('my-pipeline', 100);
  * for (const testCase of testCases) {
  *   await runTest(testCase);
@@ -40,26 +40,26 @@ function fitNameToSpaces(name: string, length: number = 40): string {
 export interface ProgressReporter {
   /**
    * Initialize the progress reporter for a new evaluation run.
-   * 
+   *
    * @param name - The name or identifier of the evaluation (e.g., pipeline ID)
    * @param total - The total number of test cases to be executed
    */
   start(name: string, total: number): void;
-  
+
   /**
    * Update the current test case being processed (for display purposes).
-   * 
+   *
    * @param testCaseName - The name of the test case currently being processed
    */
   updateCurrentTest?(testCaseName: string): void;
-  
+
   /**
    * Report that a single test case has been completed.
-   * 
+   *
    * @param testCaseName - The name or identifier of the completed test case
    */
   increment(testCaseName: string): void;
-  
+
   /**
    * Finalize the progress reporter after all test cases have been executed.
    * This should be called whether the evaluation completed successfully or not.
@@ -71,7 +71,7 @@ export interface ProgressReporter {
  * Simple progress reporter that outputs line-by-line progress to the console.
  * Ideal for CI/CD environments where interactive terminals are not available
  * or when you want persistent, searchable logs of each test case execution.
- * 
+ *
  * @example Output format:
  * ```
  * Running evaluation "pipeline-123" with 50 test cases...
@@ -81,7 +81,7 @@ export interface ProgressReporter {
  * [50/50] Running test case: "Logout test"
  * Evaluation complete.
  * ```
- * 
+ *
  * @example Usage:
  * ```typescript
  * const reporter = new SimpleProgressReporter(logger);
@@ -95,19 +95,19 @@ export class SimpleProgressReporter implements ProgressReporter {
   private total = 0;
   private count = 0;
   private logger: Logger | undefined;
-  
+
   /**
    * Creates a new SimpleProgressReporter instance.
-   * 
+   *
    * @param logger - Optional logger instance. If not provided, falls back to console.
    */
   constructor(logger?: Logger) {
     this.logger = logger;
   }
-  
+
   /**
    * Initialize a new evaluation run with line-by-line output.
-   * 
+   *
    * @param name - The name or identifier of the evaluation
    * @param total - The total number of test cases
    */
@@ -123,7 +123,7 @@ export class SimpleProgressReporter implements ProgressReporter {
 
   /**
    * Log the completion of a test case with its name and progress counter.
-   * 
+   *
    * @param testCaseName - The name of the completed test case
    */
   public increment(testCaseName: string): void {
@@ -153,12 +153,12 @@ export class SimpleProgressReporter implements ProgressReporter {
  * Interactive progress bar reporter using cli-progress library.
  * Creates a visual progress bar that updates in place, ideal for
  * local development and interactive terminal sessions.
- * 
+ *
  * @example Output format:
  * ```
  * ████████████████░░░░ | my-pipeline-name      | 80% | 40/50 runs
  * ```
- * 
+ *
  * @example Usage:
  * ```typescript
  * const reporter = new BarProgressReporter();
@@ -169,7 +169,7 @@ export class SimpleProgressReporter implements ProgressReporter {
  * }
  * reporter.stop();
  * ```
- * 
+ *
  * @remarks
  * - Pipeline names longer than 40 characters will be truncated with ellipsis
  * - The progress bar updates in place and requires an interactive terminal
@@ -196,7 +196,7 @@ export class BarProgressReporter implements ProgressReporter {
 
   /**
    * Initialize a new progress bar for the evaluation run.
-   * 
+   *
    * @param name - The name or identifier of the evaluation (not used in display anymore)
    * @param total - The total number of test cases
    */
@@ -209,7 +209,7 @@ export class BarProgressReporter implements ProgressReporter {
 
   /**
    * Update the display to show the current test case being processed.
-   * 
+   *
    * @param testCaseName - The name of the test case currently being processed
    */
   public updateCurrentTest(testCaseName: string): void {
@@ -222,7 +222,7 @@ export class BarProgressReporter implements ProgressReporter {
 
   /**
    * Increment the progress bar by one step and optionally update the test name.
-   * 
+   *
    * @param testCaseName - The name of the completed test case
    */
   public increment(testCaseName: string): void {
