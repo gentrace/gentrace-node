@@ -25,7 +25,7 @@ function fitNameToSpaces(name: string, length: number = 40): string {
  *
  * @example
  * ```typescript
- * const reporter: ProgressReporter = showProgress
+ * const reporter: ProgressReporter = showProgressBar
  *   ? new BarProgressReporter()
  *   : new SimpleProgressReporter();
  *
@@ -122,7 +122,7 @@ export class SimpleProgressReporter implements ProgressReporter {
   }
 
   /**
-   * Log the completion of a test case with its name and progress counter.
+   * Report the completion of a test case and update the progress counter.
    *
    * @param testCaseName - The name of the completed test case
    */
@@ -137,7 +137,7 @@ export class SimpleProgressReporter implements ProgressReporter {
   }
 
   /**
-   * Log the completion message for the evaluation run.
+   * Report the completion of the evaluation run.
    */
   public stop(): void {
     const message = 'Evaluation complete.';
@@ -156,7 +156,7 @@ export class SimpleProgressReporter implements ProgressReporter {
  *
  * @example Output format:
  * ```
- * ████████████████░░░░ | my-pipeline-name      | 80% | 40/50 runs
+ * ████████████████░░░░ | Test Case Name        | 80% | 40/50
  * ```
  *
  * @example Usage:
@@ -171,7 +171,7 @@ export class SimpleProgressReporter implements ProgressReporter {
  * ```
  *
  * @remarks
- * - Pipeline names longer than 40 characters will be truncated with ellipsis
+ * - Test case names longer than 40 characters will be truncated with ellipsis
  * - The progress bar updates in place and requires an interactive terminal
  * - Not suitable for CI/CD environments or when output needs to be logged
  */
@@ -197,7 +197,7 @@ export class BarProgressReporter implements ProgressReporter {
   /**
    * Initialize a new progress bar for the evaluation run.
    *
-   * @param name - The name or identifier of the evaluation (not used in display anymore)
+   * @param name - The name or identifier of the evaluation (e.g., pipeline ID)
    * @param total - The total number of test cases
    */
   public start(name: string, total: number): void {
@@ -221,7 +221,7 @@ export class BarProgressReporter implements ProgressReporter {
   }
 
   /**
-   * Increment the progress bar by one step and optionally update the test name.
+   * Report the completion of a test case and increment the progress bar.
    *
    * @param testCaseName - The name of the completed test case
    */
@@ -235,7 +235,7 @@ export class BarProgressReporter implements ProgressReporter {
   }
 
   /**
-   * Stop and finalize the progress bar display.
+   * Report the completion of the evaluation run and finalize the progress bar.
    * The final state of the bar will remain visible in the terminal.
    */
   public stop(): void {
