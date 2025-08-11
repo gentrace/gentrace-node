@@ -26,12 +26,16 @@ describe('Progress Reporters', () => {
       expect(reporter).toHaveProperty('stop');
     });
 
-    it('should log start message with evaluation name and total count', () => {
+    it('should log start message with total count', () => {
       reporter.start('test-pipeline-123', 25);
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        '\nRunning evaluation "test-pipeline-123" with 25 test cases...',
-      );
+      expect(consoleLogSpy).toHaveBeenCalledWith('\nRunning experiment with 25 test cases...');
+    });
+
+    it('should use singular "case" for single test', () => {
+      reporter.start('test-pipeline-123', 1);
+
+      expect(consoleLogSpy).toHaveBeenCalledWith('\nRunning experiment with 1 test case...');
     });
 
     it('should log each test case with incrementing counter', () => {
@@ -224,9 +228,7 @@ describe('Progress Reporters', () => {
       const reporter = new SimpleProgressReporter(mockLogger);
 
       reporter.start('test-pipeline', 2);
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        '\nRunning evaluation "test-pipeline" with 2 test cases...',
-      );
+      expect(mockLogger.info).toHaveBeenCalledWith('\nRunning experiment with 2 test cases...');
 
       reporter.increment('Test 1');
       expect(mockLogger.info).toHaveBeenCalledWith('[1/2] Running test case: "Test 1"');
@@ -242,7 +244,7 @@ describe('Progress Reporters', () => {
       const reporter = new SimpleProgressReporter();
 
       reporter.start('test-pipeline', 1);
-      expect(consoleLogSpy).toHaveBeenCalledWith('\nRunning evaluation "test-pipeline" with 1 test cases...');
+      expect(consoleLogSpy).toHaveBeenCalledWith('\nRunning experiment with 1 test case...');
 
       reporter.increment('Test');
       expect(consoleLogSpy).toHaveBeenCalledWith('[1/1] Running test case: "Test"');

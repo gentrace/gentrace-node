@@ -722,7 +722,7 @@ describe('evalDataset', () => {
 
       // Verify console output for SimpleProgressReporter
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Running evaluation "pipe-progress-4" with 4 test cases'),
+        expect.stringContaining('Running experiment with 4 test cases'),
       );
       expect(consoleLogSpy).toHaveBeenCalledWith(
         expect.stringContaining('[1/4] Running test case: "Case 1"'),
@@ -803,7 +803,7 @@ describe('evalDataset', () => {
       // Verify all tests ran with progress reporting
       expect(mockEvalTest).toHaveBeenCalledTimes(3);
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Running evaluation "pipe-progress-6" with 3 test cases'),
+        expect.stringContaining('Running experiment with 3 test cases'),
       );
       expect(consoleLogSpy).toHaveBeenCalledWith('Evaluation complete.');
     });

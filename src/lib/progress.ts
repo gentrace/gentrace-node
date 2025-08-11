@@ -74,7 +74,7 @@ export interface ProgressReporter {
  *
  * @example Output format:
  * ```
- * Running evaluation "pipeline-123" with 50 test cases...
+ * Running experiment with 50 test cases...
  * [1/50] Running test case: "Login test"
  * [2/50] Running test case: "Signup test"
  * ...
@@ -108,12 +108,13 @@ export class SimpleProgressReporter implements ProgressReporter {
   /**
    * Initialize a new evaluation run with line-by-line output.
    *
-   * @param name - The name or identifier of the evaluation
+   * @param name - The name or identifier of the evaluation (not displayed)
    * @param total - The total number of test cases
    */
   public start(name: string, total: number): void {
     this.total = total;
-    const message = `\nRunning evaluation "${name}" with ${total} test cases...`;
+    this.count = 0;
+    const message = `\nRunning experiment with ${total} test ${total === 1 ? 'case' : 'cases'}...`;
     if (this.logger) {
       this.logger.info(message);
     } else {
