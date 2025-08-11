@@ -11,4 +11,9 @@ export { interaction, type InteractionOptions } from './interaction';
 export { evalDataset, type TestInput } from './eval-dataset';
 export { traced, type TracedConfig } from './traced';
 export { evalOnce } from './eval-once';
+export { 
+  type ProgressReporter, 
+  SimpleProgressReporter, 
+  BarProgressReporter 
+} from './progress';
 export * from './otel';

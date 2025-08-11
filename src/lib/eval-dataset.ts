@@ -2,7 +2,8 @@ import { _getClient } from './client-instance';
 import { getCurrentExperimentContext } from './experiment';
 import { _runEval } from './eval-once';
 import { ATTR_GENTRACE_TEST_CASE_ID } from './otel/constants';
-import { runWithConcurrency } from './utils';
+import { runWithConcurrency, isCI } from './utils';
+import { ProgressReporter, BarProgressReporter, SimpleProgressReporter } from './progress';
 
 /**
  * Runs a series of evals  against a dataset using a provided interaction function.
@@ -39,6 +40,7 @@ import { runWithConcurrency } from './utils';
  *     },
  *     // Optional: limit concurrent test executions (default: unlimited)
  *     maxConcurrency: 5
+ *     // showProgressBar is auto-detected based on CI environment
  *   });
  *
  * // Without schema - interaction receives the full TestInput object
@@ -60,7 +62,10 @@ import { runWithConcurrency } from './utils';
 export async function evalDataset<TSchema extends ParseableSchema<any> | undefined = undefined>(
   options: EvalDatasetOptions<TSchema>,
 ): Promise<void> {
-  const { interaction, data, schema, maxConcurrency } = options;
+  const { interaction, data, schema, maxConcurrency, showProgressBar } = options;
+  
+  // Auto-detect CI environment if showProgressBar is not explicitly set
+  const useProgressBar = showProgressBar !== undefined ? showProgressBar : !isCI();
 
   const client = _getClient();
   const experimentContext = getCurrentExperimentContext();
@@ -88,54 +93,80 @@ export async function evalDataset<TSchema extends ParseableSchema<any> | undefin
     );
   }
 
-  // Create array of task functions
-  const tasks: (() => Promise<void>)[] = [];
+  // Initialize progress reporter (bar or line-by-line based on preference or CI detection)
+  const reporter: ProgressReporter = useProgressBar 
+    ? new BarProgressReporter() 
+    : new SimpleProgressReporter();
+  
+  // Start progress reporting with pipeline ID and total count
+  reporter.start(experimentContext.pipelineId, rawTestInputs.length);
 
-  for (let i = 0; i < rawTestInputs.length; i++) {
-    const inputItem = rawTestInputs[i];
+  try {
+    // Create array of task functions with their test names
+    const tasks: Array<{ task: () => Promise<void>; name: string }> = [];
 
-    if (inputItem === undefined || inputItem === null) {
-      client.logger?.warn(`Skipping undefined or null test case at index ${i}`);
-      continue;
-    }
+    for (let i = 0; i < rawTestInputs.length; i++) {
+      const inputItem = rawTestInputs[i];
 
-    const extractedName: string | undefined = inputItem.name;
-    const extractedId: string | undefined = inputItem.id;
+      if (inputItem === undefined || inputItem === null) {
+        client.logger?.warn(`Skipping undefined or null test case at index ${i}`);
+        continue;
+      }
 
-    let finalName: string;
-    if (typeof extractedName === 'string') {
-      finalName = extractedName;
-    } else if (typeof extractedId === 'string') {
-      finalName = `Test Case (ID: ${extractedId})`;
-    } else {
-      finalName = `Test Case ${i + 1}`;
-    }
+      const extractedName: string | undefined = inputItem.name;
+      const extractedId: string | undefined = inputItem.id;
 
-    const finalId = extractedId;
+      let finalName: string;
+      if (typeof extractedName === 'string') {
+        finalName = extractedName;
+      } else if (typeof extractedId === 'string') {
+        finalName = `Test Case (ID: ${extractedId})`;
+      } else {
+        finalName = `Test Case ${i + 1}`;
+      }
 
-    const spanAttributes: Record<string, string> = {};
-    if (typeof finalId === 'string') {
-      spanAttributes[ATTR_GENTRACE_TEST_CASE_ID] = finalId;
-    }
+      const finalId = extractedId;
 
-    // Push task function instead of promise
-    tasks.push(() => {
-      return _runEval({
-        spanName: finalName,
-        spanAttributes,
-        testCase: inputItem,
-        schema: schema as TSchema,
-        callback: interaction,
+      const spanAttributes: Record<string, string> = {};
+      if (typeof finalId === 'string') {
+        spanAttributes[ATTR_GENTRACE_TEST_CASE_ID] = finalId;
+      }
+
+      // Store both the task function and its name for progress reporting
+      tasks.push({
+        name: finalName,
+        task: async () => {
+          try {
+            // Update progress bar to show current test (if supported)
+            if (reporter.updateCurrentTest) {
+              reporter.updateCurrentTest(finalName);
+            }
+            
+            await _runEval({
+              spanName: finalName,
+              spanAttributes,
+              testCase: inputItem,
+              schema: schema as TSchema,
+              callback: interaction,
+            });
+          } finally {
+            // Report progress after test completes (success or failure)
+            reporter.increment(finalName);
+          }
+        },
       });
-    });
-  }
+    }
 
-  // Run tasks with concurrency control
-  if (maxConcurrency && maxConcurrency > 0) {
-    await runWithConcurrency(tasks, maxConcurrency);
-  } else {
-    // No concurrency limit - run all tasks in parallel
-    await Promise.all(tasks.map((task) => task()));
+    // Run tasks with concurrency control
+    if (maxConcurrency && maxConcurrency > 0) {
+      await runWithConcurrency(tasks.map(t => t.task), maxConcurrency);
+    } else {
+      // No concurrency limit - run all tasks in parallel
+      await Promise.all(tasks.map(t => t.task()));
+    }
+  } finally {
+    // Always stop the reporter, even if tests fail
+    reporter.stop();
   }
 }
 
@@ -188,4 +219,26 @@ export type EvalDatasetOptions<TSchema extends ParseableSchema<any> | undefined>
    * If not specified, all test cases will run in parallel.
    */
   maxConcurrency?: number;
+  /**
+   * Controls whether to display an interactive progress bar or line-by-line output.
+   * - `true`: Shows an interactive progress bar in the terminal
+   * - `false`: Outputs line-by-line progress, suitable for CI/CD environments
+   * - `undefined` (default): Auto-detects CI environment (bar for local, line-by-line for CI)
+   * 
+   * Note: Progress is always reported; this only controls the display format.
+   * 
+   * When not specified, automatically detects common CI environments including:
+   * GitHub Actions, GitLab CI, CircleCI, Jenkins, Azure DevOps, and more.
+   * 
+   * @example
+   * ```typescript
+   * // Let the SDK auto-detect (recommended)
+   * // No need to set showProgressBar
+   * 
+   * // Or explicitly override
+   * showProgressBar: true  // Force progress bar even in CI
+   * showProgressBar: false // Force line-by-line even locally
+   * ```
+   */
+  showProgressBar?: boolean;
 };

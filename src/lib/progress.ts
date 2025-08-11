@@ -1,0 +1,224 @@
+import * as cliProgress from 'cli-progress';
+
+/**
+ * Helper function to fit a name into a fixed number of spaces.
+ * If the name is shorter than the length, it pads with spaces.
+ * If the name is longer, it truncates with ellipsis.
+ * 
+ * @internal
+ * @param name - The name to fit
+ * @param length - The target length (default: 40)
+ * @returns The fitted name string
+ */
+function fitNameToSpaces(name: string, length: number = 40): string {
+  if (name.length <= length) {
+    return name.padEnd(length);
+  }
+  return name.substring(0, length - 3) + '...';
+}
+
+/**
+ * Interface for progress reporting during evaluation runs.
+ * Implementations can provide different visualization strategies
+ * for tracking the progress of test case execution.
+ * 
+ * @example
+ * ```typescript
+ * const reporter: ProgressReporter = showProgress 
+ *   ? new BarProgressReporter() 
+ *   : new SimpleProgressReporter();
+ * 
+ * reporter.start('my-pipeline', 100);
+ * for (const testCase of testCases) {
+ *   await runTest(testCase);
+ *   reporter.increment(testCase.name);
+ * }
+ * reporter.stop();
+ * ```
+ */
+export interface ProgressReporter {
+  /**
+   * Initialize the progress reporter for a new evaluation run.
+   * 
+   * @param name - The name or identifier of the evaluation (e.g., pipeline ID)
+   * @param total - The total number of test cases to be executed
+   */
+  start(name: string, total: number): void;
+  
+  /**
+   * Update the current test case being processed (for display purposes).
+   * 
+   * @param testCaseName - The name of the test case currently being processed
+   */
+  updateCurrentTest?(testCaseName: string): void;
+  
+  /**
+   * Report that a single test case has been completed.
+   * 
+   * @param testCaseName - The name or identifier of the completed test case
+   */
+  increment(testCaseName: string): void;
+  
+  /**
+   * Finalize the progress reporter after all test cases have been executed.
+   * This should be called whether the evaluation completed successfully or not.
+   */
+  stop(): void;
+}
+
+/**
+ * Simple progress reporter that outputs line-by-line progress to the console.
+ * Ideal for CI/CD environments where interactive terminals are not available
+ * or when you want persistent, searchable logs of each test case execution.
+ * 
+ * @example Output format:
+ * ```
+ * Running evaluation "pipeline-123" with 50 test cases...
+ * [1/50] Running test case: "Login test"
+ * [2/50] Running test case: "Signup test"
+ * ...
+ * [50/50] Running test case: "Logout test"
+ * Evaluation complete.
+ * ```
+ * 
+ * @example Usage:
+ * ```typescript
+ * const reporter = new SimpleProgressReporter();
+ * reporter.start('my-pipeline', 10);
+ * reporter.increment('Test 1');
+ * reporter.increment('Test 2');
+ * reporter.stop();
+ * ```
+ */
+export class SimpleProgressReporter implements ProgressReporter {
+  private total = 0;
+  private count = 0;
+  
+  /**
+   * Initialize a new evaluation run with line-by-line output.
+   * 
+   * @param name - The name or identifier of the evaluation
+   * @param total - The total number of test cases
+   */
+  public start(name: string, total: number): void {
+    this.total = total;
+    console.log(`\nRunning evaluation "${name}" with ${total} test cases...`);
+  }
+
+  /**
+   * Log the completion of a test case with its name and progress counter.
+   * 
+   * @param testCaseName - The name of the completed test case
+   */
+  public increment(testCaseName: string): void {
+    this.count++;
+    console.log(`[${this.count}/${this.total}] Running test case: "${testCaseName}"`);
+  }
+
+  /**
+   * Log the completion message for the evaluation run.
+   */
+  public stop(): void {
+    console.log('Evaluation complete.');
+  }
+}
+
+/**
+ * Interactive progress bar reporter using cli-progress library.
+ * Creates a visual progress bar that updates in place, ideal for
+ * local development and interactive terminal sessions.
+ * 
+ * @example Output format:
+ * ```
+ * ████████████████░░░░ | my-pipeline-name      | 80% | 40/50 runs
+ * ```
+ * 
+ * @example Usage:
+ * ```typescript
+ * const reporter = new BarProgressReporter();
+ * reporter.start('my-pipeline', 50);
+ * for (let i = 0; i < 50; i++) {
+ *   await processTestCase(i);
+ *   reporter.increment(`Test ${i}`);
+ * }
+ * reporter.stop();
+ * ```
+ * 
+ * @remarks
+ * - Pipeline names longer than 40 characters will be truncated with ellipsis
+ * - The progress bar updates in place and requires an interactive terminal
+ * - Not suitable for CI/CD environments or when output needs to be logged
+ */
+export class BarProgressReporter implements ProgressReporter {
+  private multiBar: cliProgress.MultiBar;
+  private bar: cliProgress.SingleBar | null = null;
+  private currentValue = 0;
+
+  /**
+   * Creates a new BarProgressReporter instance with a configured progress bar.
+   */
+  constructor() {
+    this.multiBar = new cliProgress.MultiBar(
+      {
+        clearOnComplete: false,
+        format: ' {bar} | {currentTest} | {percentage}% | {value}/{total}',
+        autopadding: true,
+      },
+      cliProgress.Presets.shades_grey,
+    );
+  }
+
+  /**
+   * Initialize a new progress bar for the evaluation run.
+   * 
+   * @param name - The name or identifier of the evaluation (not used in display anymore)
+   * @param total - The total number of test cases
+   */
+  public start(name: string, total: number): void {
+    this.currentValue = 0;
+    this.bar = this.multiBar.create(total, 0, {
+      currentTest: fitNameToSpaces('Starting...'),
+    });
+  }
+
+  /**
+   * Update the display to show the current test case being processed.
+   * 
+   * @param testCaseName - The name of the test case currently being processed
+   */
+  public updateCurrentTest(testCaseName: string): void {
+    if (this.bar) {
+      this.bar.update(this.currentValue, {
+        currentTest: fitNameToSpaces(testCaseName),
+      });
+    }
+  }
+
+  /**
+   * Increment the progress bar by one step and optionally update the test name.
+   * 
+   * @param testCaseName - The name of the completed test case
+   */
+  public increment(testCaseName: string): void {
+    if (this.bar) {
+      this.currentValue++;
+      this.bar.update(this.currentValue, {
+        currentTest: fitNameToSpaces('Completed: ' + testCaseName),
+      });
+    }
+  }
+
+  /**
+   * Stop and finalize the progress bar display.
+   * The final state of the bar will remain visible in the terminal.
+   */
+  public stop(): void {
+    if (this.bar) {
+      this.bar.update(this.bar.getTotal(), {
+        currentTest: fitNameToSpaces('Evaluation complete'),
+      });
+      this.bar.stop();
+    }
+    this.multiBar.stop();
+  }
+}

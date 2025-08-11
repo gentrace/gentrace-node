@@ -68,6 +68,9 @@ async function main() {
 
           return completion.choices[0]?.message?.content || 'No response';
         },
+        // Progress display is automatically determined:
+        // - Interactive progress bar for local development
+        // - Line-by-line output for CI/CD environments (auto-detected)
       });
     },
     { pipelineId },
