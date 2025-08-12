@@ -8,7 +8,7 @@ const client = new Gentrace({
 });
 
 describe('resource pipelines', () => {
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.pipelines.create({ slug: 'my-awesome-pipeline' });
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource pipelines', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.pipelines.create({
       slug: 'my-awesome-pipeline',
@@ -29,7 +29,7 @@ describe('resource pipelines', () => {
     });
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.pipelines.retrieve('123e4567-e89b-12d3-a456-426614174000');
     const rawResponse = await responsePromise.asResponse();
@@ -41,7 +41,7 @@ describe('resource pipelines', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('update', async () => {
     const responsePromise = client.pipelines.update('123e4567-e89b-12d3-a456-426614174000', {});
     const rawResponse = await responsePromise.asResponse();
@@ -53,7 +53,7 @@ describe('resource pipelines', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.pipelines.list();
     const rawResponse = await responsePromise.asResponse();
@@ -65,7 +65,7 @@ describe('resource pipelines', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('list: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(

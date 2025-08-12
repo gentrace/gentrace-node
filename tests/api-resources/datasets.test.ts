@@ -8,7 +8,7 @@ const client = new Gentrace({
 });
 
 describe('resource datasets', () => {
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.datasets.create({
       description: 'Negative user feedback collected from our production environment',
@@ -23,7 +23,7 @@ describe('resource datasets', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.datasets.create({
       description: 'Negative user feedback collected from our production environment',
@@ -34,7 +34,7 @@ describe('resource datasets', () => {
     });
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.datasets.retrieve('123e4567-e89b-12d3-a456-426614174000');
     const rawResponse = await responsePromise.asResponse();
@@ -46,7 +46,7 @@ describe('resource datasets', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('update', async () => {
     const responsePromise = client.datasets.update('123e4567-e89b-12d3-a456-426614174000', {});
     const rawResponse = await responsePromise.asResponse();
@@ -58,7 +58,7 @@ describe('resource datasets', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.datasets.list();
     const rawResponse = await responsePromise.asResponse();
@@ -70,7 +70,7 @@ describe('resource datasets', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('list: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(

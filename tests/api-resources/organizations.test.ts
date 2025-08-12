@@ -8,7 +8,7 @@ const client = new Gentrace({
 });
 
 describe('resource organizations', () => {
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.organizations.retrieve('123e4567-e89b-12d3-a456-426614174000');
     const rawResponse = await responsePromise.asResponse();
