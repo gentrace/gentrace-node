@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.13.0 (2025-08-12)
+
+Full Changelog: [v0.12.3...v0.13.0](https://github.com/gentrace/gentrace-node/compare/v0.12.3...v0.13.0)
+
+### Features
+
+* add a CLI loader to track evaluation progress ([#636](https://github.com/gentrace/gentrace-node/issues/636)) ([e48e1b8](https://github.com/gentrace/gentrace-node/commit/e48e1b8f402d4d85b11761928e021722a653e1cd))
+
+
+### Bug Fixes
+
+* **lib:** use type-only exports for types ([#635](https://github.com/gentrace/gentrace-node/issues/635)) ([2750f9b](https://github.com/gentrace/gentrace-node/commit/2750f9b0b13a6047475cc2225e7ff78d55f981e8))
+
+
+### Chores
+
+* **internal:** codegen related update ([1a2ed35](https://github.com/gentrace/gentrace-node/commit/1a2ed3521063ae4b4cf1cdcce6518f6b2c44a5f4))
+* **internal:** move publish config ([2cf345d](https://github.com/gentrace/gentrace-node/commit/2cf345db82aa1ec3df35c253a35dc5add6a8b58b))
+* **internal:** update comment in script ([941bc19](https://github.com/gentrace/gentrace-node/commit/941bc1912c93601ee989448bb081f98a2b822cd9))
+* update @stainless-api/prism-cli to v5.15.0 ([6cbaed0](https://github.com/gentrace/gentrace-node/commit/6cbaed0d4b8bdf19998a0f703ab03a34e25baf0b))
+
 ## 0.12.3 (2025-08-03)
 
 Full Changelog: [v0.12.2...v0.12.3](https://github.com/gentrace/gentrace-node/compare/v0.12.2...v0.12.3)

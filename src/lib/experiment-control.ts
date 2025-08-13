@@ -56,7 +56,6 @@ export async function startExperiment({ pipelineId, metadata }: StartExperimentP
   process.on('SIGINT', shutdownListener);
   process.on('SIGTERM', shutdownListener);
 
-  client.logger?.info(`Started experiment ${experimentId} for pipeline ${pipelineId}`);
   return experiment;
 }
 
@@ -110,6 +109,4 @@ async function _finishExperiment(
     status: 'EVALUATING',
     ...(result.status === 'error' && { errorMessage: result.error }),
   });
-
-  client.logger?.info(`Finished experiment ${id} with status ${result.status}`);
 }

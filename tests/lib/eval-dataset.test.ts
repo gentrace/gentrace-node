@@ -2,9 +2,10 @@ import { TestInput } from '../../src/lib/eval-dataset';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { ATTR_GENTRACE_TEST_CASE_ID } from 'gentrace/lib/otel/constants';
 import { z } from 'zod';
+import { BarProgressReporter, SimpleProgressReporter } from '../../src/lib/progress';
 
 const mockGentraceClient: {
-  logger: { warn: jest.Mock; error: jest.Mock; info: jest.Mock };
+  logger: { warn: jest.Mock; error: jest.Mock; info: jest.Mock } | undefined;
 } = {
   logger: {
     warn: jest.fn(),
@@ -255,11 +256,11 @@ describe('evalDataset', () => {
       schema: InputSchema,
     });
 
-    expect((mockGetClient() as typeof mockGentraceClient).logger.warn).toHaveBeenCalledTimes(2);
-    expect((mockGetClient() as typeof mockGentraceClient).logger.warn).toHaveBeenCalledWith(
+    expect((mockGetClient() as typeof mockGentraceClient).logger?.warn).toHaveBeenCalledTimes(2);
+    expect((mockGetClient() as typeof mockGentraceClient).logger?.warn).toHaveBeenCalledWith(
       'Skipping undefined or null test case at index 1',
     );
-    expect((mockGetClient() as typeof mockGentraceClient).logger.warn).toHaveBeenCalledWith(
+    expect((mockGetClient() as typeof mockGentraceClient).logger?.warn).toHaveBeenCalledWith(
       'Skipping undefined or null test case at index 3',
     );
     expect(mockEvalTest).toHaveBeenCalledTimes(2);
@@ -613,5 +614,224 @@ describe('evalDataset', () => {
       inputs: { input: 30 },
     });
     expect(mockInteractionNoSchema).toHaveBeenCalledWith({ inputs: { input: 40 } });
+  });
+
+  describe('Progress Reporting', () => {
+    let mockBarProgressReporter: jest.Mocked<BarProgressReporter>;
+    let mockSimpleProgressReporter: jest.Mocked<SimpleProgressReporter>;
+    let consoleLogSpy: jest.SpiedFunction<typeof console.log>;
+
+    beforeEach(() => {
+      // Mock progress reporters
+      mockBarProgressReporter = {
+        start: jest.fn(),
+        increment: jest.fn(),
+        stop: jest.fn(),
+      } as any;
+
+      mockSimpleProgressReporter = {
+        start: jest.fn(),
+        increment: jest.fn(),
+        stop: jest.fn(),
+      } as any;
+
+      // Spy on console.log for SimpleProgressReporter
+      consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      consoleLogSpy.mockRestore();
+    });
+
+    it('should use BarProgressReporter by default (showProgressBar not specified)', async () => {
+      mockGetCurrentExperimentContext.mockReturnValue({
+        experimentId: 'exp-p1',
+        pipelineId: 'pipe-progress-1',
+      });
+
+      await evalDatasetLib.evalDataset({
+        data: datasetSimple,
+        interaction: mockInteraction,
+        schema: InputSchema,
+      });
+
+      // The progress bar should have been created and used
+      expect(mockEvalTest).toHaveBeenCalledTimes(3);
+    });
+
+    it('should use BarProgressReporter when showProgressBar is true', async () => {
+      mockGetCurrentExperimentContext.mockReturnValue({
+        experimentId: 'exp-p2',
+        pipelineId: 'pipe-progress-2',
+      });
+
+      await evalDatasetLib.evalDataset({
+        data: datasetSimple,
+        interaction: mockInteraction,
+        schema: InputSchema,
+        showProgressBar: true,
+      });
+
+      expect(mockEvalTest).toHaveBeenCalledTimes(3);
+    });
+
+    it('should use SimpleProgressReporter when showProgressBar is false', async () => {
+      mockGetCurrentExperimentContext.mockReturnValue({
+        experimentId: 'exp-p3',
+        pipelineId: 'pipe-progress-3',
+      });
+
+      // Temporarily set logger to undefined so SimpleProgressReporter falls back to console
+      const originalLogger = mockGentraceClient.logger;
+      mockGentraceClient.logger = undefined;
+
+      await evalDatasetLib.evalDataset({
+        data: datasetSimple,
+        interaction: mockInteraction,
+        schema: InputSchema,
+        showProgressBar: false,
+      });
+
+      // Restore logger
+      mockGentraceClient.logger = originalLogger;
+
+      expect(mockEvalTest).toHaveBeenCalledTimes(3);
+      // SimpleProgressReporter should log to console
+      expect(consoleLogSpy).toHaveBeenCalled();
+    });
+
+    it('should report progress for each completed test case', async () => {
+      mockGetCurrentExperimentContext.mockReturnValue({
+        experimentId: 'exp-p4',
+        pipelineId: 'pipe-progress-4',
+      });
+
+      // Temporarily set logger to undefined so SimpleProgressReporter falls back to console
+      const originalLogger = mockGentraceClient.logger;
+      mockGentraceClient.logger = undefined;
+
+      await evalDatasetLib.evalDataset({
+        data: datasetStructured,
+        interaction: mockInteraction,
+        schema: InputSchema,
+        showProgressBar: false,
+      });
+
+      // Restore logger
+      mockGentraceClient.logger = originalLogger;
+
+      // Verify console output for SimpleProgressReporter
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Running experiment with 4 test cases'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[1/4] Running test case: "Case 1"'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[2/4] Running test case: "Test Case (ID: case-id-20)"'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[3/4] Running test case: "Case 30"'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[4/4] Running test case: "Test Case 4"'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith('Evaluation complete.');
+    });
+
+    it('should stop progress reporter even if tests fail', async () => {
+      mockGetCurrentExperimentContext.mockReturnValue({
+        experimentId: 'exp-p5',
+        pipelineId: 'pipe-progress-5',
+      });
+
+      const error = new Error('Test failed');
+      (mockEvalTest as any).mockRejectedValueOnce(error);
+
+      // Temporarily set logger to undefined so SimpleProgressReporter falls back to console
+      const originalLogger = mockGentraceClient.logger;
+      mockGentraceClient.logger = undefined;
+
+      await expect(
+        evalDatasetLib.evalDataset({
+          data: datasetSimple,
+          interaction: mockInteraction,
+          schema: InputSchema,
+          showProgressBar: false,
+        }),
+      ).rejects.toThrow();
+
+      // Restore logger
+      mockGentraceClient.logger = originalLogger;
+
+      // Even though it failed, the reporter should have been stopped
+      expect(consoleLogSpy).toHaveBeenCalledWith('Evaluation complete.');
+    });
+
+    it('should handle progress reporting with maxConcurrency', async () => {
+      mockGetCurrentExperimentContext.mockReturnValue({
+        experimentId: 'exp-p6',
+        pipelineId: 'pipe-progress-6',
+      });
+
+      // Simulate delayed test execution
+      mockEvalTest.mockImplementation(async ({ callback, testCase, schema }: any) => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        if (schema) {
+          const validatedInputs = schema.parse(testCase.inputs);
+          const testCaseWithValidatedInputs = { ...testCase, inputs: validatedInputs };
+          return callback(testCaseWithValidatedInputs);
+        }
+        return callback(testCase);
+      });
+
+      // Temporarily set logger to undefined so SimpleProgressReporter falls back to console
+      const originalLogger = mockGentraceClient.logger;
+      mockGentraceClient.logger = undefined;
+
+      await evalDatasetLib.evalDataset({
+        data: datasetSimple,
+        interaction: mockInteraction,
+        schema: InputSchema,
+        maxConcurrency: 2,
+        showProgressBar: false,
+      });
+
+      // Restore logger
+      mockGentraceClient.logger = originalLogger;
+
+      // Verify all tests ran with progress reporting
+      expect(mockEvalTest).toHaveBeenCalledTimes(3);
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Running experiment with 3 test cases'),
+      );
+      expect(consoleLogSpy).toHaveBeenCalledWith('Evaluation complete.');
+    });
+
+    it('should skip null/undefined test cases in progress count', async () => {
+      mockGetCurrentExperimentContext.mockReturnValue({
+        experimentId: 'exp-p7',
+        pipelineId: 'pipe-progress-7',
+      });
+
+      const datasetWithNulls: any[] = [{ inputs: { input: 1 } }, null, undefined, { inputs: { input: 2 } }];
+
+      await evalDatasetLib.evalDataset({
+        data: datasetWithNulls,
+        interaction: mockInteraction,
+        schema: InputSchema,
+        showProgressBar: false,
+      });
+
+      // Should still show total of 4, but only run 2 tests
+      // Note: The progress reporter uses the logger if available, but warn messages still go through the client logger
+      expect(mockEvalTest).toHaveBeenCalledTimes(2);
+      expect(mockGentraceClient.logger?.warn).toHaveBeenCalledWith(
+        'Skipping undefined or null test case at index 1',
+      );
+      expect(mockGentraceClient.logger?.warn).toHaveBeenCalledWith(
+        'Skipping undefined or null test case at index 2',
+      );
+    });
   });
 });

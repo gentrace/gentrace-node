@@ -8,7 +8,7 @@ const client = new Gentrace({
 });
 
 describe('resource testCases', () => {
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.testCases.create({
       datasetId: 'b2c3d4e5-f6a7-8901-2345-67890abcdef1',
@@ -24,7 +24,7 @@ describe('resource testCases', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.testCases.create({
       datasetId: 'b2c3d4e5-f6a7-8901-2345-67890abcdef1',
@@ -34,7 +34,7 @@ describe('resource testCases', () => {
     });
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.testCases.retrieve('123e4567-e89b-12d3-a456-426614174000');
     const rawResponse = await responsePromise.asResponse();
@@ -46,7 +46,7 @@ describe('resource testCases', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.testCases.list();
     const rawResponse = await responsePromise.asResponse();
@@ -58,7 +58,7 @@ describe('resource testCases', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('list: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
@@ -73,7 +73,7 @@ describe('resource testCases', () => {
     ).rejects.toThrow(Gentrace.NotFoundError);
   });
 
-  // skipped: tests are disabled for the time being
+  // Prism tests are disabled
   test.skip('delete', async () => {
     const responsePromise = client.testCases.delete('123e4567-e89b-12d3-a456-426614174000');
     const rawResponse = await responsePromise.asResponse();

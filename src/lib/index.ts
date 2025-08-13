@@ -4,11 +4,12 @@ export { experiment } from './experiment';
 export {
   startExperiment,
   finishExperiment,
-  StartExperimentParams,
-  FinishExperimentParams,
+  type StartExperimentParams,
+  type FinishExperimentParams,
 } from './experiment-control';
-export { interaction, InteractionOptions } from './interaction';
+export { interaction, type InteractionOptions } from './interaction';
 export { evalDataset, type TestInput } from './eval-dataset';
-export { traced, TracedConfig } from './traced';
+export { traced, type TracedConfig } from './traced';
 export { evalOnce } from './eval-once';
+export { type ProgressReporter, SimpleProgressReporter, BarProgressReporter } from './progress';
 export * from './otel';

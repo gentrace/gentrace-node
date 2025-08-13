@@ -1,7 +1,7 @@
 /**
- * Evaluation Example
+ * Eval Dataset Example
  *
- * This example demonstrates running simple evaluations with Gentrace.
+ * This example demonstrates running evaluations with datasets using Gentrace.
  *
  * How to run:
  * 1. Set environment variables:
@@ -11,7 +11,7 @@
  *    export GENTRACE_BASE_URL="https://gentrace.ai/api"  # optional
  *
  * 2. Run the example:
- *    yarn example examples/evaluation-dataset.ts
+ *    yarn example examples/eval-dataset.ts
  */
 
 import z from 'zod';
@@ -68,6 +68,9 @@ async function main() {
 
           return completion.choices[0]?.message?.content || 'No response';
         },
+        // Progress display is automatically determined:
+        // - Interactive progress bar for local development
+        // - Line-by-line output for CI/CD environments (auto-detected)
       });
     },
     { pipelineId },
