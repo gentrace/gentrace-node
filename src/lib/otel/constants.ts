@@ -5,6 +5,12 @@
 export const ATTR_GENTRACE_SAMPLE = 'gentrace.sample';
 
 /**
+ * Key used to identify Gentrace sampling configuration in baggage and span attributes.
+ * When set to 'true', indicates that the span should be sampled.
+ */
+export const ATTR_GENTRACE_IN_EXPERIMENT = 'gentrace.in_experiment';
+
+/**
  * Key used to identify which Gentrace pipeline a particular span belongs to.
  * Spans tagged with this attribute will be viewable in the "Traces" section of the Gentrace dashboard.
  */

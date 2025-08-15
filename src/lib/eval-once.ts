@@ -1,12 +1,13 @@
-import { Span, SpanStatusCode, trace, context, propagation } from '@opentelemetry/api';
+import { context, propagation, Span, SpanStatusCode, trace } from '@opentelemetry/api';
 import stringify from 'json-stringify-safe';
-import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
-import { type ParseableSchema, type TestInput } from './eval-dataset'; // Import the interface
 import { _getClient } from './client-instance';
+import { type ParseableSchema, type TestInput } from './eval-dataset'; // Import the interface
+import { getCurrentExperimentContext } from './experiment'; // Assuming this provides the experimentId
 import {
   ATTR_GENTRACE_EXPERIMENT_ID,
   ATTR_GENTRACE_FN_ARGS,
   ATTR_GENTRACE_FN_OUTPUT,
+  ATTR_GENTRACE_IN_EXPERIMENT,
   ATTR_GENTRACE_SAMPLE,
 } from './otel/constants';
 import { checkOtelConfigAndWarn } from './utils';
@@ -111,9 +112,9 @@ export async function _runEval<
     const currentContext = context.active();
     const currentBaggage = propagation.getBaggage(currentContext) ?? propagation.createBaggage();
 
-    const newBaggage = currentBaggage.setEntry(ATTR_GENTRACE_SAMPLE, {
-      value: 'true',
-    });
+    const newBaggage = currentBaggage
+      .setEntry(ATTR_GENTRACE_SAMPLE, { value: 'true' })
+      .setEntry(ATTR_GENTRACE_IN_EXPERIMENT, { value: 'true' });
     const newContext = propagation.setBaggage(currentContext, newBaggage);
 
     context.with(newContext, () => {
