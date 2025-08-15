@@ -12,7 +12,6 @@
   "files": [
     "**/*"
   ],
-  "private": false,
   "publishConfig": {
     "access": "public"
   },

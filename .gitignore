@@ -15,3 +15,4 @@ INSTRUCTIONS.md
 .venv
 .mcp.json
 .vscode
+.yarn/install-state.gz
