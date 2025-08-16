@@ -737,11 +737,13 @@ export class Gentrace {
   datasets: API.Datasets = new API.Datasets(this);
   testCases: API.TestCases = new API.TestCases(this);
 }
+
 Gentrace.Pipelines = Pipelines;
 Gentrace.Experiments = Experiments;
 Gentrace.Organizations = Organizations;
 Gentrace.Datasets = Datasets;
 Gentrace.TestCases = TestCases;
+
 export declare namespace Gentrace {
   export type RequestOptions = Opts.RequestOptions;
 
