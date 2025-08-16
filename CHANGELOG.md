@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.14.1 (2025-08-16)
+
+Full Changelog: [v0.14.0...v0.14.1](https://github.com/gentrace/gentrace-node/compare/v0.14.0...v0.14.1)
+
+### Chores
+
+* **deps:** update dependency @types/node to v20.17.58 ([d1d2c10](https://github.com/gentrace/gentrace-node/commit/d1d2c107e05f24d1f6c6b4f58745f2b8887f8e12))
+* **internal:** formatting change ([b88dbf8](https://github.com/gentrace/gentrace-node/commit/b88dbf8a3bf2977b1271a8fe1f3b5ef3e0364bc6))
+
 ## 0.14.0 (2025-08-16)
 
 Full Changelog: [v0.13.0...v0.14.0](https://github.com/gentrace/gentrace-node/compare/v0.13.0...v0.14.0)
