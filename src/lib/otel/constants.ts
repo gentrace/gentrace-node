@@ -4,7 +4,6 @@
  */
 export const ATTR_GENTRACE_SAMPLE = 'gentrace.sample';
 
-
 /**
  * Key used to identify spans that are part of a Gentrace experiment.
  * When set to 'true', indicates that the span was created during an experiment run.
