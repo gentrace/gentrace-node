@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.14.0 (2025-08-16)
+
+Full Changelog: [v0.13.0...v0.14.0](https://github.com/gentrace/gentrace-node/compare/v0.13.0...v0.14.0)
+
+### Features
+
+* add gentrace.in_experiment baggage key ([#637](https://github.com/gentrace/gentrace-node/issues/637)) ([bdab045](https://github.com/gentrace/gentrace-node/commit/bdab0456983079f48d54026f3206a4524c1829a0))
+
+
+### Chores
+
+* remove extra blank line in constants.ts ([#640](https://github.com/gentrace/gentrace-node/issues/640)) ([de40971](https://github.com/gentrace/gentrace-node/commit/de4097160b0a0949f3ba483d89b84c2bd380de21))
+
 ## 0.13.0 (2025-08-12)
 
 Full Changelog: [v0.12.3...v0.13.0](https://github.com/gentrace/gentrace-node/compare/v0.12.3...v0.13.0)
