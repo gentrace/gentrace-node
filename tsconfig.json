@@ -7,10 +7,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "baseUrl": "./",
     "paths": {
-      "gentrace/*": ["src/*"],
-      "gentrace": ["src/index.ts"]
+      "gentrace/*": ["./src/*"],
+      "gentrace": ["./src/index.ts"]
     },
     "noEmit": true,
 
