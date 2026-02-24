@@ -60,7 +60,7 @@ $ yarn link gentrace
 # With pnpm
 $ pnpm link --global
 $ cd ../my-package
-$ pnpm link -—global gentrace
+$ pnpm link --global gentrace
 ```
 
 ## Running tests
